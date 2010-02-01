@@ -1,0 +1,8 @@
+component	graphics_wserv_std_plugins
+source	\sf\os\graphics\windowing\windowserverplugins
+binary	\sf\os\graphics\windowing\windowserverplugins\group	all
+exports	\sf\os\graphics\windowing\windowserverplugins\group
+notes_source	\component_defs\release.src
+
+ipr E
+ipr T \sf\os\graphics\windowing\windowserverplugins\screencapture

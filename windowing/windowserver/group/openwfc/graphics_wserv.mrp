@@ -1,0 +1,32 @@
+component	graphics_wserv
+source	\sf\os\graphics\windowing\windowserver
+binary	\sf\os\graphics\windowing\windowserver\group	all
+exports	\sf\os\graphics\windowing\windowserver\group
+notes_source	\component_defs\release.src
+
+
+
+ipr D 
+ipr T \sf\os\graphics\windowing\windowserver\tanim
+ipr T \sf\os\graphics\windowing\windowserver\tauto
+ipr T \sf\os\graphics\windowing\windowserver\tcapability
+ipr T \sf\os\graphics\windowing\windowserver\TClick
+ipr T \sf\os\graphics\windowing\windowserver\tcrx
+ipr T \sf\os\graphics\windowing\windowserver\test
+ipr T \sf\os\graphics\windowing\windowserver\tframerate
+ipr T \sf\os\graphics\windowing\windowserver\tlib
+ipr T \sf\os\graphics\windowing\windowserver\tlisten
+ipr T \sf\os\graphics\windowing\windowserver\tman
+ipr T \sf\os\graphics\windowing\windowserver\tredir
+ipr T \sf\os\graphics\windowing\windowserver\ttime
+ipr T \sf\os\graphics\windowing\windowserver\twsgraphic
+ipr T \sf\os\graphics\windowing\windowserver\tcontaindrawer
+ipr F \sf\os\graphics\windowing\windowserver\nga\samplegraphicsurfacedrawer
+ipr T \sf\os\graphics\windowing\windowserver\t_integ
+ipr T \sf\os\graphics\windowing\windowserver\tbufferdrawer
+ipr T \sf\os\graphics\windowing\windowserver\tcsc  
+ipr T \sf\os\graphics\windowing\windowserver\tdynamicres
+ipr T \sf\os\graphics\windowing\windowserver\tvalidationrenderstages
+
+
+

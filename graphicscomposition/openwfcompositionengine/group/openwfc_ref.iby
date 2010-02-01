@@ -1,0 +1,25 @@
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// OpenWFC sample implementation
+
+#ifndef __OPENWFC_REF_IBY__
+#define __OPENWFC_REF_IBY__
+
+#include <egl.iby>
+#include <openwfc_support.iby>
+
+REM OpenWFC SI
+file=ABI_DIR\BUILD_DIR\libWFC.dll				\sys\bin\libWFC.dll
+
+#endif // __OPENWFC_REF_IBY__

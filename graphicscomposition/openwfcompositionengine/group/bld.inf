@@ -1,0 +1,38 @@
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// 
+// 
+//
+
+PRJ_PLATFORMS
+DEFAULT
+
+PRJ_EXPORTS
+../group/openwfc_ref.iby							/epoc32/rom/include/openwfc_ref.iby
+
+PRJ_MMPFILES
+openwfc.mmp
+
+PRJ_TESTMMPFILES
+owfsharect.mmp
+
+PRJ_TESTEXPORTS
+../adaptation/include/owfnativestream.h												SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(owfnativestream.h)
+../adaptation/include/owfmutex.h															SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(owfmutex.h)
+../adaptation/include/owfsemaphore.h													SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(owfsemaphore.h)
+../adaptation/include/owfthread.h															SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(owfthread.h)
+../common/include/owflinkedlist.h															SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(owflinkedlist.h)
+../common/include/owfpool.h																		SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(owfpool.h)
+../common/include/owfimage.h																	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(owfimage.h)
+../common/include/owftypes.h																	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(owftypes.h)

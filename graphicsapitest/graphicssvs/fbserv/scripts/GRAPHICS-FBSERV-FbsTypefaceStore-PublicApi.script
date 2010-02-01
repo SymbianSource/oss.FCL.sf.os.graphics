@@ -1,0 +1,1382 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi
+//! @SYMScriptTestEnvironment	This test script requires a basic ROM.
+
+/////////////////////////////////////////////////////////////////////
+// GRAPHICS-FBSERV-FbsTypefaceStore-PublicAPI.script
+//
+// Tests all public elements of the CFbsTypefaceStore class
+// as a means of confidence that the APIs work as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for CFbsTypefaceStore.
+// Negative testing is performed to confirm that correct errors are returned when incorrect parameters are given.
+// The tests are fully automated.
+/////////////////////////////////////////////////////////////////////
+
+LOAD_SUITE	T_FBServAPI
+
+RUN_UTILS	CopyFile	${SYSDRIVE}\graphics\t_fbservapi\testfontfb.gdr	${SYSDRIVE}\graphics\t_fbservapi\tmpfontfb.gdr
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0001
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0001
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::NewL() with null parameter test
+//!				Uses API elements: NewL()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that the creation will not cause panic, will not leave and the returned value is not NULL
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0001
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0002
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0002
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::AddFile() test
+//!				Uses API elements: AddFile()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call AddFile() method specifying the location of an existing gdr-file on z: drive
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that the addFile() method call returns KErrNone and aId is other that 0 on return
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	AddFile			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0002-001-AddFile_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0002
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0003
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0003
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::InstallFile() test
+//!				Uses API elements: InstallFile()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call InstallFile() method specifing the location of an existing gdr-file on z: drive
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that the method call returns KErrNone and aId is other that 0 on return
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	InstallFile		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0003-001-InstallFile_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0003
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0004
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0004
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::RemoveFile() test
+//!				Uses API elements: RemoveFile(), AddFile()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call AddFile() method specifing the location of an existing gdr-file on z: drive
+//!				4. Call RemoveFile() twice to decrement instance count from previous test cases specifing the file id obtained from AddFile() call
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function RemoveFile() call doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	AddFile			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0004-001-AddFile_command004
+		COMMAND		CFbsTypefaceStore1	RemoveFile
+		COMMAND		CFbsTypefaceStore1	RemoveFile
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0004
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0005
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0005
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		Deprecated CFbsTypefaceStore::GetNearestFontInTwips() test
+//!				Uses API elements: GetNearestFontInTwips()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontInTwips() for Swiss, 12 twips font
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that the GetNearestFontInTwips() method call doesn't cause panic, returns KErrNone and the returned font pointer is not NULL
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0005-001-GetNearestFontInTwips_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0005
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0006
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0006
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::GetNearestFontInPixels() test
+//!				Uses API elements: GetNearestFontInPixels()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontInPixels() for Swiss, 12px font
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that the GetNearestFontInPixels() method call doesn't cause panic, returns KErrNone and the returned font pointer is not NULL
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0006-001-GetNearestFontInPixels_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0006
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0007
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0007
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::GetNearestFontToDesignHeightInPixels() test
+//!				Uses API elements: GetNearestFontToDesignHeightInPixels()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontToDesignHeightInPixels() for Swiss, 12 font
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that the GetNearestFontToDesignHeightInPixels() method call doesn't cause panic, returns KErrNone and the returned font pointer is not NULL
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0007-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0007
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0008
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0008
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::GetNearestFontToMaxHeightInPixels() test
+//!				Uses API elements: GetNearestFontToMaxHeightInPixels()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontToMaxHeightInPixels() for Swiss, 12 font setting maximum height to 12
+//!				4. Call font's FontHeightInPixels() to verify that it's actual height doesn't exceed maximum
+//!					height restriction
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that the GetNearestFontToMaxHeightInPixels() method call doesn't cause panic, returns KErrNone and
+//!				that the height of the returned font is not greater that the maximum specified.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToMaxHeightInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0008-001-GetNearestFontToMaxHeightInPixels_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0008
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0009
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0009
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::GetFontById() test
+//!				Uses API elements: GetFontById()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetFontById() passing 268435493 (KScreenFontUidCalc13n from FONTID.H) and default TAlgStyle as arguments
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that the GetFontById() method call doesn't cause panic, returns KErrNone and
+//!				that the returned font is not NULL.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetFontById		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0009-001-GetFontById_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0009
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0010
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0010
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::NumTypefaces() test
+//!				Uses API elements: NumTypefaces()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call NumTypefaces()
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function NumtypeFaces() doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	NumTypefaces
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0010
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0011
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0011
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::TypefaceSupport() and CFbsTypefaceStore::NumTypefaces() test
+//!				Uses API elements: TypefaceSupport(), NumTypefaces()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call NumTypefaces() and memorize it's value
+//!				4. Use cycle calling TypefaceSupport() to obtain all TTypefaceSupport descriptions for all typeface indices between 0 and NumTypefaces() - 1
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The test expects the operations don't cause panic and that iNumHeights, iMinHeightInTwips, iMaxHeightInTwips fields are \>0
+//!				for all loaded typefaces.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	TypefaceSupport		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0011-001-TypefaceSupport_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0011
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0012
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0012
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::FontHeightInTwips(), CFbsTypefaceStore::TypefaceSupport() and CFbsTypefaceStore::NumTypefaces() test
+//!				Uses API elements: TypefaceSupport(), NumTypefaces(), FontHeightInTwips()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call NumTypefaces() and memorize it's value
+//!				4. Use cycle calling TypefaceSupport() to obtain all TTypefaceSupport descriptions for all typeface indices between 0 and NumTypefaces() - 1
+//!				5. Use inner cycle and call FontHeightInTwips() for all typeface indices between 0 and NumTypefaces() - 1 and all height
+//!				indices between 0 and iNumHeights obtained from TypefaceSupport() for the given typeface
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The test expects the operations don't cause panic and that FontHeightInTwips() result is \>0 for all loaded typefaces.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	FontHeightInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0012-001-FontHeightInTwips_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0012
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0013
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0013
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::FontHeightInPixels() test
+//!				Uses API elements: FontHeightInPixels()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call FontHeightInPixels() passing typeface index 0 and height index 0 as arguments
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The test expects the FontHeightInPixels() operation not to panic and that FontHeightInPixels() result is \>0 for all loaded typefaces.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	FontHeightInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0013-001-FontHeightInPixels_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0013
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0014
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0014
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::DefaultBitmapType(), CFbsTypefaceStore::SetDefaultBitmapType() test
+//!				Uses API elements: DefaultBitmapType(), SetDefaultBitmapType()
+//! @SYMTestActions		The test assumes that default bitmap type was not changed yet
+//!				1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call SetDefaultBitmapType() and give EMonochromeGlyphBitmap as an argument
+//!				4. Call DefaultBitmapType() and check that it's value is EMonochromeGlyphBitmap
+//!				5. Call SetDefaultBitmapType() and pass EDefaultGlyphBitmap as an argument
+//!				6. Call DefaultBitmapType() and check that it's value is EDefaultGlyphBitmap
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	See actions
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	SetDefaultBitmapType	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0014-001-SetDefaultBitmapType_command004
+		COMMAND		CFbsTypefaceStore1	DefaultBitmapType	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0014-001-DefaultBitmapType_command005
+		COMMAND		CFbsTypefaceStore1	SetDefaultBitmapType	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0014-001-SetDefaultBitmapType_command006
+		COMMAND		CFbsTypefaceStore1	DefaultBitmapType	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0014-001-DefaultBitmapType_command007
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0014
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0015
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0015
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::SetFontNameAliasL() test
+//!				Uses API elements: SetFontNameAliasL(), GetNearestFontToDesignHeightInTwips()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call SetFontNameAliasL() and set "ArialAlias" as the font's name alias for font "Arial"
+//!				5. Use GetNearestFontToDesignHeightInTwips() to find the font with alias "ALIAS" setting the value in TFontSpec
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that the font was found by alias and that the SetFontNameAliasL() method call doesn't leave or panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	SetFontNameAliasL	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0015-001-SetFontNameAliasL_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0015
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0016
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0016
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::SetDefaultLanguageForMetrics() test
+//!				Uses API elements: SetDefaultLanguageForMetrics()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call SetDefaultLanguageForMetrics() to set ELangEstonian and ELangEnglish
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function SetDefaultLanguageForMetrics() call doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI			\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	SetDefaultLanguageForMetrics	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0016-001-SetDefaultLanguageForMetrics_command004
+		COMMAND		CFbsTypefaceStore1	SetDefaultLanguageForMetrics	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0016-001-SetDefaultLanguageForMetrics_command005
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0016
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0020
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0020
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::GetNearestFontToDesignHeightInTwips() test
+//!				Uses API elements: GetNearestFontToDesignHeightInTwips()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontToDesignHeightInTwips() for Swiss, 30 twips font
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that the method call doesn't cause panic, returns KErrNone and the returned font pointer is not NULL
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0020-001-GetNearestFontToDesignHeightInTwips_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0020
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0021
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0021
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::GetNearestFontToMaxHeightInTwips() test
+//!				Uses API elements: GetNearestFontToMaxHeightInTwips()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontToMaxHeightInTwips() for Swiss, 30 font setting maximum height to 30
+//!				4. Call font's FontHeightInTwips() to verify that it's actual height doesn't exceed maximum
+//!					height restriction
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that the GetNearestFontToMaxHeightInTwips() method call returns KErrNone and
+//!				that the height of the returned font is not greater that the maximum specified.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToMaxHeightInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0021-001-GetNearestFontToMaxHeightInTwips_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0021
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0022
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0022
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::AddFile() negative test for non-existent file
+//!				Uses API elements: AddFile()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call AddFile() method specifying the location of a non-existing gdr-file
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Expects that AddFile() method call returns an error code -1 (item not found)
+//! @SYMTestType		CIT
+	START_TEST_BLOCK		100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT		RFbsSession		RFbsSession1
+		CREATE_OBJECT		CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND			RFbsSession1		Connect
+		COMMAND			CFbsTypefaceStore1	NewL
+		COMMAND	!Error=-1	CFbsTypefaceStore1	AddFile			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0022-001-AddFile_command004
+		COMMAND			CFbsTypefaceStore1	~
+		COMMAND			RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0022
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0023
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0023
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::AddFile() negative test for non-gdr file
+//!				Uses API elements: AddFile()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call AddFile() method specifying the location of an existing but non-gdr-file
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Expects that AddFile() method call will fail returning error code -20 (KErrCorrupt)
+//! @SYMTestType		CIT
+	START_TEST_BLOCK		100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT		RFbsSession		RFbsSession1
+		CREATE_OBJECT		CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND			RFbsSession1		Connect
+		COMMAND			CFbsTypefaceStore1	NewL
+		COMMAND	!Error=-20	CFbsTypefaceStore1	AddFile			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0023-001-AddFile_command004
+		COMMAND			CFbsTypefaceStore1	~
+		COMMAND			RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0023
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0024
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0024
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::InstallFile() negative test for non-existent file
+//!				Uses API elements: InstallFile()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call InstallFile() method specifying the location of a non-existing gdr-file
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Expects that InstallFile() method call returns an error code
+//! @SYMTestType		CIT
+	START_TEST_BLOCK		100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT		RFbsSession		RFbsSession1
+		CREATE_OBJECT		CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND			RFbsSession1		Connect
+		COMMAND			CFbsTypefaceStore1	NewL
+		COMMAND	!Error=-1	CFbsTypefaceStore1	InstallFile		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0024-001-InstallFile_command004
+		COMMAND			CFbsTypefaceStore1	~
+		COMMAND			RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0024
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0025
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0025
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::InstallFile() negative test for non-gdr file
+//!				Uses API elements: InstallFile()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call InstallFile() method specifying the location of an existing but non-gdr-file
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Expects that InstallFile() method call will fail returning error code -20 (KErrCorrupt)
+//! @SYMTestType		CIT
+	START_TEST_BLOCK		100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT		RFbsSession		RFbsSession1
+		CREATE_OBJECT		CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND			RFbsSession1		Connect
+		COMMAND			CFbsTypefaceStore1	NewL
+		COMMAND	!Error=-20	CFbsTypefaceStore1	InstallFile		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0025-001-InstallFile_command004
+		COMMAND			CFbsTypefaceStore1	~
+		COMMAND			RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0025
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0027
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0027
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		Deprecated CFbsTypefaceStore::GetNearestFontInTwips() negative test for non-existent font name
+//!				Uses API elements: GetNearestFontInTwips()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontInTwips() for NonExistentFont, 12 twips font
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function GetNearestFontInTwips() call returns KErrNone and doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0027-001-GetNearestFontInTwips_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0027
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0028
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0028
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::GetNearestFontInPixels() negative test for non-existent font name
+//!				Uses API elements: GetNearestFontInPixels()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontInPixels() for NonExistentFont, 12 px font
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function GetNearestFontInPixels() call returns KErrNone and doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0028-001-GetNearestFontInPixels_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0028
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0029
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0029
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::GetNearestFontToDesignHeightInPixels() negative test for non-existent font name
+//!				Uses API elements: GetNearestFontToDesignHeightInPixels()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontToDesignHeightInPixels() for NonExistentFont, 12 px font
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function GetNearestFontToDesignHeightInPixels() call returns KErrNone and doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0029-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0029
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0030
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0030
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::GetNearestFontToMaxHeightInPixels() negative test for non-existent font name
+//!				Uses API elements: GetNearestFontToMaxHeightInPixels()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontToMaxHeightInPixels() for NonExistentFont, 12 px font
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function GetNearestFontToMaxHeightInPixels() call returns KErrNone and doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToMaxHeightInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0030-001-GetNearestFontToMaxHeightInPixels_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0030
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0031
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0031
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::GetNearestFontToMaxHeightInPixels() negative test for too small maximum height
+//!				Uses API elements: GetNearestFontToMaxHeightInPixels()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontToMaxHeightInPixels() for NonExistentFont, 12 px font and aMaxHeight=0
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function GetNearestFontToMaxHeightInPixels() call returns KErrNone and doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToMaxHeightInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0031-001-GetNearestFontToMaxHeightInPixels_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0031
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0032
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0032
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::GetFontById() negative test for non-existent font id
+//!				Uses API elements: GetFontById()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Use GetFontById() providing font id = 0
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Expects that the GetFontById() method call returns an error -1 (KErrNotFound).
+//! @SYMTestType		CIT
+	START_TEST_BLOCK		100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT		RFbsSession		RFbsSession1
+		CREATE_OBJECT		CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND			RFbsSession1		Connect
+		COMMAND			CFbsTypefaceStore1	NewL
+		COMMAND	!Error=-1	CFbsTypefaceStore1	GetFontById		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0032-001-GetFontById_command004
+		COMMAND			CFbsTypefaceStore1	~
+		COMMAND			RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0032
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0036
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0036
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::SetDefaultBitmapType() test that tries to set a wrong value
+//!				Uses API elements: DefaultBitmapType(), SetDefaultBitmapType()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call DefaultBitmapType() and remember it's value
+//!				4. Call SetDefaultBitmapType() and give -999 as an argument
+//!				5. Call SetDefaultBitmapType() and pass EDefaultGlyphBitmap as an argument
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function SetDefaultBitmapType doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	SetDefaultBitmapType	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0036-001-SetDefaultBitmapType_command004
+		COMMAND		CFbsTypefaceStore1	SetDefaultBitmapType	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0036-001-SetDefaultBitmapType_command005
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0036
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0037
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0037
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::SetFontNameAliasL() test for wrong font name
+//!				Uses API elements: SetFontNameAliasL()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call SetFontNameAliasL() and set name alias for font name "NonExistentFont"
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function SetFontNameAliasL() call doesn't leave and doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	SetFontNameAliasL	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0037-001-SetFontNameAliasL_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0037
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0038
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0038
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::SetDefaultLanguageForMetrics() negative test with wrong language code
+//!				Uses API elements: SetDefaultLanguageForMetrics()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call SetDefaultLanguageForMetrics() with -1 as an argument
+//!				4. Call SetDefaultLanguageForMetrics() to ELangEnglish
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function SetDefaultLanguageForMetrics() call doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI			\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	SetDefaultLanguageForMetrics	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0038-001-SetDefaultLanguageForMetrics_command004
+		COMMAND		CFbsTypefaceStore1	SetDefaultLanguageForMetrics	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0038-001-SetDefaultLanguageForMetrics_command005
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0038
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0040
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0040
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Louis Henry Nayegon
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::SetSystemDefaultTypefaceNameL() test
+//!				Uses API elements: SetSystemDefaultTypefaceNameL(const TDesC \&aFontTypefaceName)
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call SetSystemDefaultTypefaceNameL() method
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Checks that SetSystemDefaultTypefaceNameL() method call doesn't cause panics
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI			\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	SetSystemDefaultTypefaceNameL	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0040-001-SetSystemDefaultTypefaceNameL_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0040
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0041
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0041
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::NewL() with a bitmap device as a parameter test
+//!				Uses API elements: NewL()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Create a fbs bitmap
+//!				3. Create a fbs bitmap device
+//!				4. Call CFbsTypefaceStore::NewL() passing the device as an argument
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that the creation will not cause panic, the method NewL will not leave and the returned value is not NULL
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsBitmap		CFbsBitmap1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsBitmapDevice	CFbsBitmapDevice1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsBitmap1		new
+		COMMAND		CFbsBitmap1		Create			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0041-001-Create_command004
+		COMMAND		CFbsBitmapDevice1	NewL			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0041-001-NewL_command006
+		COMMAND		CFbsTypefaceStore1	NewL			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0041-001-NewL_command008
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		CFbsBitmapDevice1	~
+		COMMAND		CFbsBitmap1		~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0041
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0042
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0042
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::NewL() with a screen device as a parameter test
+//!				Uses API elements: NewL()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Create a fbs screen device
+//!				3. Call CFbsTypefaceStore::NewL() passing the device as an argument
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that the creation will not cause panic, the method NewL doesn't cause panic and the returned value is not NULL
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsScreenDevice	CFbsScreenDevice1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsScreenDevice1	NewL			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0042-001-NewL_command003
+		COMMAND		CFbsTypefaceStore1	NewL			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0042-001-NewL_command005
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		CFbsScreenDevice1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0042
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0043
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0043
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		Deprecated CFbsTypefaceStore::GetNearestFontInTwips() negative test for an existent font name but too big/too small/negative size
+//!				Uses API elements: GetNearestFontInTwips()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontInTwips() for Arial, 1000000 twips font
+//!				4. Call GetNearestFontInTwips() for Arial, 0 twips font
+//!				5. Call GetNearestFontInTwips() for Arial, -1 twips font
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function GetNearestFontInTwips() call returns KErrNone and doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0043-001-GetNearestFontInTwips_command004
+		COMMAND		CFbsTypefaceStore1	GetNearestFontInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0043-001-GetNearestFontInTwips_command005
+		COMMAND		CFbsTypefaceStore1	GetNearestFontInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0043-001-GetNearestFontInTwips_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0043
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0044
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0044
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		Deprecated CFbsTypefaceStore::GetNearestFontInPixels() negative test for an existent font name but too big/too small/negative size
+//!				Uses API elements: GetNearestFontInPixels()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontInPixels() for Arial, 1000000 px font
+//!				4. Call GetNearestFontInPixels() for Arial, 0 px font
+//!				5. Call GetNearestFontInPixels() for Arial, -1 px font
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function GetNearestFontInPixels() call returns KErrNone and doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0044-001-GetNearestFontInPixels_command004
+		COMMAND		CFbsTypefaceStore1	GetNearestFontInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0044-001-GetNearestFontInPixels_command005
+		COMMAND		CFbsTypefaceStore1	GetNearestFontInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0044-001-GetNearestFontInPixels_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0044
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0045
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0045
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		Deprecated CFbsTypefaceStore::GetNearestFontToDesignHeightInPixels() negative test for an existent font name but too big/too small/negative size
+//!				Uses API elements: GetNearestFontToDesignHeightInPixels()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontToDesignHeightInPixels() for Arial, 1000000 px font
+//!				4. Call GetNearestFontToDesignHeightInPixels() for Arial, 0 px font
+//!				5. Call GetNearestFontToDesignHeightInPixels() for Arial, -1 px font
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function GetNearestFontToDesignHeightInPixels() call returns KErrNone and doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0045-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0045-001-GetNearestFontToDesignHeightInPixels_command005
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0045-001-GetNearestFontToDesignHeightInPixels_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0045
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0046
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0046
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		Deprecated CFbsTypefaceStore::GetNearestFontToDesignHeightInTwips() negative test for an existent font name but too big/too small/negative size
+//!				Uses API elements: GetNearestFontToDesignHeightInTwips()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontToDesignHeightInTwips() for Arial, 1000000 twips font
+//!				4. Call GetNearestFontToDesignHeightInTwips() for Arial, 0 twips font
+//!				5. Call GetNearestFontToDesignHeightInTwips() for Arial, -1 twips font
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function GetNearestFontToDesignHeightInTwips() call returns KErrNone and doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0046-001-GetNearestFontToDesignHeightInTwips_command004
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0046-001-GetNearestFontToDesignHeightInTwips_command005
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0046-001-GetNearestFontToDesignHeightInTwips_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0046
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0047a
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0047a
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		Deprecated CFbsTypefaceStore::GetNearestFontToMaxHeightInPixels() negative test for an existent font name but too big/too small/negative sizes
+//!				Uses API elements: GetNearestFontToMaxHeightInPixels()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontToMaxHeightInPixels() for Arial, 1000000 twips font, specifying max size = 50
+//!				4. Call GetNearestFontToMaxHeightInPixels() for Arial, 0 twips font, specifying max size = 50
+//!				5. Call GetNearestFontToDesignHeightInTwips() for Arial, -1 twips font, specifying max size = 50
+//!				6. Call GetNearestFontToMaxHeightInPixels() for Arial, 50 twips font, specifying max size = 1000000
+//!				7. Call GetNearestFontToMaxHeightInPixels() for Arial, 50 twips font, specifying max size = 0
+//!				8. Call GetNearestFontToDesignHeightInTwips() for Arial, 50 twips font, specifying max size = -1
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function GetNearestFontToMaxHeightInPixels() call returns KErrNone and doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK		100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT		RFbsSession		RFbsSession1
+		CREATE_OBJECT		CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND			RFbsSession1		Connect
+		COMMAND			CFbsTypefaceStore1	NewL
+		COMMAND			CFbsTypefaceStore1	GetNearestFontToMaxHeightInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0047-001-GetNearestFontToMaxHeightInPixels_command004
+		COMMAND			CFbsTypefaceStore1	GetNearestFontToMaxHeightInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0047-001-GetNearestFontToMaxHeightInPixels_command005
+		COMMAND			CFbsTypefaceStore1	GetNearestFontToDesignHeightInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0047-001-GetNearestFontToDesignHeightInTwips_command006
+		COMMAND !Error=-40	CFbsTypefaceStore1	GetNearestFontToMaxHeightInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0047-001-GetNearestFontToMaxHeightInPixels_command007
+		COMMAND			CFbsTypefaceStore1	GetNearestFontToMaxHeightInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0047-001-GetNearestFontToMaxHeightInPixels_command008
+		COMMAND			CFbsTypefaceStore1	GetNearestFontToDesignHeightInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0047-001-GetNearestFontToDesignHeightInTwips_command009
+		COMMAND			CFbsTypefaceStore1	~
+		COMMAND			RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0047a
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0048
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0048
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor		Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::GetFontById() test by algormitmic style with too big/negative/0 size factors
+//!				Uses API elements: GetFontById()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Create a TAlgStyle instance and set width and height factors to 1000000
+//!				4. Call GetFontById() passing 268435509 (KScreenFontUidArialNormal13 from FONTIDS.H) and the TAlgStyle instance with as arguments
+//!				5. Create a TAlgStyle instance and set width and height factors to -1000000
+//!				6. Call GetFontById() passing 268435509 (KScreenFontUidArialNormal13 from FONTIDS.H) and the TAlgStyle instance with as arguments
+//!				7. Create a TAlgStyle instance and set width and height factors to 0
+//!				8. Call GetFontById() passing 268435509 (KScreenFontUidArialNormal13 from FONTIDS.H) and the TAlgStyle instance with as arguments
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that the GetFontById() method call returns KErrNone and that the returned font is not NULL.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	TAlgStyle		TAlgStyle1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		TAlgStyle1		new
+		COMMAND		TAlgStyle1		SetWidthFactor		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0048-001-SetWidthFactor_command004
+		COMMAND		TAlgStyle1		SetHeightFactor		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0048-001-SetHeightFactor_command005
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetFontById		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0048-001-GetFontById_command008
+		COMMAND		TAlgStyle1		new
+		COMMAND		TAlgStyle1		SetWidthFactor		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0048-001-SetWidthFactor_command011
+		COMMAND		TAlgStyle1		SetHeightFactor		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0048-001-SetHeightFactor_command012
+		COMMAND		CFbsTypefaceStore1	GetFontById		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0048-001-GetFontById_command014
+		COMMAND		TAlgStyle1		new
+		COMMAND		TAlgStyle1		SetWidthFactor		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0048-001-SetWidthFactor_command017
+		COMMAND		TAlgStyle1		SetHeightFactor		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0048-001-SetHeightFactor_command018
+		COMMAND		CFbsTypefaceStore1	GetFontById		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0048-001-GetFontById_command020
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+		COMMAND		TAlgStyle1		~
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0048
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0049
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0049
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::FontHeightInTwips() negative test for out-of-bounds typeface index
+//!				Uses API elements: FontHeightInTwips()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call FontHeightInTwips() for typeface index = 0 and height index = -1
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The test expects FontHeightInTwips() calls to panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	FontHeightInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0049-001-FontHeightInTwips_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0049
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0050
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0050
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::FontHeightInTwips() negative test for out-of-bounds height index
+//!				Uses API elements: FontHeightInTwips()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call FontHeightInTwips() for typeface index = -1 and height index = 0
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The test expects FontHeightInTwips() calls to panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	FontHeightInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0050-001-FontHeightInTwips_command004
+	END_TEST_BLOCK	!PanicCode=26 !PanicString=FBSCLI
+    RUN_TEST_STEP	100	T_FBServAPI	utilityClearPanicDlg
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0050
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0051
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0051
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::FontHeightInPixels() negative test for out-of-bounds typeface index
+//!				Uses API elements: FontHeightInPixels()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call FontHeightInPixels() for typeface index = 0 and height index = -1
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The test expects FontHeightInPixels() calls to panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	FontHeightInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0051-001-FontHeightInPixels_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0051
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0052
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0052
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::FontHeightInPixels() negative test for out-of-bounds height index
+//!				Uses API elements: FontHeightInPixels()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call FontHeightInPixels() for typeface index = -1 and height index = 0
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The test expects FontHeightInPixels() calls to panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	FontHeightInPixels	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0052-001-FontHeightInPixels_command004
+	END_TEST_BLOCK	!PanicCode=26 !PanicString=FBSCLI
+    RUN_TEST_STEP	100	T_FBServAPI	utilityClearPanicDlg
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0052
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0053
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0053
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::SetFontNameAliasL() test with empty font and alias name
+//!				Uses API elements: SetFontNameAliasL()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call SetFontNameAliasL() with empty font and alias name parameters
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function SetFontNameAliasL() call doesn't leave and doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI		\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	SetFontNameAliasL	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0053-001-SetFontNameAliasL_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0053
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0054
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0054
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		Deprecated CFbsTypefaceStore::GetNearestFontToDesignHeightInTwips() negative test for an empty font name
+//!				Uses API elements: GetNearestFontToDesignHeightInTwips()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call GetNearestFontToDesignHeightInTwips() for "" (empty name), 50 twips font
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function GetNearestFontToDesignHeightInTwips() call returns KErrNone and doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInTwips	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0054-001-GetNearestFontToDesignHeightInTwips_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0054
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0056
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0056
+//! @SYMAPI			CFbsTypefaceStore
+//! @SYMAuthor			Rnno Sgirka
+//! @SYMCreationDate		27/07/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::SetSystemDefaultTypefaceNameL() negative test with invalid typeface name
+//!				Uses API elements: SetSystemDefaultTypefaceNameL(const TDesC \&aFontTypefaceName)
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call SetSystemDefaultTypefaceNameL() method with WrongName as typeface name
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Checks that SetSystemDefaultTypefaceNameL() doesn't leave or panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI			\graphics\GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	SetSystemDefaultTypefaceNameL	GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0056-001-SetSystemDefaultTypefaceNameL_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsTypefaceStore-PublicApi-0056
+
+RUN_UTILS	DeleteFile	${SYSDRIVE}\graphics\t_fbservapi\tmpfontfb.gdr

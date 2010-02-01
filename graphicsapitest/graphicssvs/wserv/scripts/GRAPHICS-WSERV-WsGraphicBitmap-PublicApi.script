@@ -1,0 +1,806 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi
+//! @SYMScriptTestEnvironment	This test script requires a basic ROM.
+
+///////////////////////////////////////////////////////////////////////////////
+// GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.script
+//
+// Tests all public elements of the CWsGraphic class
+// as a means of confidence that the API works as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for
+// CWsGraphicBitmap related classes.
+// Negative testing is performed to confirm that correct errors are returned
+// when incorrect parameters are given.
+//
+// The tests are fully automated.
+///////////////////////////////////////////////////////////////////////////////
+
+
+LOAD_SUITE	T_GraphicsWservAPI
+
+
+// ****************************************************************************
+// CWsGraphicBitmap
+// ****************************************************************************
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0001
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0001
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		06/02/2007
+//! @SYMTestCaseDesc		NewL(const CFbsBitmap *aBitmap, const CFbsBitmap *aMask): to construct a piece of transient graphic artwork
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphic::Id
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Execute CWsGraphicBitmap::NewL() to construct a piece of transient graphic artwork
+//!				4.	Use Id() to check the constructed CWsGraphic object with non-zero transient
+//!				5.	Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Medium
+//! @SYMTestExpectedResults	1.	Transient CWsGraphic object was constructed without causing panic
+//!				2.	The constructed CWsGraphic object with transient id != 0
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0001-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0001-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0001-0001-NewL_command10
+		COMMAND		wsgraph			Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0001-0001-Id_command11
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0001
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0002
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0002
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		14/02/2007
+//! @SYMTestCaseDesc		NewL(TUid aUid, const CFbsBitmap *aBitmap, const CFbsBitmap *aMask) to construct a piece of non-transient graphic artwork
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphic::Id
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Execute CWsGraphicBitmap::NewL() to construct a piece of non-transient graphic artwork
+//!				4.	Use Id() to check the uid of the CWsGraphic object as specified in construction
+//!				5.	Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Medium
+//! @SYMTestExpectedResults	1.	Non-transient CWsGraphic object was created without causing panic
+//!				2.	The constructed CWsGraphic object with uid (non-transient id) as specified (98765)
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0002-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0002-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0002-0001-NewL_command10
+		COMMAND		wsgraph			Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0002-0001-Id_command11
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0002
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0003
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0003
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		18/05/2007
+//! @SYMTestCaseDesc		NewL(const TWsGraphicId &aReplace, const CFbsBitmap *aBitmap, const CFbsBitmap *aMask): to replace a non-transient artwork with new data/bitmap
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphic::Id, CWsGraphicBitmap::NewL
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Use NewL() to construct a non-transient graphic artwork
+//!				4.	Use Id to check if the graphic artwork is created with the uid as specified
+//!				5.	Create and load another CFbsBitmap for the new source bitmap (to replace the old one)
+//!				6.	Execute CWsGraphicBitmap::NewL() to replace the non-transient graphic artwork with the new source bitmap
+//!				7.	Use Id to check its uid keeps the same as specified
+//!				8.	Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Medium
+//! @SYMTestExpectedResults	1.	Non-transient CWsGraphic object was replaced without causing panic
+//!							2.	The constructed CWsGraphic object  keeps uid (non-transient id) as specified (98765) and active
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph2
+		CREATE_OBJECT	CFbsBitmap		fbsbmp2
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0003-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0003-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0003-0001-NewL_command10
+		COMMAND		wsgraph			Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0003-0001-Id_command11
+		COMMAND		fbsbmp2			new
+		COMMAND		fbsbmp2			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0003-0001-Load_command14
+		COMMAND		wsgraph2		NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0003-0001-NewL_command16
+		COMMAND		wsgraph2		Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0003-0001-Id_command17
+		COMMAND		wsgraph2		~
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp2			~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0003
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0004
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0004
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		06/02/2007
+//! @SYMTestCaseDesc		~CWsGraphicBitmap(): destruct a CWsGraphicBitmap object
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphicBitmap::NewL
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Use CWsGraphicBitmap::NewL() to construct a piece of transient graphic artwork
+//!				4.	Execute ~CWsGraphicBitmap to destruct the created transient graphic artwork
+//!				5.	Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Medium
+//! @SYMTestExpectedResults	CWsGraphicBitmap destructs without causing panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0004-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0004-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0004-0001-NewL_command10
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0004
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		26/04/2007
+//! @SYMTestCaseDesc		TInt ShareGlobally(): share the graphic artwork with all the client sessions (test in CWsGraphicBitmap)
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphic::Id
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Use NewL() to construct a piece of non-transient graphic artwork
+//!				4.	Use Id() to check the uid of the CWsGraphicBitmap object as specified in construction
+//!				5.	Execute ShareGlobally() and check if it returns KErrNone
+//!				6.	Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	ShareGlobally returns KErrNone without causing panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-NewL_command10
+		COMMAND		wsgraph			Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Id_command11
+		COMMAND		wsgraph			ShareGlobally
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0006
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0006
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		26/04/2007
+//! @SYMTestCaseDesc		TInt Share(TSecureId aClientId): explicitly share this graphic artwork with client sessions with the specified Secure ID (test in CWsGraphicBitmap)
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphic::Id
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Use NewL() to construct a piece of non-transient graphic artwork
+//!				4.	Use Id() to check the uid of the CWsGraphicBitmap object as specified in construction
+//!				5.	Execute Share() with TSecureId of the specified client and check if it returns KErrNone
+//!				6.	Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Share returns KErrNone without causing panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0006-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0006-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0006-0001-NewL_command10
+		COMMAND		wsgraph			Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0006-0001-Id_command11
+		COMMAND		wsgraph			Share			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0006-0001-Share_command12
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0006
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0007
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0007
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		26/04/2007
+//! @SYMTestCaseDesc		TInt UnShare(TSecureId aClientId): stop this graphic artwork from being shared with all client sessions with the specific Secure ID (test in CWsGraphicBitmap)
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphic::Id
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Use NewL() to construct a piece of non-transient graphic artwork
+//!				4.	Use Id() to check the uid of the CWsGraphicBitmap object as specified in construction
+//!				5.	Use Share() to share the artwork for the TSecureId of the specified client
+//!				6.	Execute UnShare() with TSecureId of the specified client and check if it returns KErrNone
+//!				7.	Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	UnShare returns KErrNone without causing panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0007-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0007-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0007-0001-NewL_command10
+		COMMAND		wsgraph			Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0007-0001-Id_command11
+		COMMAND		wsgraph			Share			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0007-0001-Share_command12
+		COMMAND		wsgraph			UnShare			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0007-0001-UnShare_command13
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0007
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0008
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0008
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		26/04/2007
+//! @SYMTestCaseDesc		TInt UnShareGlobally(): prevent this graphic artwork from being shared with all the client sessions (test in CWsGraphicBitmap)
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphic::Id
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Use NewL() to construct a piece of non-transient graphic artwork
+//!				4.	Use Id() to check the uid of the CWsGraphicBitmap object as specified in construction
+//!				5.	Use ShareGlobally() to share the graphic artwork
+//!				6.	Execute UnShareGlobally() and check if it returns KErrNone
+//!				7.	Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	UnShareGlobally returns KErrNone without causing panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0008-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0008-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0008-0001-NewL_command10
+		COMMAND		wsgraph			Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0008-0001-Id_command11
+		COMMAND		wsgraph			ShareGlobally
+		COMMAND		wsgraph			UnShareGlobally
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0008
+
+
+
+
+
+
+// ****************************************************************************
+// CWsGraphicBitmap Public APIs inherited from CWsGraphic
+// ****************************************************************************
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0101
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0101
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		06/02/2007
+//! @SYMTestCaseDesc		~CWsGraphic(): destruct a CWsGraphicBitmap object
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphicBitmap::NewL
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Use CWsGraphicBitmap::NewL() to construct a piece of transient graphic artwork
+//!				4.	Execute ~CWsGraphic to destruct the created transient graphic artwork
+//!				5.	Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Medium
+//! @SYMTestExpectedResults	CWsGraphicBitmap destructs without causing panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0101-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0101-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0101-0001-NewL_command10
+		COMMAND		wsgraph			~CWsGraphic
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0101
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0102
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0102
+//! @SYMAPI			CWsGraphic
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		06/02/2007
+//! @SYMTestCaseDesc		Id(): get the CWsGraphic artwork id
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphicBitmap::NewL
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Use NewL() to construct a piece of transient graphic artwork
+//!				4.	Execute Id() and check if it returns non-zero for the transient graphic artwork
+//!				5.	Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Id() is executed without causing panic, and returns id not 0 after construction of transient graphic artwork
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0102-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0102-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0102-0001-NewL_command10
+		COMMAND		wsgraph			Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0102-0001-Id_command11
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0102
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0103
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0103
+//! @SYMAPI			CWsGraphic
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		07/02/2007
+//! @SYMTestCaseDesc		IsActive(): check whether a peer of this graphic artwork has been fully constructed on the server
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphicBitmap::NewL
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Use NewL() to construct a piece of transient graphic artwork
+//!				4.	Execute IsActive() and check if it returns TRUE for the transient graphic artwork
+//!				5.	Close the used objects: CWsGraphic, CFbsBitmap, RWsSession
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	IsActive() is executed without causing panic, and returns TRUE after construction of graphic artwork
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0103-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0103-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0103-0001-NewL_command10
+		COMMAND		wsgraph			IsActive		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0103-0001-IsActive_command11
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0103
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0104
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0104
+//! @SYMAPI			CWsGraphic
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		07/02/2007
+//! @SYMTestCaseDesc		Destroy(): destroy the corresponding CWsGraphicDrawer instance on the server
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphic::Id & IsActive, CWsGraphicBitmap::NewL
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Use CWsGraphicBitmap::NewL() to construct a piece of transient graphic artwork
+//!				4.	Check CWsGraphic object after construction: IsActive()=TRUE and Id() is not 0
+//!				5.	Execute to destroy the corresponding CWsGraphicDrawer of the CWsGraphic object
+//!				6.	Check CWsGraphic object after destroy: IsActive()=FALSE and Id() is 0
+//!				7.	Close the used objects: CWsGraphic, CFbsBitmap, RWsSession
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	1.	CWsGraphic was destroyed without causing panic
+//!				2.	After construction of transient graphic artwork, IsActive()=TRUE and Id() is not 0
+//!				3.	After destroy the transient graphic artwork, IsActive()=FALSE and Id() is 0
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0104-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0104-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0104-0001-NewL_command10
+		COMMAND		wsgraph			IsActive		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0104-0001-IsActive_command11
+		COMMAND		wsgraph			Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0104-0001-Id_command12
+		COMMAND		wsgraph			Destroy
+		COMMAND		wsgraph			IsActive		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0104-0001-IsActive_command14
+		COMMAND		wsgraph			Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0104-0001-Id_command15
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		Command		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0104
+
+
+
+
+
+// ****************************************************************************
+// Negative testcases of CWsGraphicBitmap
+// ****************************************************************************
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1001
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1001
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		01/11/2007
+//! @SYMTestCaseDesc		NewL(TUid aUid, const CFbsBitmap *aBitmap, const CFbsBitmap *aMask) to construct a piece of non-transient graphic artwork with the uid already in use
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Execute CWsGraphicBitmap::NewL() to construct a piece of non-transient graphic artwork
+//!				4.	Execute CWsGraphicBitmap::NewL() to construct another piece of non-transient graphic artwork and with the same uid as the above
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Medium
+//! @SYMTestExpectedResults	get panic WSERV code=66 (this panic code is not yet documented in Symbian Library)
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph2
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0002-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0002-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0002-0001-NewL_command10
+		COMMAND		wsgraph2		NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0002-0001-NewL_command10
+	END_TEST_BLOCK	!PanicString=WSERV	!PanicCode=66
+	RUN_TEST_STEP	100	T_GraphicsWservAPI	utilityClearPanicDlg
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1001
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1002
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1002
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		03/10/2007
+//! @SYMTestCaseDesc		NewL(TUid aUid, const CFbsBitmap *aBitmap, const CFbsBitmap *aMask) to replace a non-transient graphic artwork with non-existed uid
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Execute CWsGraphicBitmap::NewL() to replace a non-transient graphic artwork but with non-existed uid
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Medium
+//! @SYMTestExpectedResults	get panic W32 code=14
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0002-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0002-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1002-0001-NewL_command01
+	END_TEST_BLOCK	!PanicString=W32	!PanicCode=14
+	RUN_TEST_STEP	100	T_GraphicsWservAPI	utilityClearPanicDlg
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1002
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1003
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1003
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		06/11/2007
+//! @SYMTestCaseDesc		TInt ShareGlobally(): share globally a graphic artwork that already been shared globally
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphic::Id
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Use NewL() to construct a piece of non-transient graphic artwork
+//!				4.	Use Id() to check the uid of the CWsGraphicBitmap object as specified in construction
+//!				5.	Execute ShareGlobally() and check if it returns KErrNone
+//!				6.	Execute ShareGlobally() again to share the graphic artwork globally and check if it returns KErrNone
+//!				7.	Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	ShareGlobally() again on a graphic artwork that already ShareGlobally would not generate any error (return KErrNone)
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-NewL_command10
+		COMMAND		wsgraph			Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Id_command11
+		COMMAND		wsgraph			ShareGlobally
+		COMMAND		wsgraph			ShareGlobally
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1003
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1004
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1004
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		05/11/2007
+//! @SYMTestCaseDesc		TInt Share(TSecureId aClientId): share a graphic artwork to a Secure ID that already been shared to explicitly
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphic::Id
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Use NewL() to construct a piece of non-transient graphic artwork
+//!				4.	Use Id() to check the uid of the CWsGraphicBitmap object as specified in construction
+//!				5.	Execute Share() with TSecureId of the specified client and check if it returns KErrNone
+//!				6.	Execute Share() again to share the graphic artwork with the same TSecureId and check if it returns the expected error code
+//!				7.	Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Share() a graphic artwork to a Secure ID that already been shared to would generate KErrAlreadyExists (-11)
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-NewL_command10
+		COMMAND		wsgraph			Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Id_command11
+		COMMAND		wsgraph			Share			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0007-0001-Share_command12
+		COMMAND		!Error=-11	wsgraph			Share			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0007-0001-Share_command12
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1004
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1005
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1005
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		05/11/2007
+//! @SYMTestCaseDesc		TInt UnShare(TSecureId aClientId): stop this graphic artwork from being shared to a Secure ID before execute Share() to it first
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphic::Id
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Use NewL() to construct a piece of non-transient graphic artwork
+//!				4.	Use Id() to check the uid of the CWsGraphicBitmap object as specified in construction
+//!				5.	Execute UnShare() with TSecureId that not yet shared and check if it returns expected error
+//!				6.	Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	UnShare() a graphic artwork to a Secure ID before shared to it would generate KErrNotFound (-1)
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-NewL_command10
+		COMMAND		wsgraph			Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Id_command11
+		COMMAND		!Error=-1	wsgraph			UnShare			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0007-0001-UnShare_command13
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1005
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1006
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1006
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		06/11/2007
+//! @SYMTestCaseDesc		TInt UnShareGlobally(): prevent this graphic artwork from being shared with all the client sessions before execute ShareGlobally() on it first
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphic::Id
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Use NewL() to construct a piece of non-transient graphic artwork
+//!				4.	Use Id() to check the uid of the CWsGraphicBitmap object as specified in construction
+//!				5.	Execute UnShareGlobally() the graphic artwork before ShareGlobally() it first and check if it returns KErrNone
+//!				6.	Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	UnShareGlobally() a graphic artwork before execute ShareGlobally() on it first would not generate any error (returns KErrNone)
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-NewL_command10
+		COMMAND		wsgraph			Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Id_command11
+		COMMAND		wsgraph			UnShareGlobally
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1006
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1007
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1007
+//! @SYMAPI			CWsGraphicBitmap
+//! @SYMAuthor			Victor Liu
+//! @SYMCreationDate		08/11/2007
+//! @SYMTestCaseDesc		ShareGlobally() a graphic artwork then UnShare() it to a Secure ID
+//!				Uses API elements: RWsSession:Connect, CFbsBitmap::Load, CWsGraphic::Id
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and load CFbsBitmap for both the source bitmap and the mask bitmap
+//!				3.	Use NewL() to construct a piece of non-transient graphic artwork
+//!				4.	Use Id() to check the uid of the CWsGraphicBitmap object as specified in construction
+//!				5.	Execute ShareGlobally() and check if it returns KErrNone
+//!				6.	Execute UnShare() it to a Secure ID and check if it returns expected error code
+//!				7.	Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	UnShare() a graphic artwork that shared globally would generate KErrNotFound (-1)
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	CFbsBitmap		fbsbmp
+		CREATE_OBJECT	CFbsBitmap		fbsmaskbmp
+		CREATE_OBJECT	CWsGraphicBitmap	wsgraph
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		fbsbmp			new
+		COMMAND		fbsbmp			Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Load_command05
+		COMMAND		fbsmaskbmp		new
+		COMMAND		fbsmaskbmp		Load			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Load_command08
+		COMMAND		wsgraph			NewL			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-NewL_command10
+		COMMAND		wsgraph			Id			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0005-0001-Id_command11
+		COMMAND		wsgraph			ShareGlobally
+		COMMAND		!Error=-1	wsgraph			UnShare			GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-0007-0001-UnShare_command13
+		COMMAND		wsgraph			~
+		COMMAND		fbsmaskbmp		~
+		COMMAND		fbsbmp			~
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicBitmap-PublicApi-1007
+
+
+
+
+// ****************************************************************************
+// Negative testcases of CWsGraphicBitmap inherited from CWsGraphic
+// ****************************************************************************
+

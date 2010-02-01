@@ -1,0 +1,309 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName  GRAPHICS-WSERV-Frame-PublicApi
+//! @SYMScriptTestEnvironment This test script requires a basic ROM.
+
+///////////////////////////////////////////////////////////////////////////////
+// GRAPHICS-WSERV-Frame-PublicApi.script
+//
+// Tests all public elements of the CFrame class
+// as a means of confidence that the API works as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for
+// CFrame related classes.
+// Negative testing is performed to confirm that correct errors are returned
+// when incorrect parameters are given.
+//
+// The tests are fully automated.
+///////////////////////////////////////////////////////////////////////////////
+
+
+LOAD_SUITE  T_GraphicsWservAPI
+
+// ****************************************************************************
+// CFrame
+// ****************************************************************************
+
+START_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0001
+//! @SYMTestCaseID          GRAPHICS-WSERV-Frame-PublicApi-0001
+//! @SYMAPI                 CFrame::NewL();
+//!                         CFrame::~CFrame()
+//! @SYMAuthor              Yue Zhang
+//! @SYMCreationDate        10-03-2008
+//! @SYMTestCaseDesc        Create CFrame object and then destroy it.
+//! @SYMTestActions         1.Create CFrame object.
+//!                         2.Destroy created object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFrame object was created and destroyed without causing panic.
+//! @SYMTestType            CIT
+
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-Frame-PublicApi.ini
+        CREATE_OBJECT      CFrame                     frame
+        COMMAND            frame                      NewL
+        COMMAND            frame                      ~
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0001
+
+
+START_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0002
+//! @SYMTestCaseID          GRAPHICS-WSERV-Frame-PublicApi-0002
+//! @SYMAPI                 CFrame::FrameInfo()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        21-04-2008
+//! @SYMTestCaseDesc        Create CFrame object and get the default FrameInfo.
+//! @SYMTestActions         1.Create CFrame object.
+//!                         2.Get FrameInfo and verify defalut setting.
+//!                         3.Destroy created object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults The default FrameInfo as expected. 
+//! @SYMTestType            CIT
+
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-Frame-PublicApi.ini
+        CREATE_OBJECT      CFrame                     frame
+        COMMAND            frame                      NewL
+        COMMAND            frame                      FrameInfo            GRAPHICS-WSERV-Frame-PublicApi-0002-0001-FrameInfo-command002
+        COMMAND            frame                      ~
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0002
+
+
+START_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0003
+//! @SYMTestCaseID          GRAPHICS-WSERV-Frame-PublicApi-0003
+//! @SYMAPI                 CFrame::SetFrameInfo(const TFrameInfo{ref});
+//!                         CFrame::FrameInfo()
+//! @SYMAuthor              Yue Zhang
+//! @SYMCreationDate        10-03-2008
+//! @SYMTestCaseDesc        Set frame info via CFrame object and then get it.
+//! @SYMTestActions         1.Create CFrame object.
+//!                         2.Set FrameInfo.
+//!                         3.Get FrameInfo.
+//!                         4.Destroy created object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFrame object sets FrameInfo succefully and gets the same FrameInfo as the setting value. 
+//! @SYMTestType            CIT
+
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-Frame-PublicApi.ini
+        CREATE_OBJECT      CFrame                     frame
+        COMMAND            frame                      NewL
+        COMMAND            frame                      SetFrameInfo         GRAPHICS-WSERV-Frame-PublicApi-0003-0001-SetFrameInfo-command002
+        COMMAND            frame                      FrameInfo            GRAPHICS-WSERV-Frame-PublicApi-0003-0001-FrameInfo-command003
+        COMMAND            frame                      ~
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0003
+
+
+START_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0004
+//! @SYMTestCaseID          GRAPHICS-WSERV-Frame-PublicApi-0004
+//! @SYMAPI                 CFrame::Bitmap()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        21-04-2008
+//! @SYMTestCaseDesc        Create CFrame object and get the default bitmap object.
+//! @SYMTestActions         1.Create CFrame object.
+//!                         2.Create CFbsBitmap object for storing default bitmap.
+//!                         2.Get the default bitmap object and verify that it is NULL.
+//!                         3.Destroy created objects.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults The default bitmap object should be NULL.
+//! @SYMTestType            CIT
+
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-Frame-PublicApi.ini
+        CREATE_OBJECT      CFrame                     frame
+        CREATE_OBJECT      CFbsBitmap                 bitmap
+        
+        COMMAND            frame                      NewL
+        COMMAND            frame                      Bitmap               GRAPHICS-WSERV-Frame-PublicApi-0004-0001-Bitmap-command002
+        COMMAND            frame                      ~
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0004
+
+
+START_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0005
+//! @SYMTestCaseID          GRAPHICS-WSERV-Frame-PublicApi-0005
+//! @SYMAPI                 CFrame::SetBitmap(CFbsbitmap{ptr});
+//!                         CFrame::Bitmap()
+//! @SYMAuthor              Yue Zhang
+//! @SYMCreationDate        10-03-2008
+//! @SYMTestCaseDesc        Set bitmap via CFrame object and then get it.
+//! @SYMTestActions         1.Create CFrame object.
+//!                         2.Create RFbsSession object.
+//!                         3.Create CFbsBitmap object.
+//!                         4.Connect the RFbsSession.
+//!                         5.Load CFbsBitmap.
+//!                         6.Set the CFbsBitmap.
+//!                         7.Get the CFbsBitmap.
+//!                         8.Destroy created objects.
+//!                         9.Disconnect the RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFrame object sets bitmap succefully and gets the same bitmap as the setting value.
+//! @SYMTestType            CIT
+
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-Frame-PublicApi.ini
+        CREATE_OBJECT      CFrame                     frame
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap
+        COMMAND            frame                      NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            bitmap                     new
+        COMMAND            bitmap                     Load                 GRAPHICS-WSERV-Frame-PublicApi-0005-0001-Load-command04
+        COMMAND            frame                      SetBitmap            GRAPHICS-WSERV-Frame-PublicApi-0005-0001-SetBitmap-command005
+        COMMAND            frame                      Bitmap               GRAPHICS-WSERV-Frame-PublicApi-0005-0001-Bitmap-command006
+        COMMAND            bitmap                     disown
+        COMMAND            frame                      ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0005
+
+
+START_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0006
+//! @SYMTestCaseID          GRAPHICS-WSERV-Frame-PublicApi-0006
+//! @SYMAPI                 CFrame::Mask()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        21-04-2008
+//! @SYMTestCaseDesc        Create CFrame object and get the default mask.
+//! @SYMTestActions         1.Create CFrame object.
+//!                         2.Create CFbsBitmap object for storing default mask.
+//!                         3.Get the default mask object and verify that it is NULL.
+//!                         4.Destroy created objects.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults The default mask object should be NULL. 
+//! @SYMTestType            CIT
+
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-Frame-PublicApi.ini
+        CREATE_OBJECT      CFrame                     frame
+        CREATE_OBJECT      CFbsBitmap                 mask
+        
+        COMMAND            frame                      NewL
+        COMMAND            frame                      Mask                 GRAPHICS-WSERV-Frame-PublicApi-0006-0001-Mask-command002
+        COMMAND            frame                      ~
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0006
+
+
+START_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0007
+//! @SYMTestCaseID          GRAPHICS-WSERV-Frame-PublicApi-0007
+//! @SYMAPI                 CFrame::SetMask(CFbsbitmap{ptr});
+//!                         CFrame::Mask()
+//! @SYMAuthor              Yue Zhang
+//! @SYMCreationDate        10-03-2008
+//! @SYMTestCaseDesc        Set mask via CFrame object and then get it.
+//! @SYMTestActions         1.Create CFrame object.
+//!                         2.Create RFbsSession object.
+//!                         3.Create CFbsBitmap object.
+//!                         4.Connect the RFbsSession.
+//!                         5.Load CFbsBitmap.
+//!                         6.Set the mask.
+//!                         7.Get the mask.
+//!                         8.Destroy created objects.
+//!                         9.Disconnect the RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFrame object sets mask succefully and gets  the same mask with setting value. 
+//! @SYMTestType            CIT
+
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-Frame-PublicApi.ini
+        CREATE_OBJECT      CFrame                     frame
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 mask
+        COMMAND            frame                      NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            mask                       new
+        COMMAND            mask                       Load                 GRAPHICS-WSERV-Frame-PublicApi-0007-0001-Load-command04
+        COMMAND            frame                      SetMask              GRAPHICS-WSERV-Frame-PublicApi-0007-0001-SetMask-command005
+        COMMAND            frame                      Mask                 GRAPHICS-WSERV-Frame-PublicApi-0007-0001-Mask-command006
+        COMMAND            mask                       disown
+        COMMAND            frame                      ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0007
+
+START_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0008
+//! @SYMTestCaseID          GRAPHICS-WSERV-Frame-PublicApi-0008
+//! @SYMAPI                 CFrame::SetBitmap(CFbsbitmap{ptr});
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        30-04-2008
+//! @SYMTestCaseDesc        Set bitmap to CFrame object twice with same bitmap.
+//! @SYMTestActions         1.Create CFrame object.
+//!                         2.Create RFbsSession object.
+//!                         3.Create CFbsBitmap object.
+//!                         4.Connect the RFbsSession.
+//!                         5.Load CFbsBitmap.
+//!                         6.Set the CFbsBitmap.
+//!                         7.Set the CFbsBitmap again.
+//!                         8.Destroy created objects.
+//!                         9.Disconnect the RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFrame object sets bitmap succefully.
+//! @SYMTestType            CIT
+
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-Frame-PublicApi.ini
+        CREATE_OBJECT      CFrame                     frame
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap
+        COMMAND            frame                      NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            bitmap                     new
+        COMMAND            bitmap                     Load                 GRAPHICS-WSERV-Frame-PublicApi-0008-0001-Load-command04
+        COMMAND            frame                      SetBitmap            GRAPHICS-WSERV-Frame-PublicApi-0008-0001-SetBitmap-command005
+        COMMAND            frame                      SetBitmap            GRAPHICS-WSERV-Frame-PublicApi-0008-0001-SetBitmap-command006
+        COMMAND            bitmap                     disown
+        COMMAND            frame                      ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0008
+
+START_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0009
+//! @SYMTestCaseID          GRAPHICS-WSERV-Frame-PublicApi-0009
+//! @SYMAPI                 CFrame::SetMask(CFbsbitmap{ptr});
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        30-04-2008
+//! @SYMTestCaseDesc        Set mask to CFrame object twice with same bitmap.
+//! @SYMTestActions         1.Create CFrame object.
+//!                         2.Create RFbsSession object.
+//!                         3.Create CFbsBitmap object.
+//!                         4.Connect the RFbsSession.
+//!                         5.Load CFbsBitmap.
+//!                         6.Set the mask.
+//!                         7.Set the mask again.
+//!                         8.Destroy created objects.
+//!                         9.Disconnect the RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFrame object sets mask succefully. 
+//! @SYMTestType            CIT
+
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-Frame-PublicApi.ini
+        CREATE_OBJECT      CFrame                     frame
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 mask
+        COMMAND            frame                      NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            mask                       new
+        COMMAND            mask                       Load                 GRAPHICS-WSERV-Frame-PublicApi-0009-0001-Load-command04
+        COMMAND            frame                      SetMask              GRAPHICS-WSERV-Frame-PublicApi-0009-0001-SetMask-command005
+        COMMAND            frame                      SetMask              GRAPHICS-WSERV-Frame-PublicApi-0009-0001-SetMask-command006
+        COMMAND            mask                       disown
+        COMMAND            frame                      ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Frame-PublicApi-0009

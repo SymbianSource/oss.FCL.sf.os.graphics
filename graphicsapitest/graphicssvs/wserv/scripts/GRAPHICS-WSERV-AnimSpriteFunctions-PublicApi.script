@@ -1,0 +1,800 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName  GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi
+//! @SYMScriptTestEnvironment This test script requires a basic ROM.
+
+///////////////////////////////////////////////////////////////////////////////
+// GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi.script
+//
+// Tests all public elements of the MAnimSpriteFunctions class
+// as a means of confidence that the API works as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for
+// MAnimSpriteFunctions related classes.
+// Negative caseing is performed to confirm that correct errors are returned
+// when incorrect parameters are given.
+//
+// The tests are fully automated.
+///////////////////////////////////////////////////////////////////////////////
+
+
+
+LOAD_SUITE      T_GraphicsWservAPI
+DELAY           1000
+
+START_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001
+//!@SYMTestCaseID            GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001
+//!@SYMAPI                   MAnimSpriteFunctions::GetSpriteMember(TInt)
+//!@SYMAuthor                Yue Zhang
+//!@SYMCreationDate          11-04-2008
+//!@SYMTestCaseDesc          Send command to animation DLL to call GetSpriteMember function, and then check if the spritenumber is the
+//!                          sending one.
+//!@SYMTestActions           1.  Create and connect a RWsSession.
+//!                          2.  Create and construct RWindowGroup and RWindow.
+//!                          8.  Create RWsSprite with RWsSession.
+//!                          9.  Construct RWsSprite.
+//!                          10. Create a CFbsBitmap object as mask.
+//!                          11. Create 2 CFbsBitmap object and load bitmap.
+//!                          12. Append these CFbsBitmaps to the RWsSprite.
+//!                          13. Set RWsSprites's position.
+//!                          14. Activate the RWsSprite.
+//!                          15. Create and load the animation DLL.
+//!                          16. Create RAnim and RAnimForMClass object and construct RAnimForMClass.
+//!                          17. Send ECmdSpriteGetSpriteMember command to plugin Dll with a given index number via CommandReply.
+//!                          17.1 Plugin Dll return the given number's offset.
+//!                          17.2 Wrapper check if the returned offset value equals to the sending one .
+//!                          18. Close and destroy all the related objects.
+//!@SYMTestStatus            Implemented
+//!@SYMTestPriority          High
+//!@SYMTestExpectedResults    the returned offset value in step 17 should be same as the given value in the step 6.
+//!@SYMTestType              CIT
+    START_TEST_BLOCK          10          T_GraphicsWservAPI          \graphics\GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi.ini
+        CREATE_OBJECT              RWsSession               ws
+        CREATE_OBJECT              RWindowGroup             wingp
+        CREATE_OBJECT              RWindow                  win
+        CREATE_OBJECT              RWsSprite                sprite
+        CREATE_OBJECT              RAnimDll                 animdll
+        CREATE_OBJECT              RAnim                    anim
+        CREATE_OBJECT              RAnimForMClass           animformc
+        CREATE_OBJECT              CFbsBitmap               mask1
+        CREATE_OBJECT              CFbsBitmap               bitmap1
+        CREATE_OBJECT              CFbsBitmap               bitmap2
+        COMMAND                    ws                       new                      
+        COMMAND                    ws                       Connect                  
+        COMMAND                    wingp                    new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-new_Command03
+        COMMAND                    wingp                    Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-Construct_Command04
+        COMMAND                    win                      new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-new_Command05
+        COMMAND                    win                      Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-Construct_Command06
+        COMMAND                    sprite                   new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-new_Command07
+        COMMAND                    sprite                   Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-Construct_Command08
+        COMMAND                    mask1                    new                      
+        COMMAND                    mask1                    Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-Load_Command10
+        COMMAND                    bitmap1                  new                      
+        COMMAND                    bitmap1                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-Load_Command12
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-AppendMember_Command13
+        COMMAND                    bitmap2                  new                      
+        COMMAND                    bitmap2                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-Load_Command15
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-AppendMember_Command16
+        COMMAND                    sprite                   SetPosition              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-SetPosition_Command17
+        COMMAND                    sprite                   Activate
+        COMMAND                    animdll                  new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-new_Command19
+        COMMAND                    animdll                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-Load_Command20
+        COMMAND                    anim                     new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-new_Command21
+        COMMAND                    animformc                new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-new_Command22
+        COMMAND                    animformc                Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-Construct_Command23
+        COMMAND                    animformc                CommandReply             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001-0001-CommandReply_Command24
+        COMMAND                    animformc                Destroy                  
+        COMMAND                    anim                     Destroy                  
+        COMMAND                    sprite                   Close                    
+        COMMAND                    mask1                    ~                        
+        COMMAND                    bitmap1                  ~                        
+        COMMAND                    bitmap2                  ~                        
+        COMMAND                    animdll                  Destroy                  
+        COMMAND                    win                      Close                    
+        COMMAND                    wingp                    Close                    
+        COMMAND                    ws                       Close                    
+    END_TEST_BLOCK
+END_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0001
+
+
+START_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002
+//!@SYMTestCaseID            GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002
+//!@SYMAPI                   MAnimSpriteFunctions::Activate(TBool)
+//!@SYMAuthor                Yue Zhang
+//!@SYMCreationDate          11-04-2008
+//!@SYMTestCaseDesc          Send command to animation DLL to call Active() to turn a sprite on , then send the command with turn off paramter.
+//!@SYMTestActions           1.  Create and connect a RWsSession.
+//!                          2.  Create and construct RWindowGroup and RWindow.
+//!                          3.  Set required display mode of RWindow object;
+//!                          4.  Create CWsScreenDevice object and construct it;
+//!                          5.  Set background color of RWindow object.
+//!                          6.  Active the RWindow object.
+//!                          7.  Redraw the RWindow object.
+//!                          8.  Create RWsSprite with RWsSession.
+//!                          9.  Construct RWsSprite.
+//!                          10. Create a CFbsBitmap object as mask.
+//!                          11. Create a CFbsBitmap object and load bitmap.
+//!                          12. Append the CFbsBitmaps to the RWsSprite.
+//!                          13. Set RWsSprites's position.
+//!                          14. Activate the RWsSprite.
+//!                          15. Create and load the animation DLL.
+//!                          16. Create RAnim and RAnimForMClass object and construct RAnimForMClass.
+//!                          17.Send command ECmdSpriteActivate with EFalse to plugin Dll via CommandReply.
+//!                          18.Use ScreenDevice object to compare the sprite rectangle with a blank rectangle.
+//!                          19.Send command ECmdSpriteActivate with ETrue to plugin Dll via CommandReply.
+//!                          20.Use ScreenDevice object to compare the sprite rectangle with a blank rectangle.
+//!                          21.Close and destroy all the related objects.
+//!@SYMTestStatus            Implemented
+//!@SYMTestPriority          High
+//!@SYMTestExpectedResults    1.In step 18, the compare result should be same because the sprite object has been turn off.
+//!                          2.In step 20, the compare result should not be same because the sprite object has been turn on.
+//!@SYMTestType              CIT
+    START_TEST_BLOCK          10          T_GraphicsWservAPI          \graphics\GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi.ini
+        CREATE_OBJECT              RWsSession               ws
+        CREATE_OBJECT              RWindowGroup             wingp
+        CREATE_OBJECT              RWindow                  win
+        CREATE_OBJECT              RWsSprite                sprite
+        CREATE_OBJECT              RAnimDll                 animdll
+        CREATE_OBJECT              RAnim                    anim
+        CREATE_OBJECT              RAnimForMClass           animformc
+        CREATE_OBJECT              CWsScreenDevice          scrdev
+        CREATE_OBJECT              CFbsBitmap               mask1
+        CREATE_OBJECT              CFbsBitmap               bitmap1
+        COMMAND                    ws                       new                      
+        COMMAND                    ws                       Connect                  
+        COMMAND                    wingp                    new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-new_Command03
+        COMMAND                    wingp                    Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-Construct_Command04
+        COMMAND                    win                      new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-new_Command05
+        COMMAND                    win                      Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-Construct_Command06
+        COMMAND                    scrdev                   new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-new_Command07
+        COMMAND                    scrdev                   Construct                
+        COMMAND                    win                      SetRequiredDisplayMode          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-SetRequiredDisplayMode_Command09
+        COMMAND                    win                      SetBackgroundColor          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-SetBackgroundColor_Command10
+        COMMAND                    win                      Activate                 
+        COMMAND                    win                      BeginRedraw              
+        COMMAND                    win                      EndRedraw                
+        COMMAND                    sprite                   new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-new_Command14
+        COMMAND                    sprite                   Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-Construct_Command15
+        COMMAND                    mask1                    new                      
+        COMMAND                    mask1                    Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-Load_Command17
+        COMMAND                    bitmap1                  new                      
+        COMMAND                    bitmap1                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-Load_Command19
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-AppendMember_Command20
+        COMMAND                    sprite                   SetPosition              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-SetPosition_Command21
+        COMMAND                    sprite                   Activate                 
+        COMMAND                    animdll                  new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-new_Command23
+        COMMAND                    animdll                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-Load_Command24
+        COMMAND                    anim                     new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-new_Command25
+        COMMAND                    animformc                new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-new_Command26
+        COMMAND                    animformc                Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-Construct_Command27
+        COMMAND                    animformc                CommandReply             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-CommandReply_Command28
+        //!COMMAND                    scrdev                   RectCompare              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-RectCompare_Command29
+        COMMAND                    animformc                CommandReply             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-CommandReply_Command30
+        //!COMMAND                    scrdev                   RectCompare              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002-0001-RectCompare_Command31
+        COMMAND                    animformc                Destroy                  
+        COMMAND                    anim                     Destroy                  
+        COMMAND                    sprite                   Close                    
+        COMMAND                    mask1                    ~                        
+        COMMAND                    bitmap1                  ~                        
+        COMMAND                    animdll                  Destroy                  
+        COMMAND                    scrdev                   ~                        
+        COMMAND                    win                      Close                    
+        COMMAND                    wingp                    Close                    
+        COMMAND                    ws                       Close                    
+    END_TEST_BLOCK
+END_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0002
+
+
+START_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003
+//!@SYMTestCaseID            GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003
+//!@SYMAPI                   MAnimSpriteFunctions::SetPosition(const TPoint)
+//!@SYMAuthor                Yue Zhangy
+//!@SYMCreationDate          11-04-2008
+//!@SYMTestCaseDesc          Send command to animation DLL to call SetPosition to move the sprite object.
+//!@SYMTestActions           1.  Create and connect a RWsSession.
+//!                          2.  Create and construct RWindowGroup and RWindow.
+//!                          3.  Set required display mode of RWindow object;
+//!                          4.  Create CWsScreenDevice object and construct it;
+//!                          5.  Set background color of RWindow object.
+//!                          6.  Active the RWindow object.
+//!                          7.  Redraw the RWindow object.
+//!                          8.  Create RWsSprite with RWsSession.
+//!                          9.  Construct RWsSprite.
+//!                          10. Create a CFbsBitmap object as mask.
+//!                          11. Create a CFbsBitmap object and load bitmap.
+//!                          12. Append the CFbsBitmaps to the RWsSprite.
+//!                          13. Set RWsSprites's position.
+//!                          14. Activate the RWsSprite.
+//!                          15. Create and load the animation DLL.
+//!                          16. Create RAnim and RAnimForMClass object and construct RAnimForMClass.
+//!                          17. Use ScreenDevice object to compare the sprite rectangle with a blank rectangle.
+//!                          18. Send ECmdSpriteSetPosition command to plugin Dll with a given position via CommandReply.
+//!                          19. Use ScreenDevice object to compare the previous position with a blank rectangle.
+//!                          20. Use ScreenDevice object to compare the new position with a blank rectangle.
+//!                          21. Close and destroy all the related objects.
+//!@SYMTestStatus            Implemented
+//!@SYMTestPriority          High
+//!@SYMTestExpectedResults    1.  In step 17, the compare result should not be same because the sprite object has been drawn.
+//!                          2.  In step 19, the compare result should be same because the sprite object has been moved to other place.
+//!                          3.  In step 20, the compare result should not be same because the sprite object has been moved here.
+//!@SYMTestType              CIT
+    START_TEST_BLOCK          200          T_GraphicsWservAPI          \graphics\GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi.ini
+        CREATE_OBJECT              RWsSession               ws
+        CREATE_OBJECT              RWindowGroup             wingp
+        CREATE_OBJECT              RWindow                  win
+        CREATE_OBJECT              RWsSprite                sprite
+        CREATE_OBJECT              RAnimDll                 animdll
+        CREATE_OBJECT              RAnim                    anim
+        CREATE_OBJECT              RAnimForMClass           animformc
+        CREATE_OBJECT              CWsScreenDevice          scrdev
+        CREATE_OBJECT              CFbsBitmap               mask1
+        CREATE_OBJECT              CFbsBitmap               bitmap1
+        COMMAND                    ws                       new                      
+        COMMAND                    ws                       Connect                  
+        COMMAND                    wingp                    new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-new_Command03
+        COMMAND                    wingp                    Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-Construct_Command04
+        COMMAND                    win                      new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-new_Command05
+        COMMAND                    win                      Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-Construct_Command06
+        COMMAND                    scrdev                   new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-new_Command07
+        COMMAND                    scrdev                   Construct                
+        COMMAND                    win                      SetRequiredDisplayMode          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-SetRequiredDisplayMode_Command09
+        COMMAND                    win                      SetBackgroundColor          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-SetBackgroundColor_Command10
+        COMMAND                    win                      Activate                 
+        COMMAND                    win                      BeginRedraw              
+        COMMAND                    win                      EndRedraw                
+        COMMAND                    sprite                   new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-new_Command14
+        COMMAND                    sprite                   Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-Construct_Command15
+        COMMAND                    mask1                    new                      
+        COMMAND                    mask1                    Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-Load_Command17
+        COMMAND                    bitmap1                  new                      
+        COMMAND                    bitmap1                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-Load_Command19
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-AppendMember_Command20
+        COMMAND                    sprite                   SetPosition              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-SetPosition_Command21
+        COMMAND                    sprite                   Activate                 
+        COMMAND                    animdll                  new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-new_Command23
+        COMMAND                    animdll                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-Load_Command24
+        COMMAND                    anim                     new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-new_Command25
+        COMMAND                    animformc                new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-new_Command26
+        COMMAND                    animformc                Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-Construct_Command27
+        //!COMMAND                    scrdev                   RectCompare              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-RectCompare_Command28
+        COMMAND                    animformc                CommandReply             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-CommandReply_Command29
+        //!COMMAND                    scrdev                   RectCompare              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-RectCompare_Command30
+        //!COMMAND                    scrdev                   RectCompare              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003-0001-RectCompare_Command31
+        COMMAND                    animformc                Destroy                  
+        COMMAND                    anim                     Destroy                  
+        COMMAND                    sprite                   Close                    
+        COMMAND                    mask1                    ~                        
+        COMMAND                    bitmap1                  ~                        
+        COMMAND                    animdll                  Destroy                  
+        COMMAND                    scrdev                   ~                        
+        COMMAND                    win                      Close                    
+        COMMAND                    wingp                    Close                    
+        COMMAND                    ws                       Close                    
+    END_TEST_BLOCK
+END_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0003
+
+
+START_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004
+//!@SYMTestCaseID            GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004
+//!@SYMAPI                   MAnimSpriteFunctions::SpriteCanBeSeen()
+//!@SYMAuthor                Yue Zhang
+//!@SYMCreationDate          11-04-2008
+//!@SYMTestCaseDesc          Send command to animation DLL to call SpriteCanBeSeen() to check the function.
+//!@SYMTestActions           1.  Create and connect a RWsSession.
+//!                          2.  Create and construct RWindowGroup and RWindow.
+//!                          3.  Set required display mode of RWindow object;
+//!                          4.  Create CWsScreenDevice object and construct it;
+//!                          5.  Set background color of RWindow object.
+//!                          6.  Active the RWindow object.
+//!                          7.  Redraw the RWindow object.
+//!                          8.  Create RWsSprite with RWsSession.
+//!                          9.  Construct RWsSprite.
+//!                          10. Create a CFbsBitmap object as mask.
+//!                          11. Create a CFbsBitmap object and load bitmap.
+//!                          12. Append the CFbsBitmaps to the RWsSprite.
+//!                          13. Set RWsSprites's position.
+//!                          14. Activate the RWsSprite.
+//!                          15. Create and load the animation DLL.
+//!                          16. Create RAnim and RAnimForMClass object and construct RAnimForMClass.
+//!                          17. Send ECmdSpriteActive command with EFalse to plugin Dll via CommandReply.
+//!                          18. Use ScreenDevice object to compare the sprite rectangle with a blank rectangle.
+//!                          19. Send ECmdSpriteCanBeSeen command to plugin Dll via CommandReply.
+//!                          19.1 The Wrapper check if the result equals to the expected (False) .If not ,set this case failed.
+//!                          20. Send ECmdSpriteActive command with ETrue to plugin Dll via CommandReply.
+//!                          21. Use ScreenDevice object to compare the sprite rectangle with a blank rectangle.
+//!                          22. Send ECmdSpriteCanBeSeen commmand to plugin Dll via CommandReply.
+//!                          22.1 The Wrapper check if the result equals to the expected(ETrue). If not ,set this case failed.
+//!                          23. Close and destroy all the related objects.
+//!@SYMTestStatus            Implemented
+//!@SYMTestPriority          High
+//!@SYMTestExpectedResults    1.  In step 18, the compare result should be same because the sprite object has been turn off.
+//!                          2.  In step 19, return value should be false because the sprite object has been turn off.
+//!                          3.  In step 21, the compare result should not be same because the sprite object has been turn on.
+//!                          4.  In step 22, eturn value should be true because the sprite object has been turn on.
+//!@SYMTestType              CIT
+    START_TEST_BLOCK          10          T_GraphicsWservAPI          \graphics\GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi.ini
+        CREATE_OBJECT              RWsSession               ws
+        CREATE_OBJECT              RWindowGroup             wingp
+        CREATE_OBJECT              RWindow                  win
+        CREATE_OBJECT              RWsSprite                sprite
+        CREATE_OBJECT              RAnimDll                 animdll
+        CREATE_OBJECT              RAnim                    anim
+        CREATE_OBJECT              RAnimForMClass           animformc
+        CREATE_OBJECT              CWsScreenDevice          scrdev
+        CREATE_OBJECT              CFbsBitmap               mask1
+        CREATE_OBJECT              CFbsBitmap               bitmap1
+        COMMAND                    ws                       new                      
+        COMMAND                    ws                       Connect                  
+        COMMAND                    wingp                    new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-new_Command03
+        COMMAND                    wingp                    Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-Construct_Command04
+        COMMAND                    win                      new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-new_Command05
+        COMMAND                    win                      Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-Construct_Command06
+        COMMAND                    scrdev                   new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-new_Command07
+        COMMAND                    scrdev                   Construct                
+        COMMAND                    win                      SetRequiredDisplayMode          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-SetRequiredDisplayMode_Command09
+        COMMAND                    win                      SetBackgroundColor          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-SetBackgroundColor_Command10
+        COMMAND                    win                      Activate                 
+        COMMAND                    win                      BeginRedraw              
+        COMMAND                    win                      EndRedraw                
+        COMMAND                    sprite                   new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-new_Command14
+        COMMAND                    sprite                   Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-Construct_Command15
+        COMMAND                    mask1                    new                      
+        COMMAND                    mask1                    Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-Load_Command17
+        COMMAND                    bitmap1                  new                      
+        COMMAND                    bitmap1                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-Load_Command19
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-AppendMember_Command20
+        COMMAND                    sprite                   SetPosition              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-SetPosition_Command21
+        COMMAND                    sprite                   Activate                 
+        COMMAND                    animdll                  new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-new_Command23
+        COMMAND                    animdll                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-Load_Command24
+        COMMAND                    anim                     new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-new_Command25
+        COMMAND                    animformc                new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-new_Command26
+        COMMAND                    animformc                Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-Construct_Command27
+        COMMAND                    animformc                CommandReply             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-CommandReply_Command28
+        //!COMMAND                    scrdev                   RectCompare              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-RectCompare_Command29
+        //!COMMAND                    animformc                CommandReply             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-CommandReply_Command30
+        //!COMMAND                    animformc                CommandReply             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-CommandReply_Command31
+        //!COMMAND                    scrdev                   RectCompare              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-RectCompare_Command32
+        //!COMMAND                    animformc                CommandReply             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004-0001-CommandReply_Command33
+        COMMAND                    animformc                Destroy                  
+        COMMAND                    anim                     Destroy                  
+        COMMAND                    sprite                   Close                    
+        COMMAND                    mask1                    ~                        
+        COMMAND                    bitmap1                  ~                        
+        COMMAND                    animdll                  Destroy                  
+        COMMAND                    scrdev                   ~                        
+        COMMAND                    win                      Close                    
+        COMMAND                    wingp                    Close                    
+        COMMAND                    ws                       Close                    
+    END_TEST_BLOCK
+END_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0004
+
+
+START_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005
+//!@SYMTestCaseID            GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005
+//!@SYMAPI                   MAnimSpriteFunctions::SpriteCanBeSeen()
+//!@SYMAuthor                Yue Zhang
+//!@SYMCreationDate          11-04-2008
+//!@SYMTestCaseDesc          Using a RWindow to cover the sprite object, check the return value of SpriteCanBeSeen().
+//!@SYMTestActions           1.  Create and connect a RWsSession.
+//!                          2.  Create and construct RWindowGroup and RWindow.
+//!                          3.  Set required display mode of RWindow object;
+//!                          4.  Set background color of RWindow object.
+//!                          5.  Active the RWindow object.
+//!                          6.  Redraw the RWindow object.
+//!                          7.  Create RWsSprite with RWsSession.
+//!                          8.  Construct RWsSprite.
+//!                          9.  Create a CFbsBitmap object as mask.
+//!                          10. Create a CFbsBitmap object and load bitmap.
+//!                          11. Append these CFbsBitmaps to the RWsSprite.
+//!                          12. Set RWsSprites's position.
+//!                          13. Activate the RWsSprite.
+//!                          14. Create and load the animation DLL.
+//!                          15. Create RAnim and RAnimForMClass object and construct RAnimForMClass.
+//!                          16. Send ECmdSpriteCanBeSeen command to plugin Dll via CommandReply.
+//!                          16.1 The Wrapper check if the result equals to the expected (True) .If not ,set this case failed.
+//!                          17. Create another RWindow object.
+//!                          18. Set required display mode of the 2nd RWindow object;
+//!                          19. Set background color of the 2nd RWindow object.
+//!                          20. Active the 2nd RWindow object.
+//!                          21. Redraw the 2nd RWindow object.
+//!                          22. Send ECmdSpriteCanBeSeen command to plugin Dll via CommandReply.
+//!                          22.1 The Wrapper check if the result equals to the expected (False) .If not ,set this case failed.
+//!                          23. Close and destroy all the related objects.
+//!@SYMTestStatus            Implemented
+//!@SYMTestPriority          High
+//!@SYMTestExpectedResults    1.  In step 16, return value should be true because the sprite object has been shown.
+//!                          2.  In step 22, return value should be false because the sprite object has been covered.
+//!@SYMTestType              CIT
+    START_TEST_BLOCK          10          T_GraphicsWservAPI          \graphics\GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi.ini
+        CREATE_OBJECT              RWsSession               ws
+        CREATE_OBJECT              RWindowGroup             wingp
+        CREATE_OBJECT              RWindow                  win
+        CREATE_OBJECT              RWindow                  win2
+        CREATE_OBJECT              RWsSprite                sprite
+        CREATE_OBJECT              RAnimDll                 animdll
+        CREATE_OBJECT              RAnim                    anim
+        CREATE_OBJECT              RAnimForMClass           animformc
+        CREATE_OBJECT              CFbsBitmap               mask1
+        CREATE_OBJECT              CFbsBitmap               bitmap1
+        COMMAND                    ws                       new                      
+        COMMAND                    ws                       Connect                  
+        COMMAND                    wingp                    new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-new_Command03
+        COMMAND                    wingp                    Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-Construct_Command04
+        COMMAND                    win                      new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-new_Command05
+        COMMAND                    win                      Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-Construct_Command06
+        COMMAND                    win                      SetRequiredDisplayMode          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-SetRequiredDisplayMode_Command09
+        COMMAND                    win                      SetBackgroundColor          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-SetBackgroundColor_Command10
+        COMMAND                    win                      Activate                 
+        COMMAND                    win                      BeginRedraw              
+        COMMAND                    win                      EndRedraw                
+        COMMAND                    sprite                   new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-new_Command14
+        COMMAND                    sprite                   Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-Construct_Command15
+        COMMAND                    mask1                    new                      
+        COMMAND                    mask1                    Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-Load_Command17
+        COMMAND                    bitmap1                  new                      
+        COMMAND                    bitmap1                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-Load_Command19
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-AppendMember_Command20
+        COMMAND                    sprite                   SetPosition              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-SetPosition_Command21
+        COMMAND                    sprite                   Activate                 
+        COMMAND                    animdll                  new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-new_Command23
+        COMMAND                    animdll                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-Load_Command24
+        COMMAND                    anim                     new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-new_Command25
+        COMMAND                    animformc                new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-new_Command26
+        COMMAND                    animformc                Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-Construct_Command27
+        COMMAND                    animformc                CommandReply             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-CommandReply_Command28
+        COMMAND                    win2                     new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-new_Command29
+        COMMAND                    win2                     Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-Construct_Command30
+        COMMAND                    win2                     SetRequiredDisplayMode          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-SetRequiredDisplayMode_Command31
+        COMMAND                    win2                     SetBackgroundColor          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-SetBackgroundColor_Command32
+        COMMAND                    win2                     Activate                 
+        COMMAND                    win2                     BeginRedraw              
+        COMMAND                    win2                     EndRedraw                
+        COMMAND                    animformc                CommandReply             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005-0001-CommandReply_Command36
+        COMMAND                    animformc                Destroy                  
+        COMMAND                    anim                     Destroy                  
+        COMMAND                    sprite                   Close                    
+        COMMAND                    mask1                    ~                        
+        COMMAND                    bitmap1                  ~                        
+        COMMAND                    animdll                  Destroy                  
+        COMMAND                    win                      Close                    
+        COMMAND                    win2                     Close                    
+        COMMAND                    wingp                    Close                    
+        COMMAND                    ws                       Close                    
+    END_TEST_BLOCK
+END_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0005
+
+
+START_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006
+//!@SYMTestCaseID            GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006
+//!@SYMAPI                   MAnimSpriteFunctions::UpdateMember(TInt, const TRect, TBool)
+//!@SYMAuthor                Yue Zhang
+//!@SYMCreationDate          11-04-2008
+//!@SYMTestCaseDesc          Send command to animation DLL to call Update function.
+//!@SYMTestActions           1.  Create and connect a RWsSession.
+//!                          2.  Create and construct RWindowGroup and RWindow.
+//!                          3.  Create RWsSprite with RWsSession.
+//!                          4.  Construct RWsSprite.
+//!                          5.  Create a CFbsBitmap object as mask.
+//!                          6.  Create 2 CFbsBitmap object and load bitmap.
+//!                          7.  Append these CFbsBitmaps to the RWsSprite.
+//!                          8.  Set RWsSprites's position.
+//!                          9.  Activate the RWsSprite.
+//!                          10. Create and load the animation DLL.
+//!                          11. Create RAnim and RAnimForMClass object and construct RAnimForMClass.
+//!                          12. Send ECmdSpriteUpdateMember command to plugin Dll with a given index number and rect via CommandReply.
+//!                          12.1 Plugin Dll update the given rect at the given member.
+//!                          13. Close and destroy all the related objects.
+//!@SYMTestStatus            Implemented
+//!@SYMTestPriority          High
+//!@SYMTestExpectedResults    Update is executed successfully.
+//!@SYMTestType              CIT
+    START_TEST_BLOCK          10          T_GraphicsWservAPI          \graphics\GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi.ini
+        CREATE_OBJECT              RWsSession               ws
+        CREATE_OBJECT              RWindowGroup             wingp
+        CREATE_OBJECT              RWindow                  win
+        CREATE_OBJECT              RWsSprite                sprite
+        CREATE_OBJECT              RAnimDll                 animdll
+        CREATE_OBJECT              RAnim                    anim
+        CREATE_OBJECT              RAnimForMClass           animformc
+        CREATE_OBJECT              CFbsBitmap               mask1
+        CREATE_OBJECT              CFbsBitmap               bitmap1
+        CREATE_OBJECT              CFbsBitmap               bitmap2
+        COMMAND                    ws                       new                      
+        COMMAND                    ws                       Connect                  
+        COMMAND                    wingp                    new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-new_Command03
+        COMMAND                    wingp                    Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-Construct_Command04
+        COMMAND                    win                      new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-new_Command05
+        COMMAND                    win                      Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-Construct_Command06
+        COMMAND                    sprite                   new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-new_Command07
+        COMMAND                    sprite                   Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-Construct_Command08
+        COMMAND                    mask1                    new                      
+        COMMAND                    mask1                    Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-Load_Command10
+        COMMAND                    bitmap1                  new                      
+        COMMAND                    bitmap1                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-Load_Command12
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-AppendMember_Command13
+        COMMAND                    bitmap2                  new                      
+        COMMAND                    bitmap2                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-Load_Command15
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-AppendMember_Command16
+        COMMAND                    sprite                   SetPosition              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-SetPosition_Command17
+        COMMAND                    sprite                   Activate                 
+        COMMAND                    animdll                  new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-new_Command19
+        COMMAND                    animdll                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-Load_Command20
+        COMMAND                    anim                     new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-new_Command21
+        COMMAND                    animformc                new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-new_Command22
+        COMMAND                    animformc                Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-Construct_Command23
+        COMMAND                    animformc                CommandReply             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006-0001-CommandReply_Command24
+        COMMAND                    animformc                Destroy                  
+        COMMAND                    anim                     Destroy                  
+        COMMAND                    sprite                   Close                    
+        COMMAND                    mask1                    ~                        
+        COMMAND                    bitmap1                  ~                        
+        COMMAND                    bitmap2                  ~                        
+        COMMAND                    animdll                  Destroy                  
+        COMMAND                    win                      Close                    
+        COMMAND                    wingp                    Close                    
+        COMMAND                    ws                       Close                    
+    END_TEST_BLOCK
+END_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0006
+
+
+START_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007
+//!@SYMTestCaseID            GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007
+//!@SYMAPI                   MAnimSpriteFunctions::UpdateMember(TInt, const TRect, TBool)
+//!@SYMAuthor                Yue Zhang
+//!@SYMCreationDate          11-04-2008
+//!@SYMTestCaseDesc          Send command to animation DLL to call Update function.Each CFbsBitmap was constructed by EDrawModePEN mode and when update the sprite object, set the aFullUpdate as EFalse.
+//!@SYMTestActions           1.  Create and connect a RWsSession.
+//!                          2.  Create and construct RWindowGroup and RWindow.
+//!                          3.  Create RWsSprite with RWsSession.
+//!                          4.  Construct RWsSprite.
+//!                          5.  Create a CFbsBitmap object as mask.
+//!                          6.  Create 2 CFbsBitmap object and load bitmap.
+//!                          7.  Append these CFbsBitmaps to the RWsSprite.
+//!                          8.  Set RWsSprites's position.
+//!                          9.  Activate the RWsSprite.
+//!                          10. Create and load the animation DLL.
+//!                          11. Create RAnim and RAnimForMClass object and construct RAnimForMClass.
+//!                          12. Send ECmdSpriteUpdateMember command to plugin Dll with a given index number and rect via CommandReply.
+//!                          12.1 Plugin Dll update the given rect at the given member.
+//!                          13. Close and destroy all the related objects.
+//!@SYMTestStatus            Implemented
+//!@SYMTestPriority          High
+//!@SYMTestExpectedResults    Update is executed successfully.
+//!@SYMTestType              CIT
+    START_TEST_BLOCK          10          T_GraphicsWservAPI          \graphics\GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi.ini
+        CREATE_OBJECT              RWsSession               ws
+        CREATE_OBJECT              RWindowGroup             wingp
+        CREATE_OBJECT              RWindow                  win
+        CREATE_OBJECT              RWsSprite                sprite
+        CREATE_OBJECT              RAnimDll                 animdll
+        CREATE_OBJECT              RAnim                    anim
+        CREATE_OBJECT              RAnimForMClass           animformc
+        CREATE_OBJECT              CFbsBitmap               mask1
+        CREATE_OBJECT              CFbsBitmap               bitmap1
+        CREATE_OBJECT              CFbsBitmap               bitmap2
+        COMMAND                    ws                       new                      
+        COMMAND                    ws                       Connect                  
+        COMMAND                    wingp                    new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-new_Command03
+        COMMAND                    wingp                    Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-Construct_Command04
+        COMMAND                    win                      new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-new_Command05
+        COMMAND                    win                      Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-Construct_Command06
+        COMMAND                    sprite                   new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-new_Command07
+        COMMAND                    sprite                   Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-Construct_Command08
+        COMMAND                    mask1                    new                      
+        COMMAND                    mask1                    Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-Load_Command10
+        COMMAND                    bitmap1                  new                      
+        COMMAND                    bitmap1                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-Load_Command12
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-AppendMember_Command13
+        COMMAND                    bitmap2                  new                      
+        COMMAND                    bitmap2                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-Load_Command15
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-AppendMember_Command16
+        COMMAND                    sprite                   SetPosition              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-SetPosition_Command17
+        COMMAND                    sprite                   Activate                 
+        COMMAND                    animdll                  new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-new_Command19
+        COMMAND                    animdll                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-Load_Command20
+        COMMAND                    anim                     new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-new_Command21
+        COMMAND                    animformc                new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-new_Command22
+        COMMAND                    animformc                Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-Construct_Command23
+        COMMAND                    animformc                CommandReply             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007-0001-CommandReply_Command24
+        COMMAND                    animformc                Destroy                  
+        COMMAND                    anim                     Destroy                  
+        COMMAND                    sprite                   Close                    
+        COMMAND                    mask1                    ~                        
+        COMMAND                    bitmap1                  ~                        
+        COMMAND                    bitmap2                  ~                        
+        COMMAND                    animdll                  Destroy                  
+        COMMAND                    win                      Close                    
+        COMMAND                    wingp                    Close                    
+        COMMAND                    ws                       Close                    
+    END_TEST_BLOCK
+END_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0007
+
+
+START_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008
+//!@SYMTestCaseID            GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008
+//!@SYMAPI                   MAnimSpriteFunctions::SizeChangedL()
+//!@SYMAuthor                Yue Zhang
+//!@SYMCreationDate          11-04-2008
+//!@SYMTestCaseDesc          Send command to animation DLL to call SizeChangeL function. After the member enlarge the size, there isn't panic occurs.
+//!@SYMTestActions           1.  Create and connect a RWsSession.
+//!                          2.  Create and construct RWindowGroup and RWindow.
+//!                          3.  Create RWsSprite with RWsSession.
+//!                          4.  Construct RWsSprite.
+//!                          5.  Create a CFbsBitmap object as mask.
+//!                          6.  Resize the mask to enlarge it.
+//!                          7.  Create 2 CFbsBitmap object and load bitmap.
+//!                          8.  Append these CFbsBitmaps to the RWsSprite.
+//!                          9.  Set RWsSprites's position.
+//!                          10. Activate the RWsSprite.
+//!                          11. Create and load the animation DLL.
+//!                          12. Create RAnim and RAnimForMClass object and construct RAnimForMClass.
+//!                          13. resize a CFbsBitmap object to enlarge it.
+//!                          14. Send ECmdSpriteSizeChange command to plugin Dll via CommandReply.
+//!                          14.1 plugin Dll call the SizeChangeL function.
+//!                          15. Close and destroy all the related objects.
+//!@SYMTestStatus            Implemented
+//!@SYMTestPriority          High
+//!@SYMTestExpectedResults    Sizechange function is executed successfully.
+//!@SYMTestType              CIT
+    START_TEST_BLOCK          10          T_GraphicsWservAPI          \graphics\GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi.ini
+        CREATE_OBJECT              RWsSession               ws
+        CREATE_OBJECT              RWindowGroup             wingp
+        CREATE_OBJECT              RWindow                  win
+        CREATE_OBJECT              RWsSprite                sprite
+        CREATE_OBJECT              RAnimDll                 animdll
+        CREATE_OBJECT              RAnim                    anim
+        CREATE_OBJECT              RAnimForMClass           animformc
+        CREATE_OBJECT              CFbsBitmap               mask1
+        CREATE_OBJECT              CFbsBitmap               bitmap1
+        CREATE_OBJECT              CFbsBitmap               bitmap2
+        COMMAND                    ws                       new                      
+        COMMAND                    ws                       Connect                  
+        COMMAND                    wingp                    new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-new_Command03
+        COMMAND                    wingp                    Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-Construct_Command04
+        COMMAND                    win                      new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-new_Command05
+        COMMAND                    win                      Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-Construct_Command06
+        COMMAND                    sprite                   new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-new_Command07
+        COMMAND                    sprite                   Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-Construct_Command08
+        COMMAND                    mask1                    new                      
+        COMMAND                    mask1                    Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-Load_Command10
+        COMMAND                    mask1                    Resize                   GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-Resize_Command11
+        COMMAND                    bitmap1                  new                      
+        COMMAND                    bitmap1                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-Load_Command13
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-AppendMember_Command14
+        COMMAND                    bitmap2                  new                      
+        COMMAND                    bitmap2                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-Load_Command16
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-AppendMember_Command17
+        COMMAND                    sprite                   SetPosition              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-SetPosition_Command18
+        COMMAND                    sprite                   Activate                 
+        COMMAND                    animdll                  new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-new_Command20
+        COMMAND                    animdll                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-Load_Command21
+        COMMAND                    anim                     new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-new_Command22
+        COMMAND                    animformc                new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-new_Command23
+        COMMAND                    animformc                Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-Construct_Command24
+        COMMAND                    bitmap1                  Resize                   GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-Resize_Command25
+        COMMAND                    animformc                CommandReply             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008-0001-CommandReply_Command26
+        COMMAND                    animformc                Destroy                  
+        COMMAND                    anim                     Destroy                  
+        COMMAND                    sprite                   Close                    
+        COMMAND                    mask1                    ~                        
+        COMMAND                    bitmap1                  ~                        
+        COMMAND                    bitmap2                  ~                        
+        COMMAND                    animdll                  Destroy                  
+        COMMAND                    win                      Close                    
+        COMMAND                    wingp                    Close                    
+        COMMAND                    ws                       Close                    
+    END_TEST_BLOCK
+END_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0008
+
+
+START_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009
+//!@SYMTestCaseID            GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009
+//!@SYMAPI                   MAnimSpriteFunctions::SizeChangedL()
+//!@SYMAuthor                Yue Zhang
+//!@SYMCreationDate          11-04-2008
+//!@SYMTestCaseDesc          Send command to animation DLL to call SizeChangeL function. Check if it sets the currently displayed sprite member to zero.
+//!@SYMTestActions           1.  Create and connect a RWsSession.
+//!                          2.  Create and construct RWindowGroup and RWindow.
+//!                          3.  Create RWsSprite with RWsSession.
+//!                          4.  Construct RWsSprite.
+//!                          5.  Create a CFbsBitmap object as mask.
+//!                          6.  Create 4 CFbsBitmap object and load bitmap.
+//!                          7.  Append these CFbsBitmaps to the RWsSprite.
+//!                          8.  Set RWsSprites's position.
+//!                          9.  Activate the RWsSprite.
+//!                          10. Create and load the animation DLL.
+//!                          11. Create RAnim and RAnimForMClass object and construct RAnimForMClass.
+//!                          12. Delay 4.5 seconds (just more than 2 member's inteval).
+//!                          13. Send ECmdSpriteSizeChange command to plugin Dll via CommandReply.
+//!                          13.1 plugin Dll call the SizeChangeL function.
+//!                          14. Delay 2.5 seconds (just more than 1 member's inteval).
+//!                          15. Use ScreenDevice object to compare the 3 member's sprite rectangle area with a blank rectangle.
+//!                          16. Close and destroy all the related objects.
+//!@SYMTestStatus            Implemented
+//!@SYMTestPriority          High
+//!@SYMTestExpectedResults    In step 15, the compare result should not be same because the 3rd sprite member is current displayed.
+//!@SYMTestType              CIT
+    START_TEST_BLOCK          10          T_GraphicsWservAPI          \graphics\GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi.ini
+        CREATE_OBJECT              RWsSession               ws
+        CREATE_OBJECT              RWindowGroup             wingp
+        CREATE_OBJECT              RWindow                  win
+        CREATE_OBJECT              RWsSprite                sprite
+        CREATE_OBJECT              RAnimDll                 animdll
+        CREATE_OBJECT              RAnim                    anim
+        CREATE_OBJECT              RAnimForMClass           animformc
+        CREATE_OBJECT              CWsScreenDevice          scrdev
+        CREATE_OBJECT              CFbsBitmap               mask1
+        CREATE_OBJECT              CFbsBitmap               bitmap1
+        CREATE_OBJECT              CFbsBitmap               bitmap2
+        CREATE_OBJECT              CFbsBitmap               bitmap3
+        CREATE_OBJECT              CFbsBitmap               bitmap4
+        COMMAND                    ws                       new                      
+        COMMAND                    ws                       Connect                  
+        COMMAND                    wingp                    new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-new_Command03
+        COMMAND                    wingp                    Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-Construct_Command04
+        COMMAND                    win                      new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-new_Command05
+        COMMAND                    win                      Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-Construct_Command06
+        COMMAND                    win                      Activate                 
+        COMMAND                    win                      BeginRedraw              
+        COMMAND                    win                      EndRedraw                
+        COMMAND                    scrdev                   new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-new_Command10
+        COMMAND                    scrdev                   Construct                
+        COMMAND                    sprite                   new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-new_Command12
+        COMMAND                    sprite                   Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-Construct_Command13
+        COMMAND                    mask1                    new                      
+        COMMAND                    mask1                    Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-Load_Command15
+        COMMAND                    bitmap1                  new                      
+        COMMAND                    bitmap1                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-Load_Command17
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-AppendMember_Command18
+        COMMAND                    bitmap2                  new                      
+        COMMAND                    bitmap2                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-Load_Command20
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-AppendMember_Command21
+        COMMAND                    bitmap3                  new                      
+        COMMAND                    bitmap3                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-Load_Command23
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-AppendMember_Command24
+        COMMAND                    bitmap4                  new                      
+        COMMAND                    bitmap4                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-Load_Command26
+        COMMAND                    sprite                   AppendMember             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-AppendMember_Command27
+        COMMAND                    sprite                   SetPosition              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-SetPosition_Command28
+        COMMAND                    sprite                   Activate                 
+        COMMAND                    animdll                  new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-new_Command30
+        COMMAND                    animdll                  Load                     GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-Load_Command31
+        COMMAND                    anim                     new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-new_Command32
+        COMMAND                    animformc                new                      GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-new_Command33
+        COMMAND                    animformc                Construct                GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-Construct_Command34
+        DELAY                      4500000                                           
+        COMMAND                    animformc                CommandReply             GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-CommandReply_Command36
+        DELAY                      2500000                                           
+        //!COMMAND                    scrdev                   RectCompare              GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009-0001-RectCompare_Command38
+        COMMAND                    animformc                Destroy                  
+        COMMAND                    anim                     Destroy                  
+        COMMAND                    sprite                   Close                    
+        COMMAND                    mask1                    ~                        
+        COMMAND                    bitmap1                  ~                        
+        COMMAND                    bitmap2                  ~                        
+        COMMAND                    bitmap3                  ~                        
+        COMMAND                    bitmap4                  ~                        
+        COMMAND                    animdll                  Destroy                  
+        COMMAND                    scrdev                   ~                        
+        COMMAND                    win                      Close                    
+        COMMAND                    wingp                    Close                    
+        COMMAND                    ws                       Close                    
+    END_TEST_BLOCK
+END_TESTCASE          GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi-0009
+
+

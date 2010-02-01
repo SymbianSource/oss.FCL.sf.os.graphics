@@ -1,0 +1,4 @@
+component	graphicssvs
+source			\sf\os\graphics\graphicsapitest\graphicssvs
+notes_source	\sf\os\graphics\graphicsapitest\graphicssvs\group\release.txt
+ipr T 

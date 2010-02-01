@@ -1,0 +1,449 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi
+//! @SYMScriptTestEnvironment	This test script requires a basic ROM.
+
+///////////////////////////////////////////////////////////////////////////////
+// GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.script
+//
+// Tests all public elements of the WsGraphicMsgBuf class
+// as a means of confidence that the API works as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for
+// TWindowInfo related classes.
+// Negative testing is performed to confirm that correct errors are returned
+// when incorrect parameters are given.
+//
+// The tests are fully automated.
+///////////////////////////////////////////////////////////////////////////////
+
+
+LOAD_SUITE	T_GraphicsWservAPI
+
+
+// ****************************************************************************
+// WsGraphicMsgBuf
+// ****************************************************************************
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0001
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0001
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		RWsGraphicMsgBuf(): Default constructor.
+//!				Uses API elements:RWsGraphicMsgBuf() and Close()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Close the object using Close().
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	RWsGraphicMsgBuf object create and close successed.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0001
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0002
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0002
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		CleanupClosePushL(): Close with clean up memory.
+//!				Uses API elements:RWsGraphicMsgBuf() and CleanupClosePushL()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Close and clean up memory of the object using CleanupClosePushL().
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	RWsGraphicMsgBuf object create and close successed.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		CleanupClosePushL
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0002
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0003
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0003
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		Append(): Append a eight bits descriptor as data.
+//!				Uses API elements:RWsGraphicMsgBuf(), Close() and Append()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Append a eight bits descriptor as data using Append() and return KErrNone if successed.
+//!				3.	Close the object using Close().
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	A eight bits descriptor as data was appended successed.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Append			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0003-0001-Append_command02
+		COMMAND		wsGraphicMsgBuf		Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0003
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0004
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0004
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		Append(): Append a sixteen bits descriptor as data.
+//!				Uses API elements:RWsGraphicMsgBuf(), Close() and Append()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Append a sixteen bits descriptor as data using Append() and return KErrNone if successed.
+//!				3.	Close the object using Close().
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	A sixteen bits descriptor as data was appended successed.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Append			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0004-0001-Append_command02
+		COMMAND		wsGraphicMsgBuf		Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0004
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0005
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0005
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		Append(): Append a message of the specified length and type.
+//!				Uses API elements:RWsGraphicMsgBuf(), Close() and Append()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Append a message of the specified length and type, and return a pointer to allow client code to modify the message using Append() and return KErrNone if successed.
+//!				3.	Close the object using Close().
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	A message of the specified length and type, and return a pointer to allow client code to modify the message was appended successed.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Append			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0005-0001-Append_command02
+		COMMAND		wsGraphicMsgBuf		Close
+	END_TEST_BLOCK
+
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0005
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0006
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0006
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		Append(): Append a fixed-size message.
+//!				Uses API elements:RWsGraphicMsgBuf(), Close() and Append()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Append a fixed-size message using Append() and return KErrNone if successed.
+//!				3.	Close the object using Close().
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	A fixed-size message was appended successed.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Append
+		COMMAND		wsGraphicMsgBuf		Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0006
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0007
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0007
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		Data(): Returns a non-modifiable descriptor of a message body in the buffer.
+//!				Uses API elements:RWsGraphicMsgBuf(), Close(), Append() and Data()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Append a eight bits descriptor as data using Append() and return KErrNone if successed.
+//!				3.	Returns a non-modifiable descriptor of a message body in the buffer by using Data().
+//!				4.	Verify if returned descriptor is same as appended descriptor.
+//!				5.	Close the object using Close().
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The returned descriptor is same as appended descriptor.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Append			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0007-0001-Append_command02
+		COMMAND		wsGraphicMsgBuf		Data			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0007-0001-Data_command03
+		COMMAND		wsGraphicMsgBuf		Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0007
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0008
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0008
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		Data(): Returns a modifiable descriptor of a message body in the buffer.
+//!				Uses API elements:RWsGraphicMsgBuf(), Close(), Append() and Data()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Append a eight bits descriptor as data using Append() and return KErrNone if successed.
+//!				3.	Returns a modifiable descriptor of a message body in the buffer by using Data().
+//!				4.	Close the object using Close().
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The returned modifiable descriptor of a message body in the buffer is as expected.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Append			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0008-0001-Append_command02
+		COMMAND		wsGraphicMsgBuf		Data			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0008-0001-Data_command03
+		COMMAND		wsGraphicMsgBuf		Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0008
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0009
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0009
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		Count(): Returns the number of messages in the buffer.
+//!				Uses API elements:RWsGraphicMsgBuf(), Close(), Append() and Count()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Append a eight bits descriptor as data using Append() and return KErrNone if successed.
+//!				3.	Returns the number of messages in the buffer by using Count().
+//!				4.	Verify if the number of messages in the buffer is as expected.
+//!				5.	Close the object using Close().
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The number of messages in the buffer is as expected.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Append			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0009-0001-Append_command02
+		COMMAND		wsGraphicMsgBuf		Count			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0009-0001-Count_command03
+		COMMAND		wsGraphicMsgBuf		Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0009
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0010
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0010
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		TypeId(): Returns the type ID of a message in the buffer.
+//!				Uses API elements:RWsGraphicMsgBuf(), Close(), Append() and TypeId()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Append a eight bits descriptor as data using Append() and return KErrNone if successed.
+//!				3.	Returns the type ID of a message in the buffer by using TypeId().
+//!				4.	Verify if the type ID of a message in the buffer is as expected.
+//!				5.	Close the object using Close().
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The type ID of a message in the buffer is as expected.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Append			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0010-0001-Append_command02
+		COMMAND		wsGraphicMsgBuf		TypeId			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0010-0001-TypeId_command03
+		COMMAND		wsGraphicMsgBuf		Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0010
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0011
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0011
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		Remove(): Remove a message from the buffer.
+//!				Uses API elements:RWsGraphicMsgBuf(), Close(), Append() and Remove()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Append a eight bits descriptor as data using Append() and return KErrNone if successed.
+//!				3.	Remove a message from the buffer by using Remove() and return KErrNone if successed.
+//!				4.	Close the object using Close().
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The message from the buffer was removed successed.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Append			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0011-0001-Append_command02
+		COMMAND		wsGraphicMsgBuf		Remove			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0011-0001-Remove_command03
+		COMMAND		wsGraphicMsgBuf		Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0011
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0012
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0012
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		Pckg(): Returns the message buffer as a descriptor.
+//!				Uses API elements:RWsGraphicMsgBuf(), Close(), Append() and Pckg()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Append a eight bits descriptor as data using Append() and return KErrNone if successed.
+//!				3.	Returns the message buffer as a descriptor by using Pckg() and return KErrNone if successed.
+//!				4.	Close the object using Close().
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The message buffer as a descriptor successed.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Append			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0012-0001-Append_command02
+		COMMAND		wsGraphicMsgBuf		Pckg
+		COMMAND		wsGraphicMsgBuf		Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0012
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0013
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0013
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		GetFixedMsg(): Returns a copy of a fixed-size message in the buffer.
+//!				Uses API elements:RWsGraphicMsgBuf(), Close(), Append() and GetFixedMsg()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Append a eight bits descriptor as data using Append() and return KErrNone if successed.
+//!				3.	Returns a copy of a fixed-size message in the buffer by using GetFixedMsg() and return KErrNone if successed.
+//!				4.	Close the object using Close().
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The copy of a fixed-size message in the buffer successed.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Append
+		COMMAND		wsGraphicMsgBuf		GetFixedMsg		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0013-0001-GetFixedMsg_command03
+		COMMAND		wsGraphicMsgBuf		Close
+	END_TEST_BLOCK
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0013
+
+
+//---- Negative Test Cases ----
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0101
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0101
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		Data(): Returns a non-modifiable descriptor of a message body in the buffer.
+//!				Uses API elements:RWsGraphicMsgBuf(), Close(), Append() and Data()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Append a eight bits descriptor as data using Append() and return KErrNone if successed.
+//!				3.	Returns a non-modifiable descriptor of a message body in the buffer by using Data() with a out of bounds index -1.
+//!				4.	Verify if returned descriptor is same as appended descriptor.
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	A panic code 15 occurs, the returned descriptor is not same as appended descriptor.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Append			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0101-0001-Append_command02
+		COMMAND		wsGraphicMsgBuf		Data			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0101-0001-Data_command03
+	END_TEST_BLOCK		!PanicCode=15		!PanicString=W32
+    RUN_TEST_STEP	100	T_GraphicsWservAPI	utilityClearPanicDlg    
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0101
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0102
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0102
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		TypeId(): Returns the type ID of a message in the buffer.
+//!				Uses API elements:RWsGraphicMsgBuf(), Close(), Append() and TypeId()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Append a eight bits descriptor as data using Append() and return KErrNone if successed.
+//!				3.	Returns the type ID of a message in the buffer by using TypeId() with a out of bounds index -1.
+//!				4.	Verify if the type ID of a message in the buffer is as expected.
+//!				5.	Close the object using Close().
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	A panic code 15 occurs, the type ID of a message in the buffer is not as expected.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Append			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0102-0001-Append_command02
+		COMMAND		wsGraphicMsgBuf		TypeId			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0102-0001-TypeId_command03
+	END_TEST_BLOCK		!PanicCode=15		!PanicString=W32
+    RUN_TEST_STEP	100	T_GraphicsWservAPI	utilityClearPanicDlg    
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0102
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0103
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0103
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		Remove(): Remove a message from the buffer with a negative index.
+//!				Uses API elements:RWsGraphicMsgBuf(), and Remove()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Remove a message from the buffer by using Remove() and a negtive index
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	EW32PanicGraphicBadBuffer(15) PANIC on attempt to remove
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Remove			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0103-0001-Remove_command02
+	END_TEST_BLOCK		!PanicCode=15		!PanicString=W32
+    RUN_TEST_STEP	100	T_GraphicsWservAPI	utilityClearPanicDlg    
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0103
+
+
+START_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0104
+//! @SYMTestCaseID		GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0104
+//! @SYMAPI			WsGraphicMsgBuf
+//! @SYMAuthor			Shirly Kuo
+//! @SYMCreationDate		28/12/2006
+//! @SYMTestCaseDesc		Remove(): Remove a message from the buffer with an index larger than its size
+//!				Uses API elements:RWsGraphicMsgBuf(), and Remove()
+//! @SYMTestActions		1.	Construct RWsGraphicMsgBuf object using RWsGraphicMsgBuf() and return KErrNone if successed.
+//!				2.	Remove a message from the buffer by using Remove() and a large index
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	EW32PanicGraphicBadBuffer(15) PANIC on attempt to remove
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+		CREATE_OBJECT	RWsGraphicMsgBuf	wsGraphicMsgBuf
+		COMMAND		wsGraphicMsgBuf		new
+		COMMAND		wsGraphicMsgBuf		Remove			GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0104-0001-Remove_command02
+	END_TEST_BLOCK		!PanicCode=15		!PanicString=W32
+    RUN_TEST_STEP	100	T_GraphicsWservAPI	utilityClearPanicDlg    
+END_TESTCASE	GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi-0104

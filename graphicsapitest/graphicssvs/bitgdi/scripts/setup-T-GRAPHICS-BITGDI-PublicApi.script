@@ -1,0 +1,79 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+
+RUN_UTILS MkDir		${SYSDRIVE}\graphics\
+RUN_UTILS MkDir		${SYSDRIVE}\graphics\bitgdi\
+
+RUN_UTILS CopyFile	z:\graphics\GRAPHICS-BITGDI-PublicApi.script			${SYSDRIVE}\graphics\GRAPHICS-BITGDI-PublicApi.script
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\GRAPHICS-BITGDI-PublicApi.script
+RUN_UTILS CopyFile	z:\graphics\t_graphics.tcs							${SYSDRIVE}\graphics\t_graphics.tcs
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\t_graphics.tcs
+RUN_UTILS CopyFile	z:\graphics\t_graphics_panic.tcs					${SYSDRIVE}\graphics\t_graphics_panic.tcs
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\t_graphics_panic.tcs
+
+//T_DataFbsDevice
+RUN_UTILS CopyFile	z:\graphics\GRAPHICS-BITGDI-FbsDevice-PublicApi.script		${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsDevice-PublicApi.script
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsDevice-PublicApi.script
+RUN_UTILS CopyFile	z:\graphics\GRAPHICS-BITGDI-FbsDevice-PublicApi.ini			${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsDevice-PublicApi.ini
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsDevice-PublicApi.ini
+
+//T_DataFbsScreenDevice
+RUN_UTILS CopyFile	z:\graphics\GRAPHICS-BITGDI-FbsScreenDevice-PublicApi.script		${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsScreenDevice-PublicApi.script
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsScreenDevice-PublicApi.script
+RUN_UTILS CopyFile	z:\graphics\GRAPHICS-BITGDI-FbsScreenDevice-PublicApi.ini		${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsScreenDevice-PublicApi.ini
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsScreenDevice-PublicApi.ini
+
+//T_DataFbsBitmapDevice
+RUN_UTILS CopyFile	z:\graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.script		${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.script
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.script
+RUN_UTILS CopyFile	z:\graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini		${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+
+
+//T_DataFbsBitGc
+RUN_UTILS CopyFile	z:\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi.script		${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi.script
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi.script
+RUN_UTILS CopyFile	z:\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi.ini		${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi.ini
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi.ini
+RUN_UTILS CopyFile	z:\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi-2.ini		${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi-2.ini
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi-2.ini
+RUN_UTILS CopyFile	z:\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi-3.ini		${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi-3.ini
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi-3.ini
+
+//T_DataFbsBitGc
+RUN_UTILS CopyFile	z:\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual.script		${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual.script
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual.script
+RUN_UTILS CopyFile	z:\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual.ini		${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual.ini
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual.ini
+
+
+//T_DataPolygonFiller
+RUN_UTILS CopyFile z:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicApi.script ${SYSDRIVE}\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicApi.script
+RUN_UTILS MakeReadWrite ${SYSDRIVE}\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicApi.script
+RUN_UTILS CopyFile z:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicApi.ini ${SYSDRIVE}\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicApi.ini
+RUN_UTILS MakeReadWrite ${SYSDRIVE}\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicApi.ini
+
+//T_DataFbsBitGcFont
+RUN_UTILS CopyFile z:\graphics\GRAPHICS-BITGDI-FbsBitGcFont-PublicApi.script ${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGcFont-PublicApi.script
+RUN_UTILS MakeReadWrite ${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGcFont-PublicApi.script
+RUN_UTILS CopyFile z:\graphics\GRAPHICS-BITGDI-FbsBitGcFont-PublicApi.ini ${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGcFont-PublicApi.ini
+RUN_UTILS MakeReadWrite ${SYSDRIVE}\graphics\GRAPHICS-BITGDI-FbsBitGcFont-PublicApi.ini
+
+RUN_UTILS MkDir		\graphics\bitgdi
+
+//datafile test_rwssprite_bitmap.mbm
+RUN_UTILS CopyFile	z:\graphics\bitgdi\test_rwssprite_bitmap.mbm			${SYSDRIVE}\graphics\bitgdi\test_rwssprite_bitmap.mbm
+RUN_UTILS MakeReadWrite	${SYSDRIVE}\graphics\bitgdi\test_rwssprite_bitmap.mbm

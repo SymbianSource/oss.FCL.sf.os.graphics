@@ -1,0 +1,454 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName  GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual
+//! @SYMScriptTestEnvironment This test script requires a basic ROM.
+
+///////////////////////////////////////////////////////////////////////////////
+// GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual.script
+//
+// Tests all public elements of the CFbsBitGc class
+// as a means of confidence that the API works as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for CFbsBitGc.
+//
+// The tests are fully manual.
+///////////////////////////////////////////////////////////////////////////////
+
+
+LOAD_SUITE      T_GraphicsBitgdiApi
+DELAY           1000
+
+
+START_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0001
+//! @SYMTestCaseID          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0001
+//! @SYMAPI                 CFbsBitGc::Plot(const TPoint{ref})
+//! @SYMAuthor              Forbes Fu
+//! @SYMCreationDate        02/04/2009
+//! @SYMTestCaseDesc        Draw a single point.
+//! @SYMTestActions         1. Create and connect a RFbsSession object.
+//!                         2. Create a CFbsScreenDevice object.
+//!                         3. Create a CFbsBitGc object and activate it.
+//!                         4. Clear the device.
+//!                         5. Set pen size TSize(2, 2).
+//!                         6. Set pen color TRgb(255, 0, 0).
+//!                         7. Draw a single point at TPoint(100, 100).
+//!                         8. Check the point.
+//!                         9. Check manually.
+//!                         10.Destruct CFbsBitGc object, CFbsScreenDevice object and disconnect RFbsSession object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults A red point is drawn as expected.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK        100   T_GraphicsBitgdiApi         \graphics\graphics-bitgdi-fbsbitgc-publicapi-manual.ini
+        CREATE_OBJECT       RFbsSession          fbsSession
+        CREATE_OBJECT       CFbsScreenDevice     fbsScrDev
+        CREATE_OBJECT       CFbsBitGc            fbsBitGc
+        COMMAND             fbsSession           Connect
+        COMMAND             fbsScrDev            NewL                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0001-NewL_command02
+        COMMAND             fbsBitGc             NewL
+        COMMAND             fbsBitGc             Activate                               GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0001-Activate_command04
+        COMMAND             fbsBitGc             Clear
+        COMMAND             fbsBitGc             SetPenSize                             GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0001-SetPenSize_command06
+        COMMAND             fbsBitGc             SetPenColor                            GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0001-SetPenColor_command07
+        COMMAND             fbsBitGc             Plot                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0001-Plot_command08
+        COMMAND             fbsScrDev            Update
+        DELAY               6000000
+        COMMAND             fbsScrDev            checkPixels                            GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0001-checkPixels_command11
+        COMMAND             fbsBitGc             PromptMessage                          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0001-PromptMessage_command12   
+        COMMAND             fbsBitGc             ~
+        COMMAND             fbsScrDev            ~
+        COMMAND             fbsSession           Disconnect
+     END_TEST_BLOCK
+END_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0001
+
+
+START_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002
+//! @SYMTestCaseID          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002
+//! @SYMAPI                 CFbsBitGc::Plot(const TPoint{ref})
+//! @SYMAuthor              Forbes Fu
+//! @SYMCreationDate        02/04/2009
+//! @SYMTestCaseDesc        Draw five points.
+//! @SYMTestActions         1. Create and connect a RFbsSession object.
+//!                         2. Create a CFbsScreenDevice object.
+//!                         3. Create a CFbsBitGc object and activate it.
+//!                         4. Clear the device.
+//!                         5. Set pen size TSize(2, 2).
+//!                         6. Set pen color TRgb(255, 0, 0).
+//!                         7. Draw a point at TPoint(100, 30).
+//!                         8. Set pen color TRgb(0, 255, 0).
+//!                         9. Draw a point at TPoint(50, 70).
+//!                         10.Draw a point at TPoint(150, 70).
+//!                         11.Set pen color TRgb(0, 0, 255).
+//!                         12.Draw a point at TPoint(75, 120).
+//!                         13.Draw a point at TPoint(125, 120).
+//!                         14.Check the five points.
+//!                         15.Check manually.
+//!                         16.Destruct CFbsBitGc object, CFbsScreenDevice object and disconnect RFbsSession object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Five points are drawn as expected.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK        100   T_GraphicsBitgdiApi         \graphics\graphics-bitgdi-fbsbitgc-publicapi-manual.ini
+        CREATE_OBJECT       RFbsSession          fbsSession
+        CREATE_OBJECT       CFbsScreenDevice     fbsScrDev
+        CREATE_OBJECT       CFbsBitGc            fbsBitGc
+        COMMAND             fbsSession           Connect
+        COMMAND             fbsScrDev            NewL                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002-NewL_command02
+        COMMAND             fbsBitGc             NewL
+        COMMAND             fbsBitGc             Activate                               GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002-Activate_command04
+        COMMAND             fbsBitGc             Clear
+        COMMAND             fbsBitGc             SetPenSize                             GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002-SetPenSize_command06
+        COMMAND             fbsBitGc             SetPenColor                            GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002-SetPenColor_command07
+        COMMAND             fbsBitGc             Plot                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002-Plot_command08
+        COMMAND             fbsBitGc             SetPenColor                            GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002-SetPenColor_command09
+        COMMAND             fbsBitGc             Plot                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002-Plot_command10
+        COMMAND             fbsBitGc             Plot                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002-Plot_command11
+        COMMAND             fbsBitGc             SetPenColor                            GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002-SetPenColor_command12
+        COMMAND             fbsBitGc             Plot                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002-Plot_command13
+        COMMAND             fbsBitGc             Plot                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002-Plot_command14
+        COMMAND             fbsScrDev            Update
+        DELAY               6000000
+        COMMAND             fbsScrDev            checkPixels                            GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002-checkPixels_command17
+        COMMAND             fbsBitGc             PromptMessage                          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002-PromptMessage_command18   
+        COMMAND             fbsBitGc             ~
+        COMMAND             fbsScrDev            ~
+        COMMAND             fbsSession           Disconnect
+     END_TEST_BLOCK
+END_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0002
+
+
+START_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0003
+//! @SYMTestCaseID          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0003
+//! @SYMAPI                 CFbsBitGc::DrawLine(const TPoint{ref}, const TPoint{ref})
+//! @SYMAuthor              Forbes Fu
+//! @SYMCreationDate        02/04/2009
+//! @SYMTestCaseDesc        Draws a straight line.
+//! @SYMTestActions         1. Create and connect a RFbsSession object.
+//!                         2. Create a CFbsScreenDevice object.
+//!                         3. Create a CFbsBitGc object and activate it.
+//!                         4. Clear the device.
+//!                         5. Set pen size TSize(1, 1).
+//!                         6. Set pen color TRgb(255, 0, 0).
+//!                         7. Draw a straight line between TPoint(20, 100) and TPoint(120, 100).
+//!                         8. Check the line.
+//!                         9. Check manually.
+//!                         10.Destruct CFbsBitGc object, CFbsScreenDevice object and disconnect RFbsSession object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults A red straight line is drawn as expected.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK        100   T_GraphicsBitgdiApi         \graphics\graphics-bitgdi-fbsbitgc-publicapi-manual.ini
+        CREATE_OBJECT       RFbsSession          fbsSession
+        CREATE_OBJECT       CFbsScreenDevice     fbsScrDev
+        CREATE_OBJECT       CFbsBitGc            fbsBitGc
+        COMMAND             fbsSession           Connect
+        COMMAND             fbsScrDev            NewL                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0003-NewL_command02
+        COMMAND             fbsBitGc             NewL
+        COMMAND             fbsBitGc             Activate                               GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0003-Activate_command04
+        COMMAND             fbsBitGc             Clear
+        COMMAND             fbsBitGc             SetPenSize                             GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0003-SetPenSize_command06
+        COMMAND             fbsBitGc             SetPenColor                            GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0003-SetPenColor_command07
+        COMMAND             fbsBitGc             DrawLine                               GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0003-DrawLine_command08
+        COMMAND             fbsScrDev            Update
+        DELAY               6000000
+        COMMAND             fbsScrDev            checkLineColor                         GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0003-checkLineColor_command11
+        COMMAND             fbsBitGc             PromptMessage                          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0003-PromptMessage_command12
+        COMMAND             fbsBitGc             ~
+        COMMAND             fbsScrDev            ~
+        COMMAND             fbsSession           Disconnect
+     END_TEST_BLOCK
+END_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0003
+
+START_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0004
+//! @SYMTestCaseID          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0004
+//! @SYMAPI                 CFbsBitGc::DrawLine(const TPoint{ref}, const TPoint{ref})
+//! @SYMAuthor              Forbes Fu
+//! @SYMCreationDate        02/04/2009
+//! @SYMTestCaseDesc        Draws three lines.
+//! @SYMTestActions         1. Create and connect a RFbsSession object.
+//!                         2. Create a CFbsScreenDevice object.
+//!                         3. Create a CFbsBitGc object and activate it.
+//!                         4. Clear the device.
+//!                         5. Set pen size TSize(1, 1).
+//!                         6. Set pen color TRgb(255, 0, 0).
+//!                         7. Draw a line between TPoint(80, 20) and TPoint(80, 100).
+//!                         8. Set pen color TRgb(0, 255, 0).
+//!                         9. Draw a line between TPoint(20, 20) and TPoint(60, 100).
+//!                         10.Set pen color TRgb(0, 0, 255).
+//!                         11.Draw a line between TPoint(120, 100) and TPoint(100, 100).
+//!                         12.Check three lines.
+//!                         13.Check manually.
+//!                         14.Destruct CFbsBitGc object, CFbsScreenDevice object and disconnect RFbsSession object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Three lines are drawn as expected.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK        100   T_GraphicsBitgdiApi         \graphics\graphics-bitgdi-fbsbitgc-publicapi-manual.ini
+        CREATE_OBJECT       RFbsSession          fbsSession
+        CREATE_OBJECT       CFbsScreenDevice     fbsScrDev
+        CREATE_OBJECT       CFbsBitGc            fbsBitGc
+        COMMAND             fbsSession           Connect
+        COMMAND             fbsScrDev            NewL                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0004-NewL_command02
+        COMMAND             fbsBitGc             NewL
+        COMMAND             fbsBitGc             Activate                               GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0004-Activate_command04
+        COMMAND             fbsBitGc             Clear
+        COMMAND             fbsBitGc             SetPenSize                             GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0004-SetPenSize_command06
+        COMMAND             fbsBitGc             SetPenColor                            GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0004-SetPenColor_command07
+        COMMAND             fbsBitGc             DrawLine                               GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0004-DrawLine_command08
+        COMMAND             fbsBitGc             SetPenColor                            GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0004-SetPenColor_command09
+        COMMAND             fbsBitGc             DrawLine                               GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0004-DrawLine_command10
+        COMMAND             fbsBitGc             SetPenColor                            GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0004-SetPenColor_command11
+        COMMAND             fbsBitGc             DrawLine                               GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0004-DrawLine_command12
+        COMMAND             fbsScrDev            Update
+        DELAY               6000000
+        COMMAND             fbsScrDev            checkLineColor                         GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0004-checkLineColor_command15
+        COMMAND             fbsBitGc             PromptMessage                          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0004-PromptMessage_command16 
+        COMMAND             fbsBitGc             ~
+        COMMAND             fbsScrDev            ~
+        COMMAND             fbsSession           Disconnect
+     END_TEST_BLOCK
+END_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0004
+
+
+START_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0005
+//! @SYMTestCaseID          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0005
+//! @SYMAPI                 CFbsBitGc::DrawBitmap(const TPoint{ref}, const CFbsBitmap{ptr})
+//! @SYMAuthor              Forbes Fu
+//! @SYMCreationDate        02/04/2009
+//! @SYMTestCaseDesc        Draw a bitmap at TPoint(20, 20).
+//! @SYMTestActions         1. Create and connect a RFbsSession object.
+//!                         2. Create a CFbsScreenDevice object.
+//!                         3. Create a CFbsBitGc object and activate it.
+//!                         4. Create a CFbsBitmap object.
+//!                         5. Load a bitmap and set size in twips of bitmap to TSize(1000, 1000).
+//!                         6. Clear the device.
+//!                         7. Draw the bitmap at TPoint(20, 20).
+//!                         8. Check manually.
+//!                         9. Disconnect RFbsSession and destruct CFbsBitGc object and CFbsScreenDevice object, CFbsBitmap object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults A bitmap will be drawn.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK        100   T_GraphicsBitgdiApi         \graphics\graphics-bitgdi-fbsbitgc-publicapi-manual.ini
+        CREATE_OBJECT       RFbsSession          fbsSession
+        CREATE_OBJECT       CFbsScreenDevice     fbsScrDev
+        CREATE_OBJECT       CFbsBitGc            fbsBitGc
+        CREATE_OBJECT       CFbsBitmap           fbsBitmap
+        COMMAND             fbsSession           Connect
+        COMMAND             fbsBitGc             NewL
+        COMMAND             fbsScrDev            NewL                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0005-NewL_command03
+        COMMAND             fbsBitGc             Activate                               GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0005-Activate_command04
+        COMMAND             fbsBitmap            new
+        COMMAND             fbsBitmap            Load                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0005-Load_command06
+        COMMAND             fbsBitmap            SetSizeInTwips                         GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0005-SetSizeInTwips_command07
+        COMMAND             fbsBitGc             Clear
+        COMMAND             fbsBitGc             DrawBitmap                             GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0005-DrawBitmap_command09
+        COMMAND             fbsScrDev            Update
+        DELAY               6000000        
+        COMMAND             fbsBitGc             PromptMessage                          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0005-PromptMessage_command12
+        COMMAND             fbsBitmap            ~
+        COMMAND             fbsBitGc             ~
+        COMMAND             fbsScrDev            ~
+        COMMAND             fbsSession           Disconnect
+     END_TEST_BLOCK
+END_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0005
+
+
+START_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0006
+//! @SYMTestCaseID          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0006
+//! @SYMAPI                 CFbsBitGc::DrawBitmap(const TRect{ref}, const CFbsBitmap{ptr})
+//! @SYMAuthor              Forbes Fu
+//! @SYMCreationDate        02/04/2009
+//! @SYMTestCaseDesc        Draw two bitmaps to fit TRect(0, 0, 120, 100) and TRect(110, 50, 130, 70).
+//! @SYMTestActions         1. Create and connect a RFbsSession object.
+//!                         2. Create a CFbsScreenDevice object.
+//!                         3. Create a CFbsBitGc object and activate it.
+//!                         4. Create a CFbsBitmap object.
+//!                         6. Clear the device.
+//!                         7. Draw the bitmap to fit TRect(0, 0, 120, 100).
+//!                         8. Draw the bitmap to fit TRect(110, 50, 130, 70).
+//!                         9. Check manually.
+//!                         10.Disconnect RFbsSession and destruct CFbsBitGc object and CFbsScreenDevice object, CFbsBitmap object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Two bitmaps will be drawn.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK        100   T_GraphicsBitgdiApi         \graphics\graphics-bitgdi-fbsbitgc-publicapi-manual.ini
+        CREATE_OBJECT       RFbsSession          fbsSession
+        CREATE_OBJECT       CFbsScreenDevice     fbsScrDev
+        CREATE_OBJECT       CFbsBitGc            fbsBitGc
+        CREATE_OBJECT       CFbsBitmap           fbsBitmap
+        COMMAND             fbsSession           Connect
+        COMMAND             fbsBitGc             NewL
+        COMMAND             fbsScrDev            NewL                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0006-NewL_command03
+        COMMAND             fbsBitGc             Activate                               GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0006-Activate_command04
+        COMMAND             fbsBitmap            new
+        COMMAND             fbsBitmap            Load                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0006-Load_command06        
+        COMMAND             fbsBitGc             Clear
+        COMMAND             fbsBitGc             DrawBitmap                             GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0006-DrawBitmap_command08
+        COMMAND             fbsBitGc             DrawBitmap                             GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0006-DrawBitmap_command09
+        COMMAND             fbsScrDev            Update
+        DELAY               6000000        
+        COMMAND             fbsBitGc             PromptMessage                          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0006-PromptMessage_command12
+        COMMAND             fbsBitmap            ~
+        COMMAND             fbsBitGc             ~
+        COMMAND             fbsScrDev            ~
+        COMMAND             fbsSession           Disconnect
+     END_TEST_BLOCK
+END_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0006
+
+
+START_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0007
+//! @SYMTestCaseID          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0007
+//! @SYMAPI                 CFbsBitGc::DrawText(const TDesC{ref}, const TPoint(ref)).
+//! @SYMAuthor              Forbes Fu
+//! @SYMCreationDate        02/04/2009
+//! @SYMTestCaseDesc        Draw a line of text at the specific position.
+//! @SYMTestActions         1. Create and connect a RFbsSession object.
+//!                         2. Create a CFbsScreenDevice object.
+//!                         3. Create a CFbsBitGc object and activate it.
+//!                         4. Clear the device and set pen color TRgb(255, 0, 0).
+//!                         5. Set the device font.
+//!                         6. Draw a line of the text at (20,50).
+//!                         7. Check manually.
+//!                         8. Disconnect RFbsSession and destruct CFbsBitGc object and CFbsScreenDevice object, CFbsBitmap object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults A line of red text will be drawn as expected.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK        100   T_GraphicsBitgdiApi         \graphics\graphics-bitgdi-fbsbitgc-publicapi-manual.ini
+        CREATE_OBJECT       RFbsSession          fbsSession
+        CREATE_OBJECT       CFbsScreenDevice     fbsScrDev
+        CREATE_OBJECT       CFbsBitGc            fbsBitGc
+        CREATE_OBJECT       CFbsFont          	 font
+        COMMAND             fbsSession           Connect
+        COMMAND             fbsBitGc             NewL
+        COMMAND             fbsScrDev            NewL                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0007-NewL_command03
+        COMMAND             fbsBitGc             Activate                               GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0007-Activate_command04
+        COMMAND             fbsBitGc             Clear
+        COMMAND             fbsBitGc             SetPenColor                            GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0007-SetPenColor_command06
+        COMMAND             fbsScrDev            GetNearestFontToDesignHeightInPixels   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0007-GetNearestFontToDesignHeightInPixels_command07
+        COMMAND             fbsBitGc             UseFont                                GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0007-UseFont_command08
+        COMMAND             fbsBitGc             DrawText                               GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0007-DrawText_command09
+        COMMAND             fbsScrDev            Update
+        DELAY               6000000
+        COMMAND             fbsBitGc             PromptMessage                          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0007-PromptMessage_command12
+        COMMAND             fbsBitGc             DiscardFont 
+        COMMAND             fbsScrDev            ReleaseFont                            GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0007-ReleaseFont_command14
+        COMMAND             fbsSession           Disconnect
+        COMMAND             fbsBitGc             ~
+        COMMAND             fbsScrDev            ~
+     END_TEST_BLOCK
+END_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0007
+
+
+START_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0008
+//! @SYMTestCaseID          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0008
+//! @SYMAPI                 CFbsBitGc::DrawTextVertical(const TDesC{ref}, const TPoint(ref), TBool).
+//! @SYMAuthor              Forbes Fu
+//! @SYMCreationDate        02/04/2009
+//! @SYMTestCaseDesc        Draw two lines of text vertically.
+//! @SYMTestActions         1. Create and connect a RFbsSession object.
+//!                         2. Create a CFbsScreenDevice object.
+//!                         3. Create a CFbsBitGc object and activate it.
+//!                         4. Clear the device and set pen color TRgb(0, 0, 255).
+//!                         5. Set the device font.
+//!                         6. Draw a line of text vertically at TPoint(20,20).
+//!                         7. Draw a line of text vertically at TPoint(100, 200).
+//!                         8. Check manually.
+//!                         9. Disconnect RFbsSession and destruct CFbsBitGc object and CFbsScreenDevice object, CFbsBitmap object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Two lines of blue text will be drawn vertically as expected.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK        100   T_GraphicsBitgdiApi         \graphics\graphics-bitgdi-fbsbitgc-publicapi-manual.ini
+        CREATE_OBJECT       RFbsSession          fbsSession
+        CREATE_OBJECT       CFbsScreenDevice     fbsScrDev
+        CREATE_OBJECT       CFbsBitGc            fbsBitGc
+        CREATE_OBJECT       CFbsFont             font
+        COMMAND             fbsSession           Connect
+        COMMAND             fbsBitGc             NewL
+        COMMAND             fbsScrDev            NewL                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0008-NewL_command03
+        COMMAND             fbsBitGc             Activate                               GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0008-Activate_command04
+        COMMAND             fbsBitGc             Clear
+        COMMAND             fbsBitGc             SetPenColor                            GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0008-SetPenColor_command06
+        COMMAND             fbsScrDev            GetNearestFontToDesignHeightInPixels   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0008-GetNearestFontToDesignHeightInPixels_command07
+        COMMAND             fbsBitGc             UseFont                                GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0008-UseFont_command08
+        COMMAND             fbsBitGc             DrawTextVertical                       GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0008-DrawTextVertical_command09
+        COMMAND             fbsBitGc             DrawTextVertical                       GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0008-DrawTextVertical_command10
+        COMMAND             fbsScrDev            Update
+        DELAY               6000000
+        COMMAND             fbsBitGc             PromptMessage                          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0008-PromptMessage_command12
+        COMMAND             fbsBitGc             DiscardFont 
+        COMMAND             fbsScrDev            ReleaseFont                            GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0008-ReleaseFont_command14
+        COMMAND             fbsSession           Disconnect
+        COMMAND             fbsBitGc             ~
+        COMMAND             fbsScrDev            ~
+     END_TEST_BLOCK
+END_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0008
+
+
+START_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0009
+//! @SYMTestCaseID          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0009
+//! @SYMAPI                 CFbsBitGc::DrawEllipse(const TRect{ref})
+//! @SYMAuthor              Forbes Fu
+//! @SYMCreationDate        02/04/2009
+//! @SYMTestCaseDesc        Draw an ellipse.
+//! @SYMTestActions         1. Create and connect a RFbsSession object.
+//!                         2. Create a CFbsScreenDevice object.
+//!                         3. Create a CFbsBitGc object and activate it.
+//!                         4. Clear the device.
+//!                         5. Set brush style ESolidStyle.
+//!                         6. Set brush color TRgb(0, 255, 0).
+//!                         7. Draw an ellipse at TRect(20, 20, 100, 160).
+//!                         8. Check manually .
+//!                         9. Disconnect RFbsSession and destruct CFbsBitGc object and CFbsScreenDevice object, CFbsBitmap object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults A green ellipse is drawn as expected.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK        100   T_GraphicsBitgdiApi         \graphics\graphics-bitgdi-fbsbitgc-publicapi-manual.ini
+        CREATE_OBJECT       RFbsSession          fbsSession
+        CREATE_OBJECT       CFbsScreenDevice     fbsScrDev
+        CREATE_OBJECT       CFbsBitGc            fbsBitGc
+        COMMAND             fbsSession           Connect
+        COMMAND             fbsBitGc             NewL
+        COMMAND             fbsScrDev            NewL                                   GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0009-NewL_command03
+        COMMAND             fbsBitGc             Activate                               GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0009-Activate_command04
+        COMMAND             fbsBitGc             Clear
+        COMMAND             fbsBitGc             SetBrushStyle                          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0009-SetBrushStyle_command06
+        COMMAND             fbsBitGc             SetBrushColor                          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0009-SetBrushColor_command07
+        COMMAND             fbsBitGc             DrawEllipse                            GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0009-DrawEllipse_command08      
+        COMMAND             fbsScrDev            Update
+        DELAY               6000000
+        COMMAND             fbsBitGc             PromptMessage                          GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0009-PromptMessage_command12
+        COMMAND             fbsSession           Disconnect
+        COMMAND             fbsBitGc             ~
+        COMMAND             fbsScrDev            ~
+     END_TEST_BLOCK
+END_TESTCASE GRAPHICS-BITGDI-FbsBitGc-PublicApi-manual-0009
+
+

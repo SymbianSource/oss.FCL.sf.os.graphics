@@ -1,0 +1,818 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName		GRAPHICS-WSERV-Events-PublicApi
+//! @SYMScriptTestEnvironment	This test script requires a basic ROM.
+
+///////////////////////////////////////////////////////////////////////////////
+// GRAPHICS-WSERV-Events-PublicApi.script
+//
+// Tests all public elements of the RWsSession class
+// as a means of confidence that the API works as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for
+// RWsSession related classes.
+// Negative testing is performed to confirm that correct errors are returned
+// when incorrect parameters are given.
+//
+// The tests are fully automated.
+///////////////////////////////////////////////////////////////////////////////
+
+
+LOAD_SUITE	T_GraphicsWservAPI
+
+
+// ****************************************************************************
+// RWsEvent
+// ****************************************************************************
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0001
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0001
+//! @SYMAPI			TWsEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		18/12/2007
+//! @SYMTestCaseDesc		TWsEvent(): create a TWsEvent object by C++ defaut constructor
+//!				Uses API elements: TWsEvent(),Type()
+//! @SYMTestActions		1. use new() to create a RWsSession and TWsEvent object
+//!				2. use Connect() to make a connection with window server
+//!				3. use new() and Construct() to create a RWindowGroup
+//!				4. use EventReady() to request standard events from the window server
+//!				5. Wait for an event, A EEventFocusGained event should be triggered from the RWindowGroup::Construct
+//!				6. Get the event
+//!				7. use Type() to get the type of event that occurred
+//!				8. Close the session
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	TWsEvent Type should be EEventFocusGained
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	TWsEvent	we
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		we		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new				GRAPHICS-WSERV-Events-PublicApi-0001-0001-new_command04
+		COMMAND		wingrp		Construct			GRAPHICS-WSERV-Events-PublicApi-0001-0001-Construct_command05
+		COMMAND		ws		EventReady
+		OUTSTANDING
+		COMMAND		ws		GetEvent			GRAPHICS-WSERV-Events-PublicApi-0001-0001-GetEvent_command07
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0001-0001-Type_command08
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0001
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0002
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0002
+//! @SYMAPI			TWsEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		17/09/2007
+//! @SYMTestCaseDesc		Int(): get the event data as a TInt
+//!				Uses API elements: TWsEvent::Type & SetType, Int
+//! @SYMTestActions		1. use new() to create a TWsEvent object
+//!				2. use SetType() to set event type to EEventUser
+//!				3. use Type() to get and check the event type = EEventUser
+//!				4. execute Int() and set the event data as TInt=100
+//!				5. execute Int() to get and check if the event data is TInt=100
+//!				6. Destruct the TWsEvent object
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	No errors
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	TWsEvent	we
+		COMMAND		we		new
+		COMMAND		we		SetType				GRAPHICS-WSERV-Events-PublicApi-0002-0001-SetType_command01
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0002-0001-Type_command02
+		COMMAND		we		Int				GRAPHICS-WSERV-Events-PublicApi-0002-0001-Int_command03
+		COMMAND		we		Int				GRAPHICS-WSERV-Events-PublicApi-0002-0001-Int_command04
+		COMMAND		we		~
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0002
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0003
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0003
+//! @SYMAPI			TWsEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		17/09/2007
+//! @SYMTestCaseDesc		ErrorMessage(): Gets an error event
+//!				Uses API elements: TWsEvent::Type & SetType, ErrorMessage
+//! @SYMTestActions		1. use new() to create a TWsEvent object
+//!				2. use SetType() to set event type to EEventUser
+//!				3. use Type() to get and check the event type = EEventUser
+//!				4. execute ErrorMessage() and set the error category to 100 and error to 200
+//!				5. execute ErrorMessage() to get and check if the error category and error as expected
+//!				6. Destruct the TWsEvent object
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	No errors
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	TWsEvent	we
+		COMMAND		we		new
+		COMMAND		we		SetType				GRAPHICS-WSERV-Events-PublicApi-0003-0001-SetType_command01
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0003-0001-Type_command02
+		COMMAND		we		ErrorMessage			GRAPHICS-WSERV-Events-PublicApi-0003-0001-ErrorMessage_command03
+		COMMAND		we		ErrorMessage			GRAPHICS-WSERV-Events-PublicApi-0003-0001-ErrorMessage_command04
+		COMMAND		we		~
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0003
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0004
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0004
+//! @SYMAPI			TWsEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		17/09/2007
+//! @SYMTestCaseDesc		EventData(): Gets information about the event
+//!				Uses API elements: TWsEvent::Type & SetType, EventData
+//! @SYMTestActions		1. use new() to create a TWsEvent object
+//!				2. use SetType() to set event type to EEventUser
+//!				3. use Type() to get and check the event type = EEventUser
+//!				4. execute EventData() and set the event data of first 3 bytes to 10, 20, 30
+//!				5. execute EventData() to get and check if the event data of the first 3 bytes as expected
+//!				6. Destruct the TWsEvent object
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	No errors
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	TWsEvent	we
+		COMMAND		we		new
+		COMMAND		we		SetType				GRAPHICS-WSERV-Events-PublicApi-0004-0001-SetType_command01
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0004-0001-Type_command02
+		COMMAND		we		EventData			GRAPHICS-WSERV-Events-PublicApi-0004-0001-EventData_command03
+		COMMAND		we		EventData			GRAPHICS-WSERV-Events-PublicApi-0004-0001-EventData_command04
+		COMMAND		we		~
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0004
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0005
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0005
+//! @SYMAPI			TWsEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		18/12/2007
+//! @SYMTestCaseDesc		SetHandle(), Handle(): Set and Get the window handle
+//!				Uses API elements: TWsEvent(),SetHandle(),Handle()
+//! @SYMTestActions		1. use new() to create a TWsEvent object
+//!				2. use SetHandle() to set the handle
+//!				3. use Handle() to get the handle
+//!				4. Close the session
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	Handle returned is that set with SetHandle
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	TWsEvent	we
+		COMMAND		we		new
+		COMMAND		we		SetHandle 			GRAPHICS-WSERV-Events-PublicApi-0005-0001-SetHandle_command02
+		COMMAND		we		Handle				GRAPHICS-WSERV-Events-PublicApi-0005-0001-Handle_command03
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0005
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0006
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0006
+//! @SYMAPI			TWsEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		18/12/2007
+//! @SYMTestCaseDesc		SetType(), Type(): Set and Get the event type
+//!				Uses API elements: TWsEvent(),SetType(),Type()
+//! @SYMTestActions		1. use new() to create a TWsEvent object
+//!				2. use SetType() to set Type
+//!				3. use Type() to get the Type
+//!				4. Close the session
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	Type returned is that set with SetType
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	TWsEvent	we
+		COMMAND		we		new
+		COMMAND		we		SetType 			GRAPHICS-WSERV-Events-PublicApi-0006-0001-SetType_command02
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0006-0001-Type_command03
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0006
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0007
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0007
+//! @SYMAPI			TWsEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		13/09/2007
+//! @SYMTestCaseDesc		Pointer(): Gets the pointer event
+//!				Uses API elements: RWsSession::Connect & EventReady & GetEvent & SimulateRawEvent, RWindowGroup::Construct, RWindow::Construct & Activate, TWsEvent::Type & Handle
+//! @SYMTestActions		1. use new() to create a RWsSession and TWsEvent object
+//!				2. use Connect() to make a connection with window server
+//!				3. use new() and Construct() to create a RWindowGroup
+//!				4. use EventReady() to request standard events from the window server
+//!				5. Wait for an event, A EEventFocusGained event should be triggered from the RWindowGroup::Construct
+//!				6. Get the event
+//!				7. use Type() to get the type of event that occurred
+//!				8. use new() and Construct() to create a RWindow as the child of the RWindowGroup within the RWsSession
+//!				9. Activate() the RWindow to make it to receive events
+//!				10. use SimulateRawEvent() to trigger a EButton1Down event at (10,15) on default device number 0
+//!				11. use Flush() to send all pending commands to WSERV
+//!				12. use EventReady() to request standard events from the window server
+//!				13. Wait for an event, the raw event should be wrapped into a EEventPointer event and triggered
+//!				14. use Type() to check the received event type should be EEventPointer
+//!				15. use Handle() to check the received event handle should be the client handle of RWindow, i.e. 2
+//!				16. execute Pointer() to check the received pointer event with type=EButton1Down and position (10,15)
+//!				17. Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	Pointer() call without causing panic, and returned TPointerEvent is the same as expected
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	TWsEvent	we
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindow		win
+		COMMAND		ws		new
+		COMMAND		we		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new				GRAPHICS-WSERV-Events-PublicApi-0001-0001-new_command04
+		COMMAND		wingrp		Construct			GRAPHICS-WSERV-Events-PublicApi-0001-0001-Construct_command05
+		COMMAND		ws		EventReady
+		OUTSTANDING
+		COMMAND		ws		GetEvent			GRAPHICS-WSERV-Events-PublicApi-0001-0001-GetEvent_command07
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0001-0001-Type_command08
+
+		COMMAND		win		new				GRAPHICS-WSERV-Events-PublicApi-0001-0001-new_command04
+		COMMAND		win		Construct			GRAPHICS-WSERV-Events-PublicApi-0007-0001-Construct_command01
+		COMMAND		win		Activate
+
+		COMMAND		ws		SimulateRawEvent		GRAPHICS-WSERV-Events-PublicApi-0007-0001-SimulateRawEvent_command02
+		COMMAND		ws		Flush
+		COMMAND		ws		EventReady
+		OUTSTANDING
+		COMMAND		ws		GetEvent			GRAPHICS-WSERV-Events-PublicApi-0007-0001-GetEvent_command03
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0007-0001-Type_command04
+		COMMAND		we		Handle				GRAPHICS-WSERV-Events-PublicApi-0007-0001-Handle_command05
+		COMMAND		we		Pointer				GRAPHICS-WSERV-Events-PublicApi-0007-0001-Pointer_command06
+
+		COMMAND		win		Close
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0007
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0008
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0008
+//! @SYMAPI			TWsEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		13/09/2007
+//! @SYMTestCaseDesc		Key(): get the key event
+//!				Uses API elements: RWsSession::Connect & EventReady & GetEvent & SimulateKeyEvent, RWindowGroup::Construct, TWsEvent::Type & Handle
+//! @SYMTestActions		1. use new() to create a RWsSession and TWsEvent object
+//!				2. use Connect() to make a connection with window server
+//!				3. use new() and Construct() to create a RWindowGroup
+//!				4. use EventReady() to request standard events from the window server
+//!				5. Wait for an event, A EEventFocusGained event should be triggered from the RWindowGroup::Construct
+//!				6. Get the event
+//!				7. use Type() to get the type of event that occurred
+//!				8. use SimulateKeyEvent() to trigger a key event of keycode=EKeyF1 and modifiers=EModifierCtrl
+//!				9. use Flush() to send all pending commands to WSERV
+//!				10. use EventReady() to request standard events from the window server
+//!				11. Wait for an event, the raw event should be wrapped into a EEventKey event and triggered
+//!				12. use Type() to check the received event type should be EEventKey
+//!				13. use Handle() to check the received event handle should be the client handle of RWindowGroup, i.e. 1
+//!				14. execute Key() to check the received key event with code=EKeyF1 and modifiers=EModifierCtrl and repeats=0
+//!				15. Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	No errors
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	TWsEvent	we
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		we		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new				GRAPHICS-WSERV-Events-PublicApi-0001-0001-new_command04
+		COMMAND		wingrp		Construct			GRAPHICS-WSERV-Events-PublicApi-0001-0001-Construct_command05
+		COMMAND		ws		EventReady
+		OUTSTANDING
+		COMMAND		ws		GetEvent			GRAPHICS-WSERV-Events-PublicApi-0001-0001-GetEvent_command07
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0001-0001-Type_command08
+
+		COMMAND		ws		SimulateKeyEvent		GRAPHICS-WSERV-Events-PublicApi-0008-0001-SimulateKeyEvent_command01
+		COMMAND		ws		Flush
+		COMMAND		ws		EventReady
+		OUTSTANDING
+		COMMAND		ws		GetEvent			GRAPHICS-WSERV-Events-PublicApi-0008-0001-GetEvent_command02
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0008-0001-Type_command03
+		COMMAND		we		Handle				GRAPHICS-WSERV-Events-PublicApi-0008-0001-Handle_command04
+		COMMAND		we		Key				GRAPHICS-WSERV-Events-PublicApi-0008-0001-Key_command05
+
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0008
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0009
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0009
+//! @SYMAPI			TWsEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		18/12/2007
+//! @SYMTestCaseDesc		SetTimeNow(): Sets the event time to the current time
+//!				Uses API elements: TWsEvent(),SetTimeNow()
+//! @SYMTestActions		1. use new() to create a TWsEvent object
+//!				2. use SetTimeNow() to set the event time to the current time
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	Event time set
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	TWsEvent	we
+		COMMAND		we		new
+		COMMAND		we		SetTimeNow		
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0009
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0010
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0010
+//! @SYMAPI			TWsEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		18/12/2007
+//! @SYMTestCaseDesc		Time(): Gets the time when the event occurred
+//!				Uses API elements: TWsEvent(),SetTimeNow(),Time()
+//! @SYMTestActions		1. use new() to create a TWsEvent object
+//!				2. use SetTimeNow() to set the event time to the current time
+//!				3. use Time() to get  the time when the event occurred
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	No errors
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	TWsEvent	we
+		COMMAND		we		new
+		COMMAND		we		SetTimeNow		
+		COMMAND		we		Time			
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0010
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0011
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0011
+//! @SYMAPI			TWsEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		14/09/2007
+//! @SYMTestCaseDesc		ModifiersChanged(): Gets information about the modifier changed event.
+//!				Uses API elements: RWsSession::Connect & EventReady & GetEvent & SimulateRawEvent, RWindowGroup::Construct & EnableModifierChangedEvents, TWsEvent::Type & Handle
+//! @SYMTestActions		1. use new() to create a RWsSession and TWsEvent object
+//!				2. use Connect() to make a connection with window server
+//!				3. use new() and Construct() to create a RWindowGroup
+//!				4. use EventReady() to request standard events from the window server
+//!				5. Wait for an event, A EEventFocusGained event should be triggered from the RWindowGroup::Construct
+//!				6. Get the event
+//!				7. use Type() to get the type of event that occurred
+//!				8. use EnableModifierChangedEvents() to request modifier changed event for modifier EModifierCapsLock and to send when EEventControlAlways
+//!				9. use SimulateRawEvent() to trigger a raw event of type=EKeyDown and stdscancode=EStdKeyCapsLock
+//!				10. use Flush() to send all pending commands to WSERV
+//!				10. use EventReady() to request standard events from the window server
+//!				11. Wait for an event, the raw event should be wrapped into a EEventModifiersChanged event and triggered
+//!				12. use Type() to check the received event type should be EEventModifiersChanged
+//!				13. use Handle() to check the received event handle should be the client handle of RWindowGroup, i.e. 1
+//!				14. execute ModifiersChanged() to check the received modifier changed event with changedmodifier=EModifierCapsLock & modifier=EModifierCapsLock
+//!				15. Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	information about the visibility changed event returned
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	TWsEvent	we
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		we		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new				GRAPHICS-WSERV-Events-PublicApi-0001-0001-new_command04
+		COMMAND		wingrp		Construct			GRAPHICS-WSERV-Events-PublicApi-0001-0001-Construct_command05
+		COMMAND		ws		EventReady
+		OUTSTANDING
+		COMMAND		ws		GetEvent			GRAPHICS-WSERV-Events-PublicApi-0001-0001-GetEvent_command07
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0001-0001-Type_command08
+
+		COMMAND		wingrp		EnableModifierChangedEvents	GRAPHICS-WSERV-Events-PublicApi-0011-0001-EnableModifierChangedEvents_command01
+		COMMAND		ws		SimulateRawEvent		GRAPHICS-WSERV-Events-PublicApi-0011-0001-SimulateRawEvent_command02
+		COMMAND		ws		SimulateRawEvent		GRAPHICS-WSERV-Events-PublicApi-0011-0001-SimulateRawEvent_command03
+		COMMAND		ws		Flush
+		COMMAND		ws		EventReady
+		OUTSTANDING
+		COMMAND		ws		GetEvent			GRAPHICS-WSERV-Events-PublicApi-0011-0001-GetEvent_command04
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0011-0001-Type_command05
+		COMMAND		we		Handle				GRAPHICS-WSERV-Events-PublicApi-0011-0001-Handle_command06
+		COMMAND		we		ModifiersChanged		GRAPHICS-WSERV-Events-PublicApi-0011-0001-ModifiersChanged_command07
+
+		COMMAND		ws		SimulateRawEvent		GRAPHICS-WSERV-Events-PublicApi-0011-0001-SimulateRawEvent_command08
+		COMMAND		ws		SimulateRawEvent		GRAPHICS-WSERV-Events-PublicApi-0011-0001-SimulateRawEvent_command09
+		COMMAND		ws		Flush
+		COMMAND		ws		EventReady
+		OUTSTANDING
+		COMMAND		ws		GetEvent			GRAPHICS-WSERV-Events-PublicApi-0011-0001-GetEvent_command10
+
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0011
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0012
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0012
+//! @SYMAPI			TWsEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		14/09/2007
+//! @SYMTestCaseDesc		VisibilityChanged(): Gets information about the visibility changed event.
+//!				Uses API elements: RWsSession::Connect & EventReady & GetEvent & SimulateRawEvent, RWindowGroup::Construct, RWindow::Construct & EnableVisibilityChangeEvents, TWsEvent::Type & Handle
+//! @SYMTestActions		1. use new() to create a RWsSession and TWsEvent object
+//!				2. use Connect() to make a connection with window server
+//!				3. use new() and Construct() to create a RWindowGroup
+//!				4. use EventReady() to request standard events from the window server
+//!				5. Wait for an event, A EEventFocusGained event should be triggered from the RWindowGroup::Construct
+//!				6. Get the event
+//!				7. use Type() to get the type of event that occurred
+//!				8. use new() and Construct() to create a RWindow as the child of the RWindowGroup within the RWsSession
+//!				9. Activate() the RWindow to display and make it to receive events
+//!				10. use EnableVisibilityChangeEvents() to request visibility changed events of RWindow
+//!				11. use EventReady() to request standard events from the window server
+//!				12. Wait for an event, the raw event should be wrapped into a EEventWindowVisibilityChanged event and triggered
+//!				13. use Type() to check the received event type should be EEventModifiersChanged
+//!				14. use Handle() to check the received event handle should be the client handle of RWindow, i.e. 2
+//!				15. execute VisibilityChanged() to check the received visibility changed event of ECanBeSeen|EFullyVisible
+//!				16. Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	information about the visibility changed event returned
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	TWsEvent	we
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindow		win
+		COMMAND		ws		new
+		COMMAND		we		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new				GRAPHICS-WSERV-Events-PublicApi-0001-0001-new_command04
+		COMMAND		wingrp		Construct			GRAPHICS-WSERV-Events-PublicApi-0001-0001-Construct_command05
+		COMMAND		ws		EventReady
+		OUTSTANDING
+		COMMAND		ws		GetEvent			GRAPHICS-WSERV-Events-PublicApi-0001-0001-GetEvent_command07
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0001-0001-Type_command08
+
+		COMMAND		win		new				GRAPHICS-WSERV-Events-PublicApi-0001-0001-new_command04
+		COMMAND		win		Construct			GRAPHICS-WSERV-Events-PublicApi-0012-0001-Construct_command01
+		COMMAND		win		Activate
+		COMMAND		win		EnableVisibilityChangeEvents
+
+		COMMAND		ws		EventReady
+		OUTSTANDING
+		COMMAND		ws		GetEvent			GRAPHICS-WSERV-Events-PublicApi-0012-0001-GetEvent_command02
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0012-0001-Type_command03
+		COMMAND		we		Handle				GRAPHICS-WSERV-Events-PublicApi-0012-0001-Handle_command04
+		COMMAND		we		VisibilityChanged		GRAPHICS-WSERV-Events-PublicApi-0012-0001-VisibilityChanged_command05
+
+		COMMAND		win		Close
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0012
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0013
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0013
+//! @SYMAPI			TWsEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		14/09/2007
+//! @SYMTestCaseDesc		const VisibilityChanged(): Gets information about the visibility changed event.
+//!				Uses API elements: TWsEvent(),Type(),VisibilityChanged()
+//! @SYMTestActions		1. use new() to create a RWsSession and TWsEvent object
+//!				2. use Connect() to make a connection with window server
+//!				3. use new() and Construct() to create a RWindowGroup
+//!				4. use EventReady() to request standard events from the window server
+//!				5. Wait for an event, A EEventFocusGained event should be triggered from the RWindowGroup::Construct
+//!				6. Get the event
+//!				7. use Type() to get the type of event that occurred
+//!				8. use new() and Construct() to create a RWindow as the child of the RWindowGroup within the RWsSession
+//!				9. Activate() the RWindow to display and make it to receive events
+//!				10. use EnableVisibilityChangeEvents() to request visibility changed events of RWindow
+//!				11. use EventReady() to request standard events from the window server
+//!				12. Wait for an event, the raw event should be wrapped into a EEventWindowVisibilityChanged event and triggered
+//!				13. use Type() to check the received event type should be EEventModifiersChanged
+//!				14. use Handle() to check the received event handle should be the client handle of RWindow, i.e. 2
+//!				15. execute VisibilityChanged() to get constant and check the received visibility changed event of ECanBeSeen|EFullyVisible
+//!				16. Destruct and close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	information about the visibility changed event returned
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	TWsEvent	we
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindow		win
+		COMMAND		ws		new
+		COMMAND		we		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new				GRAPHICS-WSERV-Events-PublicApi-0001-0001-new_command04
+		COMMAND		wingrp		Construct			GRAPHICS-WSERV-Events-PublicApi-0001-0001-Construct_command05
+		COMMAND		ws		EventReady
+		OUTSTANDING
+		COMMAND		ws		GetEvent			GRAPHICS-WSERV-Events-PublicApi-0001-0001-GetEvent_command07
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0001-0001-Type_command08
+
+		COMMAND		win		new				GRAPHICS-WSERV-Events-PublicApi-0001-0001-new_command04
+		COMMAND		win		Construct			GRAPHICS-WSERV-Events-PublicApi-0013-0001-Construct_command01
+		COMMAND		win		Activate
+		COMMAND		win		EnableVisibilityChangeEvents
+
+		COMMAND		ws		EventReady
+		OUTSTANDING
+		COMMAND		ws		GetEvent			GRAPHICS-WSERV-Events-PublicApi-0013-0001-GetEvent_command02
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0013-0001-Type_command03
+		COMMAND		we		Handle				GRAPHICS-WSERV-Events-PublicApi-0013-0001-Handle_command04
+		COMMAND		we		VisibilityChanged		GRAPHICS-WSERV-Events-PublicApi-0013-0001-VisibilityChanged_command05
+
+		COMMAND		win		Close
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0013
+
+
+// ****************************************************************************
+// TWsPriorityKeyEvent
+// ****************************************************************************
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0014
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0014
+//! @SYMAPI			TWsPriorityKeyEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		16/08/2007
+//! @SYMTestCaseDesc 		Key(): get the priority key event.
+//!				Uses API elements: RWsSession::Connect & PriorityKeyReady & SimulateKeyEvent & GetPriorityKey & Flush, RWindowGroup::Construct & AddPriorityKey
+//! @SYMTestActions		1.	Create and construct a RWindowGroup to receive the priority key event
+//!				1.1	New and connect a RWsSession
+//!				1.2	New and construct a RWindowGroup within the RWsSession
+//!				2.	Use AddPriorityKey() to add a priority key of the RWindowGroup, e.g. keycode=EKeyF1 & modifier=EModifierCtrl
+//!				3.	Use PriorityKeyReady() to request priority key events from WSERV
+//!				4.	Use SimulateKeyEvent() to simulate a key event (with the same keycode and modifier of the specified priority key)
+//!				5.	Use Flush() to send all pending commands in the buffer to WSERV
+//!				6.	Use OUTSTANDING to wait for a priority key event
+//!				7.	when event obtained or timeouted, use GetPriorityKey to retrieve the priority key event
+//!				8.	Execute Key() to get and check if the returned key event is the same as expected
+//!				9.	Close and destruct all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Key() called without causing panic, and the returned key event is the same as the specified priority key, i.e. keycode=EKeyF1 & modifier=EModifierCtrl
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	RWindowGroup		wingrp
+		CREATE_OBJECT	TWsPriorityKeyEvent	we
+
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		wingrp			new			GRAPHICS-WSERV-Events-Setup-0014-0001-new_command001
+		COMMAND		wingrp			Construct		GRAPHICS-WSERV-Events-Setup-0014-0001-Construct_command002
+		COMMAND		we			new
+
+		COMMAND		wingrp			AddPriorityKey		GRAPHICS-WSERV-Events-PublicApi-0014-0001-AddPriorityKey_command001
+		COMMAND		ws			PriorityKeyReady
+		COMMAND		ws			SimulateKeyEvent	GRAPHICS-WSERV-Events-PublicApi-0014-0001-SimulateKeyEvent_command002
+		COMMAND		ws			Flush
+		OUTSTANDING
+		COMMAND		ws			GetPriorityKey		GRAPHICS-WSERV-Events-PublicApi-0014-0001-GetPriorityKey_command003
+		COMMAND		we			Key			GRAPHICS-WSERV-Events-PublicApi-0014-0001-Key_command004
+
+		COMMAND		we			~
+		COMMAND		wingrp			Close
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0014
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0015
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0015
+//! @SYMAPI			TWsPriorityKeyEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		16/08/2007
+//! @SYMTestCaseDesc 		Handle(): get the handle for the window group which added the priority key. 
+//!				Uses API elements: RWsSession::Connect & PriorityKeyReady & SimulateKeyEvent & GetPriorityKey & Flush, RWindowGroup::Construct & AddPriorityKey
+//! @SYMTestActions		1.	Create and construct a RWindowGroup to receive the priority key event
+//!				1.1	New and connect a RWsSession
+//!				1.2	New and construct a RWindowGroup within the RWsSession
+//!				2.	Use AddPriorityKey() to add a priority key of the RWindowGroup, e.g. keycode=EKeyF1 & modifier=EModifierCtrl
+//!				3.	Use PriorityKeyReady() to request priority key events from WSERV
+//!				4.	Use SimulateKeyEvent() to simulate a key event (with the same keycode and modifier of the specified priority key)
+//!				5.	Use Flush() to send all pending commands in the buffer to WSERV
+//!				6.	Use OUTSTANDING to wait for a priority key event
+//!				7.	when event obtained or timeouted, use GetPriorityKey to retrieve the priority key event
+//!				8.	Execute Handle() to get and check if the returned handle is the same as expected
+//!				9.	Close and destruct all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Medium
+//! @SYMTestExpectedResults	Handle() called without causing panic, and the returned handle is the client handle of the RWindowGroup, i.e. 1 (assigned when it constucted)
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	RWsSession		ws
+		CREATE_OBJECT	RWindowGroup		wingrp
+		CREATE_OBJECT	TWsPriorityKeyEvent	we
+
+		COMMAND		ws			new
+		COMMAND		ws			Connect
+		COMMAND		wingrp			new			GRAPHICS-WSERV-Events-Setup-0014-0001-new_command001
+		COMMAND		wingrp			Construct		GRAPHICS-WSERV-Events-Setup-0014-0001-Construct_command002
+		COMMAND		we			new
+
+		COMMAND		wingrp			AddPriorityKey		GRAPHICS-WSERV-Events-PublicApi-0015-0001-AddPriorityKey_command001
+		COMMAND		ws			PriorityKeyReady
+		COMMAND		ws			SimulateKeyEvent	GRAPHICS-WSERV-Events-PublicApi-0015-0001-SimulateKeyEvent_command002
+		COMMAND		ws			Flush
+		OUTSTANDING
+		COMMAND		ws			GetPriorityKey		GRAPHICS-WSERV-Events-PublicApi-0015-0001-GetPriorityKey_command003
+		COMMAND		we			Handle			GRAPHICS-WSERV-Events-PublicApi-0015-0001-Handle_command004
+
+		COMMAND		we			~
+		COMMAND		wingrp			Close
+		COMMAND		ws			Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0015
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0016
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0016
+//! @SYMAPI			TWsPriorityKeyEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		16/08/2007
+//! @SYMTestCaseDesc 		SetHandle(TUint aHandle): set the window group event handle 
+//!				Uses API elements: TWsPriorityKeyEvent::Handle
+//! @SYMTestActions		1.	new a TWsPriorityKeyEvent
+//!				2.	Execute SetHandle() to set the event handle, e.g. 2
+//!				3.	Use Handle() to check the event handle is the same as specified
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	1.	SetHandle() called without causing panic
+//!				2.	After SetHandle() executed, use Handle to check the event handle is the same as specified
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10			T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	TWsPriorityKeyEvent	we
+		COMMAND		we			new
+		COMMAND		we			SetHandle		GRAPHICS-WSERV-Events-PublicApi-0016-0001-SetHandle_command001
+		COMMAND		we			Handle			GRAPHICS-WSERV-Events-PublicApi-0016-0001-Handle_command002
+		COMMAND		we			~
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0016
+
+
+// ****************************************************************************
+// TWsRedrawEvent
+// ****************************************************************************
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0017
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0017
+//! @SYMAPI			TWsRedrawEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		16/08/2007
+//! @SYMTestCaseDesc 		Handle(): Gets the handle of the window which is the target of the redraw event. 
+//!				Uses API elements: RWsSession::Connect & RedrawReady & GetRedraw, RWindowGroup::Construct, RWindowBase::Activate, RWindow::Construct & SetExtent
+//! @SYMTestActions		1.	Create and construct a RWindow to receive the redraw event
+//!				1.1	New and connect a RWsSession
+//!				1.2	New and construct a RWindowGroup within the RWsSession
+//!				1.3	New and construct a RWindow as the child of the RWindowGroup
+//!				1.4	Set the extent of RWindow to (5,6) and height=15, width=10
+//!				1.5	Activate RWindow to display and enable it to receive event
+//!				2.	Use RedrawReady to request redraw events from WSERV
+//!				3.	Use OUTSTANDING to wait for a redraw event
+//!				4.	when event obtained or timeouted, use GetRedraw to retrieve the redraw event
+//!				5.	Execute Handle() to get and check if the returned handle is the same as expected
+//!				6.	Close and destruct all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Medium
+//! @SYMTestExpectedResults	Handle() called without causing panic, and the returned handle is the client handle of the RWindow, i.e. 2 (assigned when it constucted)
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindow		win
+		CREATE_OBJECT	TWsRedrawEvent	we
+
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new				GRAPHICS-WSERV-Events-Setup-0017-0001-new_command001
+		COMMAND		wingrp		Construct			GRAPHICS-WSERV-Events-Setup-0017-0001-Construct_command002
+		COMMAND		win		new				GRAPHICS-WSERV-Events-Setup-0017-0001-new_command001
+		COMMAND		win		Construct			GRAPHICS-WSERV-Events-Setup-0017-0001-Construct_command003
+		COMMAND		win		SetExtent			GRAPHICS-WSERV-Events-Setup-0017-0001-SetExtent_command004
+		COMMAND		win		Activate
+		COMMAND		we		new
+
+		COMMAND		ws		RedrawReady
+		OUTSTANDING
+		COMMAND		ws		GetRedraw			GRAPHICS-WSERV-Events-PublicApi-0017-0001-GetRedraw_command001
+		COMMAND		we		Handle				GRAPHICS-WSERV-Events-PublicApi-0017-0001-Handle_command002
+
+		COMMAND		we		~
+		COMMAND		win		Close
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0017
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0018
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0018
+//! @SYMAPI			TWsRedrawEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		16/08/2007
+//! @SYMTestCaseDesc 		Rect(): Gets the rectangle to redraw.
+//!				Uses API elements: RWsSession::Connect & RedrawReady & GetRedraw, RWindowGroup::Construct, RWindowBase::Activate, RWindow::Construct & SetExtent
+//! @SYMTestActions		1.	Create and construct a RWindow to receive the redraw event
+//!				1.1	New and connect a RWsSession
+//!				1.2	New and construct a RWindowGroup within the RWsSession
+//!				1.3	New and construct a RWindow as the child of the RWindowGroup
+//!				1.4	Set the extent of RWindow to (5,6) and height=15, width=10
+//!				1.5	Activate RWindow to display and enable it to receive event
+//!				2.	Use RedrawReady to request redraw events from WSERV
+//!				3.	Use OUTSTANDING to wait for a redraw event
+//!				4.	when event obtained or timeouted, use GetRedraw to retrieve the redraw event
+//!				5.	Execute Rect() to get and check if the returned rectangle is the same as expected
+//!				6.	Close and destruct all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Rect() called without causing panic, and the returned rectangle is the size of the RWindow ((0,0),(10,15))
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindow		win
+		CREATE_OBJECT	TWsRedrawEvent	we
+
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new				GRAPHICS-WSERV-Events-Setup-0017-0001-new_command001
+		COMMAND		wingrp		Construct			GRAPHICS-WSERV-Events-Setup-0017-0001-Construct_command002
+		COMMAND		win		new				GRAPHICS-WSERV-Events-Setup-0017-0001-new_command001
+		COMMAND		win		Construct			GRAPHICS-WSERV-Events-Setup-0017-0001-Construct_command003
+		COMMAND		win		SetExtent			GRAPHICS-WSERV-Events-Setup-0017-0001-SetExtent_command004
+		COMMAND		win		Activate
+		COMMAND		we		new
+
+		COMMAND		ws		RedrawReady
+		OUTSTANDING
+		COMMAND		ws		GetRedraw			GRAPHICS-WSERV-Events-PublicApi-0018-0001-GetRedraw_command001
+		COMMAND		we		Rect				GRAPHICS-WSERV-Events-PublicApi-0018-0001-Rect_command002
+
+		COMMAND		we		~
+		COMMAND		win		Close
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0018
+
+
+START_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0020
+//! @SYMTestCaseID		GRAPHICS-WSERV-Events-PublicApi-0020
+//! @SYMAPI			TWsEvent
+//! @SYMAuthor			Sunny Yeh
+//! @SYMCreationDate		18/12/2007
+//! @SYMTestCaseDesc		SetType(), Type(): Set and Get the event type usign a TInt
+//!				Uses API elements: TWsEvent(),SetType(),Type()
+//! @SYMTestActions		1. use new() to create a TWsEvent object
+//!				2. use SetType() to set Type
+//!				3. use Type() to get the Type
+//!				4. Close the session
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	Type returned is that set with SetType
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+		CREATE_OBJECT	TWsEvent	we
+		COMMAND		we		new
+		COMMAND		we		SetType 			GRAPHICS-WSERV-Events-PublicApi-0020-0001-SetType_command02
+		COMMAND		we		Type				GRAPHICS-WSERV-Events-PublicApi-0020-0001-Type_command03
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-Events-PublicApi-0020

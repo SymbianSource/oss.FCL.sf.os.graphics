@@ -1,0 +1,1699 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName		GRAPHICS-WSERV-WindowGroup-PublicApi
+//! @SYMScriptTestEnvironment	This test script requires a basic ROM.
+
+///////////////////////////////////////////////////////////////////////////////
+// GRAPHICS-WSERV-WindowGroup-PublicApi.script
+//
+// Tests all public elements of the RWindowGroup class
+// as a means of confidence that the API works as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for
+// RWindowGroup related classes.
+// Negative testing is performed to confirm that correct errors are returned
+// when incorrect parameters are given.
+//
+// The tests are fully automated.
+///////////////////////////////////////////////////////////////////////////////
+
+
+LOAD_SUITE	T_GraphicsWservAPI
+
+
+// ****************************************************************************
+// RWindowGroup
+// ****************************************************************************
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0001
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0001
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		18/12/2006
+//! @SYMTestCaseDesc		RWindowGroup(): create a RWindowGroup object with default C++ constructor
+//!							Uses API elements: RWindowGroup()
+//! @SYMTestActions			simply execute new() a RWindowGroup to create the object
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		Low
+//! @SYMTestExpectedResults	RWindowGroup object was created without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI			\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		wingrp		new
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0001
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0002
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0002
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		18/12/2006
+//! @SYMTestCaseDesc		RWindowGroup(RWsSession &aWs): create a RWindowGroup object within the specified RWsSession
+//!							Uses API elements: RWsSession::Connect, RWindowGroup()
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create a RWindowGroup within the RWsSession
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	RWindowGroup object was created without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI			\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0002-0001-new_command04
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0002
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0003
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0003
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		18/12/2006
+//! @SYMTestCaseDesc		Construct(TUint32 aClientHandle): complete construction of a RWindowGroup
+//!							Uses API elements: RWsSession::Connect, RWindowGroup::Construct
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession
+//!							3.	close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Construct() method returns KErrNone without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI			\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0003-0001-new_command04
+		COMMAND		wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0003-0001-Construct_command05
+
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0003
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0004
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0004
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		Construct(TUint32 aClientHandle, TBool aIsFocusable): complete construction of a RWindowGroup and set initial focus state
+//!							Uses API elements: RWsSession::Connect, RWindowGroup::Construct
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state = TRUE
+//!							3.	close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Construct() method returns KErrNone without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI			\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0004-0001-new_command04
+		COMMAND		wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0004-0001-Construct_command05
+
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0004
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0005
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0005
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		21/08/2007
+//! @SYMTestCaseDesc		Construct(TUint32 aClientHandle, CWsScreenDevice *aScreenDevice): complete construction of a RWindowGroup on a screen
+//!							Uses API elements: RWsSession::Connect, RWindowGroup::Construct
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create a CWsScreenDevice within the RWsSession
+//!							3.	Create and construct a RWindowGroup within the RWsSession and on the CWsScreenDevice
+//!							4.	close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Construct() method returns KErrNone without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI			\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	CWsScreenDevice	scrdev
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		scrdev		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0005-0001-new_command01
+		COMMAND		wingrp		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0005-0001-new_command04
+		COMMAND		wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0005-0001-Construct_command05
+
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0005
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0006
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0006
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		21/08/2007
+//! @SYMTestCaseDesc		Construct(TUint32 aClientHandle, TBool aIsFocusable, CWsScreenDevice *aScreenDevice): complete construction of a RWindowGroup on a screen
+//!							Uses API elements: RWsSession::Connect, RWindowGroup::Construct
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create a CWsScreenDevice within the RWsSession
+//!							3.	Create and construct a RWindowGroup within the RWsSession and on the CWsScreenDevice, and set initial focus state = TRUE
+//!							4.	close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Construct() method returns KErrNone without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI			\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	CWsScreenDevice	scrdev
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		scrdev		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0006-0001-new_command01
+		COMMAND		wingrp		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0006-0001-new_command04
+		COMMAND		wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0006-0001-Construct_command05
+
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0006
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0007
+//! @SYMTestCaseID		GRAPHICS-WSERV-WindowGroup-PublicApi-0007
+//! @SYMAPI			RWindowGroup
+//! @SYMAuthor			Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		ConstructChildApp(TInt aIdOfParentWindowGroup, TUint32 aClientHandle): Completes construction of a window group
+//!				Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and construct a parent RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!				3.	Use new() to create a RWindowGroup as child window group
+//!				4.	Execute ConstructChildApp() to construct window group as the child of the parent RWindowGroup
+//!				5.	Close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	ConstructChildApp() method returns KErrNone without causing panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindowGroup	wingrp2
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0007-0001-new_command01
+		COMMAND		wingrp		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0007-0001-Construct_command02
+		COMMAND		wingrp		Identifier
+		COMMAND		wingrp2		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0007-0001-new_command04
+		COMMAND		wingrp2		ConstructChildApp	GRAPHICS-WSERV-WindowGroup-PublicApi-0007-0001-ConstructChildApp_command05
+		COMMAND		wingrp2		Close
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0007
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0008
+//! @SYMTestCaseID		GRAPHICS-WSERV-WindowGroup-PublicApi-0008
+//! @SYMAPI			RWindowGroup
+//! @SYMAuthor			Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		ConstructChildApp(TInt aIdOfParentWindowGroup, TUint32 aClientHandle, TBool aIsFocusable): Completes construction of a window group
+//!				Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!				3.	Use new() to create a RWindowGroup as child window group
+//!				4.	Execute ConstructChildApp() to construct window group as the child of the parent RWindowGroup, and with IsFocusable=TRUE
+//!				5.	Close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	ConstructChildApp() method returns KErrNone without causing panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindowGroup	wingrp2
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0008-0001-new_command01
+		COMMAND		wingrp		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0008-0001-Construct_command02
+		COMMAND		wingrp		Identifier
+		COMMAND		wingrp2		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0008-0001-new_command01
+		COMMAND		wingrp2		ConstructChildApp		GRAPHICS-WSERV-WindowGroup-PublicApi-0008-0001-ConstructChildApp_command03
+		COMMAND		wingrp2		Close
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0008
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0009
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0009
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		DefaultOwningWindow(): Makes this window group the default owning window group
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute DefaultOwningWindow to set the RWindowGroup as the default owning window group
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run DefaultOwningWindow() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws		new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0009-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0009-0001-Construct_command05
+		COMMAND			wingrp		DefaultOwningWindow
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0009
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0010
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0010
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		EnableReceiptOfFocus(TBool aState): enable/disable receipt of keyboard focus
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute EnableReceiptOfFocus to enable RWindowGroup receipt of keyboard focus (state=TRUE)
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run EnableReceiptOfFocus() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0010-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0010-0001-Construct_command05
+		COMMAND			wingrp		EnableReceiptOfFocus			GRAPHICS-WSERV-WindowGroup-PublicApi-0010-0001-EnableReceiptOfFocus_command06
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0010
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0011
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0011
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		EnableScreenChangeEvents(): enable screen change event sending
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute EnableReceiptOfFocus to enable RWindowGroup screen change event sending
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run EnableScreenChangeEvents() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0011-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0011-0001-Construct_command05
+		COMMAND			wingrp		EnableScreenChangeEvents
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0011
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0012
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0012
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		AutoForeground(TBool aState): Sets or disables auto-foreground behaviour
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute AutoForeground to enable RWindowGroup auto-foreground behaviour (state=TRUE)
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run AutoForeground() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0012-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0012-0001-Construct_command05
+		COMMAND			wingrp		AutoForeground					GRAPHICS-WSERV-WindowGroup-PublicApi-0012-0001-AutoForeground_command06
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0012
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0013
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0013
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		AllowProcessToCreateChildWindowGroups(TUid aProcessSID): allow a RWindowGroup in the specified process to be be a child of this one
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute AllowProcessToCreateChildWindowGroups to allow the specified process (uid=1) to be a child of the RWindowGroup
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		Medium
+//! @SYMTestExpectedResults	Run AllowProcessToCreateChildWindowGroups() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0013-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0013-0001-Construct_command05
+		COMMAND			wingrp		AllowProcessToCreateChildWindowGroups		GRAPHICS-WSERV-WindowGroup-PublicApi-0013-0001-AllowProcessToCreateChildWindowGroups_command06
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0013
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0014
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0014
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		AddPriorityKey(TUint aKeycode, TUint aModifierMask, TUint aModifier): add a priority key
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute AddPriorityKey to set a priority key as specified
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	AddPriorityKey() method returns KErrNone without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0014-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0014-0001-Construct_command05
+		COMMAND			wingrp		AddPriorityKey			GRAPHICS-WSERV-WindowGroup-PublicApi-0014-0001-AddPriorityKey_command06
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0014
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0015
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0015
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		RemovePriorityKey(TUint aKeycode, TUint aModifierMask, TUint aModifier): remove a priority key
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute RemovePriorityKey to remove a priority key as specified
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run RemovePriorityKey() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0015-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0015-0001-Construct_command05
+		COMMAND			wingrp		RemovePriorityKey			GRAPHICS-WSERV-WindowGroup-PublicApi-0015-0001-RemovePriorityKey_command06
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0015
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0016
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0016
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		SetName(const TDesC &aName): set the window group's name
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close & Name
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute SetName to set the name of the RWindowGroup as specified
+//!							4.	Use Name to get and check if the RWindowGroup's name as specified
+//!							5.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	1.	SetName() method returns KErrNone without causing panic
+//!							2.	after execute SetName(), the RWindowGroup's name is the same as specified
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0016-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0016-0001-Construct_command05
+		COMMAND			wingrp		SetName					GRAPHICS-WSERV-WindowGroup-PublicApi-0016-0001-SetName_command06
+		COMMAND			wingrp		Name					GRAPHICS-WSERV-WindowGroup-PublicApi-0016-0001-Name_command07
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0016
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0017
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0017
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		Name(TDes &aWindowName) const: get the window group's name
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute Name to get and check if the default RWindowGroup's name (should be an empty string)
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	1.	Name() method returns KErrNone without causing panic
+//!							2.	the default RWindowGroup's name is an empty string
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws		new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0017-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0017-0001-Construct_command05
+		COMMAND			wingrp		Name					GRAPHICS-WSERV-WindowGroup-PublicApi-0017-0001-Name_command06
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0017
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0018
+//! @SYMTestCaseID		GRAPHICS-WSERV-WindowGroup-PublicApi-0018
+//! @SYMAPI			RWindowGroup
+//! @SYMAuthor			Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		SetChildGroup: set a window group chain onto the current window group.
+//!				Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!				3.	Create and construct another RWindowGroup (wingrp2) within the RWsSession, and set initial focus state TRUE
+//!				4.	Execute SetChildGroup to set a window group chain (with identifier of wingrp2) onto the first created window group (wingrp)
+//!				5.	Close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	SetChildGroup() method returns KErrNone without causing panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindowGroup	wingrp2
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0018-0001-new_command01
+		COMMAND		wingrp		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0018-0001-Construct_command02
+		COMMAND		wingrp2		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0018-0001-new_command03
+		COMMAND		wingrp2		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0018-0001-Construct_command04
+		COMMAND		wingrp2		Identifier
+		COMMAND		wingrp		SetChildGroup		GRAPHICS-WSERV-WindowGroup-PublicApi-0018-0001-SetChildGroup_command06
+		COMMAND		wingrp2		Close
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0018
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0019
+//! @SYMTestCaseID		GRAPHICS-WSERV-WindowGroup-PublicApi-0019
+//! @SYMAPI			RWindowGroup
+//! @SYMAuthor			Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		ClearChildGroup: clear all children of the current window group
+//!				Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close & SetChildGroup
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!				3.	Create and construct another RWindowGroup (wingrp2) within the RWsSession, and set initial focus state TRUE
+//!				4.	Use SetChildGroup to set a window group chain (with identifier of wingrp2) onto the first created window group (wingrp)
+//!				5.	Execute ClearChildGroup on the first created window group (wingrp)
+//!				6.	Close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	ClearChildGroup() method returns KErrNone without causing panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindowGroup	wingrp2
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0019-0001-new_command01
+		COMMAND		wingrp		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0019-0001-Construct_command02
+		COMMAND		wingrp2		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0019-0001-new_command04
+		COMMAND		wingrp2		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0019-0001-Construct_command05
+		COMMAND		wingrp2		Identifier
+		COMMAND		wingrp		SetChildGroup		GRAPHICS-WSERV-WindowGroup-PublicApi-0019-0001-SetChildGroup_command07
+		COMMAND		wingrp		ClearChildGroup
+		COMMAND		wingrp2		Close
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0019
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0020
+//! @SYMTestCaseID		GRAPHICS-WSERV-WindowGroup-PublicApi-0020
+//! @SYMAPI			RWindowGroup
+//! @SYMAuthor			Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		SetOwningWindowGroup(TInt aIdentifier): set the owning window group for this window group
+//!				Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!				3.	Create and construct another RWindowGroup (wingrp2) within the RWsSession, and set initial focus state TRUE
+//!				4.	Execute SetOwningWindowGroup on wingrp2 to set the owning window group (to the identifier of wingrp)
+//!				5.	Close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run SetOwningWindowGroup() method without causing panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindowGroup	wingrp2
+		COMMAND		ws		new
+		COMMAND		ws			Connect
+		COMMAND		wingrp		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0020-0001-new_command01
+		COMMAND		wingrp		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0020-0001-Construct_command02
+		COMMAND		wingrp		Identifier
+		COMMAND		wingrp2		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0020-0001-new_command04
+		COMMAND		wingrp2		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0020-0001-Construct_command05
+		COMMAND		wingrp2		SetOwningWindowGroup	GRAPHICS-WSERV-WindowGroup-PublicApi-0020-0001-SetOwningWindowGroup_command06
+		COMMAND		wingrp2		Close
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0020
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0021
+//! @SYMTestCaseID		GRAPHICS-WSERV-WindowGroup-PublicApi-0021
+//! @SYMAPI			RWindowGroup
+//! @SYMAuthor			Ryan Lu
+//! @SYMCreationDate		05/06/2007
+//! @SYMTestCaseDesc		SetOrdinalPriorityAdjust(TInt aAdjust): set the window group's priority adjust value
+//!				Uses API elements: RWsSession::Connect, RWindowGroup::Construct, WindowTreeNode::OrdinalPosition & OrdinalPriority
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!				3.	Create and construct another RWindowGroup (wingrp2) within the RWsSession, and set initial focus state TRUE
+//!				4.	Use OrdinalPosition() & OrdinalPriority() to check the initial ordinal position and priority of both RWindowGroup
+//!				5.	Execute SetOrdinalPriorityAdjust to adjust priority of wingrp (from 0) to 4 (different priority from the other RWindowGroup)
+//!				6.	Use OrdinalPosition() & OrdinalPriority() to check the ordinal position and priority of both RWindowGroup
+//!				7.	Execute SetOrdinalPriorityAdjust to adjust priority of wingrp (from 4) to 0 (the same priority as the other RWindowGroup)
+//!				8.	Use OrdinalPosition() & OrdinalPriority() to check the ordinal position and priority of both RWindowGroup
+//!				9.	Close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	1.	SetOrdinalPriorityAdjust() method returns KErrNone without causing panic
+//!				2.	SetOrdinalPriorityAdjust() would adjust ordinal position and priority of associated RWindowGroup as expected
+//!					2.1	initially, both RWindowGroup have ordinal priority = 0
+//!						RWindowGroup that constructed later (wingrp2) has ordinal position = 0, the other one (wingrp) has ordinal position = 1
+//!					2.2	after SetOrdinalPriorityAdjust wingrp to 4
+//!						wingrp2 still has ordinal priority = 0, position = 0
+//!						wingrp is adjusted to priority = 4, and reset its postion = 0
+//!					2.3	after SetOrdinalPriorityAdjust wingrp to 0
+//!						wingrp is adjusted to priority = 0 (same as the wingrp2), and reset its postion = 0
+//!						wingrp2 still has ordinal priority = 0, as position 0 is used by wingrp, adjust its position to next position = 1
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI		\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindowGroup	wingrp2
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new				GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-new_command01
+		COMMAND		wingrp		Construct			GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-Construct_command02
+		COMMAND		wingrp2		new				GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-new_command01
+		COMMAND		wingrp2		Construct			GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-Construct_command03
+
+		COMMAND		wingrp		OrdinalPosition			GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-expected_1
+		COMMAND		wingrp		OrdinalPriority			GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-expected_0
+		COMMAND		wingrp2		OrdinalPosition			GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-expected_0
+		COMMAND		wingrp2		OrdinalPriority			GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-expected_0
+		COMMAND		wingrp		SetOrdinalPriorityAdjust	GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-SetOrdinalPriorityAdjust_command04
+		COMMAND		wingrp		OrdinalPosition			GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-expected_0
+		COMMAND		wingrp		OrdinalPriority			GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-expected_4
+		COMMAND		wingrp2		OrdinalPosition			GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-expected_0
+		COMMAND		wingrp2		OrdinalPriority			GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-expected_0
+		COMMAND		wingrp		SetOrdinalPriorityAdjust	GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-SetOrdinalPriorityAdjust_command05
+		COMMAND		wingrp		OrdinalPosition			GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-expected_0
+		COMMAND		wingrp		OrdinalPriority			GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-expected_0
+		COMMAND		wingrp2		OrdinalPosition			GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-expected_1
+		COMMAND		wingrp2		OrdinalPriority			GRAPHICS-WSERV-WindowGroup-PublicApi-0021-0001-expected_0
+
+		COMMAND		wingrp2		Close
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0021
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0022
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0022
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		06/06/2007
+//! @SYMTestCaseDesc		SetOrdinalPositionErr(TInt aPos, TInt aOrdinalPriority): set the ordinal position and ordinal priority of a window group
+//!							Uses API elements: RWsSession::Connect, RWindowGroup::Construct, WindowTreeNode::OrdinalPosition & OrdinalPriority
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Create and construct another RWindowGroup (wingrp2) within the RWsSession, and set initial focus state TRUE
+//!							4.	Use OrdinalPosition() & OrdinalPriority() to check the initial ordinal position and priority of both RWindowGroup
+//!							5.	Execute SetOrdinalPositionErr to set wingrp to new ordinal position 4 and keep priority 0 (keep priority, new position case)
+//!							6.	Use OrdinalPosition() & OrdinalPriority() to check if the ordinal position and priority of both RWindowGroup as expected
+//!							7.	Execute SetOrdinalPositionErr to set wingrp to new ordinal position 0 and keep priority 0 (keep priority, collision position case)
+//!							8.	Use OrdinalPosition() & OrdinalPriority() to check if the ordinal position and priority of both RWindowGroup as expected
+//!							9.	Execute SetOrdinalPositionErr to set wingrp to new ordinal position 3 and priority 1 (new priority, new position case)
+//!							10.	Use OrdinalPosition() & OrdinalPriority() to check if the ordinal position and priority of both RWindowGroup as expected
+//!							11.	Execute SetOrdinalPositionErr to set wingrp to new ordinal position 3 and priority 0 (new priority, same position case)
+//!							12.	Use OrdinalPosition() & OrdinalPriority() to check if the ordinal position and priority of both RWindowGroup as expected
+//!							13.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	1.	SetOrdinalPositionErr() method returns KErrNone without causing panic
+//!							2.	SetOrdinalPositionErr()
+//!							2.1		initially, both RWindowGroup have ordinal priority = 0
+//!									RWindowGroup that constructed later (wingrp2) has ordinal position = 0, the other one (wingrp) has ordinal position = 1
+//!							2.2		after test action 5 (keep priority, new position case)
+//!									wingrp2 still has ordinal priority = 0, position = 0
+//!									wingrp set its ordinal priority = 0, position = 4 (as specified)
+//!							2.3		after test action 7 (keep priority, collision position case)
+//!									wingrp set its ordinal priority = 0, position = 4 (as specified)
+//!									wingrp2 still has ordinal priority = 0, as position 0 is used by wingrp, adjust its position to next position = 1
+//!							2.4		after test action 9 (new priority, new position case)
+//!									wingrp set its ordinal priority = 1 (as specified), as no window group within priority 1, adjust its position = 0
+//!									wingrp2 still has ordinal priority = 0, as wingrp moved out from position 0, adjust its position to position = 0
+//!							2.5		after test action 11 (new priority, same position case)
+//!									wingrp set its ordinal priority = 0, position = 3 (as specified)
+//!									wingrp2 still has ordinal priority = 0, position = 0
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI			\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindowGroup	wingrp2
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-new_command01
+		COMMAND		wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-Construct_command02
+		COMMAND		wingrp2		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-new_command01
+		COMMAND		wingrp2		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-Construct_command03
+
+		COMMAND		wingrp		OrdinalPosition		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_1
+		COMMAND		wingrp		OrdinalPriority		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_0
+		COMMAND		wingrp2		OrdinalPosition		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_0
+		COMMAND		wingrp2		OrdinalPriority		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_0
+		COMMAND		wingrp		SetOrdinalPositionErr	GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-SetOrdinalPositionErr_command04
+		COMMAND		wingrp		OrdinalPosition		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_4
+		COMMAND		wingrp		OrdinalPriority		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_0
+		COMMAND		wingrp2		OrdinalPosition		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_0
+		COMMAND		wingrp2		OrdinalPriority		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_0
+		COMMAND		wingrp		SetOrdinalPositionErr	GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-SetOrdinalPositionErr_command05
+		COMMAND		wingrp		OrdinalPosition		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_0
+		COMMAND		wingrp		OrdinalPriority		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_0
+		COMMAND		wingrp2		OrdinalPosition		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_1
+		COMMAND		wingrp2		OrdinalPriority		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_0
+		COMMAND		wingrp		SetOrdinalPositionErr	GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-SetOrdinalPositionErr_command06
+		COMMAND		wingrp		OrdinalPosition		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_0
+		COMMAND		wingrp		OrdinalPriority		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_1
+		COMMAND		wingrp2		OrdinalPosition		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_0
+		COMMAND		wingrp2		OrdinalPriority		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_0
+		COMMAND		wingrp		SetOrdinalPositionErr	GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-SetOrdinalPositionErr_command07
+		COMMAND		wingrp		OrdinalPosition		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_3
+		COMMAND		wingrp		OrdinalPriority		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_0
+		COMMAND		wingrp2		OrdinalPosition		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_0
+		COMMAND		wingrp2		OrdinalPriority		GRAPHICS-WSERV-WindowGroup-PublicApi-0022-0001-expected_0
+
+		COMMAND		wingrp2		Close
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0022
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0023
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0023
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		SetTextCursor(RWindowBase &aWin, const TPoint &aPos, const TTextCursor &aCursor): set the text cursor
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute SetTextCursor to set the text cursor
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run SetTextCursor() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RBlankWindow	bnkwin
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0023-0001-new_command01
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0023-0001-Construct_command02
+		COMMAND			bnkwin		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0023-0001-new_command03
+		COMMAND			bnkwin		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0023-0001-Construct_command04
+		COMMAND			wingrp		SetTextCursor					GRAPHICS-WSERV-WindowGroup-PublicApi-0023-0001-SetTextCursor_command05
+		COMMAND			bnkwin		Close
+		COMMAND			wingrp		Close
+		COMMAND			ws			Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0023
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0024
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0024
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		CancelTextCursor():Removes the text cursor
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute CancelTextCursor to remove the text cursor
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run CancelTextCursor() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0024-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0024-0001-Construct_command05
+		COMMAND			wingrp		CancelTextCursor					GRAPHICS-WSERV-WindowGroup-PublicApi-0024-0001-CancelTextCursor_command06
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0024
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0025
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0025
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		SetTextCursor(RWindowBase &aWin, const TPoint &aPos, const TTextCursor &aCursor, const TRect &aClipRect): set the text cursor and its clipping rectangle
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute SetTextCursor to set the text cursor and its clipping rectangle
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run SetTextCursor() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RBlankWindow	bnkwin
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0025-0001-new_command01
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0025-0001-Construct_command02
+		COMMAND			bnkwin		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0025-0001-new_command03
+		COMMAND			bnkwin		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0025-0001-Construct_command04
+		COMMAND			wingrp		SetTextCursor					GRAPHICS-WSERV-WindowGroup-PublicApi-0025-0001-SetTextCursor_command05
+		COMMAND			bnkwin		Close
+		COMMAND			wingrp		Close
+		COMMAND			ws			Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0025
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0026
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0026
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		DisableKeyClick(TBool aState): disable key clicks
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute DisableKeyClick to disable key clicks (state=TRUE)
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run DisableKeyClick() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0026-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0026-0001-Construct_command05
+		COMMAND			wingrp		DisableKeyClick					GRAPHICS-WSERV-WindowGroup-PublicApi-0026-0001-DisableKeyClick_command06
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0026
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0027
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0027
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		DisableScreenChangeEvents(): disable screen change event sending
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute DisableScreenChangeEvents to disable screen change event sending
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run DisableScreenChangeEvents() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0027-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0027-0001-Construct_command05
+		COMMAND			wingrp		DisableScreenChangeEvents
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0027
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0028
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0028
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		SimulatePointerEvent(): simulate a pointer event
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute SimulatePointerEvent to simulate a EPointerMove evnet
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run SimulatePointerEvent() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0028-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0028-0001-Construct_command05
+		COMMAND			wingrp		SimulatePointerEvent		GRAPHICS-WSERV-WindowGroup-PublicApi-0028-0001-SimulatePointerEvent_command06
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0028
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0034
+//! @SYMTestCaseID		GRAPHICS-WSERV-WindowGroup-PublicApi-0034
+//! @SYMAPI			RWindowGroup
+//! @SYMAuthor			Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		Identifier() const: get the identifier of the window group
+//!				Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!				3.	Execute Identifier to get identifier of the RWindowGroup
+//!				4.	Close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run SimulatePointerEvent() method without causing panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0034-0001-new_command04
+		COMMAND		wingrp		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0034-0001-Construct_command05
+		COMMAND		wingrp		Identifier
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0034
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0035
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0035
+//! @SYMAPI				RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate			11/12/2006
+//! @SYMTestCaseDesc			CaptureKey: Requests key capture
+//!					Use API elements: Construct, CaptureKey
+//! @SYMTestActions			1. Create and connect a RWsSession
+//!					2. Create and construct a RWindowGroup within the RWsSession, and set initial focus state as specified
+//!					3. Capture a key in the RWindowGroup
+//!					4. Create and construct a second RWindowGroup within the RWsSession
+//!					5. Capture the same key in the second RWindowGroup, with a priority
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority			Critical
+//! @SYMTestExpectedResults		The both CaptureKey returns successful.
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindowGroup	wingrp2
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-new_command04
+		COMMAND		wingrp		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-Construct_command05
+		COMMAND		wingrp		CaptureKey		GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-CaptureKey_command6
+		COMMAND		wingrp2		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-new_command04
+		COMMAND		wingrp2		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-Construct_command09
+		COMMAND		wingrp2		CaptureKey		GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-CaptureKey_command10
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0035
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0036
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0036
+//! @SYMAPI				RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate			11/12/2006
+//! @SYMTestCaseDesc			CancelCaptureKey: Cancels a request for key capture
+//!					Use API elements: Construct, CaptureKey, CancelCaptureKey
+//! @SYMTestActions			1. Recreate a RWsSession and a RWindowGroup and then Capture a key in the RWindowGroup
+//!					2. Cancel the Captured Key.
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority			Low
+//! @SYMTestExpectedResults		CancelCaptureKey() method returns KErrNone without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-new_command04
+		COMMAND		wingrp		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-Construct_command05
+		COMMAND		wingrp		CaptureKey		GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-CaptureKey_command6
+		COMMAND		wingrp		CancelCaptureKey	GRAPHICS-WSERV-WindowGroup-PublicApi-0036-0001-CancelCaptureKey_command7
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0036
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0037
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0037
+//! @SYMAPI				RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate			11/12/2006
+//! @SYMTestCaseDesc		CaptureKeyUpAndDowns(TUint aScanCode, TUint aModifierMask, TUint aModifier):Requests the capture of key-up and key-down events on behalf of a window group
+//!							Uses API elements: RWsSession::Connect, RWindowGroup::Construct,CaptureKeyUpAndDowns and close()
+//! @SYMTestActions			1. Create and connect a RWsSession
+//!					2. Create and construct a RWindowGroup within the RWsSession, and set initial focus state as specified
+//!					3. Capture a key in the RWindowGroup
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority			Low
+//! @SYMTestExpectedResults		CaptureKeyUpAndDowns returns successful.
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new				GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-new_command04
+		COMMAND		wingrp		Construct			GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-Construct_command05
+		COMMAND		wingrp		CaptureKeyUpAndDowns		GRAPHICS-WSERV-WindowGroup-PublicApi-0037-0001-CaptureKeyUpAndDowns_command6
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0037
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0038
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0038
+//! @SYMAPI				RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate			11/12/2006
+//! @SYMTestCaseDesc			CancelCaptureKeyUpAndDowns(TInt32 aCaptureKey): Cancels a capture request for a key up or key down event.
+//!					Use API elements: Construct, CaptureKeyUpAndDowns, CancelCaptureKeyUpAndDowns
+//! @SYMTestActions			1. Recreate a RWsSession and a RWindowGroup and then Capture a key in the RWindowGroup
+//!					2. Cancel the Captured Key.
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority			Low
+//! @SYMTestExpectedResults		CancelCaptureKeyUpAndDowns() method returns KErrNone without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new				GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-new_command04
+		COMMAND		wingrp		Construct			GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-Construct_command05
+		COMMAND		wingrp		CaptureKeyUpAndDowns		GRAPHICS-WSERV-WindowGroup-PublicApi-0037-0001-CaptureKeyUpAndDowns_command6
+		COMMAND		wingrp		CancelCaptureKeyUpAndDowns	GRAPHICS-WSERV-WindowGroup-PublicApi-0038-0001-CancelCaptureKeyUpAndDOwns
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0038
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0039
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0039
+//! @SYMAPI				RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate			11/12/2006
+//! @SYMTestCaseDesc		CaptureKeyUpAndDowns(TUint aScanCode, TUint aModifierMask, TUint aModifier):Requests the capture of key-up and key-down events on behalf of a window group
+//!							Uses API elements: RWsSession::Connect, RWindowGroup::Construct,CaptureKeyUpAndDowns and close()
+//! @SYMTestActions			1. Create and connect a RWsSession
+//!					2. Create and construct a RWindowGroup within the RWsSession, and set initial focus state as specified
+//!					3. Capture the same key in the second RWindowGroup, with a priority
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority			Low
+//! @SYMTestExpectedResults		CaptureKeyUpAndDowns returns successful.
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new				GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-new_command04
+		COMMAND		wingrp		Construct			GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-Construct_command09
+		COMMAND		wingrp		CaptureKeyUpAndDowns		GRAPHICS-WSERV-WindowGroup-PublicApi-0039-0001-CaptureKeyUpAndDowns_command10
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0039
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0040
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0040
+//! @SYMAPI				RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate			11/12/2006
+//! @SYMTestCaseDesc			CaptureLongKey: Requests capture of long key presses.
+//!					Use API elements: Construct, CaptureLongKey
+//! @SYMTestActions			1. Create and connect a RWsSession
+//!					2. Create and construct a RWindowGroup within the RWsSession, and set initial focus state as specified
+//!					3. Capture a key in the RWindowGroup
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority			Low
+//! @SYMTestExpectedResults		CaptureLongKey returns successful.
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new				GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-new_command04
+		COMMAND		wingrp		Construct			GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-Construct_command05
+		COMMAND		wingrp		CaptureLongKey			GRAPHICS-WSERV-WindowGroup-PublicApi-0040-0001-CaptureLongKey_command6
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0040
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0041
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0041
+//! @SYMAPI				RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate			11/12/2006
+//! @SYMTestCaseDesc			CancelCaptureLongKey: Cancels a previous long key capture request.
+//!					Use API elements: Construct, CaptureLongKey, CancelCaptureLongKey
+//! @SYMTestActions			1. Recreate a RWsSession and a RWindowGroup and then Capture a key in the RWindowGroup
+//!					2. Cancel the Captured Key.
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority			Low
+//! @SYMTestExpectedResults		CancelCaptureLongKey() method returns KErrNone without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-new_command04
+		COMMAND		wingrp		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-Construct_command05
+		COMMAND		wingrp		CaptureLongKey			GRAPHICS-WSERV-WindowGroup-PublicApi-0040-0001-CaptureLongKey_command6
+		COMMAND		wingrp		CancelCaptureLongKey			GRAPHICS-WSERV-WindowGroup-PublicApi-0041-0001-CancelCaptureLongKey_command7
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0041
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0042
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0042
+//! @SYMAPI				RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate			11/12/2006
+//! @SYMTestCaseDesc			CaptureLongKey: Requests capture of long key presses.
+//!					Use API elements: Construct, CaptureLongKey
+//! @SYMTestActions			1. Create and connect a RWsSession
+//!					2. Create and construct a RWindowGroup within the RWsSession, and set initial focus state as specified
+//!					3. Capture a key, with a priority
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority			Low
+//! @SYMTestExpectedResults		CaptureLongKey returns successful.
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-new_command04
+		COMMAND		wingrp		Construct			GRAPHICS-WSERV-WindowGroup-PublicApi-0035-0001-Construct_command09
+		COMMAND		wingrp		CaptureLongKey			GRAPHICS-WSERV-WindowGroup-PublicApi-0042-0001-CaptureLongKey_command10
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0042
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0043
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0043
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		AddPriorityKey(TUint aKeycode, TUint aModifierMask, TUint aModifier): add a priority key
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute AddPriorityKey to set a priority key as specified
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	AddPriorityKey() method returns KErrNone without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0043-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0043-0001-Construct_command05
+		COMMAND			wingrp		AddPriorityKey			GRAPHICS-WSERV-WindowGroup-PublicApi-0043-0001-AddPriorityKey_command06
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0043
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0044
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0044
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		DisableKeyClick(TBool aState): disable key clicks
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute DisableKeyClick to disable key clicks (state=FALSE)
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run DisableKeyClick() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0044-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0044-0001-Construct_command05
+		COMMAND			wingrp		DisableKeyClick					GRAPHICS-WSERV-WindowGroup-PublicApi-0044-0001-DisableKeyClick_command06
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0044
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0045
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0045
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		EnableReceiptOfFocus(TBool aState): enable/disable receipt of keyboard focus
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute EnableReceiptOfFocus to enable RWindowGroup receipt of keyboard focus (state=TRUE)
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run EnableReceiptOfFocus() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0045-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0045-0001-Construct_command05
+		COMMAND			wingrp		EnableReceiptOfFocus			GRAPHICS-WSERV-WindowGroup-PublicApi-0045-0001-EnableReceiptOfFocus_command06
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0045
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0046
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0046
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		SetName(const TDesC &aName): set the window group's name
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close & Name
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute SetName to set the name of the RWindowGroup as specified
+//!							4.	Use Name to get and check if the RWindowGroup's name as specified
+//!							5.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	1.	SetName() method returns KErrNone without causing panic
+//!							2.	after execute SetName(), the RWindowGroup's name is the same as specified
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0046-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0046-0001-Construct_command05
+		COMMAND			wingrp		SetName					GRAPHICS-WSERV-WindowGroup-PublicApi-0046-0001-SetName_command06
+		COMMAND			wingrp		Name					GRAPHICS-WSERV-WindowGroup-PublicApi-0046-0001-Name_command07
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK  
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0046
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0047
+//! @SYMTestCaseID		GRAPHICS-WSERV-WindowGroup-PublicApi-0047
+//! @SYMAPI			RWindowGroup
+//! @SYMAuthor			Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		SetOwningWindowGroup(TInt aIdentifier): set the owning window group for this window group
+//!				Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!				3.	Create and construct another RWindowGroup (wingrp2) within the RWsSession, and set initial focus state TRUE
+//!				4.	Execute SetOwningWindowGroup on wingrp2 to set the owning window group (to the identifier of wingrp)
+//!				5.	Close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run SetOwningWindowGroup() method without causing panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindowGroup	wingrp2
+		COMMAND		ws		new
+		COMMAND		ws			Connect
+		COMMAND		wingrp		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0047-0001-new_command01
+		COMMAND		wingrp		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0047-0001-Construct_command02
+		COMMAND		wingrp		Identifier
+		COMMAND		wingrp2		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0047-0001-new_command04
+		COMMAND		wingrp2		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0047-0001-Construct_command05
+		COMMAND		wingrp2		SetOwningWindowGroup	GRAPHICS-WSERV-WindowGroup-PublicApi-0047-0001-SetOwningWindowGroup_command06
+		COMMAND		wingrp2		Close
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK 
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0047
+
+
+//=====
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0048
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0048
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		18/12/2006
+//! @SYMTestCaseDesc		Construct(TUint32 aClientHandle): complete construction of a RWindowGroup
+//!							Uses API elements: RWsSession::Connect, RWindowGroup::Construct
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup with client handle -99999999 within the RWsSession
+//!							3.	close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Construct() method returns KErrNone without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI			\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0048-0001-new_command04
+		COMMAND		wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0048-0001-Construct_command05
+
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0048
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0049
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0049
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		Construct(TUint32 aClientHandle, TBool aIsFocusable): complete construction of a RWindowGroup and set initial focus state
+//!							Uses API elements: RWsSession::Connect, RWindowGroup::Construct
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup with client handle -99999999 within the RWsSession, and set initial focus state = TRUE
+//!							3.	close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Construct() method returns KErrNone without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI			\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0049-0001-new_command04
+		COMMAND		wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0049-0001-Construct_command05
+
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0049
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0050
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0050
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		21/08/2007
+//! @SYMTestCaseDesc		Construct(TUint32 aClientHandle, CWsScreenDevice *aScreenDevice): complete construction of a RWindowGroup on a screen
+//!							Uses API elements: RWsSession::Connect, RWindowGroup::Construct
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create a CWsScreenDevice within the RWsSession
+//!							3.	Create and construct a RWindowGroup with client handle -99999999 within the RWsSession and on the CWsScreenDevice
+//!							4.	close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Construct() method returns KErrNone without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI			\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	CWsScreenDevice	scrdev
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		scrdev		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0050-0001-new_command01
+		COMMAND		wingrp		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0050-0001-new_command04
+		COMMAND		wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0050-0001-Construct_command05
+
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0050
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0051
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0051
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		21/08/2007
+//! @SYMTestCaseDesc		Construct(TUint32 aClientHandle, TBool aIsFocusable, CWsScreenDevice *aScreenDevice): complete construction of a RWindowGroup on a screen
+//!							Uses API elements: RWsSession::Connect, RWindowGroup::Construct
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create a CWsScreenDevice within the RWsSession
+//!							3.	Create and construct a RWindowGroup with client handle -99999999 within the RWsSession and on the CWsScreenDevice, and set initial focus state = TRUE
+//!							4.	close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Construct() method returns KErrNone without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI			\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	CWsScreenDevice	scrdev
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		scrdev		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0051-0001-new_command01
+		COMMAND		wingrp		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0051-0001-new_command04
+		COMMAND		wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0051-0001-Construct_command05
+
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0051
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0052
+//! @SYMTestCaseID		GRAPHICS-WSERV-WindowGroup-PublicApi-0052
+//! @SYMAPI			RWindowGroup
+//! @SYMAuthor			Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		ConstructChildApp(TInt aIdOfParentWindowGroup, TUint32 aClientHandle): Completes construction of a window group
+//!				Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and construct a parent RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!				3.	Use new() to create a RWindowGroup as child window group
+//!				4.	Execute ConstructChildApp() to construct window group with client handle -99999999 as the child of the parent RWindowGroup
+//!				5.	Close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	ConstructChildApp() method returns KErrNone without causing panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindowGroup	wingrp2
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0052-0001-new_command01
+		COMMAND		wingrp		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0052-0001-Construct_command02
+		COMMAND		wingrp		Identifier
+		COMMAND		wingrp2		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0052-0001-new_command04
+		COMMAND		wingrp2		ConstructChildApp	GRAPHICS-WSERV-WindowGroup-PublicApi-0052-0001-ConstructChildApp_command05
+		COMMAND		wingrp2		Close
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0052
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0053
+//! @SYMTestCaseID		GRAPHICS-WSERV-WindowGroup-PublicApi-0053
+//! @SYMAPI			RWindowGroup
+//! @SYMAuthor			Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		ConstructChildApp(TInt aIdOfParentWindowGroup, TUint32 aClientHandle, TBool aIsFocusable): Completes construction of a window group
+//!				Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions		1.	Create and connect a RWsSession
+//!				2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!				3.	Use new() to create a RWindowGroup as child window group
+//!				4.	Execute ConstructChildApp() to construct window group with client handle -99999999 as the child of the parent RWindowGroup, and with IsFocusable=TRUE
+//!				5.	Close all objects used
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	ConstructChildApp() method returns KErrNone without causing panic
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RWindowGroup	wingrp2
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0053-0001-new_command01
+		COMMAND		wingrp		Construct		GRAPHICS-WSERV-WindowGroup-PublicApi-0053-0001-Construct_command02
+		COMMAND		wingrp		Identifier
+		COMMAND		wingrp2		new			GRAPHICS-WSERV-WindowGroup-PublicApi-0053-0001-new_command01
+		COMMAND		wingrp2		ConstructChildApp		GRAPHICS-WSERV-WindowGroup-PublicApi-0053-0001-ConstructChildApp_command03
+		COMMAND		wingrp2		Close
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0053
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0054
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0054
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		AllowProcessToCreateChildWindowGroups(TUid aProcessSID): allow a RWindowGroup in the specified process to be be a child of this one
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute AllowProcessToCreateChildWindowGroups to allow the specified process (uid=-99999999) to be a child of the RWindowGroup
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		Medium
+//! @SYMTestExpectedResults	Run AllowProcessToCreateChildWindowGroups() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0054-0001-new_command04
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0054-0001-Construct_command05
+		COMMAND			wingrp		AllowProcessToCreateChildWindowGroups		GRAPHICS-WSERV-WindowGroup-PublicApi-0054-0001-AllowProcessToCreateChildWindowGroups_command06
+		COMMAND			wingrp			Close
+		COMMAND			ws				Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0054
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0055
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0055
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		05/06/2007
+//! @SYMTestCaseDesc		SetOrdinalPriorityAdjust(TInt aAdjust): set the window group's priority adjust value
+//!							Uses API elements: RWsSession::Connect, RWindowGroup::Construct, WindowTreeNode::OrdinalPosition & OrdinalPriority
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute SetOrdinalPriorityAdjust to adjust priority of wingrp with 99999999 priority value
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	SetOrdinalPriorityAdjust() method returns KErrNone without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0055-0001-new_command01
+		COMMAND		wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0055-0001-Construct_command02
+
+		COMMAND		wingrp		SetOrdinalPriorityAdjust	GRAPHICS-WSERV-WindowGroup-PublicApi-0055-0001-SetOrdinalPriorityAdjust_command03
+
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0055
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0056
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0056
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		06/06/2007
+//! @SYMTestCaseDesc		SetOrdinalPositionErr(TInt aPos, TInt aOrdinalPriority): set the ordinal position and ordinal priority of a window group
+//!							Uses API elements: RWsSession::Connect, RWindowGroup::Construct, WindowTreeNode::OrdinalPosition & OrdinalPriority
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute SetOrdinalPositionErr to set wingrp to new ordinal position with negative value -99999999 and priority with 99999999 value
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	SetOrdinalPositionErr() method returns KErrNone without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI			\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		COMMAND		ws		new
+		COMMAND		ws		Connect
+		COMMAND		wingrp		new					GRAPHICS-WSERV-WindowGroup-PublicApi-0056-0001-new_command01
+		COMMAND		wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0056-0001-Construct_command02
+
+		COMMAND		wingrp		SetOrdinalPositionErr	GRAPHICS-WSERV-WindowGroup-PublicApi-0056-0001-SetOrdinalPositionErr_command03
+
+		COMMAND		wingrp		Close
+		COMMAND		ws		Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0056
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0057
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0057
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		SetTextCursor(RWindowBase &aWin, const TPoint &aPos, const TTextCursor &aCursor): set the text cursor
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute SetTextCursor to set the text cursor with negative value as its origin.
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run SetTextCursor() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RBlankWindow	bnkwin
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0057-0001-new_command01
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0057-0001-Construct_command02
+		COMMAND			bnkwin		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0057-0001-new_command03
+		COMMAND			bnkwin		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0057-0001-Construct_command04
+		COMMAND			wingrp		SetTextCursor					GRAPHICS-WSERV-WindowGroup-PublicApi-0057-0001-SetTextCursor_command05
+		COMMAND			bnkwin		Close
+		COMMAND			wingrp		Close
+		COMMAND			ws			Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0057
+
+
+START_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0058
+//! @SYMTestCaseID			GRAPHICS-WSERV-WindowGroup-PublicApi-0058
+//! @SYMAPI					RWindowGroup
+//! @SYMAuthor				Ryan Lu
+//! @SYMCreationDate		11/12/2006
+//! @SYMTestCaseDesc		SetTextCursor(RWindowBase &aWin, const TPoint &aPos, const TTextCursor &aCursor, const TRect &aClipRect): set the text cursor and its clipping rectangle
+//!							Uses API elements: RWsSession::Connect & Close, RWindowGroup::Construct & Close
+//! @SYMTestActions			1.	Create and connect a RWsSession
+//!							2.	Create and construct a RWindowGroup within the RWsSession, and set initial focus state TRUE
+//!							3.	Execute SetTextCursor to set the text cursor with negative value as its origin and its clipping rectangle with negative value as relative to its origin
+//!							4.	Close all objects used
+//! @SYMTestStatus			Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Run SetTextCursor() method without causing panic
+//! @SYMTestType			CIT
+	START_TEST_BLOCK	10		T_GraphicsWservAPI	\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+		CREATE_OBJECT	RWsSession	ws
+		CREATE_OBJECT	RWindowGroup	wingrp
+		CREATE_OBJECT	RBlankWindow	bnkwin
+		COMMAND			ws			new
+		COMMAND			ws			Connect
+		COMMAND			wingrp		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0058-0001-new_command01
+		COMMAND			wingrp		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0058-0001-Construct_command02
+		COMMAND			bnkwin		new						GRAPHICS-WSERV-WindowGroup-PublicApi-0058-0001-new_command03
+		COMMAND			bnkwin		Construct				GRAPHICS-WSERV-WindowGroup-PublicApi-0058-0001-Construct_command04
+		COMMAND			wingrp		SetTextCursor					GRAPHICS-WSERV-WindowGroup-PublicApi-0058-0001-SetTextCursor_command05
+		COMMAND			bnkwin		Close
+		COMMAND			wingrp		Close
+		COMMAND			ws			Close
+	END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WindowGroup-PublicApi-0058

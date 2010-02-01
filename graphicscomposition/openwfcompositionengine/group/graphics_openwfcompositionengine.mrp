@@ -1,0 +1,8 @@
+component	graphics_openwfcompositionengine
+
+source	\sf\os\graphics\graphicscomposition\openwfcompositionengine
+binary	\sf\os\graphics\graphicscomposition\openwfcompositionengine\group		all
+exports	\sf\os\graphics\graphicscomposition\openwfcompositionengine\group
+notes_source	\component_defs\release.src
+
+ipr O

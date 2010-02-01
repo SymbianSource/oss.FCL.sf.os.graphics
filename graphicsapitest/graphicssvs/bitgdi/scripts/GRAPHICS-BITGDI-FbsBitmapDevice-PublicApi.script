@@ -1,0 +1,1445 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName  GRAPHICS-BitGDI-CFbsBitmapDevice-PublicApi
+//! @SYMScriptTestEnvironment This test script requires a basic ROM.
+
+///////////////////////////////////////////////////////////////////////////////
+// GRAPHICS-BitGDI-CFbsBitmapDevice-PublicApi.script
+//
+// Tests all public elements of the CFbsBitmapDevice class
+// as a means of confidence that the API works as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for
+// CFbsBitmapDevice related classes.
+// Negative testing is performed to confirm that correct errors are returned
+// when incorrect parameters are given.
+//
+// The tests are fully automated.
+///////////////////////////////////////////////////////////////////////////////
+
+
+LOAD_SUITE      T_GraphicsBitGDIAPI
+DELAY           1000
+
+// ****************************************************************************
+// Class Name		CFbsBitmapDevice
+// ****************************************************************************
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0001
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0001
+//! @SYMAPI                 	CFbsBitmapDevice::NewL(CFbsBitmap{ptr})
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	05/01/2009
+//! @SYMTestCaseDesc        	Create CFbsBitmapDevice object by using NewL(CFbsBitmap{ptr}) and destroy it.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object and distroy it.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	CFbsBitmapDevice was created without any error.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0001-Load_command03
+        COMMAND             	fbsBitmap           SetSizeInTwips      GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0001-SetSizeInTwips_command04
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0001-NewL_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0001
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0002
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0002
+//! @SYMAPI                 	CFbsBitmapDevice::NewL(CFbsBitmap{ptr})
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	05/01/2009
+//! @SYMTestCaseDesc        	Negative case, Create CFbsBitmapDevice object with NULL CFbsBitmap* param.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmapDevice Object with Null CFbsBitmap param.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	BITGDI panic will occur as expected.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   	10   	T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0002-NewL_command02
+	END_TEST_BLOCK     		!PanicString=BITGDI     !PanicCode=13
+    RUN_TEST_STEP	100		T_GraphicsBitGDIAPI		utilityClearPanicDlg
+END_TESTCASE 	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0002
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0003
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0003
+//! @SYMAPI                 	CFbsBitmapDevice::NewL(CFbsBitmap{ptr})
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	05/01/2009
+//! @SYMTestCaseDesc        	Negative case, Create CFbsBitmapDevice object by using bad CFbsBitmap object and destroy it.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object.
+//!								3.Create CFbsBitmapDevice Object and distroy it.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	KErrArgument error occurs.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND		!Error=-6	fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0003-NewL_command03
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0003
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0004
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0004
+//! @SYMAPI                 	CFbsBitmapDevice::NewL(CFbsBitmap{ptr})
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	05/01/2009
+//! @SYMTestCaseDesc        	Negative case, create CFbsBitmapDevice object using ROM bitmap.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load a ROM bitmap.
+//!								3.Create CFbsBitmapDevice Object and distroy it.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	KErrAccessDenied error was received.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0004-Load_command03
+        COMMAND             	fbsBitmap           SetSizeInTwips      GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0004-SetSizeInTwips_command04
+        COMMAND		!Error=-21	fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0004-NewL_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0004
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0005
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0005
+//! @SYMAPI                 	CFbsBitmapDevice::NewL(CFbsBitmap{ptr}, const TDesC{ref})
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	05/01/2009
+//! @SYMTestCaseDesc        	Create CFbsBitmapDevice object by using NewL(CFbsBitmap{ptr}, const TDesC{ref}) and destroy it.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object and distroy it.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	CFbsBitmapDevice was created without any error.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0005-Load_command03
+        COMMAND             	fbsBitmap           SetSizeInTwips      GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0005-SetSizeInTwips_command04
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0005-NewL_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0005
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0006
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0006
+//! @SYMAPI                 	CFbsBitmapDevice::NewL(CFbsBitmap{ptr}, const TDesC{ref})
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	05/01/2009
+//! @SYMTestCaseDesc        	Negative case, Create CFbsBitmapDevice object by using bad CFbsBitmap object and destroy it.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object.
+//!								3.Create CFbsBitmapDevice Object and distroy it.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	KErrArgument error occurs.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND		!Error=-6	fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0006-NewL_command03
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0006
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0007
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0007
+//! @SYMAPI                 	CFbsBitmapDevice::NewL(CFbsBitmap{ptr}, const TDesC{ref})
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	05/01/2009
+//! @SYMTestCaseDesc        	Negative case, Create CFbsBitmapDevice object with NULL CFbsBitmap* param.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmapDevice Object with Null CFbsBitmap param.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	BITGDI panic will occur as expected.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   	10   	T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0007-NewL_command02
+	END_TEST_BLOCK     		!PanicString=BITGDI     !PanicCode=13
+    RUN_TEST_STEP	100		T_GraphicsBitGDIAPI		utilityClearPanicDlg
+END_TESTCASE 	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0007
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0008
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0008
+//! @SYMAPI                 	CFbsBitmapDevice::NewL(CFbsBitmap{ptr}, const TDesC{ref})
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	05/01/2009
+//! @SYMTestCaseDesc        	Negative case, create CFbsBitmapDevice object using ROM bitmap.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load a ROM bitmap.
+//!								3.Create CFbsBitmapDevice Object and distroy it.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	KErrAccessDenied error was received.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0008-Load_command03
+        COMMAND             	fbsBitmap           SetSizeInTwips      GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0008-SetSizeInTwips_command04
+        COMMAND		!Error=-21	fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0008-NewL_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0008
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0009
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0009
+//! @SYMAPI                 	CFbsBitmapDevice::~CFbsBitmapDevice()
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	05/01/2009
+//! @SYMTestCaseDesc        	Create CFbsBitmapDevice object by using NewL(CFbsBitmap{ptr}) and destroy it.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object and distroy it.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	CFbsBitmapDevice was deleted without any error.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0009-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0009-NewL_command04
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0009
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0010
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0010
+//! @SYMAPI                 	CFbsBitmapDevice::DrawingBegin(TBool) and CFbsBitmapDevice::DrawingEnd(TBool)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	05/01/2009
+//! @SYMTestCaseDesc        	Create CFbsBitmapDevice object and drawing it.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Create CFbsBitGc Object and related to CFbsBitmapDevice Object.
+//!								5.Call DrawingBegin to begin a draw.
+//!								6.Draw a line on the bitmap.
+//!								7.Call DrawingEnd to end a draw.
+//!								8.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	DrawingBegin and DrawingEnd are called without any error.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        CREATE_OBJECT			CFbsBitGc			fbsBitGc
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0010-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0010-NewL_command04
+        COMMAND					fbsBitGc			NewL
+        COMMAND					fbsBitGc			Activate			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0010-Activate_command05
+        COMMAND					fbsbitdev			DrawingBegin		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0010-DrawingBegin_command06
+        COMMAND					fbsBitGc			DrawLine			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0010-DrawLine_command07
+        COMMAND					fbsbitdev			DrawingEnd			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0010-DrawingEnd_command08
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					fbsBitGc			~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0010
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0011
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0011
+//! @SYMAPI                 	CFbsBitmapDevice::DrawingBegin(TBool) and CFbsBitmapDevice::DrawingEnd(TBool)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	05/01/2009
+//! @SYMTestCaseDesc        	Negative case, Drawing a line on the bitmap without calling DrawingBegin first.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Create CFbsBitGc Object and related to CFbsBitmapDevice Object.
+//!								5.Draw a line on the bitmap.
+//!								6.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	DrawingEnd are called without any error.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        CREATE_OBJECT			CFbsBitGc			fbsBitGc
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0011-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0011-NewL_command04
+        COMMAND					fbsBitGc			NewL
+        COMMAND					fbsBitGc			Activate			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0011-Activate_command05
+        COMMAND					fbsBitGc			DrawLine			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0011-DrawLine_command06
+        COMMAND					fbsbitdev			DrawingEnd
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					fbsBitGc			~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0011
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0012
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0012
+//! @SYMAPI                 	CFbsBitmapDevice::DrawingBegin(TBool)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	05/01/2009
+//! @SYMTestCaseDesc        	Negative case, call DrawingBegin without DrawingEnd.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Call DrawingBegin to begin a draw.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	DrawingBegin is called without any error.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0012-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0012-NewL_command04
+        COMMAND					fbsbitdev			DrawingBegin		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0012-DrawingBegin_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0012
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0013
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0013
+//! @SYMAPI                 	CFbsBitmapDevice::DrawingEnd(TBool)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	05/01/2009
+//! @SYMTestCaseDesc        	Negative case, call DrawingEnd without call DrawingBegin before.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Call DrawingEnd to begin a draw.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	DrawingBegin is called without any error.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0013-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0013-NewL_command04
+        COMMAND					fbsbitdev			DrawingEnd			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0013-DrawingEnd_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0013
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0014
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0014
+//! @SYMAPI                 	CFbsBitmapDevice::SetPalette(CPalette{ptr}).
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Set a palette to CFbsBitmapDevice Object.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Create CPalette Object.
+//!								5.Set the palette with the existing palette.
+//!								6.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	A Palette was set without any error.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        CREATE_OBJECT           CPalette          	palette
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0014-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0014-NewL_command04
+        COMMAND                 palette           	NewL                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0014-NewL_command05
+        COMMAND					fbsbitdev			SetPalette			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0014-SetPalette_command06
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND                 palette           	~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0014
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0015
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0015
+//! @SYMAPI                 	CFbsBitmapDevice::SetPalette(CPalette{ptr}).
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Negative case, Set a NULL Palette to CFbsBitmapDevice Object.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Create CPalette Object.
+//!								5.Set the NULL Palette.
+//!								6.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	Null palette is set to the device.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        CREATE_OBJECT           CPalette          	palette
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0015-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0015-NewL_command04
+        COMMAND					fbsbitdev			SetPalette			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0015-SetPalette_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND                 palette           	~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0015
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0016
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0016
+//! @SYMAPI                 	CFbsBitmapDevice::GetPalette(CPalette{ptr}{ref}) const
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Get the Palette from the CFbsBitmapDevice object and verify it.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Create CPalette Object.
+//!								5.Set the palette with the existing palette.
+//!								6.Get the palette and verify whether it is the same as we set before.
+//!								7.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	Palette was received as expected.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        CREATE_OBJECT           CPalette          	palette
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0016-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0016-NewL_command04
+        COMMAND                 palette           	NewL                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0016-NewL_command05
+        COMMAND					fbsbitdev			SetPalette			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0016-SetPalette_command06
+        COMMAND					fbsbitdev			GetPalette			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0016-GetPalette_command07
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND                 palette           	~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0016
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0017
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0017
+//! @SYMAPI                 	CFbsBitmapDevice::GetPixel(TRgb{ref}, const TPoint{ref}) const
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Check the  color of specified points of CFbsBitmapDevice object.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create another CFbsBitmap2 Object without load any bitmap.
+//!								4.Create CFbsBitmapDevice Object with CFbsBitmap Object.
+//!								5.Create CFbsBitGc and CFbsBitGc2 objects and related to CFbsBitmapDevice and CFbsScreenDevice separately.
+//!								6.Gets pixel of CFbsBitmap object at point(20, 20) to verify the color of pixel is White.
+//!								7.Gets pixel of CFbsBitmap object at point(10, 30) to verify the color of pixel is Black.
+//!								8.Call BitBlt function of CFbsScreenDevice object with CFbsBitmap object to show the bitmap on the device.
+//!								9.Update the Screendevice to show the bitmap in the Screendevice.
+//!								10.Delay 1 second.
+//!								11.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	The color of specified points matchs with expected value.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        CREATE_OBJECT       	CFbsBitGc           fbsBitGc
+        CREATE_OBJECT       	CFbsScreenDevice    fbsScrDev
+        CREATE_OBJECT       	CFbsBitGc           fbsBitGc2				
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND					fbsBitGc			NewL
+        COMMAND					fbsBitGc2			NewL
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0017-Load_command05
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0017-NewL_command06
+        COMMAND					fbsScrDev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0017-NewL_command07
+        COMMAND					fbsBitGc			Activate			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0017-Activate_command08
+        COMMAND					fbsBitGc2			Activate			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0017-Activate_command09
+        COMMAND					fbsBitGc2			BitBlt				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0017-BitBlt_command10
+        COMMAND					fbsScrDev			Update
+        DELAY		        	1000000
+        COMMAND					fbsbitdev			GetPixel			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0017-GetPixel_command12
+        COMMAND					fbsbitdev			GetPixel			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0017-GetPixel_command13
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND             	fbsScrDev			~
+        COMMAND             	fbsBitGc			~
+        COMMAND             	fbsBitGc2			~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0017
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0018
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0018
+//! @SYMAPI                 	CFbsBitmapDevice::GetPixel(TRgb{ref}, const TPoint{ref}) const
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Negative case, Check the negative x- and y-coordinate/too big x- and y-coordinate.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Gets pixel at point(-1, 0) and check the RGB color is white.
+//!           	              	5.Gets pixel at point(0, -1) and check the RGB color is white.
+//!                         	6.Gets pixel at point(-1, -1) and check the RGB color is white.
+//!                     	    7.Gets pixel at point(10000, 0) and check the RGB color is white.
+//!                  	      	8.Gets pixel at point(0, 10000) and check the RGB color is white.
+//!                         	9.Gets pixel at point(10000, 10000) and check the RGB color is white.
+//!								10.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	The color of specified points matchs with expected value.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0018-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0018-NewL_command04
+        COMMAND					fbsbitdev			GetPixel			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0018-GetPixel_command05
+        COMMAND					fbsbitdev			GetPixel			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0018-GetPixel_command06
+        COMMAND					fbsbitdev			GetPixel			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0018-GetPixel_command07
+        COMMAND					fbsbitdev			GetPixel			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0018-GetPixel_command08
+        COMMAND					fbsbitdev			GetPixel			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0018-GetPixel_command09
+        COMMAND					fbsbitdev			GetPixel			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0018-GetPixel_command10
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0018
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0019
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0019
+//! @SYMAPI                 	CFbsBitmapDevice::GetScanLine(TDes8{ref}, const TPoint{ref}, TInt, TDisplayMode)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Gets a scanline into a buffer and verify it.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Get scanline from  CFbsBitmapDevice and verify the pixels just drawed.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	The color of specified scanline matchs with expected value.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0019-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0019-NewL_command04
+        COMMAND					fbsbitdev			GetScanLine			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0019-GetScanLine_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0019
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0020
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0020
+//! @SYMAPI                 	CFbsBitmapDevice::GetScanLine(TDes8{ref}, const TPoint{ref}, TInt, TDisplayMode)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Negative test, uses a zero-length buffer.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Get scanline from  CFbsBitmapDevice and verify the pixels just drawed.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	GetScanLine is called without panic.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0020-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0020-NewL_command04
+        COMMAND					fbsbitdev			GetScanLine			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0020-GetScanLine_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0020
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0021
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0021
+//! @SYMAPI                 	CFbsBitmapDevice::GetScanLine(TDes8{ref}, const TPoint{ref}, TInt, TDisplayMode)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Negative case, Test for a zero-length scanline.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Get scanline from  CFbsBitmapDevice and verify the pixels just drawed.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	GetScanLine is called without panic.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0021-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0021-NewL_command04
+        COMMAND					fbsbitdev			GetScanLine			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0021-GetScanLine_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0021
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0022
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0022
+//! @SYMAPI                 	CFbsBitmapDevice::GetScanLine(TDes8{ref}, const TPoint{ref}, TInt, TDisplayMode)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Negative case, Test for a negative-length scanline.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Get scanline from  CFbsBitmapDevice and verify the pixels just drawed.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	GetScanLine is called with USER 23 panic received.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0022-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0022-NewL_command04
+        COMMAND					fbsbitdev			GetScanLine			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0022-GetScanLine_command05
+    END_TEST_BLOCK	 !PanicString=USER !PanicCode=23
+    RUN_TEST_STEP		100	T_GraphicsBitGDIAPI	utilityClearPanicDlg
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0022
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0023
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0023
+//! @SYMAPI                 	CFbsBitmapDevice::GetScanLine(TDes8{ref}, const TPoint{ref}, TInt, TDisplayMode)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Negative case, Test for a 99999-length scanline with starting point (0, 0).
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Get scanline from  CFbsBitmapDevice and verify the pixels just drawed.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	GetScanLine is called without panic.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0023-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0023-NewL_command04
+        COMMAND					fbsbitdev			GetScanLine			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0023-GetScanLine_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0023
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0024
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0024
+//! @SYMAPI                 	CFbsBitmapDevice::GetScanLine(TDes8{ref}, const TPoint{ref}, TInt, TDisplayMode)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Negative case, Test for a 10-length scanline with negative starting point (-1, -1).
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Get scanline from  CFbsBitmapDevice and verify the pixels just drawed.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	GetScanLine is called without panic.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0024-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0024-NewL_command04
+        COMMAND					fbsbitdev			GetScanLine			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0024-GetScanLine_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0024
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0025
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0025
+//! @SYMAPI                 	CFbsBitmapDevice::GetScanLine(TDes8{ref}, const TPoint{ref}, TInt, TDisplayMode)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Negative case, Test for a 10-length scanline with starting point (10000, 10000).
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Get scanline from  CFbsBitmapDevice and verify the pixels just drawed.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	GetScanLine is called without panic.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0025-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0025-NewL_command04
+        COMMAND					fbsbitdev			GetScanLine			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0025-GetScanLine_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0025
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0026
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0026
+//! @SYMAPI                 	CFbsBitmapDevice::GetScanLine(TDes8{ref}, const TPoint{ref}, TInt, TDisplayMode)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Negative case, call scanline with bad TDisplayMode params.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Get scanline from  CFbsBitmapDevice and verify the pixels just drawed.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	A BITGDI panic is received.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0026-Load_command03
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0026-NewL_command04
+        COMMAND					fbsbitdev			GetScanLine			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0026-GetScanLine_command05
+    END_TEST_BLOCK 		!PanicString=BITGDI !PanicCode=9
+	RUN_TEST_STEP		100	T_GraphicsBitGDIAPI	utilityClearPanicDlg
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0026
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0027
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0027
+//! @SYMAPI                 	CFbsBitmapDevice::HorizontalPixelsToTwips(TInt)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Translates a horizontal dimension of a bitmap device in pixels into twips
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Translates a horizontal dimension pixels into twips.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	HorizontalPixelsToTwips doesn't cause panic and the returned twips are as expected
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0027-Load_command03
+        COMMAND					fbsbitdev			NewL						GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0027-NewL_command04
+        COMMAND					fbsbitdev			HorizontalPixelsToTwips		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0027-HorizontalPixelsToTwips_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0027
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0028
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0028
+//! @SYMAPI                 	CFbsBitmapDevice::HorizontalPixelsToTwips(TInt)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Translates a horizontal dimension of a bitmap device in pixels into twips
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Set the size of the bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Translates a horizontal dimension pixels into twips.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	HorizontalPixelsToTwips doesn't cause panic and the returned twips are as expected
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0028-Load_command03
+        COMMAND             	fbsBitmap           SetSizeInTwips              GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0028-SetSizeInTwips_command04
+        COMMAND					fbsbitdev			NewL						GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0028-NewL_command05
+        COMMAND					fbsbitdev			HorizontalPixelsToTwips		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0028-HorizontalPixelsToTwips_command06
+        COMMAND					fbsbitdev			HorizontalPixelsToTwips		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0028-HorizontalPixelsToTwips_command07
+        COMMAND					fbsbitdev			HorizontalPixelsToTwips		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0028-HorizontalPixelsToTwips_command08
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0028
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0029
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0029
+//! @SYMAPI                 	CFbsBitmapDevice::HorizontalTwipsToPixels(TInt)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Translates a horizontal dimension of a screen device in twips into pixels.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Translates a horizontal dimension twips into pixels.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	HorizontalTwipsToPixels doesn't cause panic and the returned pixels are as expected.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0029-Load_command03
+        COMMAND					fbsbitdev			NewL						GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0029-NewL_command04
+        COMMAND					fbsbitdev			HorizontalTwipsToPixels		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0029-HorizontalTwipsToPixels_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0029
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0030
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0030
+//! @SYMAPI                 	CFbsBitmapDevice::HorizontalTwipsToPixels(TInt)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Negative case, Uses big twips/0/small negative twips.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Set the size of the bitmap.
+//!								4.Create CFbsBitmapDevice Object.
+//!								5.Input twips = 1280, return 640.
+//!                             6.Input twips = 0, return 0.
+//!                             7. Input twips = -100, return -49.
+//!								8.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	HorizontalPixelsToTwips doesn't cause panic and the returned twips are as expected
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0030-Load_command03
+        COMMAND             	fbsBitmap           SetSizeInTwips              GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0030-SetSizeInTwips_command04
+        COMMAND					fbsbitdev			NewL						GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0030-NewL_command05
+        COMMAND					fbsbitdev			HorizontalTwipsToPixels		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0030-HorizontalTwipsToPixels_command06
+        COMMAND					fbsbitdev			HorizontalTwipsToPixels		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0030-HorizontalTwipsToPixels_command07
+        COMMAND					fbsbitdev			HorizontalTwipsToPixels		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0030-HorizontalTwipsToPixels_command08
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0030
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0031
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0031
+//! @SYMAPI                 	CFbsBitmapDevice::PaletteAttributes(TBool{ref}, TInt{ref})
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Gets the attributes of the device's palette.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Get PaletteAttributes and verify the palette received is the default.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	The attributes of the Palette returned are the same as expected.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0031-Load_command03
+        COMMAND					fbsbitdev			NewL						GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0031-NewL_command04
+        COMMAND					fbsbitdev			PaletteAttributes			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0031-PaletteAttributes_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0031
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0032
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0032
+//! @SYMAPI                 	CFbsBitmapDevice::PaletteAttributes(TBool{ref}, TInt{ref})
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Gets the attributes of the device's palette.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Set Palette to the device.
+//!								4.Get PaletteAttributes and verify the palette received.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	The attributes of the Palette returned are the same as expected.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        CREATE_OBJECT			CPalette           	palette
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0032-Load_command03
+        COMMAND					fbsbitdev			NewL						GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0032-NewL_command04
+        COMMAND                 palette           	NewL                		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0032-NewL_command05
+        COMMAND					fbsbitdev			SetPalette					GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0032-SetPalette_command06					
+        COMMAND					fbsbitdev			PaletteAttributes			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0032-PaletteAttributes_command07
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0032
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0033
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0033
+//! @SYMAPI                 	CFbsBitmapDevice::SizeInTwips()
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Gets the size of the device, in twips.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Get the size of the device and verify it.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	The size of the device is the same as expected.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0033-Load_command03
+        COMMAND					fbsBitmap			SetSizeInTwips		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0033-SetSizeInTwips_command04
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0033-NewL_command05
+        COMMAND					fbsbitdev			SizeInTwips			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0033-SizeInTwips_command06
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0033
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0034
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0034
+//! @SYMAPI                 	CFbsBitmapDevice::Resize(const TSize {ref})
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Gets the size of the device, in twips.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Get the size of the device.
+//!								5.Resize the size of the device.
+//!								6.Get the size of the device and verify it.
+//!								7.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	The resize the bitmap as expected.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0034-Load_command03
+        COMMAND					fbsBitmap			SetSizeInTwips		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0034-SetSizeInTwips_command04
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0034-NewL_command05
+        COMMAND					fbsbitdev			SizeInTwips			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0034-SizeInTwips_command06
+		COMMAND					fbsbitdev			Resize				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0034-Resize_command07       
+        COMMAND					fbsbitdev			SizeInTwips			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0034-SizeInTwips_command08
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0034
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0035
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0035
+//! @SYMAPI                 	CFbsBitmapDevice::Resize(const TSize {ref})
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Negative case, Set too big size.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Get the size of the device.
+//!								5.Resize the size of the device.
+//!								6.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	KErrTooBig error occurs.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0035-Load_command03
+        COMMAND					fbsBitmap			SetSizeInTwips		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0035-SetSizeInTwips_command04
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0035-NewL_command05
+        COMMAND					fbsbitdev			SizeInTwips			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0035-SizeInTwips_command06
+		COMMAND	 !Error=-40		fbsbitdev			Resize				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0035-Resize_command07       
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0035
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0036
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0036
+//! @SYMAPI                 	CFbsBitmapDevice::Resize(const TSize {ref})
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Negative case, Set Negative width size.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Get the size of the device.
+//!								5.Resize the size of the device.
+//!								6.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	KErrArgument error occurs.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0036-Load_command03
+        COMMAND					fbsBitmap			SetSizeInTwips		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0036-SetSizeInTwips_command04
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0036-NewL_command05
+        COMMAND					fbsbitdev			SizeInTwips			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0036-SizeInTwips_command06
+		COMMAND	 !Error=-6		fbsbitdev			Resize				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0036-Resize_command07        
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0036
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0037
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0037
+//! @SYMAPI                 	CFbsBitmapDevice::Resize(const TSize {ref})
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Negative case, Set Negative Height size.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Get the size of the device.
+//!								5.Resize the size of the device.
+//!								6.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	KErrArgument error occurs.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0037-Load_command03
+        COMMAND					fbsBitmap			SetSizeInTwips		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0037-SetSizeInTwips_command04
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0037-NewL_command05
+        COMMAND					fbsbitdev			SizeInTwips			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0037-SizeInTwips_command06
+		COMMAND	 !Error=-6		fbsbitdev			Resize				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0037-Resize_command07       
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0037
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0038
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0038
+//! @SYMAPI                 	CFbsBitmapDevice::SwapWidthAndHeight()
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Swaps bitmap device's width and height.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object with CFbsBitmap object.
+//!								4.Set the size of the bitmap first.
+//!								5.Swaps bitmap device's width and height.
+//!								6.Verify the device's width and height.
+//!								7.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	Swap the width and heigth as expected.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0038-Load_command03
+        COMMAND					fbsBitmap			SetSizeInTwips		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0038-SetSizeInTwips_command04
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0038-NewL_command05
+        COMMAND					fbsbitdev			Resize				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0038-Resize_command06
+        COMMAND					fbsbitdev			SwapWidthAndHeight
+        COMMAND					fbsbitdev			SizeInPixels		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0038-SizeInPixels_command08
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0038
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0039
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0039
+//! @SYMAPI                 	CFbsBitmapDevice::SwapWidthAndHeight()
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Swaps bitmap device's width and height.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Create CFbsBitGc Object and connected to CFbsBitmapDevice.
+//!								5.Set the size of the device.
+//!								6.Swaps bitmap device's width and height.
+//!								7.Draw a line to the device.
+//!								8.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	Swap the width and heigth without any error.
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        CREATE_OBJECT			CFbsBitGc			fbsBitGc
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0039-Load_command03
+        COMMAND					fbsBitmap			SetSizeInTwips		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0039-SetSizeInTwips_command04
+        COMMAND					fbsbitdev			NewL				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0039-NewL_command05
+        COMMAND					fbsBitGc			NewL
+        COMMAND					fbsBitGc			Activate			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0039-Activate_command07
+        COMMAND					fbsbitdev			Resize				GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0039-Resize_command08
+        COMMAND					fbsbitdev			SwapWidthAndHeight
+        COMMAND					fbsBitGc			DrawLine			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0039-DrawLine_command10
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					fbsBitGc			~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0039
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0040
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0040
+//! @SYMAPI                 	CFbsBitmapDevice::VerticalPixelsToTwips(TInt)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Translates a vertical dimension of a bitmap device in pixels into twips
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Translates a vertical dimension pixels into twips.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	VerticalPixelsToTwips doesn't cause panic and the returned twips are as expected
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0040-Load_command03
+        COMMAND					fbsbitdev			NewL						GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0040-NewL_command04
+        COMMAND					fbsbitdev			VerticalPixelsToTwips		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0040-VerticalPixelsToTwips_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0040
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0041
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0041
+//! @SYMAPI                 	CFbsBitmapDevice::VerticalPixelsToTwips(TInt)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Negative case, Uses big pixels/0/small negative pixels.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Set the size of the bitmap.
+//!								5.Input pixel = 240, return 480.
+//!                             6.Input pixel = 0, return 0.
+//!                             7.Input pixel = -100, return -49.
+//!								8.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	VerticalPixelsToTwips doesn't cause panic and the returned twips are as expected
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0041-Load_command03
+        COMMAND             	fbsBitmap           SetSizeInTwips              GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0041-SetSizeInTwips_command04
+        COMMAND					fbsbitdev			NewL						GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0041-NewL_command05
+        COMMAND					fbsbitdev			VerticalPixelsToTwips		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0041-VerticalPixelsToTwips_command06
+		COMMAND					fbsbitdev			VerticalPixelsToTwips		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0041-VerticalPixelsToTwips_command07
+		COMMAND					fbsbitdev			VerticalPixelsToTwips		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0041-VerticalPixelsToTwips_command08       
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0041
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0042
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0042
+//! @SYMAPI                 	CFbsBitmapDevice::VerticalTwipsToPixels(TInt)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Translates a vertical dimension of a bitmap device in twips into Pixels
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Translates a vertical dimension twips into Pixels.
+//!								5.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	VerticalTwipsToPixels doesn't cause panic and the returned twips are as expected
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0042-Load_command03
+        COMMAND					fbsbitdev			NewL						GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0042-NewL_command04
+        COMMAND					fbsbitdev			VerticalTwipsToPixels		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0042-VerticalTwipsToPixels_command05
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0042
+
+START_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0043
+//! @SYMTestCaseID          	GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0043
+//! @SYMAPI                 	CFbsBitmapDevice::VerticalTwipsToPixels(TInt)
+//! @SYMAuthor              	Wei Liu
+//! @SYMCreationDate        	06/01/2009
+//! @SYMTestCaseDesc        	Negative case, Uses big twips/0/small negative twips.
+//! @SYMTestActions         	1.Create RFbsSession Object and connect it.
+//!								2.Create CFbsBitmap Object and load bitmap.
+//!								3.Create CFbsBitmapDevice Object.
+//!								4.Set the size of the bitmap.
+//!								5.Translates a vertical dimension twips into Pixels.
+//!								6.Destroy all the objects.
+//! @SYMTestStatus          	Implemented
+//! @SYMTestPriority        	High
+//! @SYMTestExpectedResults 	VerticalTwipsToPixels doesn't cause panic and the returned twips are as expected
+//! @SYMTestType            	CIT
+
+    START_TEST_BLOCK   		10   T_GraphicsBitGDIAPI \graphics\GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi.ini
+        CREATE_OBJECT       	CFbsBitmapDevice 	fbsbitdev
+        CREATE_OBJECT       	RFbsSession 	 	rfbssession
+        CREATE_OBJECT			CFbsBitmap          fbsBitmap
+        COMMAND					rfbssession			Connect
+        COMMAND             	fbsBitmap           new
+        COMMAND             	fbsBitmap           Load                		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0043-Load_command03
+        COMMAND             	fbsBitmap           SetSizeInTwips              GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0043-SetSizeInTwips_command04
+        COMMAND					fbsbitdev			NewL						GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0043-NewL_command05
+        COMMAND					fbsbitdev			VerticalTwipsToPixels		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0043-VerticalTwipsToPixels_command06
+        COMMAND					fbsbitdev			VerticalTwipsToPixels		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0043-VerticalTwipsToPixels_command07
+        COMMAND					fbsbitdev			VerticalTwipsToPixels		GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0043-VerticalTwipsToPixels_command08
+        COMMAND             	fbsbitdev			~
+        COMMAND             	fbsBitmap           ~
+        COMMAND					rfbssession			Disconnect
+     END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-BITGDI-FbsBitmapDevice-PublicApi-0043

@@ -1,0 +1,10 @@
+component	graphics_gdi
+source	\sf\os\graphics\graphicsdeviceinterface\gdi
+binary	\sf\os\graphics\graphicsdeviceinterface\gdi\group	all
+exports	\sf\os\graphics\graphicsdeviceinterface\gdi\group
+notes_source	\component_defs\release.src
+
+
+ipr D 
+ipr T \sf\os\graphics\graphicsdeviceinterface\gdi\tgdi
+

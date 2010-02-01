@@ -1,0 +1,682 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName		GRAPHICS-WSERV-SoundPlugin-PublicApi
+//! @SYMScriptTestEnvironment	This test script requires a basic ROM.
+
+/////////////////////////////////////////////////////////////////////
+// GRAPHICS-WSERV-SoundPlugin-PublicAPI.script
+//
+// Tests all public elements of the RSoundPlugIn
+// classes as a means of confidence that the APIs work as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for RSoundPlugIn
+// The tests are fully automated.
+/////////////////////////////////////////////////////////////////////
+
+LOAD_SUITE      T_GraphicsWservAPI
+DELAY           1000
+
+//! @file
+//! @SYMTestSuiteName           GRAPHICS-WSERV-SoundPlugin-PublicAPI
+//! @SYMScriptTestEnvironment   This test script requires a basic ROM.
+
+/////////////////////////////////////////////////////////////////////
+// RSoundPlugIn class
+/////////////////////////////////////////////////////////////////////
+
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0001
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0001
+//! @SYMAPI                     RSoundPlugIn::RSoundPlugIn();
+//!                             RSoundPlugIn::Close()
+//! @SYMAuthor                  Kevin Zeng, Ray Liang, Wekey Weng.
+//! @SYMCreationDate            31/10/2007
+//! @SYMTestCaseDesc            Create a RSoundPlugIn object by C++ Default constructor and end with Close
+//! @SYMTestActions             execute new() a RSoundPlugIn to create the object and Close.  
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     RSoundPlugin object was created and Close without causing panic. 
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI      c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RSoundPlugIn           soundPlugIn
+        COMMAND                 soundPlugIn            new       
+        COMMAND                 soundPlugIn            Close        
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0001
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0002
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0002
+//! @SYMAPI                     RSoundPlugIn::RSoundPlugIn();
+//!                             RSoundPlugIn::Destroy()
+//! @SYMAuthor                  Kevin Zeng, Ray Liang, Wekey Weng.
+//! @SYMCreationDate            31/10/2007
+//! @SYMTestCaseDesc            Create a RSoundPlugIn object by C++ Default constructor and end with Destroy()
+//! @SYMTestActions             execute new() a RSoundPlugIn to create the object and Destroy. 
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     RSoundPlugin object was created and Destroy without causing panic. 
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RSoundPlugIn       soundPlugIn
+        COMMAND                 soundPlugIn        new       
+        COMMAND                 soundPlugIn        Destroy        
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0002
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0004
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0004
+//! @SYMAPI                     RSoundPlugIn::RSoundPlugIn(RWsSession {ref});
+//!                             RSoundPlugIn::Close()
+//! @SYMAuthor                  Kevin Zeng, Ray Liang, Wekey Weng.
+//! @SYMCreationDate            31/10/2007
+//! @SYMTestCaseDesc            Create a RSoundPlugin object within the specified RWsSession and end with Close.
+//! @SYMTestActions             1.Create and connect a RWsSession, and within the RWsSession 
+//!                             2.Create and construct a RSoundPlugin 
+//!                             3.Close all used objects 
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     RSoubdPlugin object was created without causing panic.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new               GRAPHICS-WSERV-SoundPlugin-PublicAPI-0004-001-new_Command01
+        COMMAND                 soundPlugIn                Construct
+        COMMAND                 soundPlugIn                Close
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0004
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0005
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0005
+//! @SYMAPI                     RSoundPlugIn::RSoundPlugIn(RWsSession {ref});
+//!                             RSoundPlugIn::Destroy()
+//! @SYMAuthor                  Kevin Zeng, Ray Liang, Wekey Weng.
+//! @SYMCreationDate            31/10/2007
+//! @SYMTestCaseDesc            Create a RSoundPlugin object within the specified RWsSession and end with Destroy.
+//! @SYMTestActions             1.  Create and connect a RWsSession, and within the RWsSession 
+//!                             2.  Create and construct a RSoundPlugin 
+//!                             3.  Destroy constructed RSoundPlugin 
+//!                             4.  Close RWsSession 
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     Destroy with no panic.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new                GRAPHICS-WSERV-SoundPlugin-PublicAPI-0005-001-new_Command01
+        COMMAND                 soundPlugIn                Construct
+        COMMAND                 soundPlugIn                Destroy    
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0005
+
+
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0007
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0007
+//! @SYMAPI                     RSoundPlugIn::Load(const TDesC {ref});
+//!                             RSoundPlugIn::IsLoaded(TBool {ref})
+//! @SYMAuthor                  Kevin Zeng, Ray Liang, Wekey Weng.
+//! @SYMCreationDate            31/10/2007
+//! @SYMTestCaseDesc            Load the plugin, then check wether plugin is loaded.
+//! @SYMTestActions             1.  Create and connect a RWsSession, and within the RWsSession 
+//!                             2.  Create and construct a RSoundPlugin 
+//!                             3.  Load constructed RSoundPlugin by using Load()
+//!                             4.  Check if plugin is loaded successfully by using IsLoaded() 
+//!                             5.  Destroy the loaded plugin by using Destroy() 
+//!                             4.  Close RWsSession 
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1.Load the plugin without causing panic
+//!                             2.Verify the plugin is loaded successfully
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new                 GRAPHICS-WSERV-SoundPlugin-PublicAPI-0007-001-new_Command01
+        COMMAND                 soundPlugIn                Construct           GRAPHICS-WSERV-SoundPlugin-PublicAPI-0007-001-Construct_Command02
+        COMMAND                 soundPlugIn                Load                GRAPHICS-WSERV-SoundPlugin-PublicAPI-0007-001-Load_Command03
+        COMMAND                 soundPlugIn                IsLoaded            GRAPHICS-WSERV-SoundPlugin-PublicAPI-0007-001-IsLoaded_Command04
+        COMMAND                 soundPlugIn                Destroy    
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0007
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0008
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0008
+//! @SYMAPI                     RSoundPlugIn::SetKeyClick(TBool);
+//!                             RSoundPlugIn::KeyClickEnabled()
+//! @SYMAuthor                  Kevin Zeng, Ray Liang, Wekey Weng.
+//! @SYMCreationDate            31/10/2007
+//! @SYMTestCaseDesc            Check SetKeyClick() & KeyClickEnabled().
+//! @SYMTestActions             1.  Create and connect a RWsSession, and within the RWsSession 
+//!                             2.  Create and construct a RSoundPlugin 
+//!                             3.  Enable key click by using SetKeyClick()
+//!                             4.  Check if the key click is enabled by using KeyClickEnabled()
+//!                             5.  Destroy the plugin and close window session
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1. SetKeyClick() to ETrue without causing panic 
+//!                             2. Verify key click is enabled by KeyClickEnabled() returns ETrue 
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new                 GRAPHICS-WSERV-SoundPlugin-PublicAPI-0008-001-new_Command01
+        COMMAND                 soundPlugIn                Construct
+        COMMAND                 soundPlugIn                SetKeyClick         GRAPHICS-WSERV-SoundPlugin-PublicAPI-0008-001-SetKeyClick_Command03
+        COMMAND                 soundPlugIn                KeyClickEnabled      GRAPHICS-WSERV-SoundPlugin-PublicAPI-0008-001-KeyClickEnabled_Command04
+        COMMAND                 soundPlugIn                Destroy    
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0008
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0009
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0009
+//! @SYMAPI                     RSoundPlugIn::SetKeyClick(TBool);
+//!                             RSoundPlugIn::KeyClickEnabled()
+//! @SYMAuthor                  Kevin Zeng, Ray Liang, Wekey Weng.
+//! @SYMCreationDate            31/10/2007
+//! @SYMTestCaseDesc            Check SetKeyClick() & KeyClickEnabled().
+//! @SYMTestActions             1.  Create and connect a RWsSession, and within the RWsSession 
+//!                             2.  Create and construct a RSoundPlugin 
+//!                             3.  Disable key click by using SetKeyClick()
+//!                             4.  Check if the key click is diabled by using KeyClickEnabled()
+//!                             5.  Destroy the plugin and close window session
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1. SetKeyClick() to EFalse without causing panic 
+//!                             2. Verify key click is diabled by KeyClickEnabled() returns EFalse 
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new                 GRAPHICS-WSERV-SoundPlugin-PublicAPI-0009-001-new_Command01
+        COMMAND                 soundPlugIn                Construct
+        COMMAND                 soundPlugIn                SetKeyClick         GRAPHICS-WSERV-SoundPlugin-PublicAPI-0009-001-SetKeyClick_Command03
+        COMMAND                 soundPlugIn                KeyClickEnabled      GRAPHICS-WSERV-SoundPlugin-PublicAPI-0009-001-KeyClickEnabled_Command04
+        COMMAND                 soundPlugIn                Destroy    
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0009
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0010
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0010
+//! @SYMAPI                     RSoundPlugIn::SetPenClick(TBool);
+//!                             RSoundPlugIn::PenClickEnabled()
+//! @SYMAuthor                  Kevin Zeng, Ray Liang, Wekey Weng.
+//! @SYMCreationDate            31/10/2007
+//! @SYMTestCaseDesc            SetPenClick() & PenClickEnabled().
+//! @SYMTestActions             1.  Create and connect a RWsSession, and within the RWsSession 
+//!                             2.  Create and construct a RSoundPlugin 
+//!                             3.  Enable pen click by using SetPenClick()
+//!                             4.  Check if the pen click is enabled by using PenClickEnabled()
+//!                             5.  Destroy the plugin and close window session
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1. SetPenClick() to ETrue without causing panic 
+//!                             2. Verify key click is enabled by PenClickEnabled() returns ETrue 
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new                 GRAPHICS-WSERV-SoundPlugin-PublicAPI-0010-001-new_Command01
+        COMMAND                 soundPlugIn                Construct
+        COMMAND                 soundPlugIn                SetPenClick         GRAPHICS-WSERV-SoundPlugin-PublicAPI-0010-001-SetPenClick_Command03
+        COMMAND                 soundPlugIn                PenClickEnabled      GRAPHICS-WSERV-SoundPlugin-PublicAPI-0010-001-PenClickEnabled_Command04
+        COMMAND                 soundPlugIn                Destroy    
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0010
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0011
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0011
+//! @SYMAPI                     RSoundPlugIn::SetPenClick(TBool);
+//!                             RSoundPlugIn::PenClickEnabled()
+//! @SYMAuthor                  Kevin Zeng, Ray Liang, Wekey Weng.
+//! @SYMCreationDate            31/10/2007
+//! @SYMTestCaseDesc            Check SetPenClick() & PenClickEnabled().
+//! @SYMTestActions             1.  Create and connect a RWsSession, and within the RWsSession 
+//!                             2.  Create and construct a RSoundPlugin 
+//!                             3.  Enable pen click by using SetPenClick()
+//!                             4.  Check if the pen click is enabled by using PenClickEnabled()
+//!                             5.  Destroy the plugin and close window session
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1. SetKeyClick() to EFalse 
+//!                             2. Verify key click is diabled by KeyClickEnabled() returns EFalse 
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new                 GRAPHICS-WSERV-SoundPlugin-PublicAPI-0011-001-new_Command01
+        COMMAND                 soundPlugIn                Construct
+        COMMAND                 soundPlugIn                SetPenClick         GRAPHICS-WSERV-SoundPlugin-PublicAPI-0011-001-SetPenClick_Command03
+        COMMAND                 soundPlugIn                PenClickEnabled      GRAPHICS-WSERV-SoundPlugin-PublicAPI-0011-001-PenClickEnabled_Command04
+        COMMAND                 soundPlugIn                Destroy    
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0011
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0012
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0012
+//! @SYMAPI                     RSoundPlugIn::Unload()
+//! @SYMAuthor                  Kevin Zeng, Ray Liang, Wekey Weng.
+//! @SYMCreationDate            31/10/2007
+//! @SYMTestCaseDesc            Load a pulgin and then unload it.
+//! @SYMTestActions             1.  Create and connect a RWsSession, and within the RWsSession 
+//!                             2.  Create and construct a RSoundPlugin 
+//!                             3.  Load the plugin 
+//!                             4.  Unload the plugin 
+//!                             5.  Check if the plugin is unloaded by using IsLoaded() 
+//!                             6.  Destroy the plugin and close window session 
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1. Load and Unload retrived with no errors
+//!                             2. IsLoaded() returns EFalse after Unload the plugin //dwzhang
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new                 GRAPHICS-WSERV-SoundPlugin-PublicAPI-0012-001-new_Command01
+        COMMAND                 soundPlugIn                Construct           GRAPHICS-WSERV-SoundPlugin-PublicAPI-0012-001-Construct_Command02
+        COMMAND                 soundPlugIn                Load                GRAPHICS-WSERV-SoundPlugin-PublicAPI-0012-001-Load_Command03
+        COMMAND                 soundPlugIn                Unload              
+        COMMAND                 soundPlugIn                Destroy    
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0012
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0013
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0013
+//! @SYMAPI                     RSoundPlugIn::CommandReply(TInt, const TPtrC8 {ref})
+//! @SYMAuthor                  Kevin Zeng
+//! @SYMCreationDate            29/12/2007
+//! @SYMTestCaseDesc            Try to Construct without a UID, then load the default dll, call CommandReply and unload it. 
+//! @SYMTestActions             1. Create and connect a RWsSession 
+//!                             2. Create a RSoundPlugIn attached to RWsSession
+//!                             3. Complete the construction without UID 
+//!                             4. Load the defaut plugin dll.(keyclickref.dll) and verifty.
+//!                             5. Send command and get reply. 
+//!                             6. Unload the plugin.
+//!                             7. Verify it is unloaded.
+//!                             8. Destruct and close all objects used.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1. Construct and Load complete successfully.
+//!                             2. Because Construct without UID, CommandReply returns ESoundWrongPlugIn(-2147483648) and no panic.
+//!                             3. Unload Completes successfully.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new                 GRAPHICS-WSERV-SoundPlugin-PublicAPI-0013-001-new_Command01
+        COMMAND                 soundPlugIn                Construct
+        COMMAND                 soundPlugIn                Load                GRAPHICS-WSERV-SoundPlugin-PublicAPI-0013-001-Load_Command03
+        COMMAND                 soundPlugIn                IsLoaded            GRAPHICS-WSERV-SoundPlugin-PublicAPI-0013-001-IsLoaded_Command04
+        COMMAND !Error=-2147483648 soundPlugIn             CommandReply        GRAPHICS-WSERV-SoundPlugin-PublicAPI-0013-001-CommandReply_Command05
+        COMMAND                 soundPlugIn                Unload
+        COMMAND                 soundPlugIn                IsLoaded            GRAPHICS-WSERV-SoundPlugin-PublicAPI-0013-001-IsLoaded_Command07
+        COMMAND                 soundPlugIn                Destroy    
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0013
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0014
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0014
+//! @SYMAPI                     RSoundPlugIn::SetKeyClick(TBool);
+//!                             RSoundPlugIn::SetPenClick(TBool);
+//!                             RSoundPlugIn::KeyClickEnabled();
+//!                             RSoundPlugIn::PenClilckEnabled()
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            02/01/2008
+//! @SYMTestCaseDesc            SetKeyClick and SetPenClick and then check the value after unload and re-load. 
+//! @SYMTestActions             1. Create and connect a RWsSession 
+//!                             2. Create a RSoundPlugIn attached to RWsSession
+//!                             3. Complete the construction without UID
+//!                             4. Load the defaut plugin dll.(keyclickref.dll) and verifty.
+//!                             5. SetKeyClick disabled and then check the KeyClickEnabled status.
+//!                             6. SetPenClick enabled and then check the PenClickEnalbed status.
+//!                             7. Unload the plugin and then check the KeyClickEnabled and PenClickEnabled status.
+//!                             8. Destruct and close all objects used.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1. KeyClickEnabled status should always be disabled.
+//!                             2. PenClickEnabled status should always be enabled.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new                 GRAPHICS-WSERV-SoundPlugin-PublicAPI-0014-001-new_Command01
+        COMMAND                 soundPlugIn                Construct
+        COMMAND                 soundPlugIn                Load                GRAPHICS-WSERV-SoundPlugin-PublicAPI-0014-001-Load_Command03
+        COMMAND                 soundPlugIn                SetKeyClick         GRAPHICS-WSERV-SoundPlugin-PublicAPI-0014-001-SetKeyClick_Command04
+        COMMAND                 soundPlugIn                KeyClickEnabled     GRAPHICS-WSERV-SoundPlugin-PublicAPI-0014-001-KeyClickEnabled_Command05
+        COMMAND                 soundPlugIn                SetPenClick         GRAPHICS-WSERV-SoundPlugin-PublicAPI-0014-001-SetPenClick_Command06
+        COMMAND                 soundPlugIn                PenClickEnabled     GRAPHICS-WSERV-SoundPlugin-PublicAPI-0014-001-PenClickEnabled_Command07
+        COMMAND                 soundPlugIn                Unload              
+        COMMAND                 soundPlugIn                KeyClickEnabled     GRAPHICS-WSERV-SoundPlugin-PublicAPI-0014-001-KeyClickEnabled_Command09
+        COMMAND                 soundPlugIn                PenClickEnabled     GRAPHICS-WSERV-SoundPlugin-PublicAPI-0014-001-PenClickEnabled_Command10
+        COMMAND                 soundPlugIn                Destroy    
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0014
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0015
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0015
+//! @SYMAPI                     RSoundPlugIn::Load(const TDesC {ref})
+//! @SYMAuthor                  Kevin Zeng
+//! @SYMCreationDate            29/12/2007
+//! @SYMTestCaseDesc            Negative test for load non-existed file, non-dll file and non-plugin dll file.
+//!                             Try to load three files: a non-existed file, a non-dll file and a non-plugin file respectively. 
+//! @SYMTestActions             1. Create and connect a RWsSession 
+//!                             2. Create a RSoundPlugIn attached to RWsSession
+//!                             3. Complete the construction without UID
+//!                             4. Unload existing plugin.
+//!                             5. Load a plugin dll.which is not existed and verify weather is loaded.
+//!                             6. Load a file which is not a dll and verify weather is loaded.
+//!                             7. Load a file which is a dll but not a plugin and verify weather is loaded.
+//!                             8. Destruct and close all objects used.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1. The first load should return -1(KErrNotFound) and IsLoaded returned false.
+//!                             2. The second load should return -5(KErrNotSupported)and IsLoaded returned false.
+//!                             3. The third load should return -5(KErrNotSupported)and IsLoaded returned false.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new                 GRAPHICS-WSERV-SoundPlugin-PublicAPI-0015-001-new_Command01
+        COMMAND                 soundPlugIn                Construct
+        COMMAND                 soundPlugIn                Unload
+        COMMAND !Error=-1       soundPlugIn                Load                GRAPHICS-WSERV-SoundPlugin-PublicAPI-0015-001-Load_Command04
+        COMMAND                 soundPlugIn                IsLoaded            GRAPHICS-WSERV-SoundPlugin-PublicAPI-0015-001-IsLoaded_Command05
+        COMMAND !Error=-5      soundPlugIn                 Load                GRAPHICS-WSERV-SoundPlugin-PublicAPI-0015-001-Load_Command06
+        COMMAND                 soundPlugIn                IsLoaded            GRAPHICS-WSERV-SoundPlugin-PublicAPI-0015-001-IsLoaded_Command07
+        COMMAND !Error=-5      soundPlugIn                 Load                GRAPHICS-WSERV-SoundPlugin-PublicAPI-0015-001-Load_Command08
+        COMMAND                 soundPlugIn                IsLoaded            GRAPHICS-WSERV-SoundPlugin-PublicAPI-0015-001-IsLoaded_Command09
+        COMMAND                 soundPlugIn                Destroy    
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0015
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0016
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0016
+//! @SYMAPI                     RSoundPlugIn::Load(const TDesC {ref})
+//! @SYMAuthor                  Kevin Zeng
+//! @SYMCreationDate            29/12/2007
+//! @SYMTestCaseDesc            Try to load plugin dlls multi-times. 
+//! @SYMTestActions             1. Create and connect a RWsSession.
+//!                             2. Create a RSoundPlugIn attached to RWsSession.
+//!                             3. Complete the construction with keyclickref.dll's UID.
+//!                             4. Load a plugin dll(keyclickref.dll).
+//!                             5. Load again(keyclickref.dll).
+//!                             6. Check is loaded.
+//!                             7. Send command and get reply.
+//!                             8. Destruct and close all objects used.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1. All the Load methods returns KErrNone and no panic.
+//!                             2. IsLoaded returns True as expected.
+//!                             3. CommandReply returns KErrNone and no panic.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new                 GRAPHICS-WSERV-SoundPlugin-PublicAPI-0016-001-new_Command01
+        COMMAND                 soundPlugIn                Construct           GRAPHICS-WSERV-SoundPlugin-PublicAPI-0016-001-Construct_Command02
+        COMMAND                 soundPlugIn                Load                GRAPHICS-WSERV-SoundPlugin-PublicAPI-0016-001-Load_Command03
+        COMMAND                 soundPlugIn                Load                GRAPHICS-WSERV-SoundPlugin-PublicAPI-0016-001-Load_Command04
+        COMMAND                 soundPlugIn                IsLoaded            GRAPHICS-WSERV-SoundPlugin-PublicAPI-0016-001-IsLoaded_Command05
+        COMMAND                 soundPlugIn                CommandReply        GRAPHICS-WSERV-SoundPlugin-PublicAPI-0016-001-CommandReply_Command06
+        COMMAND                 soundPlugIn                Destroy    
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0016
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0017
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0017
+//! @SYMAPI                     RSoundPlugIn::Unload()
+//! @SYMAuthor                  Kevin Zeng
+//! @SYMCreationDate            29/12/2007
+//! @SYMTestCaseDesc            Try to Unload multi-times. 
+//! @SYMTestActions             1. Create and connect a RWsSession.
+//!                             2. Create a RSoundPlugIn attached to RWsSession.
+//!                             3. Complete the construction with keyclickref.dll's UID.
+//!                             4. Load a plugin dll(keyclickref.dll).
+//!                             5. Unload the plugin multi-times.
+//!                             6. Check is unloaded.
+//!                             7. Send command and get reply.
+//!                             8. Destruct and close all objects used.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1. All the Unload methods complete and no panic.
+//!                             2. IsLoaded returns False as expected.
+//!                             3. Because no plugin is loaded, CommandReply returns ESoundWrongPlugIn(-2147483648) and no panic.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new                 GRAPHICS-WSERV-SoundPlugin-PublicAPI-0017-001-new_Command01
+        COMMAND                 soundPlugIn                Construct           GRAPHICS-WSERV-SoundPlugin-PublicAPI-0017-001-Construct_Command02
+        COMMAND                 soundPlugIn                Load                GRAPHICS-WSERV-SoundPlugin-PublicAPI-0017-001-Load_Command03
+        COMMAND                 soundPlugIn                Unload              
+        COMMAND                 soundPlugIn                Unload              
+        COMMAND                 soundPlugIn                Unload              
+        COMMAND                 soundPlugIn                IsLoaded            GRAPHICS-WSERV-SoundPlugin-PublicAPI-0017-001-IsLoaded_Command07
+        COMMAND !Error=-2147483648 soundPlugIn             CommandReply        GRAPHICS-WSERV-SoundPlugin-PublicAPI-0017-001-CommandReply_Command08
+        COMMAND                 soundPlugIn                Destroy    
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0017
+
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0018
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0018
+//! @SYMAPI                     RSoundPlugIn::RSoundPlugIn(RWsSession &aWs);
+//!                             RSoundPlugIn::Close()
+//! @SYMAuthor                  Ray Liang
+//! @SYMCreationDate            02/02/2008
+//! @SYMTestCaseDesc            Create a RSoundPlugIn object within the specified RWsSession and end with Close
+//! @SYMTestActions             execute RSoundPlugIn(RWsSession &) a RSoundPlugIn to create the object and Close.  
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     RSoundPlugin object was created and Close without causing panic. 
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI      c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new          GRAPHICS-WSERV-SoundPlugin-PublicAPI-0018-001-new_Command03
+        COMMAND                 soundPlugIn                Close        
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0018
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0019
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0019
+//! @SYMAPI                     RSoundPlugIn::RSoundPlugIn(RWsSession &aWs);
+//!                             RSoundPlugIn::Destroy()
+//! @SYMAuthor                  Ray Liang
+//! @SYMCreationDate            02/02/2008
+//! @SYMTestCaseDesc            Create a RSoundPlugIn object within the specified RWsSession and end with Destroy()
+//! @SYMTestActions             execute RSoundPlugIn(RWsSession &) a RSoundPlugIn to create the object and Destroy. 
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     RSoundPlugin object was created and Destroy without causing panic. 
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new          GRAPHICS-WSERV-SoundPlugin-PublicAPI-0019-001-new_Command03
+        COMMAND                 soundPlugIn                Destroy        
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0019
+
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0021
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0021
+//! @SYMAPI                     RSoundPlugIn::CommandReply(TInt, const TPtrC8 {ref})
+//! @SYMAuthor                  Kevin Zeng
+//! @SYMCreationDate            1/2/2008
+//! @SYMTestCaseDesc            Negative test for a wrong uid.
+//!                             Try to Construct with a wrong uid.
+//! @SYMTestActions             1. Create and connect a RWsSession.
+//!                             2. Create a RSoundPlugIn attached to RWsSession.
+//!                             3. Complete the construction with an error UID. 
+//!                             4. Load a plugin dll(keyclickref.dll).
+//!                             5. Check is loaded.
+//!                             6. Send command and get reply.
+//!                             7. Destruct and close all objects used.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1. Construct completes and no panic. 
+//!                             2. Because Construct with wrong uid, CommandReply returns ESoundWrongPlugIn(-2147483648) and no panic.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new                 GRAPHICS-WSERV-SoundPlugin-PublicAPI-0021-001-new_Command01
+        COMMAND                 soundPlugIn                Construct           GRAPHICS-WSERV-SoundPlugin-PublicAPI-0021-001-Construct_Command02
+        COMMAND                 soundPlugIn                Load                GRAPHICS-WSERV-SoundPlugin-PublicAPI-0021-001-Load_Command03
+        COMMAND                 soundPlugIn                IsLoaded            GRAPHICS-WSERV-SoundPlugin-PublicAPI-0021-001-IsLoaded_Command04
+        COMMAND !Error=-2147483648 soundPlugIn             CommandReply        GRAPHICS-WSERV-SoundPlugin-PublicAPI-0021-001-CommandReply_Command5
+        COMMAND                 soundPlugIn                Destroy    
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0021
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0023
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0023
+//! @SYMAPI                     RSoundPlugIn::SetKeyClick(TBool);
+//!                             RSoundPlugIn::KeyClickEnabled()
+//! @SYMAuthor                  Kevin Zeng
+//! @SYMCreationDate            02/01/2008
+//! @SYMTestCaseDesc            Unload the plugin and then set and get the KeyClick status.
+//! @SYMTestActions             1. Create and connect a RWsSession.
+//!                             2. Create a RSoundPlugIn attached to RWsSession.
+//!                             3. Complete the construction without a UID. 
+//!                             4. Load a plugin dll(keyclickref.dll).
+//!                             5. Unload the plugin.
+//!                             6. Set keyclick to True and get it.
+//!                             7. Set Keyclick to False and get it.
+//!                             8. Destruct and close all objects used.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1. SetKeyClick completes and no panic.
+//!                             2. KeyClickEnabled returns as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new                 GRAPHICS-WSERV-SoundPlugin-PublicAPI-0023-001-new_Command01
+        COMMAND                 soundPlugIn                Construct
+        COMMAND                 soundPlugIn                Load                GRAPHICS-WSERV-SoundPlugin-PublicAPI-0023-001-Load_Command03
+        COMMAND                 soundPlugIn                Unload
+        COMMAND                 soundPlugIn                SetKeyClick         GRAPHICS-WSERV-SoundPlugin-PublicAPI-0023-001-SetKeyClick_Command05
+        COMMAND                 soundPlugIn                KeyClickEnabled     GRAPHICS-WSERV-SoundPlugin-PublicAPI-0023-001-KeyClickEnabled_Command06
+        COMMAND                 soundPlugIn                SetKeyClick         GRAPHICS-WSERV-SoundPlugin-PublicAPI-0023-001-SetKeyClick_Command07
+        COMMAND                 soundPlugIn                KeyClickEnabled     GRAPHICS-WSERV-SoundPlugin-PublicAPI-0023-001-KeyClickEnabled_Command08
+        COMMAND                 soundPlugIn                Destroy    
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0023
+
+START_TESTCASE                  GRAPHICS-WSERV-SoundPlugin-PublicAPI-0024
+//! @SYMTestCaseID              GRAPHICS-WSERV-SoundPlugin-PublicAPI-0024
+//! @SYMAPI                     RSoundPlugIn::SetPenClick(TBool);
+//!                             RSoundPlugIn::PenClickEnabled()
+//! @SYMAuthor                  Kevin Zeng
+//! @SYMCreationDate            02/01/2008
+//! @SYMTestCaseDesc            SetPenClick after the plugin is unloaded.
+//! @SYMTestActions             1. Create and connect a RWsSession.
+//!                             2. Create a RSoundPlugIn attached to RWsSession.
+//!                             3. Complete the construction without a UID. 
+//!                             4. Load a plugin dll(keyclickref.dll).
+//!                             5. Unload the plugin.
+//!                             6. Set and get PenClick.
+//!                             7. Destruct and close all objects used.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1. SetPenClick completes and no panic.
+//!                             2. PenClickEnabled returns as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsWservAPI    c:\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+        CREATE_OBJECT           RWsSession                 ws
+        CREATE_OBJECT           RSoundPlugIn               soundPlugIn
+        COMMAND                 ws                         new
+        COMMAND                 ws                         Connect
+        COMMAND                 soundPlugIn                new                 GRAPHICS-WSERV-SoundPlugin-PublicAPI-0024-001-new_Command01
+        COMMAND                 soundPlugIn                Construct
+        COMMAND                 soundPlugIn                Load                GRAPHICS-WSERV-SoundPlugin-PublicAPI-0024-001-Load_Command03
+        COMMAND                 soundPlugIn                Unload
+        COMMAND                 soundPlugIn                SetPenClick         GRAPHICS-WSERV-SoundPlugin-PublicAPI-0024-001-SetPenClick_Command05
+        COMMAND                 soundPlugIn                PenClickEnabled     GRAPHICS-WSERV-SoundPlugin-PublicAPI-0024-001-PenClickEnabled_Command06
+        COMMAND                 soundPlugIn                SetPenClick         GRAPHICS-WSERV-SoundPlugin-PublicAPI-0024-001-SetPenClick_Command07
+        COMMAND                 soundPlugIn                PenClickEnabled     GRAPHICS-WSERV-SoundPlugin-PublicAPI-0024-001-PenClickEnabled_Command08
+        COMMAND                 soundPlugIn                Destroy    
+        COMMAND                 ws                         Close
+    END_TEST_BLOCK
+END_TESTCASE                    GRAPHICS-WSERV-SoundPlugin-PublicAPI-0024
+
+
+
+
+
+
+
+
+
+
+
+
+
+

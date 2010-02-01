@@ -1,0 +1,1004 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName  GRAPHICS-WSERV-AnimGfwe-PublicApi
+//! @SYMScriptTestEnvironment This test script requires a basic ROM.
+
+///////////////////////////////////////////////////////////////////////////////
+// GRAPHICS-WSERV-AnimGfwe-PublicApi.script
+//
+// Tests all public elements of the CFrame class
+// as a means of confidence that the API works as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for
+// MAnimGeneralFunctionsWindowExtension related classes.
+// Negative testing is performed to confirm that correct errors are returned
+// when incorrect parameters are given.
+//
+// The tests are fully automated.
+///////////////////////////////////////////////////////////////////////////////
+
+
+LOAD_SUITE  T_GraphicsWservAPI
+
+// ****************************************************************************
+// MAnimGeneralFunctionsWindowExtension
+// ****************************************************************************
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0001
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0001
+//! @SYMAPI                 MAnimGeneralFunctionsWindowExtension::Screens()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        10-04-2008
+//! @SYMTestCaseDesc        Create animation client object and send command to plugin to get total number of screens.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct RWindowGroup and RWindow.
+//!                         3.Activate the RWindow.
+//!                         4.Create a RAnimDll object and load the animation plugin DLL.
+//!                         5.Create a RAnim object by using RAnimDll object.
+//!                         6.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         7.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         8.Send ECmdGfweScreens to then animation plugin by CommandReply to get total number of screens.
+//!                         8.1 Plugin get total number of screens and return it.
+//!                         8.2 Wrapper check number of screens by RWsSession::NumberOfScreens().
+//!                         9.Close RAnimForMClass.
+//!                         10.Close RAnim.
+//!                         11.Destroy RAnimDll.
+//!                         12.Close RWsSession, RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Screens function returns right numbers of screens.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0001-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0001-0001-Construct_command004
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0001-0001-new_command005
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0001-0001-Construct_command006
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0001-0001-new_command008
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0001-0001-Load_command009
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0001-0001-new_command010
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0001-0001-new_command011
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0001-0001-Construct_command012
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0001-0001-CommandReply_command013
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0001
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0002
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0002
+//! @SYMAPI                 MAnimGeneralFunctionsWindowExtension::FocusScreens()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        10-04-2008
+//! @SYMTestCaseDesc        Create animation client object and send command to plugin to get the number of the screen which is currently in focus.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct RWindowGroup and RWindow.
+//!                         3.Activate the RWindow.
+//!                         4.Create a RAnimDll object and load the animation plugin DLL.
+//!                         5.Create a RAnim object by using RAnimDll object.
+//!                         6.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         7.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         8.Send ECmdGfweFocusScreens to the animaion plugin by CommandReply to get focused screen number.
+//!                         8.1 Plugin get focused screen number and return it.
+//!                         8.2 Wrapper check focused screen number by RWsSession::GetFocusScreen().
+//!                         9.Close RAnimForMClass.
+//!                         11.Close RAnim.
+//!                         12.Destroy RAnimDll.
+//!                         13.Close RWsSession, RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Get focused screen as expected. 
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0002-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0002-0001-Construct_command004
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0002-0001-new_command005
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0002-0001-Construct_command006
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0002-0001-new_command008
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0002-0001-Load_command009
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0002-0001-new_command010
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0002-0001-new_command011
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0002-0001-Construct_command012
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0002-0001-CommandReply_command013
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0002
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0003
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0003
+//! @SYMAPI                 MAnimGeneralFunctionsWindowExtension::SetFocusScreen(TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        10-04-2008
+//! @SYMTestCaseDesc        Create animation client object and send command to plugin to changes the focused screen.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct RWindowGroup and RWindow.
+//!                         3.Activate the RWindow.
+//!                         4.Create a RAnimDll object and load the animation plugin DLL.
+//!                         5.Create a RAnim object by using RAnimDll object.
+//!                         6.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         7.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         8.Send ECmdGfweSetFocusScreen to the animaion plugin by CommandReply to set focused screen.
+//!                         9.Send ECmdGfweFocusScreens to the animaion plugin by CommandReply to get focused screen number.
+//!                         9.1 Plugin get focused screen number and return it.
+//!                         9.2 Wrapper check what CommandReply return is set screen number or not.
+//!                         10.Close RAnimForMClass.
+//!                         11.Close RAnim.
+//!                         12.Destroy RAnimDll.
+//!                         13.Close RWsSession, RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Set focused screen as expected. 
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0003-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0003-0001-Construct_command004
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0003-0001-new_command005
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0003-0001-Construct_command006
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0003-0001-new_command008
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0003-0001-Load_command009
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0003-0001-new_command010
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0003-0001-new_command011
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0003-0001-Construct_command012
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0003-0001-CommandReply_command013
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0003-0001-CommandReply_command014
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0003
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0004
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0004
+//! @SYMAPI                 MAnimGeneralFunctionsWindowExtension::WindowGroups(TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        10-04-2008
+//! @SYMTestCaseDesc        Create animation client object and send command to plugin to get the number of window groups available for the specified screen.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct RWindowGroup and RWindow.
+//!                         3.Activate the RWindow.
+//!                         4.Create a RAnimDll object and load the animation plugin DLL.
+//!                         5.Create a RAnim object by using RAnimDll object.
+//!                         6.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         7.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         8.Send ECmdGfweWindowGroups to the animaion plugin  by CommandReply to get the number of window groups.
+//!                         8.1 Plugin get the number of window groups and return it.
+//!                         8.2 Wrapper check the number of window groups by RWsSession::NumWindowGroups().
+//!                         9.Close RAnimForMClass.
+//!                         11.Close RAnim.
+//!                         12.Destroy RAnimDll.
+//!                         13.Close RWsSession, RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults WindowGroups function get the right number of window groups.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0004-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0004-0001-Construct_command004
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0004-0001-new_command005
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0004-0001-Construct_command006
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0004-0001-new_command008
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0004-0001-Load_command009
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0004-0001-new_command010
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0004-0001-new_command011
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0004-0001-Construct_command012
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0004-0001-CommandReply_command013
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0004
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0005
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0005
+//! @SYMAPI                 MAnimGeneralFunctionsWindowExtension::WindowGroupInfo(TWindowGroupInfo{ref},TInt, TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        10-04-2008
+//! @SYMTestCaseDesc        Create animation client object and send command to plugin to get window group id.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct RWindowGroup and RWindow.
+//!                         3.Activate the RWindow.
+//!                         4.Create a RAnimDll object and load the animation plugin DLL.
+//!                         5.Create a RAnim object by using RAnimDll object.
+//!                         6.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         7.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         8.Send ECmdGfweWindowGroupInfo to the animaion plugin by CommandReply to get window group id.
+//!                         8.1 Plugin get window group information and return id.
+//!                         8.2 Wrapper check window group id by RWindowGroup::Identifier().
+//!                         9.Close RAnimForMClass.
+//!                         10. Close RAnim.
+//!                         11.Destroy RAnimDll.
+//!                         12.Close RWsSession, RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults WindowGroupInfo returns true. 
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0005-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0005-0001-Construct_command004
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0005-0001-new_command005
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0005-0001-Construct_command006
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0005-0001-new_command008
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0005-0001-Load_command009
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0005-0001-new_command010
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0005-0001-new_command011
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0005-0001-Construct_command012
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0005-0001-CommandReply_command013        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0005
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0006
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0006
+//! @SYMAPI                 MAnimGeneralFunctionsWindowExtension::WindowGroupInfo(TWindowGroupInfo{ref},TInt, TInt)
+//! @SYMAuthor              Forbes Fu
+//! @SYMCreationDate        10-04-2008
+//! @SYMTestCaseDesc        Create animation client object whose corresponding RWindowGroup can't receive focus and has a name.
+//!                         Then send command to plugin to get window group id.
+//! @SYMTestActions         1. Create and connect a RWsSession.
+//!                         2. Create and construct a parent RWindowGroup.
+//!                         3. Create and construct a RWindowGroup as child window group. 
+//!                         4. Disable receipt of focus on the child RWindowGroup.
+//!                         5. Set the child RWindowGroup's name.
+//!                         6. Create and construct a RWindow as the child of the second RWindowGroup.
+//!                         7. Activate the RWindow.
+//!                         8. Create a RAnimDll object and load the animation plugin DLL.
+//!                         9. Create a RAnim object by using RAnimDll object.
+//!                         10. Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         11. Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         12. Send ECmdGfweWindowGroupInfo to the animaion plugin by CommandReply to get window group id.
+//!                         12.1 Plugin get window group information and return id.
+//!                         12.2 Wrapper check window group id by RWindowGroup::Identifier().
+//!                         13. Close RAnimForMClass.
+//!                         14. Close RAnim.
+//!                         15. Destroy RAnimDll.
+//!                         16. Close RWsSession, two RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults WindowGroupInfo returns true. 
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindowGroup               wingrp1
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0006-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0006-0001-Construct_command004
+        COMMAND             wingrp1                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0006-0001-new_command005
+        COMMAND             wingrp1                    ConstructChildApp    GRAPHICS-WSERV-AnimGfwe-PublicApi-0006-0001-ConstructChildApp_command006
+        COMMAND             wingrp1                    EnableReceiptOfFocus GRAPHICS-WSERV-AnimGfwe-PublicApi-0006-0001-EnableReceiptOfFocus_command007
+        COMMAND             wingrp1                    SetName              GRAPHICS-WSERV-AnimGfwe-PublicApi-0006-0001-SetName_command008
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0006-0001-new_command009
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0006-0001-Construct_command010
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0006-0001-new_command012
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0006-0001-Load_command013
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0006-0001-new_command014
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0006-0001-new_command015
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0006-0001-Construct_command016
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0006-0001-CommandReply_command017
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp1                    Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0006
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0007
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0007
+//! @SYMAPI                 MAnimGeneralFunctionsWindowExtension::WindowGroupInfo(TWindowGroupInfo{ref},TInt, TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        10-04-2008
+//! @SYMTestCaseDesc        Create animation client object and send command to plugin with non-exist ordinal position to get window group information.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct RWindowGroup and RWindow.
+//!                         3.Activate the RWindow.
+//!                         4.Create a RAnimDll object and load the animation plugin DLL.
+//!                         5.Create a RAnim object by using RAnimDll object.
+//!                         6.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         7.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         8.Send ECmdGfweWindowGroupInfo to the animaion plugin by CommandReply with non-exist ordinal position to get window group information.
+//!                         8.1 Wrapper check CommandReply return false or not.
+//!                         9.Close RAnimForMClass.
+//!                         10. Close RAnim.
+//!                         11.Destroy RAnimDll.
+//!                         12.Close RWsSession, RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults WindowGroupInfo returns false.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0007-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0007-0001-Construct_command004
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0007-0001-new_command005
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0007-0001-Construct_command006
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0007-0001-new_command008
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0007-0001-Load_command009
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0007-0001-new_command010
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0007-0001-new_command011
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0007-0001-Construct_command012
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0007-0001-CommandReply_command013
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+   
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0007
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0008
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0008
+//! @SYMAPI                 MAnimGeneralFunctionsWindowExtension::WindowGroupName(TPtrC{ref}, TInt, TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        10-04-2008
+//! @SYMTestCaseDesc        Create animation client object and send command to plugin to get window group name.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct RWindowGroup and RWindow.
+//!                         3.Activate the RWindow.
+//!                         4.Create a RAnimDll object and load the animation plugin DLL.
+//!                         5.Create a RAnim object by using RAnimDll object.
+//!                         6.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         7.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         8.Send ECmdGfweWindowGroupName to the animaion plugin  by CommandReply to get window group name.
+//!                         8.1 Plugin get window group name and return it by IPC slot 3.
+//!                         8.2 Wrapper check window group name by RWindowGroup::Name().
+//!                         9.Close RAnimForMClass.
+//!                         10. Close RAnim.
+//!                         11.Destroy RAnimDll.
+//!                         10.Close RWsSession, RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults WindowGroupName returns correct window group name. 
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0008-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0008-0001-Construct_command004
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0008-0001-new_command005
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0008-0001-Construct_command006
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0008-0001-new_command008
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0008-0001-Load_command009
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0008-0001-new_command010
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0008-0001-new_command011
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0008-0001-Construct_command012
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0008-0001-CommandReply_command013
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0008
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0009
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0009
+//! @SYMAPI                 MAnimGeneralFunctionsWindowExtension::WindowGroupName(TPtrC{ref}, TInt, TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        10-04-2008
+//! @SYMTestCaseDesc        Create animation client object whose corresponding RWindowGroup has a name.
+//!                         Then send command to plugin to get window group name.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct RWindowGroup and RWindow.
+//!                         3.Activate the RWindow.
+//!                         4.Create a RAnimDll object and load the animation plugin DLL.
+//!                         5.Create a RAnim object by using RAnimDll object.
+//!                         6.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         7.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         8.Set the window group's name.
+//!                         9.Send ECmdGfweWindowGroupName to the animaion plugin  by CommandReply to get window group name.
+//!                         9.1 Plugin get window group name and return it by IPC slot 3.
+//!                         9.2 Wrapper check window group name by RWindowGroup::Name().
+//!                         10.Close RAnimForMClass.
+//!                         11.Close RAnim.
+//!                         12.Destroy RAnimDll.
+//!                         13.Close RWsSession, RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults WindowGroupName returns correct window group name. 
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0009-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0009-0001-Construct_command004
+        COMMAND             wingrp                     SetName              GRAPHICS-WSERV-AnimGfwe-PublicApi-0009-0001-SetName_command005
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0009-0001-new_command006
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0009-0001-Construct_command007
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0009-0001-new_command009
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0009-0001-Load_command010
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0009-0001-new_command011
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0009-0001-new_command012
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0009-0001-Construct_command013
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0009-0001-CommandReply_command014
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0009
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0010
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0010
+//! @SYMAPI                 MAnimGeneralFunctionsWindowExtension::WindowGroupName(TPtrC{ref}, TInt, TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        10-04-2008
+//! @SYMTestCaseDesc        Create animation client object and send command to plugin with non-exist ordinal position to get window group name.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct RWindowGroup and RWindow.
+//!                         3.Activate the RWindow.
+//!                         4.Create a RAnimDll object and load the animation plugin DLL.
+//!                         5.Create a RAnim object by using RAnimDll object.
+//!                         6.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         7.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         8.Send ECmdGfweWindowGroupName to the animaion plugin by CommandReply with non-exist screen number to get window group name.
+//!                         8.1 Wrapper check CommandReply return false or not.
+//!                         9.Close RAnimForMClass.
+//!                         10. Close RAnim.
+//!                         11.Destroy RAnimDll.
+//!                         12.Close RWsSession, RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults WindowGroupName returns false.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0010-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0010-0001-Construct_command004
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0010-0001-new_command005
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0010-0001-Construct_command006
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0010-0001-new_command008
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0010-0001-Load_command009
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0010-0001-new_command010
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0010-0001-new_command011
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0010-0001-Construct_command012
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0010-0001-CommandReply_command013
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+   
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0010
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0011
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0011
+//! @SYMAPI                 MAnimGeneralFunctionsWindowExtension::SetOrdinalPosition(TInt, TInt, TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        10-04-2008
+//! @SYMTestCaseDesc        Create animation client object and send command to plugin to change the ordinal priority of the window group.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct RWindowGroup and RWindow.
+//!                         3.Activate the RWindow.
+//!                         4.Create a RAnimDll object and load the animation plugin DLL.
+//!                         5.Create a RAnim object by using RAnimDll object.
+//!                         6.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         7.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         8.Send ECmdGfweSetOrdinalPosition to the animaion plugin by CommandReply to change the ordinal priority of the window group.
+//!                         8.1 Plugin change the ordinal position and priority of the window group.
+//!                         8.2 Wrapper check ordinal priority by RWindowTreeNode::OrdinalPriority().
+//!                         9.Close RAnimForMClass.
+//!                         10.Close RAnim.
+//!                         11.Destroy RAnimDll.
+//!                         12.Close RWsSession, RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults SetOrdinalPosition returns KErrNone.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0011-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0011-0001-Construct_command004
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0011-0001-new_command005
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0011-0001-Construct_command006
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0011-0001-new_command008
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0011-0001-Load_command009
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0011-0001-new_command010
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0011-0001-new_command011
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0011-0001-Construct_command012
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0011-0001-CommandReply_command013
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+   
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0011
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0012
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0012
+//! @SYMAPI                 MAnimGeneralFunctionsWindowExtension::SetOrdinalPosition(TInt, TInt, TInt)
+//! @SYMAuthor              Forbes Fu
+//! @SYMCreationDate        19-05-2008
+//! @SYMTestCaseDesc        Create animation client object and send command to plugin to change the ordinal position of the window group with identical priority.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct two RWindowGroup.
+//!                         3.Create and construct a RWindow by using the second RWindowGroup.
+//!                         4.Activate the RWindow.
+//!                         5.Create a RAnimDll object and load the animation plugin DLL.
+//!                         6.Create a RAnim object by using RAnimDll object.
+//!                         7.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         8.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         9.Get window ordinal position and send ECmdGfweSetOrdinalPosition to the animaion plugin by CommandReply to change the ordinal position of the window group.
+//!                         9.1 Plugin change the ordinal position and priority of the window group.
+//!                         9.2 Wrapper check ordinal position by RWindowTreeNode::OrdinalPosition().
+//!                         10.Close RAnimForMClass.
+//!                         11.Close RAnim.
+//!                         12.Destroy RAnimDll.
+//!                         13.Close RWsSession, two RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults SetOrdinalPosition returns KErrNone.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindowGroup               wingrp1
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0012-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0012-0001-Construct_command004
+        COMMAND             wingrp1                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0012-0001-new_command005
+        COMMAND             wingrp1                    Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0012-0001-Construct_command006
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0012-0001-new_command007
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0012-0001-Construct_command008
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0012-0001-new_command010
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0012-0001-Load_command011
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0012-0001-new_command012
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0012-0001-new_command013
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0012-0001-Construct_command014
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0012-0001-CommandReply_command015
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp1                    Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+   
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0012
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0013
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0013
+//! @SYMAPI                 MAnimGeneralFunctionsWindowExtension::SetOrdinalPosition(TInt, TInt, TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        10-04-2008
+//! @SYMTestCaseDesc        Negative case,Create animation client object and send command to plugin with non-exist group id to change the ordinal position and priority of the window group.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct RWindowGroup and RWindow.
+//!                         3.Activate the RWindow.
+//!                         4.Create a RAnimDll object and load the animation plugin DLL.
+//!                         5.Create a RAnim object by using RAnimDll object.
+//!                         6.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         7.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         8.Send ECmdGfweSetOrdinalPosition to the animaion plugin  by CommandReply with non-exist group id to change the ordinal position and priority of the window group.
+//!                         9.Close RAnimForMClass.
+//!                         10.Close RAnim.
+//!                         11.Destroy RAnimDll.
+//!                         12.Close RWsSession, RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults SetOrdinalPosition returns KErrNotFound.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0013-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0013-0001-Construct_command004
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0013-0001-new_command005
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0013-0001-Construct_command006
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0013-0001-new_command008
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0013-0001-Load_command009
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0013-0001-new_command010
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0013-0001-new_command011
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0013-0001-Construct_command012
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0013-0001-CommandReply_command013
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+   
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0013
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0014
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0014
+//! @SYMAPI                 TWindowGroupInfo::IsFocusable()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        10-04-2008
+//! @SYMTestCaseDesc        Create animation client object and send command to plugin to check the window group's focusability.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct RWindowGroup and RWindow.
+//!                         3.Activate the RWindow.
+//!                         4.Create a RAnimDll object and load the animation plugin DLL.
+//!                         5.Create a RAnim object by using RAnimDll object.
+//!                         6.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         7.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         8.Send ECmdGfweIsFocusable to the animaion plugin by CommandReply to check the window group's focusability.
+//!                         8.1 Wrapper check CommandReply return true or not.
+//!                         9.Close RAnimForMClass.
+//!                         10.Close RAnim.
+//!                         11.Destroy RAnimDll.
+//!                         12.Close RWsSession, RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults IsFocusable returns true.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0014-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0014-0001-Construct_command004
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0014-0001-new_command005
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0014-0001-Construct_command006
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0014-0001-new_command008
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0014-0001-Load_command009
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0014-0001-new_command010
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0014-0001-new_command011
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0014-0001-Construct_command012
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0014-0001-CommandReply_command013
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+   
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0014
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0015
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0015
+//! @SYMAPI                 TWindowGroupInfo::IsFocusable()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        10-04-2008
+//! @SYMTestCaseDesc        Create animation client object and create new window cover animation window, send command to plugin to check the window group's focusability.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct RWindowGroup and RWindow.
+//!                         3.Set the window size to (100,100).
+//!                         4.Set the window position to (50,50).
+//!                         5.Activate the RWindow.
+//!                         6.Create a RAnimDll object and load the animation plugin DLL.
+//!                         7.Create a RAnim object by using RAnimDll object.
+//!                         8.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         9.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         10.Create a new fullscreen window which cover the animation window.
+//!                         11.Send ECmdGfweIsFocusable to the animaion plugin by CommandReply to check the window group's focusability.
+//!                         11.1 Wrapper check CommandReply return false or not.
+//!                         12.Close RAnimForMClass.
+//!                         13.Close RAnim.
+//!                         14.Destroy RAnimDll.
+//!                         15.Close RWsSession, RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults IsFocusable returns false.
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RWindow                    win1
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0015-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0015-0001-Construct_command004
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0015-0001-new_command005
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0015-0001-Construct_command006
+        COMMAND             win                        SetExtent            GRAPHICS-WSERV-AnimGfwe-PublicApi-0015-0001-SetExtent_command007
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0015-0001-new_command009
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0015-0001-Load_command010
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0015-0001-new_command011
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0015-0001-new_command012
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0015-0001-Construct_command013
+        COMMAND             win1                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0015-0001-new_command014
+        COMMAND             win1                       Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0015-0001-Construct_command015
+        COMMAND             win1                       Activate
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0015-0001-CommandReply_command017
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+   
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0015
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0016
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0016
+//! @SYMAPI                 MAnimGeneralFunctionsWindowExtension::WindowConfig()
+//! @SYMAuthor              Forbes Fu
+//! @SYMCreationDate        20-05-2008
+//! @SYMTestCaseDesc        Create animation client object with a nontransparent animation window and send command to plugin to get transparency state of the window.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct RWindowGroup and RWindow.
+//!                         3.Activate the RWindow.
+//!                         4.Create a RAnimDll object and load the animation plugin DLL.
+//!                         5.Create a RAnim object by using RAnimDll object.
+//!                         6.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         7.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         8.Send ECmdGfweFocusScreens to the animaion plugin by CommandReply to get transparency state of the window.
+//!                         8.1 Plugin get window config and return transparency state.
+//!                         8.2 Wrapper check transparency state is false or not .
+//!                         9.Close RAnimForMClass.
+//!                         11.Close RAnim.
+//!                         12.Destroy RAnimDll.
+//!                         13.Close RWsSession, RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CommandReply returns false. 
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0016-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0016-0001-Construct_command004
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0016-0001-new_command005
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0016-0001-Construct_command006        
+        COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0016-0001-new_command008
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0016-0001-Load_command009
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0016-0001-new_command010
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0016-0001-new_command011
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0016-0001-Construct_command012
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0016-0001-CommandReply_command013
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0016
+
+
+START_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0017
+//! @SYMTestCaseID          GRAPHICS-WSERV-AnimGfwe-PublicApi-0017
+//! @SYMAPI                 MAnimGeneralFunctionsWindowExtension::WindowConfig()
+//! @SYMAuthor              Forbes Fu
+//! @SYMCreationDate        20-05-2008
+//! @SYMTestCaseDesc        Create animation client object with a transparent animation window and send command to plugin to get transparency state of the window.
+//! @SYMTestActions         1.Create and connect a RWsSession.
+//!                         2.Create and construct RWindowGroup and RWindow.
+//!                         3.Activate the RWindow.
+//!                         4.Create a RAnimDll object and load the animation plugin DLL.
+//!                         5.Create a RAnim object by using RAnimDll object.
+//!                         6.Create a RAnimForMClass object and get wrapped object from RAnim.
+//!                         7.Completes construction of the object based on a window device, and creates the server-side animation system.
+//!                         8.Send ECmdGfweFocusScreens to the animaion plugin by CommandReply to get transparency state of the window.
+//!                         8.1 Plugin get window config and return transparency state.
+//!                         8.2 Wrapper check transparency state is true or not .
+//!                         9.Close RAnimForMClass.
+//!                         11.Close RAnim.
+//!                         12.Destroy RAnimDll.
+//!                         13.Close RWsSession, RWindowGroup and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CommandReply returns true. 
+//! @SYMTestType            CIT
+
+    START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+        CREATE_OBJECT       RWsSession                 ws
+        CREATE_OBJECT       RWindowGroup               wingrp
+        CREATE_OBJECT       RWindow                    win
+        CREATE_OBJECT       RAnimDll                   animdll
+        CREATE_OBJECT       RAnim                      anim
+        CREATE_OBJECT       RAnimForMClass             animformc
+        COMMAND             ws                         new
+        COMMAND             ws                         Connect
+        COMMAND             wingrp                     new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0017-0001-new_command003
+        COMMAND             wingrp                     Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0017-0001-Construct_command004
+        COMMAND             win                        new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0017-0001-new_command005
+        COMMAND             win                        Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0017-0001-Construct_command006
+        COMMAND             win                        SetTransparencyAlphaChannel
+	  COMMAND             win                        Activate
+        COMMAND             animdll                    new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0017-0001-new_command009
+        COMMAND             animdll                    Load                 GRAPHICS-WSERV-AnimGfwe-PublicApi-0017-0001-Load_command010
+        COMMAND             anim                       new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0017-0001-new_command011
+        COMMAND             animformc                  new                  GRAPHICS-WSERV-AnimGfwe-PublicApi-0017-0001-new_command012
+        COMMAND             animformc                  Construct            GRAPHICS-WSERV-AnimGfwe-PublicApi-0017-0001-Construct_command013
+        COMMAND             animformc                  CommandReply         GRAPHICS-WSERV-AnimGfwe-PublicApi-0017-0001-CommandReply_command014
+        COMMAND             animformc                  Close
+        COMMAND             anim                       Close
+        COMMAND             animdll                    Destroy
+        COMMAND             win                        Close
+        COMMAND             wingrp                     Close
+        COMMAND             ws                         Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-AnimGfwe-PublicApi-0017
+

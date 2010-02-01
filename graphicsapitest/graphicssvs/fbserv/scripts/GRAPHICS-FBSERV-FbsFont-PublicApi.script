@@ -1,0 +1,956 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName		GRAPHICS-FBSERV-FbsFont-PublicApi
+//! @SYMScriptTestEnvironment	This test script requires a basic ROM.
+
+/////////////////////////////////////////////////////////////////////
+// GRAPHICS-FBSERV-FbsFont-PublicAPI.script
+//
+// Tests all public elements of the CFbsFont class
+// as a means of confidence that the APIs work as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for CFbsFont.
+// Negative testing is performed to confirm that correct errors are returned when incorrect parameters are given.
+// The tests are fully automated.
+/////////////////////////////////////////////////////////////////////
+
+LOAD_SUITE	T_FBServAPI
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0001
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0001
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		Simple CFbsFont test
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Creates a CFbsFont class instance obtaining it from FBS typeface store
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Creation of CFbsFont class doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0001-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0001
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0002
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0002
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::GetFontMetrics() test
+//!				Uses API elements: GetFontMetrics()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Creates a CFbsFont class instance obtaining it from Arial, 12px FBS typeface store
+//!				4. Create a TOpenFontMetrics instance and pass it as a parameter to font's GetFontMetrics
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function GetFontMetrics() returns true and doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0002-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		GetFontMetrics				GRAPHICS-FBSERV-FbsFont-PublicApi-0002-001-GetFontMetrics_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0002
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0003
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0003
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::TextWidthInPixels() test
+//!				Uses API elements: TextWidthInPixels()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Creates a CFbsFont class instance obtaining it from FBS typeface store
+//!				4. Call TextWidthInPixels(const TDesC\&) method passing descriptor "a"
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The TextWidthInPixels() result value is greater than 0 and the method doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0003-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		TextWidthInPixels			GRAPHICS-FBSERV-FbsFont-PublicApi-0003-001-TextWidthInPixels_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0003
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0004
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0004
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::TextWidthInPixels() with SCharWidth as a parameter test
+//!				Uses API elements: TextWidthInPixels()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Creates a CFbsFont class instance obtaining it from FBS typeface store
+//!				4. Call TextWidthInPixels(const TDesC\&, SCharWidth\&) method passing descriptor "a"
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The TextWidthInPixels() result value is equal to SCharWidth.iMove and iLeftAdjust + iWidth + iRightAdjust
+//!				of the SCharWidth to equal iMove and the method doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0004-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		TextWidthInPixelsWithCharWidth		GRAPHICS-FBSERV-FbsFont-PublicApi-0004-001-TextWidthInPixelsWithCharWidth_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0004
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0005
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0005
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::Handle() test
+//!				Uses API elements: Handle()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Creates a CFbsFont class instance obtaining it from FBS typeface store
+//!				4. Call Handle() method
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The result of Handle() is not zero and the method doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0005-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		Handle
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0005
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0007
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0007
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		Deprecated CFbsFont::RawTextWidthInPixels() test
+//!				Uses API elements: RawTextWidthInPixels(), MeasureText()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Creates a CFbsFont class instance obtaining it from FBS typeface store
+//!				4. Call RawTextWidthInPixels() method passing descriptor "qwerty" to it
+//!				5. Use MeasureText() methods to check that result is the same
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	RawTextWidthInPixels() method call will give same result as MeasureText() and the RawTextWidthInPixels() method doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0007-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		RawTextWidthInPixels			GRAPHICS-FBSERV-FbsFont-PublicApi-0007-001-RawTextWidthInPixels_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0007
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0008
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0008
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::GetFaceAttrib() test
+//!				Uses API elements: GetFaceAttrib()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Creates a CFbsFont class instance (for an Open Font, take Swiss) obtaining it from FBS typeface store
+//!				4. Call GetFaceAttrib() method passing a blank TOpenFontFaceAttrib instance to it
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Font face attributes are correct and the GetFaceAttrib() method doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0008-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		GetFaceAttrib				GRAPHICS-FBSERV-FbsFont-PublicApi-0008-001-GetFaceAttrib_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0008
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0009
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0009
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::IsOpenFont() test
+//!				Uses API elements: IsOpenFont()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Creates several instances of CFbsFont class for different fonts
+//!					obtaining them from FBS typeface store
+//!				4. Call their CFbsFont::IsOpenFont() method
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function IsOpenFont() doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		CREATE_OBJECT	CFbsFont		CFbsFont2
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0009-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0009-001-GetNearestFontToDesignHeightInPixels_command005
+		COMMAND		CFbsFont1		IsOpenFont
+		COMMAND		CFbsFont2		IsOpenFont
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0009
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0010
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0010
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		22/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::HasCharacter() test
+//!				Uses API elements: HasCharacter()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Creates a CFbsFont class instance (for an Open Font) obtaining it from FBS typeface store
+//!				4. Call CFbsFont::HasCharacter() method for character 'a'
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that the HasCharacter() method call returns ETrue and doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0010-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		HasCharacter				GRAPHICS-FBSERV-FbsFont-PublicApi-0010-001-HasCharacter_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0010
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0011
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0011
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		27/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		Simple test of font metrics related methods inherited from CFont
+//!				Uses API elements: FontCapitalAscent(), FontMaxAscent(), FontStandardDescent(), FontMaxDescent(), FontLineGap(),
+//!					FontMaxHeight(), TypeUid(), HeightInPixels(), AscentInPixels(), DescentInPixels(), CharWidthInPixels(),
+//!					TextCount(), MaxCharWidthInPixels(), MaxNormalCharWidthInPixels(), FontSpecInTwips(),
+//!					WidthZeroInPixels(), BaselineOffsetInPixels()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Create a CFbsFont (Arial, 12px) class instance obtaining it from FBS typeface store
+//!				4. Call FontCapitalAscent()
+//!				5. Call FontMaxAscent()
+//!				6. Call FontStandardDescent()
+//!				7. Call FontMaxDescent()
+//!				8. Call FontLineGap()
+//!				9. Call FontMaxHeight()
+//!				10. Call TypeUid()
+//!				11. Call HeightInPixels()
+//!				12. Call AscentInPixels()
+//!				13. Call DescentInPixels()
+//!				14. Call CharWidthInPixels() passing 'a' as an argument
+//!				15. Call TextCount() with "a" and 100, check that the retuned value is 1
+//!				16. Call TextCount() with "abcdf", 30 and a excessWidthInPixels variable as arguments, check that returned value
+//!					 and aExcessWidthInPixels are greater that 0
+//!				17. Call MaxCharWidthInPixels()
+//!				18. Call MaxNormalCharWidthInPixels()
+//!				19. Call FontSpecInTwips()
+//!				20. Call WidthZeroInPixels()
+//!				21. Call BaselineOffsetInPixels()
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects the operations not to cause panic and returned values of the methods to be greater than 0
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0011-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		FontCapitalAscent
+		COMMAND		CFbsFont1		FontMaxAscent
+		COMMAND		CFbsFont1		FontStandardDescent
+		COMMAND		CFbsFont1		FontMaxDescent
+		COMMAND		CFbsFont1		FontLineGap
+		COMMAND		CFbsFont1		FontMaxHeight
+		COMMAND		CFbsFont1		TypeUid
+		COMMAND		CFbsFont1		HeightInPixels
+		COMMAND		CFbsFont1		AscentInPixels
+		COMMAND		CFbsFont1		DescentInPixels
+		COMMAND		CFbsFont1		CharWidthInPixels			GRAPHICS-FBSERV-FbsFont-PublicApi-0011-001-CharWidthInPixels_command016
+		COMMAND		CFbsFont1		TextCount				GRAPHICS-FBSERV-FbsFont-PublicApi-0011-001-TextCount_command017
+		COMMAND		CFbsFont1		TextCount				GRAPHICS-FBSERV-FbsFont-PublicApi-0011-001-TextCount_command018
+		COMMAND		CFbsFont1		MaxCharWidthInPixels
+		COMMAND		CFbsFont1		MaxNormalCharWidthInPixels
+		COMMAND		CFbsFont1		FontSpecInTwips
+		COMMAND		CFbsFont1		WidthZeroInPixels
+		COMMAND		CFbsFont1		BaselineOffsetInPixels
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0011
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0012
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0012
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		28/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::GetCharacterData() test
+//!				Uses API elements: GetCharacterData()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Create a CFbsFont (Arial, 12px) class instance obtaining it from FBS typeface store
+//!				4. Call GetCharacterData() passing code 65 ('a') as an argument
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects the GetCharacterData() function call not to cause panic and that passed arguments are set to meaningful values
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0012-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		GetCharacterData			GRAPHICS-FBSERV-FbsFont-PublicApi-0012-001-GetCharacterData_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0012
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0013
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0013
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		28/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::MeasureText() test
+//!				Uses API elements: MeasureText()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Create a CFbsFont (Arial, 12px) class instance obtaining it from FBS typeface store
+//!				4. Call MeasureText() passing only a descriptor "a" as an argument
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects the MeasureText() function call not to cause panic and returned value to be greater that 0
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		CREATE_OBJECT	TMeasureTextInput	TMeasureTextInput1
+		CREATE_OBJECT	TMeasureTextOutput	TMeasureTextOutput1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0013-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		TMeasureTextOutput1	new
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0013-001-MeasureText_command010
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+		COMMAND		TMeasureTextInput1	~
+		COMMAND		TMeasureTextOutput1	~
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0013
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0014
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0014
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		28/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::ExtendedFunction() test
+//!				Uses API elements: ExtendedFunction()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Create a CFbsFont (Arial, 12px) class instance obtaining it from FBS typeface store
+//!				4. Call font's ExtendedFunction() passing KFontCapitalAscent (0x1020498E defined in GDI.H) as a parameter
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects the ExtendedFunction() call not to cause panic and returned value to be greater than 0
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0014-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		ExtendedFunction			GRAPHICS-FBSERV-FbsFont-PublicApi-0014-001-ExtendedFunction_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0014
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0017
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0017
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::TextWidthInPixels() test with an empty string
+//!				Uses API elements: TextWidthInPixels()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Creates a CFbsFont class instance obtaining it from FBS typeface store
+//!				4. Call TextWidthInPixels(const TDesC&) method passing descriptor ""
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function TextWidthInPixels() doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0017-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		TextWidthInPixels			GRAPHICS-FBSERV-FbsFont-PublicApi-0017-001-TextWidthInPixels_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0017
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0018
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0018
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::RawTextWidthInPixels() test with an empty string
+//!				Uses API elements: RawTextWidthInPixels()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Creates a CFbsFont class instance obtaining it from FBS typeface store
+//!				4. Call RawTextWidthInPixels() method passing descriptor ""
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function RawTextWidthInPixels() doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0018-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		RawTextWidthInPixels			GRAPHICS-FBSERV-FbsFont-PublicApi-0018-001-RawTextWidthInPixels_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0018
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0019
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0019
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::HasCharacter() test for negative character code
+//!				Uses API elements: HasCharacter()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Creates a CFbsFont class instance (for an Open Font) obtaining it from FBS typeface store
+//!				4. Call CFbsFont::HasCharacter() method passign code -1 as an argument
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function HasCharacter() doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0019-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		HasCharacter				GRAPHICS-FBSERV-FbsFont-PublicApi-0019-001-HasCharacter_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0019
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0020
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0020
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::CharWidthInPixels() test with 0 as character code
+//!				Uses API elements: CharWidthInPixels()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Create a CFbsFont (Arial, 12px) class instance obtaining it from FBS typeface store
+//!				4. Call CharWidthInPixels() passing char with code 0 as an argument
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function CharWidthInPixels() doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0020-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		CharWidthInPixels			GRAPHICS-FBSERV-FbsFont-PublicApi-0020-001-CharWidthInPixels_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0020
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0021
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0021
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::TextCount() (TextCount(const TDesC &aText, TInt aWidthInPixels) version) test with negative argument in place of width in pexils
+//!				Uses API elements: TextCount()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Create a CFbsFont (Arial, 12px) class instance obtaining it from FBS typeface store
+//!				4. Call TextCount() passing text "qwerty" and width -1
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function TextCount() doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0021-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		TextCount				GRAPHICS-FBSERV-FbsFont-PublicApi-0021-001-TextCount_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0021
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0022
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0022
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::TextCount() (TextCount(const TDesC &aText, TInt aWidthInPixels) version) test with 0 argument in place of width in pexils and empty string
+//!				Uses API elements: TextCount()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Create a CFbsFont (Arial, 12px) class instance obtaining it from FBS typeface store
+//!				4. Call TextCount() passing text "" and width 0
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function TextCount() doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0022-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		TextCount				GRAPHICS-FBSERV-FbsFont-PublicApi-0022-001-TextCount_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0022
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0023
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0023
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::TextCount() (TextCount(const TDesC &aText, TInt aWidthInPixels, TInt &aExcessWidthInPixels) version) test with negative argument in place of width in pexils
+//!				Uses API elements: TextCount()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Create a CFbsFont (Arial, 12px) class instance obtaining it from FBS typeface store
+//!				4. Call TextCount() passing text "qwerty" and width -1
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function TextCount() doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0023-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		TextCount				GRAPHICS-FBSERV-FbsFont-PublicApi-0023-001-TextCount_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0023
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0024
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0024
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::TextCount() (TextCount(const TDesC &aText, TInt aWidthInPixels, TInt &aExcessWidthInPixels) version) test with 0 argument in place of width in pexils and empty string
+//!				Uses API elements: TextCount()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Create a CFbsFont (Arial, 12px) class instance obtaining it from FBS typeface store
+//!				4. Call TextCount() passing text "" and width 0
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function TextCount() doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0024-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		TextCount				GRAPHICS-FBSERV-FbsFont-PublicApi-0024-001-TextCount_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0024
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0025
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0025
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		31/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::GetCharacterData() test with 0 as a character code
+//!				Uses API elements: GetCharacterData()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Create a CFbsFont (Arial, 12px) class instance obtaining it from FBS typeface store
+//!				4. Call GetCharacterData() passing code 0 as an argument
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function GetCharacterData() doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0025-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		GetCharacterData			GRAPHICS-FBSERV-FbsFont-PublicApi-0025-001-GetCharacterData_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0025
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0026
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0026
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Rnno Sgirka
+//! @SYMCreationDate		14/06/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::MeasureText() test with different variations of arguments
+//!				Uses API elements: MeasureText()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Create a CFbsFont (Arial, 12px) class instance obtaining it from FBS typeface store
+//!				4. Call MeasureText() passing text "qwerty" as an argument, with TMeasureTextOutput and with blank TMeasureTextInput provided.
+//!				5. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with blank TMeasureTextInput provided.
+//!				6. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iStartInputChar=0, iEndInputChar=5).
+//!				7. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iEndInputChar=5).
+//!				8. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iStartInputChar=0, iEndInputChar=-1).
+//!				9. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iStartInputChar=0, iEndInputChar=100).
+//!				10. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iStartInputChar=100, iEndInputChar=5).
+//!				11. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iStartInputChar=-1, iEndInputChar=-1).
+//!				12. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iDirection=0).
+//!				13. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iDirection=1).
+//!				14. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iDirection=999).
+//!				15. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iFlags=0).
+//!				16. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iFlags=1).
+//!				17. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iFlags=999).
+//!				18. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iMaxAdvance=-1).
+//!				19. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iMaxAdvance=0).
+//!				20. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iMaxAdvance=1).
+//!				21. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iMaxAdvance=999).
+//!				22. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iMaxBounds=-1).
+//!				23. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iMaxBounds=0).
+//!				24. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iMaxBounds=1).
+//!				25. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iMaxBounds=999).
+//!				26. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iCharJustNum=-1).
+//!				27. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iCharJustNum=0).
+//!				28. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iCharJustNum=1).
+//!				29. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iCharJustNum=999).
+//!				30. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iCharJustExcess=-1).
+//!				31. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iCharJustExcess=0).
+//!				32. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iCharJustExcess=1).
+//!				33. Call MeasureText() passing text "qwerty" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iCharJustExcess=999).
+//!				34. Call MeasureText() passing text "qwerty asdf" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iWordJustNum=-1).
+//!				35. Call MeasureText() passing text "qwerty asdf" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iWordJustNum=0).
+//!				36. Call MeasureText() passing text "qwerty asdf" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iWordJustNum=1).
+//!				37. Call MeasureText() passing text "qwerty asdf" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iWordJustNum=999).
+//!				38. Call MeasureText() passing text "qwerty asdf" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iWordJustExcess=-1).
+//!				39. Call MeasureText() passing text "qwerty asdf" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iWordJustExcess=0).
+//!				40. Call MeasureText() passing text "qwerty asdf" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iWordJustExcess=1).
+//!				41. Call MeasureText() passing text "qwerty asdf" as an argument, without TMeasureTextOutput and with TMeasureTextInput provided (where iWordJustExcess=999).
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function MeasureText() call doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		CREATE_OBJECT	TMeasureTextInput	TMeasureTextInput1
+		CREATE_OBJECT	TMeasureTextOutput	TMeasureTextOutput1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		TMeasureTextOutput1	new
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command010
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command014
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iStartInputChar				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iStartInputChar_command017
+		COMMAND		TMeasureTextInput1	iEndInputChar				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iEndInputChar_command018
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command020
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iEndInputChar				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iEndInputChar_command023
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command025
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iStartInputChar				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iStartInputChar_command028
+		COMMAND		TMeasureTextInput1	iEndInputChar				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iEndInputChar_command029
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command031
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iStartInputChar				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iStartInputChar_command034
+		COMMAND		TMeasureTextInput1	iEndInputChar				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iEndInputChar_command035
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command037
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iStartInputChar				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iStartInputChar_command040
+		COMMAND		TMeasureTextInput1	iEndInputChar				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iEndInputChar_command041
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command043
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iStartInputChar				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iStartInputChar_command046
+		COMMAND		TMeasureTextInput1	iEndInputChar				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iEndInputChar_command047
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command049
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iDirection				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iDirection_command052
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command054
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iDirection				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iDirection_command057
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command059
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iDirection				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iDirection_command062
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command064
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iFlags					GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iFlags_command067
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command069
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iFlags					GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iFlags_command072
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command074
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iFlags					GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iFlags_command077
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command079
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iMaxAdvance				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iMaxAdvance_command082
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command084
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iMaxAdvance				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iMaxAdvance_command087
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command089
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iMaxAdvance				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iMaxAdvance_command092
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command094
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iMaxAdvance				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iMaxAdvance_command097
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command100
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iMaxBounds				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iMaxBounds_command103
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command105
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iMaxBounds				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iMaxBounds_command108
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command110
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iMaxBounds				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iMaxBounds_command113
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command115
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iMaxBounds				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iMaxBounds_command118
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command120
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iCharJustNum				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iCharJustNum_command123
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command125
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iCharJustNum				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iCharJustNum_command128
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command130
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iCharJustNum				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iCharJustNum_command133
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command135
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iCharJustNum				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iCharJustNum_command138
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command140
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iCharJustExcess				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iCharJustExcess_command143
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command145
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iCharJustExcess				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iCharJustExcess_command148
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command150
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iCharJustExcess				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iCharJustExcess_command153
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command155
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iCharJustExcess				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iCharJustExcess_command158
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command160
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iWordJustNum				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iWordJustNum_command163
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command165
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iWordJustNum				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iWordJustNum_command168
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command170
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iWordJustNum				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iWordJustNum_command173
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command175
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iWordJustNum				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iWordJustNum_command178
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command180
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iWordJustExcess				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iWordJustExcess_command183
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command185
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iWordJustExcess				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iWordJustExcess_command188
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command190
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iWordJustExcess				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iWordJustExcess_command193
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command195
+		COMMAND		TMeasureTextInput1	new
+		COMMAND		TMeasureTextInput1	iWordJustExcess				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-iWordJustExcess_command198
+		COMMAND		CFbsFont1		MeasureText				GRAPHICS-FBSERV-FbsFont-PublicApi-0026-001-MeasureText_command200
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+		COMMAND		TMeasureTextInput1	~
+		COMMAND		TMeasureTextOutput1	~
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0026
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0028
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsFont-PublicApi-0028
+//! @SYMAPI			CFbsFont
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		05/06/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsFont-PublicApi.script
+//! @SYMTestCaseDesc		CFbsFont::ExtendedFunction() for inexistant function id test
+//!				Uses API elements: ExtendedFunction()
+//! @SYMTestActions		1. Create FBS session
+//!				2. Create FBS typeface store
+//!				3. Create a CFbsFont (Arial, 12px) class instance obtaining it from FBS typeface store
+//!				4. Call font's ExtendedFunction() passing 0 as a parameter. Expect KErrNotFound returned
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function ExtendedFunction() call doesn't panic and returns KErrNotFound (-1)
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsFont-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsFont-PublicApi-0028-001-GetNearestFontToDesignHeightInPixels_command004
+		COMMAND		CFbsFont1		ExtendedFunction			GRAPHICS-FBSERV-FbsFont-PublicApi-0028-001-ExtendedFunction_command006
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsFont-PublicApi-0028

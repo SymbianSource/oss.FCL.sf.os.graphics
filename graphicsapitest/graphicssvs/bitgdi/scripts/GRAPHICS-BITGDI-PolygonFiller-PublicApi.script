@@ -1,0 +1,686 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName		GRAPHICS-BITGDI-PolygonFiller-PublicApi
+//! @SYMScriptTestEnvironment	
+
+/////////////////////////////////////////////////////////////////////
+// GRAPHICS-BITGDI-PolygonFiller-PublicApi.script
+//
+// Tests all public elements of the CPolygonFiller
+// classes as a means of confidence that the APIs work as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for CPolygonFiller
+// The tests are fully automated.
+/////////////////////////////////////////////////////////////////////
+
+LOAD_SUITE      T_GraphicsBitgdiApi
+DELAY           1000
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0001
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0001
+//! @SYMAPI     				CPolygonFiller::Construct(const CArrayFix<TPoint>{ptr},CGraphicsContext::TFillRule,TUsage)               
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            Create a CPolygonFiller object with the type: CArrayFix, EAlternate and EGetAllPixelRunsSequentially  
+//! @SYMTestActions             1. Create a CPolygonFiller object with the type: CArrayFix, EAlternate and EGetAllPixelRunsSequentially
+//!                             2. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The CpolygonFiller object should be created without causing panic.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0001-0001-Construct_Command02   
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0001
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0002
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0002
+//! @SYMAPI     				CPolygonFiller::Construct(const CArrayFix<TPoint>{ptr},CGraphicsContext::TFillRule,TUsage)               
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            Create a CPolygonFiller object with the type: CArrayFix, EAlternate,EGetPixelRunsSequentiallyForSpecifiedScanLines 
+//! @SYMTestActions             1. Create a CPolygonFiller object with the type: CArrayFix, EAlternate,EGetPixelRunsSequentiallyForSpecifiedScanLines
+//!                             2. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The CpolygonFiller object should be created without causing panic.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0002-0001-Construct_Command02  
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0002
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0003
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0003
+//! @SYMAPI     				CPolygonFiller::Construct(const CArrayFix<TPoint>{ptr},CGraphicsContext::TFillRule,TUsage)               
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            Create a CPolygonFiller object with the type: CArrayFix, EWinding,EGetAllPixelRunsSequentially 
+//! @SYMTestActions             1. Create a CPolygonFiller object with the type: CArrayFix, EWinding,EGetAllPixelRunsSequentially
+//!                             2. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The CpolygonFiller object should be created without causing panic.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0003-0001-Construct_Command02  
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0003
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0004
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0004
+//! @SYMAPI     				CPolygonFiller::Construct(const CArrayFix<TPoint>{ptr},CGraphicsContext::TFillRule,TUsage)               
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            Create a CPolygonFiller object with the type: CArrayFix, EWinding,EGetPixelRunsSequentiallyForSpecifiedScanLines 
+//! @SYMTestActions             1. Create a CPolygonFiller object with the type: CArrayFix, EWinding,EGetPixelRunsSequentiallyForSpecifiedScanLines
+//!                             2. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The CpolygonFiller object should be created without causing panic.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0004-0001-Construct_Command02   
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0004
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0005
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0005
+//! @SYMAPI     				CPolygonFiller::Construct(<TPoint>{ptr},TInt,CGraphicsContext::TFillRule,TUsage)               
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            Create a CPolygonFiller object with the type: TPoint, EWinding, EGetAllPixelRunsSequentially  
+//! @SYMTestActions             1. Create a CPolygonFiller object with the type: TPoint, EWinding, EGetAllPixelRunsSequentially 
+//!                             2. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The CpolygonFiller object should be created without causing panic.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0005-0001-Construct_Command02   
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0005
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0006
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0006
+//! @SYMAPI     				CPolygonFiller::Construct(<TPoint>{ptr},TInt,CGraphicsContext::TFillRule,TUsage)               
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            Create a CPolygonFiller object with the type: TPoint, EWinding,EGetPixelRunsSequentiallyForSpecifiedScanLines 
+//! @SYMTestActions             1. Create a CPolygonFiller object with the type: TPoint, EWinding,EGetPixelRunsSequentiallyForSpecifiedScanLines
+//!                             2. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The CpolygonFiller object should be created without causing panic.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0006-0001-Construct_Command02   
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0006
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0007
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0007
+//! @SYMAPI     				CPolygonFiller::Construct(<TPoint>{ptr},TInt,CGraphicsContext::TFillRule,TUsage)              
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            Create a CPolygonFiller object with the type: TPoint, EAlternate,EGetPixelRunsSequentiallyForSpecifiedScanLines 
+//! @SYMTestActions             1. Create a CPolygonFiller object with the type: TPoint, EAlternate,EGetPixelRunsSequentiallyForSpecifiedScanLines
+//!                             2. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The CpolygonFiller object should be created without causing panic.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0007-0001-Construct_Command02   
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0007
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0008
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0008
+//! @SYMAPI     				CPolygonFiller::Construct(<TPoint>{ptr},TInt,CGraphicsContext::TFillRule,TUsage)              
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            Create a CPolygonFiller object with the type: TPoint, EAlternate,EGetAllPixelRunsSequentially 
+//! @SYMTestActions             1. Create a CPolygonFiller object with the type: TPoint, EAlternate,EGetAllPixelRunsSequentially
+//!                             2. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The CpolygonFiller object should be created without causing panic.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0008-0001-Construct_Command02   
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0008
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0009
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0009
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRun(TBool{ref},TInt{ref},TInt{ref},TInt{ref})               
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRun of the object constructed successfully with the type: CArrayFix, EAlternate,EGetAllPixelRunsSequentially  
+//! @SYMTestActions             1. Create a CPolygonFiller object with the type: CArrayFix, EAlternate,EGetAllPixelRunsSequentially
+//!                             2. GetNextPixelRun of the object.
+//!                             3. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The return values of GetNextPixelRun are as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0009-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRun GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0009-0001-GetNextPixelRun_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0009
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0010
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0010
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRun(TBool{ref},TInt{ref},TInt{ref},TInt{ref})               
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRun of the object constructed successfully with the type: CArrayFix, EWinding,EGetAllPixelRunsSequentially 
+//! @SYMTestActions             1. Create a CPolygonFiller object with the type: CArrayFix, EWinding,EGetAllPixelRunsSequentially
+//!                             2. GetNextPixelRun of the object.
+//!                             3. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The return values of GetNextPixelRun are as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0010-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRun GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0010-0001-GetNextPixelRun_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0010
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0011
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0011
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRun(TBool{ref},TInt{ref},TInt{ref},TInt{ref})               
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRun of the object constructed successfully with the type: CArrayFix, EAlternate, EGetPixelRunsSequentiallyForSpecifiedScanLines
+//! @SYMTestActions             1. Createa CPolygonFiller with the type: CArrayFix, EAlternate, EGetPixelRunsSequentiallyForSpecifiedScanLines
+//!                             2. GetNextPixelRun of the object.
+//!                             3. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The return values of GetNextPixelRun are as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0011-0001-Construct_Command02  
+        COMMAND 				polygonfiller				 GetNextPixelRun GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0011-0001-GetNextPixelRun_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0011
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0012
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0012
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRun(TBool{ref},TInt{ref},TInt{ref},TInt{ref})                
+//! @SYMAuthor                  DorothyZhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRun of the object constructed successfully with the type: CArrayFix, EWinding, EGetPixelRunsSequentiallyForSpecifiedScanLines 
+//! @SYMTestActions             1. Create a CPolygonFiller object with the type: CArrayFix, EWinding,EGetPixelRunsSequentiallyForSpecifiedScanLines
+//!                             2. GetNextPixelRun of the object.
+//!                             3. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The return values of GetNextPixelRun are as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0012-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRun GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0012-0001-GetNextPixelRun_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0012
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0013
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0013
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRun(TBool{ref},TInt{ref},TInt{ref},TInt{ref})              
+//! @SYMAuthor                  DorothyZhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRun of the CPolygonfiller object constructed with Horizontal line
+//! @SYMTestActions             1. Create a CPolygonFiller object by Construct(<TPoint>*, TInt,EAlternate,EGetAllPixelRunsSequentially)
+//!                              1.1 Set the list of the points for a Horizontal line: (50,100),(60,100),(70,100),(80,100).
+//!                              1.2 Set the fill rule type : EAlternate
+//!                              1.3 Set the Usage type: EGetAllPixelRunsSequentially
+//!                             2. GetNextPixelRun of the object.
+//!                             3. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The GetNextPixelRun call should return the initial scan line correctly as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0013-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRun GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0013-0001-GetNextPixelRun_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0013
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0014
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0014
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRun(TBool{ref},TInt{ref},TInt{ref},TInt{ref})               
+//! @SYMAuthor                  DorothyZhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRun of the CPolygonfiller object constructed with vertical line
+//! @SYMTestActions             1. Create a CPolygonFiller object by Construct(<TPoint>*, TInt, EAlternate,EGetAllPixelRunsSequentially)
+//!                              1.1 Set the list of points of the new polygon, a vertical line: (50,50),(50,60),(50,80),(50,120).
+//!                              1.2 Set the fill rule : EAlternate
+//!                              1.3 Set the polygon algorithm: EGetAllPixelRunsSequentially
+//!                             2. GetNextPixelRun of the object.
+//!                             3. Destoy the object.   
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The GetNextPixelRun call should return the initial scan line, the start and end position on the scan line correctly as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0014-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRun GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0014-0001-GetNextPixelRun_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0014
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0015
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0015
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRun(TBool{ref},TInt{ref},TInt{ref},TInt{ref})              
+//! @SYMAuthor                  DorothyZhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRun of the CPolygonFiller object constructed with a point
+//! @SYMTestActions             1. Create a CPolygonFiller object by Construct(<TPoint>*, TInt, EAlternate,EGetAllPixelRunsSequentially)
+//!                              1.1 Set the list of points of the new polygon:(0,0),(0,0),(0,0),(0,0).
+//!                              1.2 Set the fill rule: EAlternate
+//!                              1.3 Set the polygon algorithm: EGetAllPixelRunsSequentially
+//!                             2. GetNextPixelRun
+//!                             3. Destroy the object
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The GetNextPixelRun call should return the initial scan line correctly as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0015-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRun GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0015-0001-GetNextPixelRun_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0015
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0016
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0016
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRun(TBool{ref},TInt{ref},TInt{ref},TInt{ref})              
+//! @SYMAuthor                  DorothyZhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRun of the CPolygonFiller object constructed with polygon in negative area
+//! @SYMTestActions             1. Create a CPolygonFiller object by Construct(<TPoint>*, TInt, EAlternate, EGetAllPixelRunsSequentially)
+//!                              1.1 Set the lisf of points of the new polygon in negative area: (-10,-10),(-20,-20),(-10,-20),(0,0).
+//!                              1.2 Set the fill rule: EAlternate
+//!                              1.3 Set the polygon algorithm: EGetAllPixelRunsSequentially
+//!                             2. GetNextPixelRun of the object
+//!                             3. Destroy the object
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The GetNextPixelRun call should return the initial scan line, the start and end position on the scan line correctly as expected
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0016-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRun GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0016-0001-GetNextPixelRun_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0016
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0017
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0017
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRun(TBool{ref},TInt{ref},TInt{ref},TInt{ref})               
+//! @SYMAuthor                  DorothyZhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRun of the object constructed with 13 sides polygon
+//! @SYMTestActions             1. Create a CPolygonFiller object with the type: TPoint, EAlternate,EGetAllPixelRunsSequentially
+//!                              1.1 Set the lisf of points of the 13 sides polygon: (30,100),(30,60),(60,30),(90,60),(120,30),(150,60),(180,30),(210,60),(240,30),(270,60),(300,30),(330,60),(330,100)
+//!                              1.2 Set the fill rule: EAlternate
+//!                              1.3 Set the polygon algorithm: EGetAllPixelRunsSequentially
+//!                             2. GetNextPixelRun of the object.
+//!                             3. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The return values of GetNextPixelRun are as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0017-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRun GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0017-0001-GetNextPixelRun_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0017
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0020
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0020
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRunOnSpecifiedScanLine(TBool{ref},TInt,TInt{ref},TInt{ref})               
+//! @SYMAuthor                  DorothyZhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRunOnSpecifiedScanLine of the CPolygonFiller object constructed with polygon in square shape using EAlternate fill rule
+//! @SYMTestActions             1. Create a CPolygonFiller object by Construct(<TPoint>*, TInt, EAlternate,EGetAllPixelRunsSequentially)
+//!                              1.1 Set the list of points of the new polygon:(50,50),(100,50),(100,100),(50,100)
+//!                              1.2 Set the fill rule of the polygon: EAlternate
+//!                              1.3 Set the polygon algorithm: EGetPixelRunsSequentiallyForSpecifiedScanLines
+//!                             2. GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                              2.1 Specifiy the scan line: 60.
+//!                              2.2 GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                             3. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The GetNextPixelRunOnSpecifiedScanLine call should return the start and end position on the scan line correctly as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0020-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRunOnSpecifiedScanLine GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0020-0001-GetNextPixelRunOnSpecifiedScanLine_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0020
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0021
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0021
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRunOnSpecifiedScanLine(TBool{ref},TInt,TInt{ref},TInt{ref})               
+//! @SYMAuthor                  DorothyZhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRunOnSpecifiedScanLine of the CPolygonFiller object constructed with polygon in square shape using EWinding fill rule
+//! @SYMTestActions             1. Create a CPolygonFiller object by Construct(<TPoint>*,TInt,EAlternate,EGetAllPixelRunsSequentially)
+//!                              1.1 Set the list of points of the new polygon:(50,50),(100,50),(100,100),(50,100)
+//!                              1.2 Set the fill rule of the polygon: EWinding
+//!                              1.3 Set the polygon algorithm: EGetPixelRunsSequentiallyForSpecifiedScanLines
+//!                             2. GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                              2.1 Specifiy the scan line: 60.
+//!                              2.2 GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                             3. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The GetNextPixelRunOnSpecifiedScanLine call should return the start and end position on the scan line correctly as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0021-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRunOnSpecifiedScanLine GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0021-0001-GetNextPixelRunOnSpecifiedScanLine_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0021
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0022
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0022
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRunOnSpecifiedScanLine(TBool{ref},TInt,TInt{ref},TInt{ref})              
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRunOnSpecifiedScanLine of the CPolygonFiller object constructed with polygon in Horizontal shape  
+//! @SYMTestActions             1. Create a CPolygonFiller object by Construct(<TPoint>*, TInt, EAlternate,EGetAllPixelRunsSequentially)
+//!                              1.1 Set the list of points of the new polygon, a horizontal line:{(50,100),(60,100),(70,100),(80,100)}
+//!                              1.2 Set the fill rule of the polygon: EAlternate
+//!                              1.3 Set the polygon algorithm: EGetPixelRunsSequentiallyForSpecifiedScanLines
+//!                             2. GetNextPixelRunOnSpecifiedScanLine
+//!                              2.1 Specifiy the scan line: 100.
+//!                              2.2 GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                             3. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The GetNextPixelRunOnSpecifiedScanLine call should return the start and end position on the specified scan line correctly as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0022-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRunOnSpecifiedScanLine GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0022-0001-GetNextPixelRunOnSpecifiedScanLine_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0022
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0023
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0023
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRunOnSpecifiedScanLine(TBool{ref},TInt,TInt{ref},TInt{ref})               
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRunOnSpecifiedScanLine of the CPolygonFiller constructed with polygon in Vertical shape
+//! @SYMTestActions             1. Create a CPolygonFiller with polygon a vertical line by Construct(<TPoint>*, TInt, EAlternate,EGetAllPixelRunsSequentially)
+//!                              1.1 Set the list of points of the new polygon, a vertical line: (50,50),(50,60),(50,80),(50,120).
+//!                              1.2 Set the fill rule of the polygon: EWinding
+//!                              1.3 Set the polygon algorithm: EGetPixelRunsSequentiallyForSpecifiedScanLines
+//!                             2. GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                              2.1 Specifiy the scan line: 60.
+//!                              2.2 GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                             3. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The GetNextPixelRunOnSpecifiedScanLine call should return the start and end position on the specified scan line correctly as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0023-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRunOnSpecifiedScanLine GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0023-0001-GetNextPixelRunOnSpecifiedScanLine_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0023
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0024
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0024
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRunOnSpecifiedScanLine(TBool{ref},TInt,TInt{ref},TInt{ref})                
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRunOnSpecifiedScanLine of the CPolygonFiller object constructed with a single point
+//! @SYMTestActions             1. Create a CPolygonFiller with polygon by Construct(<TPoint>*, TInt, EWinding,EGetAllPixelRunsSequentially)
+//!                              1.1 Set the list of points of the new polygon: (0,0),(0,0),(0,0),(0,0).
+//!                              1.2 Set the fill rule of the polygon: EWinding
+//!                              1.3 Set the polygon algorithm: EGetPixelRunsSequentiallyForSpecifiedScanLines
+//!                             2. GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                              2.1 Specifiy the scan line: 0.
+//!                              2.2 GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                             3. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults    The GetNextPixelRunOnSpecifiedScanLine call should return the start and end position on the specified scan line correctly as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0024-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRunOnSpecifiedScanLine GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0024-0001-GetNextPixelRunOnSpecifiedScanLine_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0024
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0025
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0025
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRunOnSpecifiedScanLine(TBool{ref},TInt,TInt{ref},TInt{ref})                
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRunOnSpecifiedScanLine of the CPolygonFiller object constructed with polygon in negative area
+//! @SYMTestActions             1. Create a CPolygonFiller with polygon by Construct(<TPoint>*, TInt, EWinding,EGetAllPixelRunsSequentially)
+//!                              1.1 Set the list of points of the new polygon: (-10,-10),(-20,-20),(-10,-20),(0,0).
+//!                              1.2 Set the fill rule of the polygon: EWinding
+//!                              1.3 Set the polygon algorithm: EGetPixelRunsSequentiallyForSpecifiedScanLines
+//!                             2. GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                              2.1 Specifiy the scan line: -15.
+//!                              2.2 GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                             3. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The GetNextPixelRunOnSpecifiedScanLine call should return the start and end position on the specified scan line correctly as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0025-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRunOnSpecifiedScanLine GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0025-0001-GetNextPixelRunOnSpecifiedScanLine_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0025
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0026
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0026
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRunOnSpecifiedScanLine(TBool{ref},TInt,TInt{ref},TInt{ref})                               
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008        
+//! @SYMTestCaseDesc            GetNextPixelRunOnSpecifiedScanLine of the CPolygonFiller object with the specified scan line out of the polygon range 
+//! @SYMTestActions             1. Create a CPolygonFiller with polygon by Construct(<TPoint>*, TInt, EWinding,EGetAllPixelRunsSequentially)
+//!                              1.1 Set the list of points of the new polygon in square shape: (50,50),(100,50),(100,100),(50,100)
+//!                              1.2 Set the fill rule of the polygon: EWinding
+//!                              1.3 Set the polygon algorithm: EGetPixelRunsSequentiallyForSpecifiedScanLines
+//!                             2. GetNextPixelRunOnSpecifiedScanLine: scanline out of the range
+//!                              2.1 Specify the scan line out of the polygon range: 110
+//!                              2.2 GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                             3. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The GetNextPixelRunOnSpecifiedScanLine call should return EFalse as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0026-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRunOnSpecifiedScanLine GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0026-0001-GetNextPixelRunOnSpecifiedScanLine_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0026
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0027
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0027
+//! @SYMAPI     				CPolygonFiller::GetNextPixelRunOnSpecifiedScanLine(TBool{ref},TInt,TInt{ref},TInt{ref})                
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008
+//! @SYMTestCaseDesc            GetNextPixelRunOnSpecifiedScanLine of the CPolygonFiller object constructed with 11 sides polygon
+//! @SYMTestActions             1. Create a CPolygonFiller with polygon by Construct(<TPoint>*, TInt, EWinding,EGetAllPixelRunsSequentially)
+//!                              1.1 Set the list of points for the new 11 sides polygon: (0,0),(60,60),(90,30),(120,60),(150,30),(180,60),(210,30),(240,60),(270,30),(300,60),(330,30)
+//!                              1.2 Set the fill rule of the polygon: EWinding
+//!                              1.3 Set the polygon algorithm: EGetPixelRunsSequentiallyForSpecifiedScanLines
+//!                             2. GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                              2.1 Specifiy the scan line: 40.
+//!                              2.2 GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                             3. Destroy the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     The GetNextPixelRunOnSpecifiedScanLine call should return the start and end position on the specified scan line correctly.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0027-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRunOnSpecifiedScanLine GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0027-0001-GetNextPixelRunOnSpecifiedScanLine_Command03
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0027
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0028
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0028
+//! @SYMAPI     				CPolygonFiller::Reset()
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008   
+//! @SYMTestCaseDesc            Rest the CPolygonFiller object constructed using EGetAllPixelRunsSequentially
+//! @SYMTestActions             1. Create a CPolygonFiller with polygon by Construct(<TPoint>*, TInt, EWinding,EGetAllPixelRunsSequentially)
+//!                              1.1 Set the list of points of the new polygon in square shape: (50,50),(100,50),(100,100),(50,100)
+//!                              1.2 Set the fill rule of the polygon: EWinding
+//!                              1.3 Set the polygon algorithm: EGetAllPixelRunsSequentially
+//!                             2. GetNextPixelRun of the object
+//!                             3. Reset 
+//!                             4. GetNextPixelRun of the object
+//!                             5. Destroy the object
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1. The Reset() call should not cause any panic.
+//!                             2. The second GetNextPixelRun call should return the initial scan line and the start and end position on the scan line as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0028-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRun GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0028-0001-GetNextPixelRun_Command03
+        COMMAND                 polygonfiller                Reset
+        COMMAND 				polygonfiller				 GetNextPixelRun GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0028-0001-GetNextPixelRun_Command05
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0028
+
+START_TESTCASE                  GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0029
+//! @SYMTestCaseID              GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0029
+//! @SYMAPI     				CPolygonFiller::Reset()
+//! @SYMAuthor                  Dorothy Zhang
+//! @SYMCreationDate            04/12/2008   
+//! @SYMTestCaseDesc            Reset the CPolygonFiller object constructed using EGetPixelRunsSequentiallyForSpecifiedScanLines
+//! @SYMTestActions             1. Create a CPolygonFiller object by Construct(<TPoint>*, TInt, EAlternate, EGetAllPixelRunsSequentially)
+//!                              1.1 Set the list of points of the new polygon in square shape: (50,50),(100,50),(100,100),(50,100)
+//!                              1.2 Set the fill rule of the polygon: EWinding
+//!                              1.3 Set the polygon algorithm: EGetPixelRunsSequentiallyForSpecifiedScanLines
+//!                             2. GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                              2.1 Specify the scan line: 50
+//!                              2.2 GetNextPixelRunOnSpecifiedScanLine.
+//!                             3. Reset 
+//!                             4. GetNextPixelRunOnSpecifiedScanLine of the object.
+//!                              4.1 Specify the scan line: 50
+//!                              4.2 GetNextPixelRunOnSpecifiedScanLine
+//!                             5. Destory the object.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     1. The Reset() Call should not cause any panic.
+//!                             2. The second GetNextPixelRunOnSpecifiedScanLine() call should return EFalse as expected.
+//! @SYMTestType                CIT
+    START_TEST_BLOCK            10    T_GraphicsBitgdiApi      c:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicAPI.ini
+        CREATE_OBJECT           CPolygonFiller               polygonfiller
+        COMMAND                 polygonfiller                new     
+        COMMAND					polygonfiller				 Construct 		 GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0029-0001-Construct_Command02   
+        COMMAND 				polygonfiller				 GetNextPixelRunOnSpecifiedScanLine GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0029-0001-GetNextPixelRunOnSpecifiedScanLine_Command03
+        COMMAND                 polygonfiller                Reset
+        COMMAND 				polygonfiller				 GetNextPixelRunOnSpecifiedScanLine GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0029-0001-GetNextPixelRunOnSpecifiedScanLine_Command05
+    	COMMAND					polygonfiller				 ~
+    END_TEST_BLOCK    
+END_TESTCASE                    GRAPHICS-BITGDI-PolygonFiller-PublicAPI-0029
+
+

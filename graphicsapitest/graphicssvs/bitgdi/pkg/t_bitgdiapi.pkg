@@ -1,0 +1,79 @@
+;
+; Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+; All rights reserved.
+; This component and the accompanying materials are made available
+; under the terms of "Eclipse Public License v1.0"
+; which accompanies this distribution, and is available
+; at the URL "http://www.eclipse.org/legal/epl-v10.html".
+;
+; Initial Contributors:
+; Nokia Corporation - initial contribution.
+;
+; Contributors:
+;
+; Description:
+;
+;
+; Install file for T_GraphicsBitgdiApi.exe
+;
+
+; Languages - 
+&EN
+
+; Installation header
+; UID is the app's UID
+#{"T_BitgdiAPI"},(0x20003722),1,0,0
+
+;%{"Vendor-EN"}
+;:"Symbian"
+
+; Localised Vendor name
+%{"Nokia"}
+
+; Unique Vendor name
+:"Nokia"
+
+
+"T_GraphicsBitgdiApi.exe"-"!:\sys\bin\T_GraphicsBitgdiApi.exe"
+"t_prompt.exe"-"!:\sys\bin\t_prompt.exe"
+
+"t_graphics.ini"-"!:\graphics\t_graphics.ini"
+"tbitgdiapi.bat"-"!:\graphics\tbitgdiapi.bat"
+"t_graphics.tcs"-"!:\graphics\t_graphics.tcs"
+"t_graphics_panic.tcs"-"!:\graphics\t_graphics_panic.tcs"
+"graphics-bitgdi-publicapi.script"-"!:\graphics\graphics-bitgdi-publicapi.script"
+
+"graphics-bitgdi-fbsdevice-publicapi.script"-"!:\graphics\graphics-bitgdi-fbsdevice-publicapi.script"
+"graphics-bitgdi-fbsdevice-publicapi.ini"-"!:\graphics\graphics-bitgdi-fbsdevice-publicapi.ini"
+
+"graphics-bitgdi-fbsscreendevice-publicapi.script"-"!:\graphics\graphics-bitgdi-fbsscreendevice-publicapi.script"
+"graphics-bitgdi-fbsscreendevice-publicapi.ini"-"!:\graphics\graphics-bitgdi-fbsscreendevice-publicapi.ini"
+
+"graphics-bitgdi-fbsbitmapdevice-publicapi.script"-"!:\graphics\graphics-bitgdi-fbsbitmapdevice-publicapi.script"
+"graphics-bitgdi-fbsbitmapdevice-publicapi.ini"-"!:\graphics\graphics-bitgdi-fbsbitmapdevice-publicapi.ini"
+
+"graphics-bitgdi-fbsbitgc-publicapi.script"-"!:\graphics\graphics-bitgdi-fbsbitgc-publicapi.script"
+"graphics-bitgdi-fbsbitgc-publicapi.ini"-"!:\graphics\graphics-bitgdi-fbsbitgc-publicapi.ini"
+"graphics-bitgdi-fbsbitgc-publicapi-2.ini"-"!:\graphics\graphics-bitgdi-fbsbitgc-publicapi-2.ini"
+"graphics-bitgdi-fbsbitgc-publicapi-3.ini"-"!:\graphics\graphics-bitgdi-fbsbitgc-publicapi-3.ini"
+
+"graphics-bitgdi-fbsbitgc-publicapi-manual.script"-"!:\graphics\graphics-bitgdi-fbsbitgc-publicapi-manual.script"
+"graphics-bitgdi-fbsbitgc-publicapi-manual.ini"-"!:\graphics\graphics-bitgdi-fbsbitgc-publicapi-manual.ini"
+
+"bitgdi\test_rwssprite_bitmap.mbm"-"!:\graphics\bitgdi\test_rwssprite_bitmap.mbm"
+"bitgdi\testfontws.gdr"-"!:\graphics\bitgdi\testfontws.gdr"
+
+"GRAPHICS-BITGDI-PolygonFiller-PublicApi.script"-"!:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicApi.script"
+"GRAPHICS-BITGDI-PolygonFiller-PublicApi.ini"-"!:\graphics\GRAPHICS-BITGDI-PolygonFiller-PublicApi.ini"
+
+"GRAPHICS-BITGDI-FbsBitGcBitmap-PublicApi.script"-"!:\graphics\GRAPHICS-BITGDI-FbsBitGcBitmap-PublicApi.script"
+"GRAPHICS-BITGDI-FbsBitGcBitmap-PublicApi.ini"-"!:\graphics\GRAPHICS-BITGDI-FbsBitGcBitmap-PublicApi.ini"
+
+"GRAPHICS-BITGDI-FbsBitGcFont-PublicApi.script"-"!:\graphics\GRAPHICS-BITGDI-FbsBitGcFont-PublicApi.script"
+"GRAPHICS-BITGDI-FbsBitGcFont-PublicApi.ini"-"!:\graphics\GRAPHICS-BITGDI-FbsBitGcFont-PublicApi.ini"
+
+; Required files
+; None
+
+; Component .sis files
+; None
