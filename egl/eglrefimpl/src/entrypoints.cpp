@@ -14,6 +14,7 @@
 // Reference EGL implementation to support EGL sync objects and OpenWF extensions
 
 #include "eglprivate.h"
+#include <e32debug.h>
 
 // Helper macros
 //
@@ -23,7 +24,7 @@
                                     return r; \
                                     }
 
-#define PANIC_NOT_SUPPORTED     User::Panic(KEglPanicCategory, EEglPanicNotSupported); \
+#define PANIC_NOT_SUPPORTED     RDebug::Printf("EGL Panic %s %s:%d\n",__func__,__FILE__,__LINE__);User::Panic(KEglPanicCategory, EEglPanicNotSupported); \
                                 return 0;
 
 // EGL API entrypoints
