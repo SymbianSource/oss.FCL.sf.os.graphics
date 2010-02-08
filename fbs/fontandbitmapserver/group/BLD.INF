@@ -30,6 +30,7 @@ PRJ_EXPORTS
 ../inc/BITMAP.H SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(bitmap.h)
 ../inc/bitmap.inl SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/bitmap.inl)
 ../inc/FBS.H SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(fbs.h)
+../inc/FbsMessage.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(fbsmessage.h)
 ../inc/fbsrasterizer.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/fbsrasterizer.h)
 ../inc/fbsrasterizerclearcache.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/fbsrasterizerclearcache.h)
 ../inc/bitmapuid.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/bitmapuid.h)
