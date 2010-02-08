@@ -19,7 +19,8 @@
 // 
 //
  
-TARGET			opengles11.dll
+//TARGET			opengles11.dll
+TARGET			libgles_cm.dll
 TARGETTYPE		dll
 CAPABILITY		All -TCB
 
