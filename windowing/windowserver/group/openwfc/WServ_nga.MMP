@@ -23,10 +23,10 @@ TARGET            wserv_nga.exe
 TARGETTYPE        exe
 
 EPOCSTACKSIZE	  0x4000
-// 3Mb max heap for Winscw builds (default 1Mb used for target builds)
+// 6Mb max heap for Winscw builds (default 1Mb used for target builds)
 
 #ifdef WINS
-EPOCHEAPSIZE	    0x00010000 0x00300000
+EPOCHEAPSIZE	    0x00010000 0x00600000
 #endif
 EPOCFIXEDPROCESS
 CAPABILITY        PowerMgmt ReadDeviceData WriteDeviceData ProtServ
