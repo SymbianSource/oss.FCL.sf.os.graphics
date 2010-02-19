@@ -69,7 +69,11 @@ typedef struct {
     EGLSurface handle;
     M3Gbitmask bufferBits;
     M3Gbitmask type;
+    M3Guint width;
+    M3Guint height;
+    M3Guint format;
     M3Guint targetHandle;
+    void* pixels;
     M3Guint lastUseTime;
 } GLSurfaceRecord;
 #endif /*!M3G_NGL_CONTEXT_API*/
@@ -82,12 +86,9 @@ typedef struct
     M3Gbitmask type;
     M3GPixelFormat format;
     M3Gint width, height;
-#   if defined(M3G_NGL_CONTEXT_API)
     M3Guint stride;
     /*@shared@*/ void *pixels, *lockedPixels;
-#   else
     EGLSurface surface;
-#   endif
     M3Guint handle;
     M3Guint userData;
     
@@ -1324,7 +1325,7 @@ M3G_API void m3gReleaseTarget(M3GRenderContext context)
      * hog resources */
 #   if !defined(M3G_NGL_CONTEXT_API)
     if (ctx->target.type != SURFACE_EGL) {
-    m3gSwapBuffers(ctx->target.surface);
+//    m3gSwapBuffers(ctx->target.surface);
     }
 #   endif
     m3gCollectGLObjects(M3G_INTERFACE(ctx));

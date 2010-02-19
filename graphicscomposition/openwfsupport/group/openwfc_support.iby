@@ -17,7 +17,7 @@
 #define __OPENWFC_SUPPORT_IBY__
 
 REM openwfc_interop
-file=ABI_DIR\BUILD_DIR\WFCinterop.dll 		\sys\bin\WFCinterop.dll
+file=ABI_DIR\BUILD_DIR\wfcinterop.dll 		\sys\bin\wfcinterop.dll
 
 
 #endif

@@ -1,4 +1,4 @@
-// Copyright (c) 1994-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1994-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1496,7 +1496,7 @@ public:
 #if defined(__WINS__)
 // Function for WINS behaviour only
 	IMPORT_C void SetRemoveKeyCode(TBool aRemove);
-	IMPORT_C void SimulateXyInputType(TXYInputType aInputType);		//Only for testing WSERV
+	IMPORT_C void SimulateXyInputType(TInt aInputType);		//Only for testing WSERV
 #endif
 //
 	IMPORT_C void SimulateRawEvent(TRawEvent aEvent);

@@ -807,6 +807,7 @@ static M3Gint m3gBytesPerPixel(M3GPixelFormat format)
         return 3;
     case M3G_RGBA8:
     case M3G_BGRA8:
+    case M3G_ARGB8:
     case M3G_BGR8_32:
     case M3G_RGB8_32:
         return 4;
@@ -841,8 +842,14 @@ static void m3gConvertPixels(M3GPixelFormat srcFormat, const M3Gubyte *src,
 
     while (count > 0) {
         M3Gsizei n = (count < SPAN_BUFFER_SIZE) ? count : SPAN_BUFFER_SIZE;
-        convertToARGB(srcFormat, src, n, temp);
-        convertFromARGB(temp, n, dstFormat, dst);
+        if (srcFormat == M3G_ARGB8 && dstFormat != M3G_ARGB8) {
+            convertFromARGB((M3Guint*)src, n, dstFormat, dst);
+        } else if (srcFormat != M3G_ARGB8 && dstFormat == M3G_ARGB8) {
+            convertToARGB(srcFormat, src, n, (M3Guint*)dst);
+        } else {
+            convertToARGB(srcFormat, src, n, temp);
+            convertFromARGB(temp, n, dstFormat, dst);
+        }
         count -= SPAN_BUFFER_SIZE; /* \note may go negative */
         src += n * srcBpp;
         dst += n * dstBpp;
@@ -1252,7 +1259,6 @@ M3G_API M3GImage m3gCreateImage(/*@dependent@*/ M3GInterface interface,
             /* Allocate pixel & palette data; the palette is stored at
              * the beginning of the pixel data chunk */
 
-            /* \ comment */
             M3Gbool paletted = ((img->flags & M3G_PALETTED) != 0)
                 && m3gSupportedPaletteFormat(srcFormat);
             M3GPixelFormat internalFormat = getInternalFormat(srcFormat,

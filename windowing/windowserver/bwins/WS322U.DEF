@@ -333,7 +333,7 @@ EXPORTS
 	?SetPointerCursorArea@RWsSession@@QAEXHABVTRect@@@Z @ 332 NONAME ; public: void __thiscall RWsSession::SetPointerCursorArea(int,class TRect const &)
 	?SetPointerCursorMode@RWsSession@@QAEXW4TPointerCursorMode@@@Z @ 333 NONAME ; public: void __thiscall RWsSession::SetPointerCursorMode(enum TPointerCursorMode)
 	?SetPointerCursorPosition@RWsSession@@QAEHABVTPoint@@@Z @ 334 NONAME ; public: int __thiscall RWsSession::SetPointerCursorPosition(class TPoint const &)
-	?SimulateXyInputType@RWsSession@@QAEXW4TXYInputType@@@Z @ 335 NONAME ; public: void __thiscall RWsSession::SimulateXyInputType(enum TXYInputType)
+	?SimulateXyInputType@RWsSession@@QAEXH@Z @ 335 NONAME ; void RWsSession::SimulateXyInputType(int)
 	?MoveToGroup@RWindowBase@@QAEHH@Z @ 336 NONAME ; public: int __thiscall RWindowBase::MoveToGroup(int)
 	?SendMessageToAllWindowGroups@RWsSession@@QAEHHVTUid@@ABVTDesC8@@@Z @ 337 NONAME ; public: int __thiscall RWsSession::SendMessageToAllWindowGroups(int,class TUid,class TDesC8 const &)
 	?SendMessageToAllWindowGroups@RWsSession@@QAEHVTUid@@ABVTDesC8@@@Z @ 338 NONAME ; public: int __thiscall RWsSession::SendMessageToAllWindowGroups(class TUid,class TDesC8 const &)

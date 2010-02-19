@@ -436,6 +436,12 @@ void CTBitmap::RunTestCaseL(TInt aCurTestCase)
 		TestBitmapWhiteFillL();
 		break;
 	case 46:
+#ifdef _DEBUG
+	    ((CTBitmapStep*)iStep)->SetTestStepID(_L("GRAPHICS-FBSERV-0661"));
+	    TestBitmapUtilWithUnsupportedBitmaps();
+#endif
+        break;
+	case 47:
 		((CTBitmapStep*)iStep)->SetTestStepID(KNotATestSYMTestCaseIDName);
 		((CTBitmapStep*)iStep)->CloseTMSGraphicsStep();
 		TestComplete();
@@ -5654,6 +5660,120 @@ void CTBitmap::TestTouchedAndVolatileL()
 
 	CleanupStack::PopAndDestroy(bmp);
 	}
+
+#ifdef _DEBUG
+/*
+ * Creates an extended bitmap and it tries to use it with TBitmapUtil, which should cause a panic
+ */
+LOCAL_C void DoBitmapUtilWithExtendedBitmapThreadL()
+    {  
+    const TUint8 KTestData[]        = "Extended bitmap test data 123456";
+    const TInt KTestDataSize        = sizeof(KTestData);
+    const TSize KSizeInPixels       = TSize(50,50);
+    const TDisplayMode KDisplayMode = EColor64K;
+
+    CFbsBitmap* bmp = new(ELeave)CFbsBitmap;
+    CleanupStack::PushL(bmp);
+     
+    const TUid KUidTestExtendedBitmap   = TUid::Uid(0xFFFFFFFF);
+    User::LeaveIfError(bmp->CreateExtendedBitmap(KSizeInPixels, KDisplayMode, KUidTestExtendedBitmap, KTestData, KTestDataSize));
+     
+    TBitmapUtil util(bmp); // this will cause a panic
+     
+    CleanupStack::PopAndDestroy(bmp);
+    }
+
+/*
+ * Creates a compressed bitmap and it tries to use it with TBitmapUtil, which should cause a panic
+ */
+LOCAL_C void DoBitmapUtilWithCompressedBitmapThreadL()
+    {
+    CFbsBitmap*  bmp = new (ELeave) CFbsBitmap;
+    CleanupStack::PushL(bmp);
+    bmp->Load(KRamBitmap);
+    User::LeaveIfError(bmp->Compress());
+    if(!bmp->IsCompressedInRAM())
+        {
+        User::Leave(KErrArgument);
+        }
+     
+    TBitmapUtil util(bmp); // this will cause a panic
+     
+    CleanupStack::PopAndDestroy(bmp);
+    }
+
+typedef void (*TFunctionPtr)();
+
+LOCAL_C TInt BitmapUtilWithUnsupportedBitmapThreadFunc(TAny* aFunctionPtr)
+    {
+    TInt ret = RFbsSession::Connect();
+    if(ret != KErrNone)
+        {
+        return ret;
+        }
+    
+    CTrapCleanup* trap = CTrapCleanup::New();
+    if (!trap)
+         {
+         RFbsSession::Disconnect();
+         return KErrNoMemory;
+         }
+    
+    TRAP(ret, ((TFunctionPtr)aFunctionPtr)()); // this function can leave
+    
+    delete trap;
+    RFbsSession::Disconnect();
+    
+    return ret;
+    }
+/*
+ * Creates a thread, and the test scenario for GRAPHICS-FBSERV-0661 is run in aThreadFunction, which 
+ * causes a panic. Checks if the thread has been terminated with panic with correct category and panic code.
+ */
+void CTBitmap::TestBitmapUtilWithUnsupportedBitmap(const TDesC& aThreadName, TAny* aFunctionPtr)
+    {
+    RThread thread;
+    TInt ret = thread.Create(aThreadName, BitmapUtilWithUnsupportedBitmapThreadFunc, KDefaultStackSize, 0x2000, 0x2000, aFunctionPtr);
+    TEST(ret == KErrNone);
+    TRequestStatus status;
+    thread.Logon(status);
+    thread.Resume();
+    User::WaitForRequest(status);
+    TExitType exitType = thread.ExitType();
+    TExitCategoryName exitCategory = thread.ExitCategory();
+    TInt exitReason = thread.ExitReason();
+    TEST(exitType == EExitPanic);
+    TEST(exitCategory == KFBSERVClientPanicCategory);
+    TEST(exitReason == EFbsPanicInvalidBitmapType);
+    thread.Close();   
+    }
+
+/**
+@SYMTestCaseID          GRAPHICS-FBSERV-0661
+
+@SYMTestCaseDesc        Test the use of TBitmapUtil with extended and compressed bitmaps. 
+                        NOTE: this is a debug only test.
+
+@SYMTestStatus          Implemented
+
+@SYMTestPriority        High
+
+@SYMTestActions         Create extended bitmap, and TBitmapUtil to process it. 
+                        Create bitmap and compress it,and TBitmapUtil to process it. 
+
+@SYMTestExpectedResults Panic FBSCLI 29
+*/
+void CTBitmap::TestBitmapUtilWithUnsupportedBitmaps()
+    {
+    INFO_PRINTF1(_L("Test TBitmapUtil with unsupported bitmaps"));
+    
+    // extended bitmap
+    TestBitmapUtilWithUnsupportedBitmap(_L("BitmapUtilWithExtentedBitmapThread"), (TAny*)&DoBitmapUtilWithExtendedBitmapThreadL);
+    
+    // compressed bitmap
+    TestBitmapUtilWithUnsupportedBitmap(_L("BitmapUtilWithCompressedBitmapThread"), (TAny*)&DoBitmapUtilWithCompressedBitmapThreadL);  
+    }
+#endif //_DEBUG
 
 //--------------
 __CONSTRUCT_STEP__(Bitmap)

@@ -26,7 +26,7 @@ LOAD_SUITE tautoserver_nga
 // RUN_TEST_STEP 100 tautoserver_nga TMemLeakCheckEnable
 //
 
-RUN_TEST_STEP 100 tautoserver_nga TRedrawTest
+RUN_TEST_STEP 120 tautoserver_nga TRedrawTest
 RUN_TEST_STEP 100 tautoserver_nga TOOMDRAW
 RUN_TEST_STEP 600 tautoserver_nga TRedrawStoring
 

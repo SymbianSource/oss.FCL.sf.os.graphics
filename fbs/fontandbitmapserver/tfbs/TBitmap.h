@@ -23,6 +23,7 @@
 #include "TGraphicsHarness.h"
 #include "../sfbs/fbsbitmapasyncstreamer.h"
 
+
 //The main test class. Add your test methods here.
 class CTBitmap : public CTGraphicsBase
 	{
@@ -91,6 +92,10 @@ private:
 	void TestDisconnectWithBitmapL();
 	void TestTouchedAndVolatileL();
 	void TestBitmapWhiteFillL();
+#ifdef _DEBUG
+	void TestBitmapUtilWithUnsupportedBitmap(const TDesC& aThreadName, TAny* aFunctionPtr);
+	void TestBitmapUtilWithUnsupportedBitmaps();
+#endif
 private:
 	void DoStreamBitmapSizes(TDisplayMode aDispMode);
 	void DoStreamBitmap(const TSize& aSize,TDisplayMode aDispMode,TBool aBlank);

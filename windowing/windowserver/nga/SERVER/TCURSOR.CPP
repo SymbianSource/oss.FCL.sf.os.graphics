@@ -138,7 +138,9 @@ void RWsTextCursor::SetL(const TWsWinCmdSetTextCursor &aSet, TBool aClipped)
 			clipRect=aSet.rect;
 			}
 
-		if (pos != iPos || size != iSize || iType != type ||
+		TPoint absPos(pos.iX,pos.iY);
+		absPos=absPos+win->Origin();
+		if (pos != iPos || absPos != iAbsPos || size != iSize || iType != type ||
 			flags != iFlags || clipRect != iClipRect || color != iColor ||
 			customTextCursor != iCustomTextCursor || win != iWin)
 			{
@@ -153,7 +155,7 @@ void RWsTextCursor::SetL(const TWsWinCmdSetTextCursor &aSet, TBool aClipped)
 			TCursorSprite::Hide();
 			}
 
-		UpdateAttributes(pos, size, type, flags, clipRect, color, customTextCursor, win);
+		UpdateAttributes(pos, absPos, size, type, flags, clipRect, color, customTextCursor, win);
 
 		if (customTextCursor && iInternalFlags&EHasFocus)
 			{
@@ -167,11 +169,12 @@ void RWsTextCursor::SetL(const TWsWinCmdSetTextCursor &aSet, TBool aClipped)
 			}
 		}
 	}
-void RWsTextCursor::UpdateAttributes(TPoint aPos, TSize aSize, TInt aType, TUint aFlags, TRect aClipRect, TRgb aColor, CWsCustomTextCursor* aCustomTextCursor, CWsClientWindow* aWin)
+void RWsTextCursor::UpdateAttributes(TPoint aPos, TPoint aAbsPos, TSize aSize, TInt aType, TUint aFlags, TRect aClipRect, TRgb aColor, CWsCustomTextCursor* aCustomTextCursor, CWsClientWindow* aWin)
 	{
-	if (aPos != iPos || aSize != iSize)
+	if (aPos != iPos || aSize != iSize || aAbsPos != iAbsPos)
 		{
 		iPos = aPos;
+        iAbsPos = aAbsPos;
 		iSize = aSize;
 		WS_ASSERT_DEBUG(iGroupWin->Screen(),EWsPanicNoScreen);
 		MWsWindowTreeObserver* const windowTreeObserver = iGroupWin->Screen()->WindowTreeObserver();

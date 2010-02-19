@@ -70,7 +70,8 @@ enum TFbsPanic
 	EFbsInvalidCompressionThreshold,
 	EFbsTypefaceIndexOutOfRange,
 	EFbsPanicBitmapDataCopy,
-	EFbsPanicBitmapReadOnly
+	EFbsPanicBitmapReadOnly,
+	EFbsPanicInvalidBitmapType
 	};
 
 class TScanLine
