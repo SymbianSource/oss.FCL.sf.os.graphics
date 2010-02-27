@@ -26,7 +26,7 @@
 #   error This file is for the OES API only
 #endif
 
-#include <GLES/egl.h>
+#include <EGL/egl.h>
 #include "m3g_image.h"
 
 /*----------------------------------------------------------------------
@@ -40,9 +40,10 @@
  */
 static EGLConfig m3gQueryEGLConfig(M3Genum format,
                                    M3Gbitmask bufferBits,
-                                   EGLint surfaceBits)
+                                   EGLint surfaceBits,
+                                   M3GNativeBitmap bitmapHandle)
 {
-    struct { int attrib, value; } attribs[9];
+    struct { int attrib, value; } attribs[10];
     int samples;
 
     /* Determine color depth */
@@ -93,37 +94,72 @@ static EGLConfig m3gQueryEGLConfig(M3Genum format,
     attribs[5].attrib = EGL_SURFACE_TYPE;
     attribs[5].value = surfaceBits;
 
-    /* Try to get multisampling if requested */
 
-    attribs[6].attrib = EGL_SAMPLE_BUFFERS;
-    attribs[7].attrib = EGL_SAMPLES;
-    attribs[8].attrib = EGL_NONE;
+    if (bitmapHandle) {
+        /* This attribute is matched only for pixmap targets */
+        attribs[6].attrib = EGL_MATCH_NATIVE_PIXMAP;
+        attribs[6].value = bitmapHandle;
 
+        /* Try to get multisampling if requested */
+
+        attribs[7].attrib = EGL_SAMPLE_BUFFERS;
+        attribs[8].attrib = EGL_SAMPLES;
+
+        attribs[9].attrib = EGL_NONE;
+    } else {
+        /* Try to get multisampling if requested */
+
+        attribs[6].attrib = EGL_SAMPLE_BUFFERS;
+        attribs[7].attrib = EGL_SAMPLES;
+
+        attribs[8].attrib = EGL_NONE;
+    }
+    
+    
     /* Try 4 samples if multisampling enabled, then 2, then 1 */
     
     samples = (bufferBits & M3G_MULTISAMPLE_BUFFER_BIT) ? 4 : 1;
     for ( ; samples > 0; samples >>= 1) {
         
-        if (samples > 1) {
-            attribs[6].value = 1;
-            attribs[7].value = samples;
-        }
-        else {
-            attribs[6].value = EGL_FALSE;
-            attribs[7].value = 0;
+        if (bitmapHandle) {
+            if (samples > 1) {
+                attribs[7].value = 1;
+                attribs[8].value = samples;
+            }
+            else {
+                attribs[7].value = EGL_FALSE;
+                attribs[8].value = 0;
+            }
+        } else {
+            if (samples > 1) {
+                attribs[6].value = 1;
+                attribs[7].value = samples;
+            }
+            else {
+                attribs[6].value = EGL_FALSE;
+                attribs[7].value = 0;
+            }
         }
 
         /* Get the first matching config; according to EGL sorting
          * rules, this should be an accelerated one if possible */
         {
             EGLConfig config;
-            int numConfigs;
+            int numConfigs;  
+            EGLint error;            
+        
             eglChooseConfig(eglGetDisplay(EGL_DEFAULT_DISPLAY),
                             (const int *) attribs,
                             &config, 1,
                             &numConfigs);
             
-            M3G_ASSERT(eglGetError() == EGL_SUCCESS);
+            error = eglGetError();
+            if (error != EGL_SUCCESS) {
+                M3G_LOG1(M3G_LOG_FATAL_ERRORS, "eglChooseConfig  failed: %d\n", error);
+            }
+            
+            
+            M3G_ASSERT(error == EGL_SUCCESS);
 
             /* If we got a config, return that; otherwise, drop the
              * number of multisampling samples and try again, or
@@ -154,6 +190,7 @@ static void m3gInitializeEGL(void)
 {
     M3G_LOG(M3G_LOG_INTERFACE, "Initializing EGL\n");
     eglInitialize(eglGetDisplay(EGL_DEFAULT_DISPLAY), NULL, NULL);
+    eglBindAPI(EGL_OPENGL_ES_API);
 }
 
 /*!
@@ -170,7 +207,7 @@ static void m3gTerminateEGL(void)
  * \internal
  * \brief Creates a new EGL context
  */
-static EGLContext m3gCreateGLContext(M3Genum format,
+/*static EGLContext m3gCreateGLContext(M3Genum format,
                                      M3Gbitmask bufferBits,
                                      M3Gbitmask reqSurfaceBits,
                                      EGLContext share,
@@ -181,7 +218,7 @@ static EGLContext m3gCreateGLContext(M3Genum format,
 
     M3G_ASSERT((reqSurfaceBits & ~(EGL_PIXMAP_BIT|EGL_PBUFFER_BIT|EGL_WINDOW_BIT)) == 0);
     
-    config = m3gQueryEGLConfig(format, bufferBits, reqSurfaceBits);
+    config = m3gQueryEGLConfig(format, bufferBits, reqSurfaceBits, NULL);
     
     if (!config || !eglGetConfigAttrib(eglGetDisplay(EGL_DEFAULT_DISPLAY),
                                        config,
@@ -205,7 +242,7 @@ static EGLContext m3gCreateGLContext(M3Genum format,
     M3G_LOG1(M3G_LOG_OBJECTS, "New GL context 0x%08X\n", (unsigned) ctx);
     return ctx;
 }
-
+*/
 /*!
  * \internal
  * \brief Deletes an EGL context
@@ -236,7 +273,7 @@ static EGLSurface m3gCreateWindowSurface(M3Genum format,
                                          M3GNativeWindow wnd)
 {
     EGLSurface surf;
-    EGLConfig config = m3gQueryEGLConfig(format, bufferBits, EGL_WINDOW_BIT);
+    EGLConfig config = m3gQueryEGLConfig(format, bufferBits, EGL_WINDOW_BIT, NULL);
     
     if (!config) {
         return NULL;
@@ -272,7 +309,7 @@ static EGLSurface m3gCreateBitmapSurface(M3Genum format,
                                          M3GNativeBitmap bmp)
 {
     EGLSurface surf;
-    EGLConfig config = m3gQueryEGLConfig(format, bufferBits, EGL_PIXMAP_BIT);
+    EGLConfig config = m3gQueryEGLConfig(format, bufferBits, EGL_PIXMAP_BIT, bmp);
     
     if (!config) {
         return NULL;
@@ -317,7 +354,7 @@ static EGLSurface m3gCreatePBufferSurface(M3Genum format,
     attrib[3] = height;
     attrib[4] = EGL_NONE;
     
-    config = m3gQueryEGLConfig(format, bufferBits, EGL_PBUFFER_BIT);
+    config = m3gQueryEGLConfig(format, bufferBits, EGL_PBUFFER_BIT, NULL);
     if (!config) {
         return NULL;
     }
@@ -410,7 +447,7 @@ static void m3gBlitFrameBufferPixels2(RenderContext *ctx,
     if (internalFormat == M3G_RGB8_32) {
         glFormat = GL_RGBA;
     }
-    if (internalFormat == M3G_BGR8_32) {
+    if (internalFormat == M3G_BGR8_32 || internalFormat == M3G_ARGB8) {
         glFormat = GL_RGBA;
         mustConvert = M3G_TRUE;
     }
@@ -714,6 +751,7 @@ static M3Gbool m3gCanDirectRender(const RenderContext *ctx)
     M3GPixelFormat format = ctx->target.format;
     M3Gbitmask bufferBits = ctx->bufferBits;
     M3Gbitmask surfaceType = ctx->target.type;
+    M3GNativeBitmap bitmapHandle = ctx->target.handle;
     int i;
 
     /* Images always go via pbuffers; EGL surfaces can always be
@@ -742,7 +780,7 @@ static M3Gbool m3gCanDirectRender(const RenderContext *ctx)
 
     /* No dice; must resort to querying from EGL */
 
-    return (m3gQueryEGLConfig(format, bufferBits, (EGLint) surfaceType) != NULL);
+    return (m3gQueryEGLConfig(format, bufferBits, (EGLint) surfaceType, bitmapHandle) != NULL);
 }
 
 /*!
@@ -918,37 +956,44 @@ static void m3gUpdateBackBuffer(RenderContext *ctx)
     if (ctx->target.type == SURFACE_IMAGE) {
         m3gDrawFrameBufferImage(ctx, (Image *) ctx->target.handle);
     }
-    else if (ctx->target.type == SURFACE_BITMAP) {
+    else if (ctx->target.type == SURFACE_BITMAP || ctx->target.type == SURFACE_MEMORY) {
 
         M3Gubyte *src;
         M3Gsizei stride;
 
-        /* Obtain a pointer to the native bitmap and copy the data to
-         * the backbuffer from there */
-        
-        if (m3gglLockNativeBitmap((M3GNativeBitmap) ctx->target.handle,
-                                  &src, &stride)) {
+        M3Gint clipWidth = ctx->clip.x1 - ctx->clip.x0;
+        M3Gint clipHeight = ctx->clip.y1 - ctx->clip.y0;
+        M3Gint srcOffset;
 
-            M3Gint clipWidth = ctx->clip.x1 - ctx->clip.x0;
-            M3Gint clipHeight = ctx->clip.y1 - ctx->clip.y0;
-            M3Gint srcOffset =
-                (ctx->target.height - ctx->clip.y1) * stride
-                + ctx->clip.x0 * m3gBytesPerPixel(ctx->target.format);
-            
-            m3gBlitFrameBufferPixels(
-                ctx,
-                ctx->clip.x0, ctx->clip.y0,
-                clipWidth, clipHeight,
-                ctx->target.format,
-                stride,
-                src + srcOffset);
-                
-            m3gglReleaseNativeBitmap((M3GNativeBitmap) ctx->target.handle);
+        if (ctx->target.type == SURFACE_BITMAP) {
+            /* Obtain a pointer to the native bitmap and copy the data to
+             * the backbuffer from there */
+            if (!m3gglLockNativeBitmap((M3GNativeBitmap) ctx->target.handle,
+                                      &src, &stride)) {
+                /* No dice! There's no way that we know of to copy the
+                 * data between the buffers */
+                M3G_ASSERT(M3G_FALSE);
+            }
+        } else {
+            /* Memory target */
+            src = ctx->target.pixels;
+            stride = ctx->target.stride;
         }
-        else {
-            /* No dice! There's no way that we know of to copy the
-             * data between the buffers */
-            M3G_ASSERT(M3G_FALSE);
+
+        srcOffset =
+            (ctx->target.height - ctx->clip.y1) * stride
+            + ctx->clip.x0 * m3gBytesPerPixel(ctx->target.format);
+        
+        m3gBlitFrameBufferPixels(
+            ctx,
+            ctx->clip.x0, ctx->clip.y0,
+            clipWidth, clipHeight,
+            ctx->target.format,
+            stride,
+            src + srcOffset);
+
+        if (ctx->target.type == SURFACE_BITMAP) {
+            m3gglReleaseNativeBitmap((M3GNativeBitmap) ctx->target.handle);
         }
     }
     else {
@@ -969,67 +1014,75 @@ static void m3gUpdateTargetBuffer(RenderContext *ctx)
     if (ctx->target.type == SURFACE_IMAGE) {
         m3gCopyFrameBufferImage((Image *) ctx->target.handle);
     }
-    else if (ctx->target.type == SURFACE_BITMAP) {
+    else if (ctx->target.type == SURFACE_BITMAP || ctx->target.type == SURFACE_MEMORY) {
         
-        /* We must copy the back buffer to a native bitmap: first
-         * attempt a fast buffer-to-buffer copy using EGL, but if that
-         * fails, obtain a pointer and do the copy ourselves */
+        M3GPixelFormat format = ctx->target.format;
+        M3Gint width = ctx->clip.x1 - ctx->clip.x0;
+        M3Gint height = ctx->clip.y1 - ctx->clip.y0;
+        M3Gint xOffset = ctx->clip.x0;
+        M3Gint yOffset = ctx->clip.y0;
+        M3Gint row;
 
-        /* We can only do the fast copy for the full buffer */
+        M3Gubyte *dst;
+        M3Gsizei stride;
+        M3Gubyte *temp;
 
-        M3Gbool fullClip = (ctx->clip.x0 == 0)
-            && (ctx->clip.y0 <= ctx->target.height - ctx->display.height)
-            && (ctx->clip.x1 >= ctx->display.width)
-            && (ctx->clip.y1 >= ctx->clip.y0 + ctx->display.height);
-        
-        if (!fullClip || !eglCopyBuffers(eglGetDisplay(EGL_DEFAULT_DISPLAY),
-                                         ctx->backBuffer.glSurface,
-                                         (NativePixmapType) ctx->target.handle)) {
+        if (ctx->target.type == SURFACE_BITMAP) {
+            /* We must copy the back buffer to a native bitmap: first
+             * attempt a fast buffer-to-buffer copy using EGL, but if that
+             * fails, obtain a pointer and do the copy ourselves */
+
+            /* We can only do the fast copy for the full buffer */
+
+            M3Gbool fullClip = (ctx->clip.x0 == 0)
+                && (ctx->clip.y0 <= ctx->target.height - ctx->display.height)
+                && (ctx->clip.x1 >= ctx->display.width)
+                && (ctx->clip.y1 >= ctx->clip.y0 + ctx->display.height);
+            
+            if (fullClip && eglCopyBuffers(eglGetDisplay(EGL_DEFAULT_DISPLAY),
+                                             ctx->backBuffer.glSurface,
+                                             (NativePixmapType) ctx->target.handle)) 
+            {
+                return;
+            }
             
             /* Fast copy failed, try the generic approach */
-
-            M3Gubyte *dst;
-            M3Gsizei stride;
-            
-            if (m3gglLockNativeBitmap((M3GNativeBitmap) ctx->target.handle,
+            if (!m3gglLockNativeBitmap((M3GNativeBitmap) ctx->target.handle,
                                       &dst, &stride)) {
-                
-                /* OK, got the pointer; now, copy a scanline at a
-                 * time, and we can pretty much assume conversion
-                 * since the fast method didn't work */
-
-                M3GPixelFormat format = ctx->target.format;
-                M3Gint width = ctx->clip.x1 - ctx->clip.x0;
-                M3Gint height = ctx->clip.y1 - ctx->clip.y0;
-                M3Gint xOffset = ctx->clip.x0;
-                M3Gint yOffset = ctx->clip.y0;
-                M3Gint row;
-
-                M3Gubyte *temp = m3gAllocTemp(M3G_INTERFACE(ctx), width * 4);
-                if (!temp) {
-                    return; /* out of memory */
-                }
-
-                dst += (ctx->target.height - (yOffset + height)) * stride
-                    + xOffset * m3gBytesPerPixel(format);
-                
-                for (row = 0; row < height; ++row) {
-                    glReadPixels(xOffset, yOffset + height - row - 1,
-                                 width, 1,
-                                 GL_RGBA, GL_UNSIGNED_BYTE,
-                                 temp);
-                    m3gConvertPixels(M3G_RGBA8, temp, format, dst, width);
-                    dst += stride;
-                }
-                m3gFreeTemp(M3G_INTERFACE(ctx));
-                
-                m3gglReleaseNativeBitmap((M3GNativeBitmap) ctx->target.handle);
-            }
-            else {
                 /* No dice! There's no way that we know of to copy the
                  * data between the buffers */
                 M3G_ASSERT(M3G_FALSE);
             }
+        } else {
+            /* Memory target */
+            dst = ctx->target.pixels;
+            stride = ctx->target.stride;
+        }
+                
+        /* OK, got the pointer; now, copy a scanline at a
+         * time, and we can pretty much assume conversion
+         * since the fast method didn't work */
+
+        temp = m3gAllocTemp(M3G_INTERFACE(ctx), width * 4);
+        if (!temp) {
+            return; /* out of memory */
+        }
+
+        dst += (ctx->target.height - (yOffset + height)) * stride
+            + xOffset * m3gBytesPerPixel(format);
+        
+        for (row = 0; row < height; ++row) {
+            glReadPixels(xOffset, yOffset + height - row - 1,
+                         width, 1,
+                         GL_RGBA, GL_UNSIGNED_BYTE,
+                         temp);
+            m3gConvertPixels(M3G_RGBA8, temp, format, dst, width);
+            dst += stride;
+        }
+        m3gFreeTemp(M3G_INTERFACE(ctx));
+
+        if (ctx->target.type == SURFACE_BITMAP) {
+            m3gglReleaseNativeBitmap((M3GNativeBitmap) ctx->target.handle);
         }
     }
     else {
@@ -1102,24 +1155,25 @@ static EGLContext m3gSelectGLContext(RenderContext *ctx,
          * done in this order so that we don't lose any shared texture
          * objects when deleting a context. */
 
-        if (surfaceTypeBits == SURFACE_EGL) {
+        //if (surfaceTypeBits == SURFACE_EGL) 
+        {
             EGLDisplay dpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
             EGLint configID;
             eglQuerySurface(dpy,
-                            (EGLSurface) ctx->target.handle,
+                            surface,//(EGLSurface) ctx->target.handle,
                             EGL_CONFIG_ID,
                             &configID);
             glrc = eglCreateContext(dpy, (EGLConfig) configID, shareRc, NULL);
-            M3G_ASSERT(glrc);
+            //M3G_ASSERT(glrc);
         }
-        else {
+        /*else {
             glrc = m3gCreateGLContext(format,
                                       bufferBits,
                                       surfaceTypeBits,
                                       shareRc,
                                       &lru->surfaceTypeBits);
         }
-        
+        */
         if (!glrc) {
             m3gRaiseError(M3G_INTERFACE(ctx), M3G_OUT_OF_MEMORY);
             return NULL;
@@ -1181,9 +1235,13 @@ static EGLSurface m3gSelectGLSurface(RenderContext *ctx)
     for (i = 0; i < M3G_MAX_GL_SURFACES; ++i) {
         GLSurfaceRecord *surf = &ctx->glSurface[i];
         
-        if (surf->type == ctx->target.type
-            && surf->targetHandle == ctx->target.handle
-            && (ctx->bufferBits & surf->bufferBits) == ctx->bufferBits) {
+        if ((surf->type == ctx->target.type)
+            && (surf->targetHandle == ctx->target.handle)
+            && ((ctx->bufferBits & surf->bufferBits) == ctx->bufferBits)
+            && (surf->width == ctx->target.width)
+            && (surf->height == ctx->target.height)
+            && (surf->format == ctx->target.format)
+            && (surf->pixels == ctx->target.pixels)) {
             
             surf->lastUseTime = ctx->cacheTimeStamp;
             return surf->handle;
@@ -1241,6 +1299,10 @@ static EGLSurface m3gSelectGLSurface(RenderContext *ctx)
             lru->type         = ctx->target.type;
             lru->targetHandle = ctx->target.handle;
             lru->bufferBits   = ctx->bufferBits;
+            lru->width        = ctx->target.width;
+            lru->height       = ctx->target.height;
+            lru->format       = ctx->target.format;
+            lru->pixels       = ctx->target.pixels;
             lru->lastUseTime  = ctx->cacheTimeStamp;
             return lru->handle;
         }
@@ -1302,6 +1364,8 @@ static void m3gDeleteGLSurfaces(RenderContext *ctx,
  */
 static void m3gMakeGLCurrent(RenderContext *ctx)
 {
+    eglBindAPI(EGL_OPENGL_ES_API);
+
     if (ctx != NULL) {
         EGLContext eglCtx = NULL;
         if (ctx->target.buffered) {
@@ -1357,13 +1421,13 @@ void m3gBindBitmapTarget(M3GRenderContext hCtx,
                          M3GNativeBitmap hBitmap)
 {
     M3GPixelFormat format;
-    M3Gint width, height;
+    M3Gint width, height, pixels;
     RenderContext *ctx = (RenderContext *) hCtx;
     M3G_VALIDATE_OBJECT(ctx);
     
     M3G_LOG1(M3G_LOG_RENDERING, "Binding bitmap 0x%08X\n", (unsigned) hBitmap);
     
-    if (!m3gglGetNativeBitmapParams(hBitmap, &format, &width, &height)) {
+    if (!m3gglGetNativeBitmapParams(hBitmap, &format, &width, &height, &pixels)) {
         m3gRaiseError(M3G_INTERFACE(ctx), M3G_INVALID_OBJECT);
         return;
     }
@@ -1376,7 +1440,10 @@ void m3gBindBitmapTarget(M3GRenderContext hCtx,
         return; /* appropriate error raised automatically */
     }
 
-    /* placeholder for bitmap target specific setup */
+    /* Set the bitmap target specific parameters */
+    
+    ctx->target.pixels = (void*)pixels;
+
 }
 
 /*!
@@ -1417,28 +1484,57 @@ M3G_API void m3gBindEGLSurfaceTarget(M3GRenderContext context,
 }
 
 /*!
- * \brief Unsupported with OpenGL ES
+ * \brief Binds a new memory rendering target to this rendering
+ * context
+ *
+ * Upon first binding of a specific target, binding the buffer may
+ * require auxiliary data to be allocated, depending on the rendering
+ * modes set for this context. In that case, the binding will be
+ * canceled, and the function will return a non-zero value giving the
+ * number of bytes of additional memory that needs to be supplied for
+ * binding of that target to succeed. The function must then be called
+ * again and a pointer to a sufficient memory block supplied as the \c
+ * mem parameter.
+ *
+ * \param pixels NULL to signal that the frame buffer is accessed
+ * using a callback upon rendering time
  */
-/*@access EGLContext@*/
-M3G_API void m3gBindMemoryTarget(M3GRenderContext context,
-                                 /*@shared@*/ void *pixels,
-                                 M3Guint width, M3Guint height,
-                                 M3GPixelFormat format,
-                                 M3Guint stride,
-                                 M3Guint userHandle)
+/*@access M3GGLContext@*/
+void m3gBindMemoryTarget(M3GRenderContext context,
+                         /*@shared@*/ void *pixels,
+                         M3Guint width, M3Guint height,
+                         M3GPixelFormat format,
+                         M3Guint stride,
+                         M3Guint userHandle)
 {
     RenderContext *ctx = (RenderContext*) context;
     Interface *m3g = M3G_INTERFACE(ctx);
     M3G_VALIDATE_OBJECT(ctx);
 
-    M3G_UNREF(pixels);
-    M3G_UNREF(width);
-    M3G_UNREF(height);
-    M3G_UNREF(format);
-    M3G_UNREF(stride);
-    M3G_UNREF(userHandle);
+    M3G_LOG1(M3G_LOG_RENDERING, "Binding memory buffer 0x%08X\n",
+             (unsigned) pixels);
     
-    m3gRaiseError(m3g, M3G_INVALID_OPERATION);
+    /* Check for bitmap specific errors */
+    
+    if (width == 0 || height == 0 || stride < width) {
+        m3gRaiseError(m3g, M3G_INVALID_VALUE);
+        return; 
+    }
+
+    /* Effect the generic target binding */
+    
+    if (!m3gBindRenderTarget(ctx,
+                             SURFACE_MEMORY,
+                             width, height,
+                             format,
+                             userHandle)) {
+        return; /* appropriate error raised automatically */
+    }
+
+    /* Set the memory target specific parameters */
+    
+    ctx->target.pixels = pixels;
+    ctx->target.stride = stride;
 }
 
 /*!
@@ -1514,4 +1610,25 @@ M3G_API void m3gInvalidateWindowTarget(M3GRenderContext hCtx,
              (unsigned) hWindow);
     
     m3gDeleteGLSurfaces(ctx, (M3Gbitmask) SURFACE_WINDOW, (M3Guint) hWindow);
+}
+
+/*!
+ * \brief Invalidate a previously bound memorytarget
+ *
+ * This should be called prior to deleting a memory buffer that has
+ * been used as an M3G rendering target in the past. 
+ *
+ * \param hCtx    M3G rendering context
+ * \param pixels  pointer to the memory buffer
+ */
+M3G_API void m3gInvalidateMemoryTarget(M3GRenderContext hCtx,
+                                       void *pixels)
+{
+    RenderContext *ctx = (RenderContext *) hCtx;
+    M3G_VALIDATE_OBJECT(ctx);
+
+    M3G_LOG1(M3G_LOG_RENDERING, "Invalidating memory target 0x%08X\n",
+             (unsigned) pixels);
+    
+    m3gDeleteGLSurfaces(ctx, (M3Gbitmask) SURFACE_MEMORY, (M3Guint) pixels);
 }

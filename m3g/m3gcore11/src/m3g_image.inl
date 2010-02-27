@@ -90,6 +90,7 @@ static GLenum m3gGetGLFormat(M3GPixelFormat format)
         return GL_RGB;
     case M3G_RGBA8:
     case M3G_BGRA8:
+    case M3G_ARGB8:
         return GL_RGBA;
     case M3G_PALETTE8_RGB8:
         return GL_PALETTE8_RGB8_OES;

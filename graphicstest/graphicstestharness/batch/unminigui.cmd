@@ -44,7 +44,7 @@ if defined EPOC_INI (
 	)
 )
 echo Restore testexecute.ini
-if EXIST %TESTEXECUTE_INI%.mgbak(
+if EXIST %TESTEXECUTE_INI%.mgbak (
 	del /f %TESTEXECUTE_INI%
 	copy %TESTEXECUTE_INI%.mgbak %TESTEXECUTE_INI%
 	del /f %TESTEXECUTE_INI%.mgbak

@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -968,7 +968,7 @@ union TWsClCmdUnion
 	const TBool *Bool;
 	const TUid *Uid;
 	const TPointerCursorMode *Mode;
-	const TXYInputType *XyInput;
+    const TInt *XyInput;
 	const TPoint *Point;
 	const TRgb *rgb;
 	const RqStatPtr *RequestStatus;

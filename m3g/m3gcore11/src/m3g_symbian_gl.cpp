@@ -43,6 +43,7 @@ static M3GPixelFormat m3gSymbianPixelFormat(TDisplayMode displayMode)
     case EColor16MU:
         return M3G_BGR8_32;
     case EColor16MA:    
+    case EColor16MAP:    
         return M3G_BGRA8;
     case ERgb:
         return M3G_RGB8_32;
@@ -84,7 +85,7 @@ void m3gglReleaseNativeBitmap(M3GNativeBitmap bitmap)
  */
 extern "C" M3Gbool m3gglGetNativeBitmapParams(M3GNativeBitmap bitmap,
                                               M3GPixelFormat *format,
-                                              M3Gint *width, M3Gint *height)
+                                              M3Gint *width, M3Gint *height, M3Gint *pixels)
 {
     CFbsBitmap *pBitmap = (CFbsBitmap *) bitmap;
 
@@ -93,6 +94,10 @@ extern "C" M3Gbool m3gglGetNativeBitmapParams(M3GNativeBitmap bitmap,
     TSize size = pBitmap->SizeInPixels();
     *width = size.iWidth;
     *height = size.iHeight;
+    
+    pBitmap->LockHeap();
+    *pixels = (M3Gint) pBitmap->DataAddress();
+    pBitmap->UnlockHeap();
     
     return M3G_TRUE;
 }

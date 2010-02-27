@@ -34,7 +34,9 @@ without wasting memory or increasing the size of this class's objects. */
 #define iPIXEL_ADDRESS      UINT2PTR(PTR2UINT(iWordPos)+iPixelShift)
 
 
-/** Constructs a TBitmapUtil object for the specified bitmap.
+/** Constructs a TBitmapUtil object for the specified bitmap. 
+
+@note The use of extended or compressed bitmaps is not supported by TBitmapUtil.
 
 @param aBitmap The bitmap on which this TBitmapUtil will operate. */
 EXPORT_C TBitmapUtil::TBitmapUtil(CFbsBitmap* aBitmap):
@@ -61,7 +63,10 @@ EXPORT_C TBitmapUtil::TBitmapUtil(CFbsBitmap* aBitmap):
 							//      scanlines are always multiples of 12 bytes.
 	iScanlineWordLength(0), // Number of 4-byte words in bitmap scan line
 	iWritten(EFalse)
-	{}
+	{
+	ASSERT(iFbsBitmap);
+	__ASSERT_DEBUG(iFbsBitmap->Header().iCompression == ENoBitmapCompression, Panic(EFbsPanicInvalidBitmapType));
+	}
 
 /** Sets the current pixel position to the specified position and prepares
 the bitmap for access to its pixel data.
@@ -76,7 +81,6 @@ by a subsequent call to End().
 set. */
 EXPORT_C void TBitmapUtil::Begin(const TPoint& aPosition)
 	{
-	ASSERT(iFbsBitmap);
 	iFbsBitmap->BeginDataAccess();
 	TSize bmpsize(iFbsBitmap->SizeInPixels());
 	ASSERT(bmpsize.iWidth > 0 && bmpsize.iHeight > 0);
