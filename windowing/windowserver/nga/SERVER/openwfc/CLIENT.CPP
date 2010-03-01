@@ -1217,7 +1217,7 @@ void CWsClient::ExecuteCommandL(TInt aOpcode, const TAny* aCmdData)	// (step #6)
 				iInternalFlags|=ERemoveKeyCode;
 			break;
 		case EWsClOpSimulateXyInput:
-			TWsPointer::SetXyInputType(*pData.XyInput);
+			TWsPointer::SetXyInputType(static_cast<TXYInputType>(*pData.XyInput));
 			break;
 #endif
 		case EWsClOpNoFlickerFree:
