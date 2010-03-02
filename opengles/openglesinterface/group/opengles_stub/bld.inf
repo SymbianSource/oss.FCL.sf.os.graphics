@@ -24,6 +24,7 @@ PRJ_EXPORTS
 
 PRJ_MMPFILES
 opengles_defgen_stub.mmp
+openglesv1_cm_stub.mmp
 
 
 PRJ_TESTMMPFILES
