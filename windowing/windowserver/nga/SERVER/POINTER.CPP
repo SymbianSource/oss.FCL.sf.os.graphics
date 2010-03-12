@@ -54,6 +54,9 @@ CWsPointerBuffer*  CWsPointerBuffer::iCurrentBuffer=NULL;
 CCirBuf<TPoint>*   CWsPointerBuffer::iPointerBuffer=NULL;
 TSglQue<CWsPointerBuffer> CWsPointerBuffer::iList(_FOFF(CWsPointerBuffer,iQue));
 TInt                TWsPointer::iYOffset;
+#if defined(__WINS__)
+TBool               TWsPointer::iEmulatorRotatePointerCoords;
+#endif
 
 static _LIT_SECURITY_POLICY_C1(KSecurityPolicy_SwEvent,ECapabilitySwEvent);
 
@@ -70,7 +73,14 @@ void TWsPointer::InitStaticsL()
        {
        iYOffset = 0;
        }
-	
+
+#if defined(__WINS__)    
+	//An emulator may or may not deploy a renderchain or displaydriver that supports rotated drawing.
+	//On a real device target the coordinate system is always rotated together with wserv's screendevice.
+	_LIT( KWSERVIniFileVarEmulatorRotPointCoords, "EMULATOR_ROTATE_POINTER_COORDS");
+	iEmulatorRotatePointerCoords = WsIniFile->FindVar(KWSERVIniFileVarEmulatorRotPointCoords);
+#endif
+
 	iRootWindow = CWsTop::Screen()->RootWindow();
 	
 	TMachineInfoV1Buf machineInfo;
@@ -679,23 +689,17 @@ TBool TWsPointer::PreProcessDriverEvent(TRawEvent &aRawEvent)
 			}
 		else
 			{
-			CScreen* screen=iRootWindow->Screen();
 	#if !defined(__WINS__)
-			TSize screenSize=screen->SizeInPixels()-TSize(1,1);		//This is in the current rotation
-			switch (screen->Orientation())
+			TranslateCoordsOnRotation(xy);
+	#else
+			if(iEmulatorRotatePointerCoords)
 				{
-				case CFbsBitGc::EGraphicsOrientationRotated90:
-					xy.SetXY(xy.iY,screenSize.iHeight-xy.iX);
-					break;
-				case CFbsBitGc::EGraphicsOrientationRotated180:
-					xy=-(xy-screenSize);
-					break;
-				case CFbsBitGc::EGraphicsOrientationRotated270:
-					xy.SetXY(screenSize.iWidth-xy.iY,xy.iX);
-					break;
-				default:;		//To stop warning
+				//emulators that support rotated drawing and touch may want to enable 
+				//rotation of pointer events in wsini.
+				TranslateCoordsOnRotation(xy);
 				}
 	#endif
+			CScreen* screen=iRootWindow->Screen();
 			ShiftYCoordinate(xy.iY);
 			// Move the raw event position by shifting it by Origin and scale
 			xy=screen->PhysicalToLogical(xy);
@@ -705,6 +709,25 @@ TBool TWsPointer::PreProcessDriverEvent(TRawEvent &aRawEvent)
 					  iIs3DPointer ? aRawEvent.Pos3D().iZ : 0);
 		}
 	return ETrue;
+	}
+
+void TWsPointer::TranslateCoordsOnRotation(TPoint& aPoint)
+	{
+	CScreen* screen=iRootWindow->Screen();
+	TSize screenSize=screen->SizeInPixels()-TSize(1,1);     //This is in the current rotation
+	switch (screen->Orientation())
+		{
+		case CFbsBitGc::EGraphicsOrientationRotated90:
+			aPoint.SetXY(aPoint.iY,screenSize.iHeight-aPoint.iX);
+			break;
+		case CFbsBitGc::EGraphicsOrientationRotated180:
+			aPoint=-(aPoint-screenSize);
+			break;
+		case CFbsBitGc::EGraphicsOrientationRotated270:
+			aPoint.SetXY(screenSize.iWidth-aPoint.iY,aPoint.iX);
+			break;
+		default:;       //To stop warning
+		}
 	}
 
 /**

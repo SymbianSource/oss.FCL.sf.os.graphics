@@ -200,15 +200,8 @@ void CTestEglSession::QueryExtensionsL(TExtensionsGroups aExtensionBelongsTo)
 		INFO_PRINTF2(_L("thread %d: Calling vgGetString for VG_EXTENSIONS)"), iThreadIdx);
 
 		// OpenVG needs a current VG context before it will allow the call to vgGetString
-		TSgImageInfoOpenVgTarget imageInfo;
-		imageInfo.iSizeInPixels = KPixmapSize;
-		imageInfo.iPixelFormat = EUidPixelFormatXRGB_8888;
-#ifdef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
-		imageInfo.iUsage = ESgUsageBitOpenVgSurface;
-#else
-        imageInfo.iUsage = ESgUsageOpenVgTarget;
-#endif		
-		CreatePixmapSurfaceAndMakeCurrentAndMatchL(imageInfo,CTestEglSession::EResourceCloseSgImageEarly);
+        EGLConfig currentConfig = GetConfigExactMatchL(EPBufferAttribsColor64K);
+        CreatePbufferSurfaceAndMakeCurrentL(currentConfig, TSize(1,1), EGL_OPENVG_API);
 
 		extensionsString = (const char*) vgGetString(VG_EXTENSIONS);
 
@@ -883,7 +876,7 @@ EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentAndMatchL(const 
 		}
 
 	// Create a context for drawing to/reading from the pixmap surface and make it current
-	const EGLint KAttribsListCtxNone[] = { EGL_NONE };;
+	const EGLint KAttribsListCtxNone[] = { EGL_NONE };
 	const EGLint KAttribsListCtxGles2[] = { EGL_CONTEXT_CLIENT_VERSION, aRenderVersionNumber, EGL_NONE };
 	const EGLint* attrib_list_ctx = (aBindAPI == EGL_OPENGL_ES_API && aRenderVersionNumber == 2) ? KAttribsListCtxGles2 : KAttribsListCtxNone; 
 	iContext = eglCreateContext(iDisplay, config, EGL_NO_CONTEXT, attrib_list_ctx);

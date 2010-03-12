@@ -78,7 +78,9 @@ LOCAL_C	CWsRenderStage *ConstructRenderStageChain(HBufC* reversedRenderStageList
 
 	if (!pluginMgr)
 		{
+#if _DEBUG
 		RDebug::Printf("ConstructRenderStageChain: Failed to obtain Plugin Manager at File: %s, Line: %d\n", __FILE__, __LINE__);
+#endif
 		return NULL;
 		}
 
@@ -103,7 +105,9 @@ LOCAL_C	CWsRenderStage *ConstructRenderStageChain(HBufC* reversedRenderStageList
 					TRAP(err, stage = factory->CreateFinalRenderStageL(aScreen, aScreenRedraw, aScreenNumber));
 					if (err)
 						{
+#if _DEBUG
 						RDebug::Printf("ConstructRenderStageChain: Create final renderstage error at File: %s, Line: %d Error Code: %d\n", __FILE__, __LINE__, err);
+#endif
 						}
 					}
 				else
@@ -112,7 +116,9 @@ LOCAL_C	CWsRenderStage *ConstructRenderStageChain(HBufC* reversedRenderStageList
 					TRAP(err, stage = factory->CreateRenderStageL(aScreen, aScreenRedraw, savedStage));
 					if (err)
 						{
+#if _DEBUG
 						RDebug::Printf("ConstructRenderStageChain: Create renderstage error at File: %s, Line: %d Error Code: %d\n", __FILE__, __LINE__, err);
+#endif
 						}
 					}
 				

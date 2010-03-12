@@ -39,11 +39,16 @@ extern "C" {
 
 FARPROC vector[MAX_ORDINAL+1];
 
-
+#ifdef _DEBUG
 void Stop(char* aErrorMessage)
+#else
+void Stop(char* /*aErrorMessage*/)
+#endif
 	{
 	int err = GetLastError();
+#if _DEBUG
 	RDebug::Printf("%S, (last error = %i)", aErrorMessage, err);
+#endif
 	_asm int 3;
 	}
 
@@ -77,8 +82,10 @@ void init_vector()
 	UserSvr::HalFunction(EHalGroupEmulator, EEmulatorHalBoolProperty,  (TAny*)"symbian_graphics_use_gce",  &nga);
 	const char* library = nga ? "remotegc_nga.dll" : "remotegc_nonnga.dll";
 
+#ifdef _DEBUG
 	RDebug::Printf("Redirecting remotegc.dll to \"%s\" ...\n", library);
-	
+#endif
+  	
 	Emulator::Escape();		// prevent deadlock between EKA2 scheduler and MS kernel
 	// try to load selected DLL
 	HINSTANCE instance = LoadLibraryA(library);
@@ -91,7 +98,9 @@ void init_vector()
 	else
 		{
 		fill_vector(instance);
+#ifdef _DEBUG
 		RDebug::Printf("... DLL loaded successfully");
+#endif
 		}
 	}
 

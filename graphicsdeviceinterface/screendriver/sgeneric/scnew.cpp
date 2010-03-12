@@ -27,8 +27,7 @@
 #include "scdraw.h"
 #include "scdraw.inl"
 #include <graphics/gdi/gdiconsts.h>
-
-
+#include <graphics/suerror.h>
 /**
 Creates an instance of CFbsDrawDevice class.
 @param aScreenNo Screen number
@@ -351,7 +350,7 @@ void CScreenDeviceHelper::Update()
 	if (iUpdateRegion.IsEmpty())
 		return;
 
-	iSurfaceUpdateSession.SubmitUpdate(ScreenNumber(), iSurface, 0, &iUpdateRegion);
+	iSurfaceUpdateSession.SubmitUpdate(KAllScreens, iSurface, 0, &iUpdateRegion);
 	iUpdateRegion.Clear();
 	}
 
