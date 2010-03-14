@@ -88,7 +88,7 @@ private:
 	void Clear();
 	void doDraw(const TRegion& aRegion);
 	void ScheduleReDrawNow();
-	void UpdateAttributes(TPoint aPos, TSize aSize, TInt aType, TUint aFlags, TRect aClipRect, TRgb aColor, CWsCustomTextCursor* aCustomTextCursor, CWsClientWindow* aWin);
+	void UpdateAttributes(TPoint aPos, TPoint aAbsPos, TSize aSize, TInt aType, TUint aFlags, TRect aClipRect, TRgb aColor, CWsCustomTextCursor* aCustomTextCursor, CWsClientWindow* aWin);
 	void NotifyObserver(MWsWindowTreeObserver::TAttributes aAttribute) const;
 private:
 	CWsWindowGroup *iGroupWin;
@@ -96,6 +96,7 @@ private:
 	TUint iInternalFlags;
 	TInt iType;
 	TPoint iPos;
+	TPoint iAbsPos;
 	TSize iSize;
     TUint iFlags;
 	TRgb iColor;

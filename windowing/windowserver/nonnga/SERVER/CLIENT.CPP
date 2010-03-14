@@ -1,4 +1,4 @@
-// Copyright (c) 1994-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1994-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1144,7 +1144,7 @@ void CWsClient::CommandL(TInt aOpcode, const TAny *aCmdData)
 			iRemoveKeyCode=*pData.Bool;
 			break;
 		case EWsClOpSimulateXyInput:
-			WsPointer::SetXyInputType(*pData.XyInput);
+			WsPointer::SetXyInputType(static_cast<TXYInputType>(*pData.XyInput));
 			break;
 #endif
 		case EWsClOpNoFlickerFree:

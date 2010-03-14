@@ -125,10 +125,6 @@ PRJ_MMPFILES
 ../../group/WSGRAPHICDRAWER_nga.MMP
 ../../group/openwfc/WServ_nga.MMP
 ../../group/RemoteGc_nga.mmp
-#ifndef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS // PREQ2669
-../../group/samplegraphicsurface.MMP
-../../group/samplegraphicsurfacedrawer.MMP
-#endif
 ../../group/graphicsresourcewrapper.mmp
 
 

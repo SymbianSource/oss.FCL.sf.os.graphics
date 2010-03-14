@@ -62,10 +62,10 @@ USERINCLUDE     ../inc
 // layer specific include directories
 OS_LAYER_SYSTEMINCLUDE
 
-SYSTEMINCLUDE   /EPOC32/INCLUDE/LIBC
+SYSTEMINCLUDE   /epoc32/include/libc
 SYSTEMINCLUDE   ../../../inc
 SYSTEMINCLUDE   ../../inc
 
 LIBRARY         euser.lib estlib.lib fbscli.lib
 LIBRARY         efsrv.lib ws32.lib
-LIBRARY         libgles_cm.lib ezlib.lib
+LIBRARY         libGLESv1_CM.lib ezlib.lib libEGL.lib

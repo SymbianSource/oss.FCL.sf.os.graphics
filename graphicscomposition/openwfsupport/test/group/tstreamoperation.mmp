@@ -37,7 +37,7 @@ LIBRARY		estlib.lib
 LIBRARY		testexecuteutils.lib
 LIBRARY		testexecutelogclient.lib
 LIBRARY		rfileloggerclient.lib
-LIBRARY		WFCinterop.lib
+LIBRARY		wfcinterop.lib
 LIBRARY		surfacemanager.lib
 LIBRARY		surfaceupdateclient.lib
 LIBRARY		gdi.lib

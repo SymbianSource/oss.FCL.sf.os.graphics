@@ -44,20 +44,20 @@ OS_LAYER_LIBC_SYSTEMINCLUDE
 MACRO		HG_NO_ALLOCA_H
 MACRO		EGL_DLL
 
-USERINCLUDE		..\composition\include
-USERINCLUDE		..\common\include
-USERINCLUDE		..\adaptation\include
+USERINCLUDE		../composition/include
+USERINCLUDE		../common/include
+USERINCLUDE		../adaptation/include
 
-LIBRARY			libegl.lib
+LIBRARY			libEGL.lib
 LIBRARY			euser.lib
 LIBRARY			libc.lib
 LIBRARY			libpthread.lib
 LIBRARY			libm.lib
 LIBRARY			hal.lib
-LIBRARY			WFCinterop.lib
+LIBRARY			wfcinterop.lib
 LIBRARY			surfacemanager.lib
 
-SOURCEPATH	..\composition\src
+SOURCEPATH	../composition/src
 SOURCE			wfcapi.c 
 SOURCE			wfccontext.c
 SOURCE			wfcdevice.c
@@ -66,7 +66,7 @@ SOURCE			wfcimageprovider.c
 SOURCE			wfcscene.c
 SOURCE			wfcpipeline.c
 
-SOURCEPATH	..\common\src
+SOURCEPATH	../common/src
 SOURCE			owfarray.c
 SOURCE			owfattributes.c
 SOURCE			owfdebug.c
@@ -77,7 +77,7 @@ SOURCE			owfobject.c
 SOURCE			owfpool.c
 SOURCE			owfutils.c
 
-SOURCEPATH	..\adaptation\src\Platform\OS\symbian
+SOURCEPATH	../adaptation/src/Platform/OS/symbian
 SOURCE			owfconsole.cpp
 SOURCE			owfmessagequeue.c
 SOURCE			owfmutex.c
@@ -85,7 +85,7 @@ SOURCE			owfsemaphore.c
 SOURCE			owfthread.c
 SOURCE			owfextensions.cpp
 
-SOURCEPATH ..\adaptation\src\Platform\Graphics\symbian
+SOURCEPATH ../adaptation/src/Platform/Graphics/symbian
 SOURCE			owfdisplaycontext.cpp
 SOURCE 			owfscreen_displaychannel.cpp
 SOURCE 			owfnativestreamstub.cpp
