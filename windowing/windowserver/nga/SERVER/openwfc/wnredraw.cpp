@@ -252,13 +252,18 @@ void CWsWindowRedraw::DrawCursorAndSprites(MWsGraphicsContext * aGc, const TRegi
 
 	for (CWsSpriteBase * sprite = iWsWin->iSpriteList; sprite; sprite = sprite->Next())
 		{
+        TBool hasRedrawBegun = EFalse;
 		STACK_REGION redrawRegion;
 		sprite->CalcRedrawRegion(aRegion, redrawRegion);
 		if(redrawRegion.CheckError() || !redrawRegion.IsEmpty())
 			{
 			if (sprite->IsFlashingEnabled() || sprite->IsDirty() || sprite->HasAnimation())
 				{
-				AnnotateSpriteRedrawStart(*iWsWin, *sprite, redrawRegion);
+                if (sprite->IsDirty() || sprite->HasAnimation())
+                    {
+                    AnnotateSpriteRedrawStart(*iWsWin, *sprite, redrawRegion);
+                    hasRedrawBegun = ETrue;
+                    }
 				
 				if(sprite->HasAnimation())
 					{
@@ -276,10 +281,16 @@ void CWsWindowRedraw::DrawCursorAndSprites(MWsGraphicsContext * aGc, const TRegi
 					}
 				
 				//...call Redraw on the sprite
-				aGc->Reset();
+				if (hasRedrawBegun)
+				    {
+                    aGc->Reset();
+				    }
 				sprite->Redraw(aGc, redrawRegion);
 				
-				AnnotateSpriteRedrawEnd(*iWsWin, *sprite);
+				if (hasRedrawBegun)
+				    {
+                    AnnotateSpriteRedrawEnd(*iWsWin, *sprite);
+				    }
 				}
 			}
 		redrawRegion.Close();

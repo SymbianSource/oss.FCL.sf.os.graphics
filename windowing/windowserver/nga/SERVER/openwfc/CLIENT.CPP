@@ -1,4 +1,4 @@
-// Copyright (c) 1994-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1994-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1217,7 +1217,7 @@ void CWsClient::ExecuteCommandL(TInt aOpcode, const TAny* aCmdData)	// (step #6)
 				iInternalFlags|=ERemoveKeyCode;
 			break;
 		case EWsClOpSimulateXyInput:
-			TWsPointer::SetXyInputType(*pData.XyInput);
+			TWsPointer::SetXyInputType(static_cast<TXYInputType>(*pData.XyInput));
 			break;
 #endif
 		case EWsClOpNoFlickerFree:
@@ -1844,23 +1844,28 @@ void CWsClient::SetComputeMode(RWsSession::TComputeMode aComputeMode)
 
 void CWsClient::CompleteMessage(const RMessage2& aMessage,TInt aReason)
 	{
-	WS_ASSERT_DEBUG(!aMessage.IsNull(),EWsPanicPanicFlagError);
-	if (iInternalFlags&EPanicClientAsSoonAsPossible)
+	WS_ASSERT_DEBUG(!aMessage.IsNull(),EWsPanicCompleteNullMessage);
+	// This defensive check should not be necessary as aMessage should never
+	// be null, but in rare situations it is and WServ would die without this check.
+	if (!aMessage.IsNull())
 		{
-		aMessage.Panic(KWSERVSessionPanicCategory,iPanicReason);
-		iInternalFlags&=~EPanicClientAsSoonAsPossible;
-		}
-	else
-		{
-		if(!iResponseHandle)
-			aMessage.Complete(aReason);
+		if (iInternalFlags&EPanicClientAsSoonAsPossible)
+			{
+			aMessage.Panic(KWSERVSessionPanicCategory,iPanicReason);
+			iInternalFlags&=~EPanicClientAsSoonAsPossible;
+			}
 		else
 			{
-			aMessage.Complete(*iResponseHandle);
-			iResponseHandle=NULL;
+			if(!iResponseHandle)
+				aMessage.Complete(aReason);
+			else
+				{
+				aMessage.Complete(*iResponseHandle);
+				iResponseHandle=NULL;
+				}
 			}
 		}
-	}
+    }
 
 void CWsClient::ServiceError(const RMessage2& /*aMessage*/,TInt aError)
 	{
