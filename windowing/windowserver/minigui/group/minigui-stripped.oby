@@ -95,6 +95,6 @@ file=\epoc32\release\ARMV5\urel\devinfosupportclient.dll	sys\bin\devinfosupportc
 file=\epoc32\release\ARMV5\urel\uissclient.dll 				sys\bin\uissclient.dll
 file=\epoc32\release\ARMV5\urel\devinfosupportcommon.dll 	sys\bin\devinfosupportcommon.dll
 file=\epoc32\release\ARMV5\urel\ipcstream.dll 				sys\bin\ipcstream.dll
-file=\epoc32\release\ARMV5\urel\usbcsc_bil.dll 				sys\bin\usbcsc_bil.dll 
+//file=\epoc32\release\ARMV5\urel\usbcsc_bil.dll 				sys\bin\usbcsc_bil.dll 
  
 #endif /* __MINIGUI_OBY__ */
