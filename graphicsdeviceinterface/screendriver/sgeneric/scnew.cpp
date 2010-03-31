@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -340,6 +340,11 @@ void CScreenDeviceHelper::NotifyWhenAvailable(TRequestStatus& aStatus)
 	iSurfaceUpdateSession.NotifyWhenAvailable(aStatus);
 	}
 
+void CScreenDeviceHelper::CancelUpdateNotification()
+	{
+	iSurfaceUpdateSession.CancelAllUpdateNotifications();
+	}
+
 /**
 Implementation of corresponding function in CDrawDevice, utilizing a tracked
 update region. Updates the screen from the surface, if the update region is
@@ -347,11 +352,24 @@ not empty.
 */
 void CScreenDeviceHelper::Update()
 	{
-	if (iUpdateRegion.IsEmpty())
-		return;
+	TRequestStatus updateComplete = KRequestPending;
+	Update(updateComplete);
+	User::WaitForRequest(updateComplete);
+	}
 
-	iSurfaceUpdateSession.SubmitUpdate(KAllScreens, iSurface, 0, &iUpdateRegion);
-	iUpdateRegion.Clear();
+void CScreenDeviceHelper::Update(TRequestStatus& aStatus)
+	{
+	if (!iUpdateRegion.IsEmpty())
+		{
+		iSurfaceUpdateSession.NotifyWhenAvailable(aStatus);
+		iSurfaceUpdateSession.SubmitUpdate(KAllScreens, iSurface, 0, &iUpdateRegion);
+		iUpdateRegion.Clear();
+		}
+	else
+		{
+		TRequestStatus* pComplete=&aStatus;
+		User::RequestComplete(pComplete,KErrNone);	    
+		}
 	}
 
 /**

@@ -56,7 +56,7 @@ static void m3gInitObject(Object *obj,
     
     M3G_VALIDATE_OBJECT(obj);
 
-    m3gAddChildObject(interface);
+    m3gAddChildObject(interface, obj);
     m3gMarkObject(obj);
     
     m3gIncStat(M3G_INTERFACE(obj), M3G_STAT_OBJECTS, 1);
@@ -86,7 +86,7 @@ static void m3gDestroyObject(Object *obj)
         m3gFree(obj->interface, obj->animTracks);
     }
 
-    m3gDelChildObject(obj->interface);
+    m3gDelChildObject(obj->interface, obj);
     m3gUnmarkObject(obj);
     
     m3gIncStat(M3G_INTERFACE(obj), M3G_STAT_OBJECTS, -1);

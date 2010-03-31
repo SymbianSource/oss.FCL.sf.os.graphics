@@ -104,9 +104,9 @@ public:
 	//
 	//Compound functions that construct surface 
 	//
-	IMPORT_C void CreateWindowSurfaceAndMakeCurrentL(EGLConfig aConfig, RWindow& aWindow, EGLenum aBindAPI = EGL_OPENVG_API, TInt aRenderVersionNumber = 1);	
+	IMPORT_C void CreateWindowSurfaceAndMakeCurrentL(EGLConfig aConfig, RWindow& aWindow, TBool aVgAlphaFormatPre = EFalse, EGLenum aBindAPI = EGL_OPENVG_API, TInt aRenderVersionNumber = 1);	
 	IMPORT_C void CreatePixmapSurfaceAndMakeCurrentAndMatchL(const TSgImageInfo& aImageInfo, TResourceCloseRule aResourceCloseRule, EGLenum aBindAPI = EGL_OPENVG_API, TInt aRenderVersionNumber = 1);
-	IMPORT_C void CreatePixmapSurfaceAndMakeCurrentAndMatchL(const TSize& aSize, TDisplayMode displayMode, EGLenum aBindAPI = EGL_OPENVG_API, TInt aRenderVersionNumber = 1);
+	IMPORT_C void CreatePixmapSurfaceAndMakeCurrentAndMatchL(const TSize& aSize, TDisplayMode aDisplayMode, EGLenum aBindAPI = EGL_OPENVG_API, TInt aRenderVersionNumber = 1);
     IMPORT_C void CreatePbufferSurfaceAndMakeCurrentL(EGLConfig aConfig, const TSize& aSize, EGLenum aBindAPI = EGL_OPENVG_API, TInt aRenderVersionNumber = 1);
 
     //

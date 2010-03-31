@@ -1,0 +1,58 @@
+// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+
+LOAD_SUITE t_nativeorientationserver
+DELAY 10
+
+START_TESTCASE 	GRAPHICS-WSERV-0733
+RUN_TEST_STEP !Heap=0x200000 !PanicCode=85	t_nativeorientationserver	T_NativeOrientationTestStep	z:\wstest\tnativeorientation\graphics-wserv-nativeorientation.ini	graphics-wserv-0733
+END_TESTCASE 	GRAPHICS-WSERV-0733
+
+START_TESTCASE 	GRAPHICS-WSERV-0734
+RUN_TEST_STEP !Heap=0x200000 !PanicCode=85	t_nativeorientationserver	T_NativeOrientationTestStep	z:\wstest\tnativeorientation\graphics-wserv-nativeorientation.ini	graphics-wserv-0734
+END_TESTCASE 	GRAPHICS-WSERV-0734
+
+START_TESTCASE 	GRAPHICS-WSERV-0735
+RUN_TEST_STEP !Heap=0x200000 !PanicCode=85	t_nativeorientationserver	T_NativeOrientationTestStep	z:\wstest\tnativeorientation\graphics-wserv-nativeorientation.ini	graphics-wserv-0735
+END_TESTCASE 	GRAPHICS-WSERV-0735
+
+START_TESTCASE 	GRAPHICS-WSERV-0736
+RUN_TEST_STEP !Heap=0x200000 !PanicCode=85	t_nativeorientationserver	T_NativeOrientationTestStep	z:\wstest\tnativeorientation\graphics-wserv-nativeorientation.ini	graphics-wserv-0736
+END_TESTCASE 	GRAPHICS-WSERV-0736
+
+START_TESTCASE 	GRAPHICS-WSERV-0737
+RUN_TEST_STEP !Heap=0x200000 !PanicCode=85	t_nativeorientationserver	T_NativeOrientationTestStep	z:\wstest\tnativeorientation\graphics-wserv-nativeorientation.ini	graphics-wserv-0737
+END_TESTCASE 	GRAPHICS-WSERV-0737
+
+START_TESTCASE 	GRAPHICS-WSERV-0738
+RUN_TEST_STEP !Heap=0x200000 50	t_nativeorientationserver	T_NativeOrientationTestStep	z:\wstest\tnativeorientation\graphics-wserv-nativeorientation.ini	graphics-wserv-0738
+END_TESTCASE 	GRAPHICS-WSERV-0738
+
+START_TESTCASE 	GRAPHICS-WSERV-0739
+RUN_TEST_STEP !Heap=0x200000 !PanicCode=85	t_nativeorientationserver	T_NativeOrientationTestStep	z:\wstest\tnativeorientation\graphics-wserv-nativeorientation.ini	graphics-wserv-0739
+END_TESTCASE 	GRAPHICS-WSERV-0739
+
+START_TESTCASE 	GRAPHICS-WSERV-0740
+RUN_TEST_STEP !Heap=0x200000 50	t_nativeorientationserver	T_NativeOrientationTestStep	z:\wstest\tnativeorientation\graphics-wserv-nativeorientation.ini	graphics-wserv-0740
+END_TESTCASE 	GRAPHICS-WSERV-0740
+
+START_TESTCASE 	GRAPHICS-WSERV-0741
+RUN_TEST_STEP !Heap=0x200000 !PanicCode=85	t_nativeorientationserver	T_NativeOrientationTestStep	z:\wstest\tnativeorientation\graphics-wserv-nativeorientation.ini	graphics-wserv-0741
+END_TESTCASE 	GRAPHICS-WSERV-0741
+
+START_TESTCASE 	GRAPHICS-WSERV-0742
+RUN_TEST_STEP !Heap=0x200000 !PanicCode=3	t_nativeorientationserver	T_NativeOrientationTestStep	z:\wstest\tnativeorientation\graphics-wserv-nativeorientation.ini	graphics-wserv-0742
+END_TESTCASE 	GRAPHICS-WSERV-0742
+

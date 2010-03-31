@@ -23,6 +23,7 @@
 #include <gdi.h>
 #include "wstypes.h"
 #include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "Graphics/wsgraphicdrawerinternal.h"
 
 class CScreen;
 class CWsRenderStage;

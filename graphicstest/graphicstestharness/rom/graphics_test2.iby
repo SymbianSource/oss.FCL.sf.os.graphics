@@ -29,6 +29,13 @@
 #include <surfaceupdatetest.iby>
 #include <graphics_screencomparison.iby>
 #include <graphics_imagecomparison.iby>
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+#include <t_nativeorientation.iby>
 #endif
+
+#endif
+
+
 
 #endif

@@ -575,3 +575,6 @@ EXPORTS
 	call_vector_574 @ 574 NONAME ; void RWsSession::HeapSetBurstFail(int, int, int)
 	call_vector_575 @ 575 NONAME ; void RWsSession::EnableWindowSizeCacheL(void)
 	call_vector_576 @ 576 NONAME ; void RWindowBase::SetSurfaceTransparency(int)
+	call_vector_577 @ 577 NONAME ; class TSize RWindowBase::SizeForEgl(void) const
+	call_vector_578 @ 578 NONAME ; int RWindowBase::FixNativeOrientation(void)
+

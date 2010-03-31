@@ -1230,7 +1230,15 @@ protected:
     void RefreshWindowSizeCache(const TSize& aNewSize) const;
     TInt CachedWindowSize(TSize& aSize) const;
     void DestroyWindowSizeCacheEntry();
-	
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+	void EnableWindowNativeSizeCacheL();
+	TBool WindowNativeSizeCacheEnabled() const;
+	TInt SetWindowNativeSize(const TSize& aNativeSize) const;
+	TInt WindowNativeSize(TSize& aSize) const;
+	void DestroyWindowNativeSizeCacheEntry();
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+
 protected:
 	TInt32 iWsHandle;	/**< WARNING: Member variable for internal use ONLY. Compatibility is not guaranteed in future releases. Please access using the provided get/set APIs only. */
 	RWsBuffer *iBuffer;	/**< WARNING: Member variable for internal use ONLY. Compatibility is not guaranteed in future releases. Please access using the provided get/set APIs only. */
@@ -1712,6 +1720,8 @@ public:
 	IMPORT_C void SetSurfaceTransparency(TBool aSurfaceTransparency);
 	IMPORT_C TRgb KeyColor() const;
 	IMPORT_C void EnableAdvancedPointers();
+	IMPORT_C TInt FixNativeOrientation();
+	IMPORT_C TSize SizeForEgl() const;
 protected:
 	TInt construct(const RWindowTreeNode &parent,TUint32 aHandle, TInt aType, TDisplayMode aDisplayMode);
 	};

@@ -546,7 +546,7 @@ void CTDirectScreenBitmap::TestRefreshingWindowsPerDisplayModeL(TDisplayMode aDi
 	TRAPD(err,pDev = CFbsDrawDevice::NewScreenDeviceL(0, aDisplayMode));
 	if (err)
 		{
-		INFO_PRINTF2(_L("Warning: Failed to create screen device for display mode %i - not supported on this config?"),aDisplayMode);
+		INFO_PRINTF2(_L("Note: Failed to create screen device for display mode %i - not supported on this config?"),aDisplayMode);
 
 		}
 	else
@@ -655,7 +655,7 @@ void CTDirectScreenBitmap::TestContinuousRefreshingPerDisplayModeL(const TDispla
 	TRAPD(err,pDev = CFbsDrawDevice::NewScreenDeviceL(0, aDisplayMode));
 	if (err)
 		{
-		INFO_PRINTF2(_L("Warning: Failed to create screen device for display mode %i - not supported on this config?"),iDispMode);
+		INFO_PRINTF2(_L("Note: Failed to create screen device for display mode %i - not supported on this config?"),iDispMode);
 
 		}
 	else
@@ -786,7 +786,7 @@ void CTDirectScreenBitmap::TestRefreshingTimeL()
 	TRAPD(err,pDev = CFbsDrawDevice::NewScreenDeviceL(0, aDisplayMode));
 	if (err)
 		{
-		INFO_PRINTF2(_L("Warning: Failed to create screen device for display mode %i - not supported on this config?"),iDispMode);
+		INFO_PRINTF2(_L("Note: Failed to create screen device for display mode %i - not supported on this config?"),iDispMode);
 		}
 	else
 		{
@@ -936,7 +936,7 @@ void CTDirectScreenBitmap::ExhaustiveTestMergePerDispModeL(TDisplayMode aDrawDev
 	TRAPD(err,pDev = CFbsDrawDevice::NewScreenDeviceL(0,aDrawDeviceDispMode));
 	if (err !=KErrNone)
 		{
-		INFO_PRINTF2(_L("Warning: Failed to create screen device for display mode %i - not supported on this config?"),iDispMode);
+		INFO_PRINTF2(_L("Note: Failed to create screen device for display mode %i - not supported on this config?"),iDispMode);
 		}
 	else
 		{

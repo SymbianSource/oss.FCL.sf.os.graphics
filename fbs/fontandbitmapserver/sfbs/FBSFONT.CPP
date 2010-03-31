@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -38,7 +38,7 @@ LOCAL_C TInt PointerToOffset(const TAny* aAny, TUint8* aHeapBase)
 	{
 	if (aAny && aHeapBase)
 		{
-		return (TInt)aAny - (TInt)aHeapBase;
+		return reinterpret_cast<TInt>(aAny) - reinterpret_cast<TInt>(aHeapBase);
 		}
 	return 0;
 	}
@@ -50,11 +50,11 @@ PointerToOffset()) back to a pointer relative to the passed heap base.
 @return A pointer relative to the passed heap base.
 @see PointerToOffset()
  */
-LOCAL_C TAny* OffsetToPointer(const TInt aOffset, TUint8* aHeapBase)
+LOCAL_C TAny* OffsetToPointer(TInt aOffset, TUint8* aHeapBase)
 	{
 	if (aOffset && aHeapBase)
 		{
-		return (TAny*)(aOffset + (TInt)aHeapBase);
+		return reinterpret_cast<TAny*>(aOffset + reinterpret_cast<TInt>(aHeapBase));
 		}
 	return NULL;
 	}
@@ -469,10 +469,10 @@ EXPORT_C CFont::TCharacterDataAvailability CFbsFont::DoGetCharacterData(TUint aC
 			{				
 			// Translate the offsets sent to the server back to pointers relative to
 			// the heap base of the current process
-			const TOpenFontCharMetrics* temp = (const TOpenFontCharMetrics*)OffsetToPointer(paramsBuf().iMetricsOffset, iFbs->HeapBase());
-			if (temp)
+			const TOpenFontCharMetrics* metrics = (const TOpenFontCharMetrics*)OffsetToPointer(paramsBuf().iMetricsOffset, iFbs->HeapBase());
+			if (metrics)
 				{
-				aMetrics = *temp;
+				aMetrics = *metrics;
 				}
 			aBitmap = static_cast<TUint8*>(OffsetToPointer(paramsBuf().iBitmapPointerOffset, iFbs->HeapBase()));			
 			}
@@ -587,7 +587,7 @@ encoding in v5, otherwise it is in Unicode
 EXPORT_C TBool CFbsFont::HasCharacter(TInt aCode) const
 	{
 	if (iHandle)
-		{		
+		{
 		return iFbs->SendCommand(EFbsMessHasCharacter,iHandle,aCode);
 		}
 	return EFalse;
@@ -621,7 +621,7 @@ TInt CFbsFont::DoFontGetShaping(TFontShapeFunctionParameters* aParam) const
 
 /** help DoExtendedFunction to perform KFontDeleteShaping function
 @param aParam Input parameter block
-@return KErrNone if successful, KErrBadHandle if the font does not have a valid handle.
+@return KErrNone if successful, KErrGeneral if the font does not have a valid handle.
 */
 TInt CFbsFont::DoFontDeleteShaping(TFontShapeDeleteFunctionParameters* aParam) const
 	{
@@ -677,3 +677,4 @@ EXPORT_C TInt CFbsFont::DoExtendedFunction(TUid aFunctionId, TAny* aParam) const
 		}
 	return CFont::DoExtendedFunction(aFunctionId, aParam);
 	}
+

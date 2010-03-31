@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1998-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -140,7 +140,12 @@ enum TGdiPanic
 	/** Insufficient text for successful completion of the method */
 	EGdiPanic_OutOfText				= 2,
 	/** Internal failure. */
-	EGdiPanic_Invariant				= 3
+	EGdiPanic_Invariant				= 3,
+	/** Reserved panic codes. Not to be used. */
+	EGdiPanic_Reserved1				= 4,
+	EGdiPanic_Reserved2				= 5,
+	/** Setting a typeface name that is too long */
+	EGdiPanic_TypefaceNameOverflow	= 6,
 	};
 
 
@@ -560,6 +565,8 @@ public:
 	IMPORT_C void SetScriptTypeForMetrics(TLanguage aLanguage);
 	IMPORT_C void SetScriptTypeForMetrics(TInt aScript);
 	IMPORT_C TInt ScriptTypeForMetrics() const;
+	IMPORT_C void SetName(const TDesC& aName);
+	IMPORT_C const TDesC& Name() const;
 private:
 	void ResetAttributes();
 	void ResetScriptType();

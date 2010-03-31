@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1998-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,7 +16,6 @@
 #include <hal.h>
 #include <cdsb.h>
 #include <e32hal.h>
-
 
 #ifdef SYMBIAN_GRAPHICS_GCE
 #undef __WINS__
@@ -73,8 +72,6 @@ private:
 #ifdef SYMBIAN_GRAPHICS_GCE
     CScreenDeviceHelper iSurfaceUpdater;
     TUidPixelFormat iPixelFormat;
-    TBool iDsaBufferIsBusy;
-    TRequestStatus iDsaBufferAvailable;
 #endif
 	TAcceleratedBitmapInfo iBitmapInfo;
 	TUint32 iSettingsFlags;
@@ -109,9 +106,6 @@ EXPORT_C CDirectScreenBitmap* CDirectScreenBitmap::NewL(TInt aScreenNo)
 CGenericDirectScreenBitmap::CGenericDirectScreenBitmap() :
 #ifndef __WINS__
 	iVideoAddress(NULL),
-#endif
-#ifdef SYMBIAN_GRAPHICS_GCE
-	iDsaBufferIsBusy(EFalse),
 #endif
 	iBitmapInfo(),
 	iSettingsFlags(ENone),
@@ -163,12 +157,16 @@ TInt CGenericDirectScreenBitmap::Create(const TRect& aScreenRect, TSettingsFlags
 		{
 		return r;
 		}
-
+	
 	__ASSERT_ALWAYS(aScreenRect.iTl.iX >= 0 &&
-					aScreenRect.iTl.iY >= 0 &&
-					aScreenRect.Width() <= screenWidth &&
-					aScreenRect.Height() <= screenHeight, Panic(EPanicOutOfBounds));
-
+	                aScreenRect.iTl.iY >= 0 &&
+	                ((aScreenRect.Width() <= screenWidth &&
+	                aScreenRect.Height() <= screenHeight)
+	                ||
+	                (aScreenRect.Width() <= screenHeight &&
+	                aScreenRect.Height() <= screenWidth)),
+	                Panic(EPanicOutOfBounds));
+	
 	__ASSERT_ALWAYS(aScreenRect.Width() > 0 &&
 					aScreenRect.Height() > 0, Panic(EPanicInvalidRect));
 
@@ -529,14 +527,7 @@ void CGenericDirectScreenBitmap::EndUpdate(TRequestStatus& aComplete)
 #else
 	TUint8* pD = (TUint8*)iVideoAddress;
 	const TUint dD = iDisplayOffsetLines;
-#ifdef SYMBIAN_GRAPHICS_GCE
-	if (iDsaBufferIsBusy)
-		{
-		User::WaitForRequest(iDsaBufferAvailable);
-		__ASSERT_DEBUG(iDsaBufferAvailable != KRequestPending, Panic(EPanicIncompleteRequest));
-		iDsaBufferIsBusy=EFalse;
-		}
-#endif	
+
 	for(TInt y=iUpdateRect.Height(); y>0; y--)
 		{
 		Mem::Move((void *)pD, (void *)pS, dS);
@@ -546,17 +537,18 @@ void CGenericDirectScreenBitmap::EndUpdate(TRequestStatus& aComplete)
 #endif
 	
 #ifdef SYMBIAN_GRAPHICS_GCE
-	iDsaBufferIsBusy=ETrue;
+	// update the region and complete notification on the client's TRequestStatus
+	// This means the backbuffer is held up until the surface update has completed
+	// notification.
 	iSurfaceUpdater.UpdateRegion(iUpdateRect);
-	iDsaBufferAvailable = KRequestPending;
-	iSurfaceUpdater.NotifyWhenAvailable(iDsaBufferAvailable);
-	iSurfaceUpdater.Update();
-#endif
+	iSurfaceUpdater.Update(aComplete);
+#else
 	// In the generic implementation, complete the request immediately to allow the client
-    // to render to the back buffer
+	// to render to the back buffer
 	TRequestStatus* pComplete=&aComplete;
+	User::RequestComplete(pComplete,KErrNone);
+#endif
 
-    User::RequestComplete(pComplete,KErrNone);
  	}
 
 //
@@ -606,15 +598,6 @@ void CGenericDirectScreenBitmap::EndUpdate(const TRect& aScreenRect, TRequestSta
 	TUint8* pS = iBitmapInfo.iAddress + offX + (offY*dS);
 	TUint8* pD = (TUint8*)iVideoAddress + offX + (offY*dD);
 
-#ifdef SYMBIAN_GRAPHICS_GCE
-	if (iDsaBufferIsBusy)
-		{
-		User::WaitForRequest(iDsaBufferAvailable);
-		__ASSERT_DEBUG(iDsaBufferAvailable != KRequestPending, Panic(EPanicIncompleteRequest));
-		iDsaBufferIsBusy=EFalse;
-		}
-#endif	
-	
 	for(TInt y=aScreenRect.Height(); y>0; y--)
 		{
 		Mem::Move((void *)pD, (void *)pS, bytesToCopy);
@@ -624,16 +607,18 @@ void CGenericDirectScreenBitmap::EndUpdate(const TRect& aScreenRect, TRequestSta
 #endif
 
 #ifdef SYMBIAN_GRAPHICS_GCE
-	iDsaBufferIsBusy=ETrue;
+	// update the region and complete notification on the client's TRequestStatus
+	// This means the backbuffer is held up until the surface update has completed
+	// notification.
 	iSurfaceUpdater.UpdateRegion(iUpdateRect);
-	iDsaBufferAvailable = KRequestPending;
-	iSurfaceUpdater.NotifyWhenAvailable(iDsaBufferAvailable);
-	iSurfaceUpdater.Update();
-#endif	
-	// In the generic implementation, complete the request immediately.
+	iSurfaceUpdater.Update(aComplete);
+#else
+	// In the generic implementation, complete the request immediately to allow the client
+	// to render to the back buffer
 	TRequestStatus* pComplete=&aComplete;
-
 	User::RequestComplete(pComplete,KErrNone);
+#endif	
+
 	}
 
 #ifdef __WINS__
@@ -728,6 +713,7 @@ TRgb CGenericDirectScreenBitmap::ExtractRgb(TUint8* aBuffer,TInt aPixelOffset) c
 	}
 #endif
 
+
 //
 // Close - Deallocate resources and cancel outstanding updates
 //
@@ -735,6 +721,9 @@ void CGenericDirectScreenBitmap::Close()
 	{
 	if(iCreated)
 		{
+#ifdef SYMBIAN_GRAPHICS_GCE
+		iSurfaceUpdater.CancelUpdateNotification();
+#endif
 		User::Free(iBitmapInfo.iAddress);
 		iBitmapInfo.iAddress = NULL;
 		iCreated = EFalse;

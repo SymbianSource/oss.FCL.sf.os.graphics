@@ -44,6 +44,9 @@ RWsBuffer::RWsBuffer(RWsSession *aSession) : iSession(aSession), iManager(NULL),
 	#endif
 	iBuf(NULL,0,0), iNext(NULL), iPreviousHandle(0), iBufSize(0), iMaxBufSize(EMinBufferSize),
 	iDirectAcessCount(0), iInvalidBitmapArray(EFalse), iWindowSizeCache(NULL)
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+, iWindowNativeSizeCache(NULL)
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 	{
 	}
 
@@ -100,6 +103,14 @@ void RWsBuffer::Close()
 	    delete iWindowSizeCache;
 	    iWindowSizeCache = NULL;
 	    }
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+	if (iWindowNativeSizeCache)
+	    {
+	    iWindowNativeSizeCache->Close();
+	    delete iWindowNativeSizeCache;
+	    iWindowNativeSizeCache = NULL;
+	    }
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 	}
 
 void RWsBuffer::Destroy()
@@ -463,3 +474,14 @@ void RWsBuffer::EnableWindowSizeCacheL()
         iWindowSizeCache = new (ELeave) RHashMap<TInt, TWindowSizeCacheEntry>();        
         }
     }
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+void RWsBuffer::EnableWindowNativeSizeCacheL()
+    {
+    if (iWindowNativeSizeCache == NULL)
+        {
+        iWindowNativeSizeCache = new (ELeave) RHashMap<TInt, TWindowSizeCacheEntry>();        
+        }
+    }
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+

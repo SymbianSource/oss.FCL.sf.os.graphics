@@ -46,7 +46,8 @@ enum TEglTestProcessSlots
 	EProcSlotMsgQueueSgId,
 	EProcSlotMsgQueueProcId,
 	EProcSlotSourceFormat,
-	EProcSlotSurfaceFormat
+	EProcSlotSurfaceFormat,
+	EProcSlotCustomClientParam //data that could be sent from client to main process. Concrete implementation will need to specify the format
 	};
 
 class EglTestCommonProcess

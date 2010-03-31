@@ -294,10 +294,12 @@ EXPORT_C void CEglTestStep::Test_MultiProcessL(const TDesC& aTestDllName, TInt a
 	RMsgQueue<TSgDrawableId> messageQueueSgId;
 	TInt ret = messageQueueSgId.CreateGlobal(KNullDesC, 1, EOwnerProcess);
 	ASSERT_EQUALS(ret, KErrNone);
+	CleanupClosePushL(messageQueueSgId);
 
 	RMsgQueue<TProcessId> messageQueueProcId;
 	ret = messageQueueProcId.CreateGlobal(KNullDesC, 1, EOwnerProcess);
 	ASSERT_EQUALS(ret, KErrNone);
+	CleanupClosePushL(messageQueueProcId);
 
     // Create semphores that can be shared (only used in some test to synch between 2 process)
     ret = iSemaphore[0].CreateGlobal(KNullDesC(), 0, EOwnerProcess);
@@ -305,6 +307,12 @@ EXPORT_C void CEglTestStep::Test_MultiProcessL(const TDesC& aTestDllName, TInt a
     ret = iSemaphore[1].CreateGlobal(KNullDesC(), 0, EOwnerProcess);
     ASSERT_EQUALS(ret, KErrNone);
 
+    // create MsgQueue (only used in some tests to pass data from client processes to the main process)
+    RMsgQueue<TEglStepMessageBuffer> messageQueueClientProcParam;
+    ret = messageQueueClientProcParam.CreateGlobal(KNullDesC, 1, EOwnerProcess);
+    ASSERT_EQUALS(ret, KErrNone);
+    CleanupClosePushL(messageQueueClientProcParam);
+    
 	for (TInt i=0; i<aProcessCount; i++)
 		{
 		TProcessInfo info;
@@ -338,14 +346,19 @@ EXPORT_C void CEglTestStep::Test_MultiProcessL(const TDesC& aTestDllName, TInt a
 		User::LeaveIfError(ret);
 		ret = iProcessStatus[i].iProcess.SetParameter(EProcSlotSurfaceFormat, static_cast<TInt>(iSurfaceFormat));
 		User::LeaveIfError(ret);
-		               
+        ret = iProcessStatus[i].iProcess.SetParameter(EProcSlotCustomClientParam, messageQueueClientProcParam);
+        User::LeaveIfError(ret);
+		
 		iProcessStatus[i].iProcess.Logon(iProcessStatus[i].iStatus); 
 		iProcessStatus[i].iProcess.Resume();
 		}
+    
+	//by default an empty implementation
+    ReceiveMessageFromClient(messageQueueClientProcParam);
 
 	// wait for all processes to complete (not worried about the order)
 	// This is needed, as the only way to determine whether the process step has failed is to check
-	//   the return value (using TEST(EFalse) has no effect on the spawned process)
+	//  the return value (using TEST(EFalse) has no effect on the spawned process)
 	for (TInt i=0; i<aProcessCount; i++)
 		{
 		User::WaitForRequest(iProcessStatus[i].iStatus);
@@ -355,8 +368,7 @@ EXPORT_C void CEglTestStep::Test_MultiProcessL(const TDesC& aTestDllName, TInt a
 		}
 
 	// close MsgQueue and semaphores (as used in some test with 2 spawned processes)
-	messageQueueSgId.Close();
-	messageQueueProcId.Close();
+	CleanupStack::PopAndDestroy(3, &messageQueueSgId); //messageQueueClientProcParam, messageQueueProcId
 	iSemaphore[1].Close();
 	iSemaphore[0].Close();
 	}

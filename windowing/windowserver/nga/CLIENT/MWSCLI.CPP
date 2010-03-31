@@ -142,3 +142,31 @@ void MWsClientClass::DestroyWindowSizeCacheEntry()
     {
     iBuffer->DestroyWindowSizeCacheEntry(iWsHandle);
     }
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+void MWsClientClass::EnableWindowNativeSizeCacheL()
+    {
+    return iBuffer->EnableWindowNativeSizeCacheL();
+    }
+
+TBool MWsClientClass::WindowNativeSizeCacheEnabled() const
+    {
+    return iBuffer->WindowNativeSizeCacheEnabled();
+    }
+
+TInt MWsClientClass::SetWindowNativeSize(const TSize& aNativeSize) const
+    {
+    return iBuffer->SetWindowNativeSize(iWsHandle,aNativeSize);
+    }
+
+TInt MWsClientClass::WindowNativeSize(TSize& aSize) const
+    {
+    return iBuffer->WindowNativeSize(iWsHandle, aSize);
+    }
+
+void MWsClientClass::DestroyWindowNativeSizeCacheEntry()
+    {
+    iBuffer->DestroyWindowNativeSizeCacheEntry(iWsHandle);
+    }
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+

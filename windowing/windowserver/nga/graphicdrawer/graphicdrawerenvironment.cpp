@@ -15,6 +15,7 @@
 
 #include "Graphics/WSGRAPHICDRAWER.H"
 #include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "Graphics/wsgraphicdrawerinternal.h"
 
 // TGraphicDrawerId \\\\\\\\\\\\\\\\\\\\\\\\
 

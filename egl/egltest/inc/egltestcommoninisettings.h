@@ -66,6 +66,10 @@ public:
 	IMPORT_C TInt GetNumberOfFormats(const TDesC& aSectioName);
     IMPORT_C TInt GetNumberOfIterations(const TDesC& aSectioName);
     IMPORT_C TSize GetImageSize(const TDesC& aSectioName); 
+    IMPORT_C TInt GetThresholdGPUUsedMemory(const TDesC& aSectioName);
+    IMPORT_C TInt GetThresholdLastIteration(const TDesC& aSectioName);
+    IMPORT_C TSize GetWindowSize(const TDesC& aSectioName); 
+    
 private:
 	void ConstructL();
 private:
