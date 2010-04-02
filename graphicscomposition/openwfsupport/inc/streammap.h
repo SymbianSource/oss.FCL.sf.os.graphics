@@ -177,7 +177,7 @@ NONSHARABLE_CLASS(COpenWfcStreamMap): public CBase
 		*/
 		static TUint32 HashFunction(const TSurfaceId& aHashKey);
 		
-		static TInt COpenWfcStreamMap::DeleteSingleton(TAny* aData);
+		static TInt DeleteSingleton(TAny* aData);
 	private:
 		/**
 		 * Mutex used for controlling the access to the native streams map
