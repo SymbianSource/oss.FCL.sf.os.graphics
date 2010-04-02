@@ -278,7 +278,10 @@ static M3Gbool m3gGetSpriteCoordinates(Sprite *sprite,
         m3gTransformVec4(projMatrix, &x);
         m3gTransformVec4(projMatrix, &y);
     }
-
+#ifndef M3G_USE_NGL_API
+    /* Store w after projection */
+    eyeSpace->w = ot.w;
+#endif
     m3gScaleVec4(&ot, m3gRcp(ot.w));
     m3gScaleVec4(&x, m3gRcp(x.w));
     m3gScaleVec4(&y, m3gRcp(y.w));
@@ -331,12 +334,12 @@ static M3Gbool m3gGetSpriteCoordinates(Sprite *sprite,
         x.x = m3gMul(x.x, (M3Gfloat) rIsect.width);
         y.y = m3gMul(y.y, (M3Gfloat) rIsect.height);
     }
-
+#ifdef M3G_USE_NGL_API
     /* Store final Z */
     if (eyeSpace != NULL) {
         eyeSpace->w = ot.z;
     }
-
+#endif
     /* Set up positions */
     vert[0 * 3 + 0] = (M3Gint) m3gMul(65536, m3gSub(ot.x, x.x));
     vert[0 * 3 + 1] = m3gRoundToInt(m3gAdd(m3gMul(65536, m3gAdd(ot.y, y.y)), 0.5f));
@@ -464,7 +467,11 @@ static void m3gSpriteDoRender(Node *self,
     glMatrixMode(GL_MODELVIEW);
 
     /* Apply fog and compositing mode */
+#ifdef M3G_USE_NGL_API
     m3gApplySpriteFog(sprite->appearance->fog, eyeSpace.z, eyeSpace.w);
+#else
+    m3gApplyFog(sprite->appearance->fog);
+#endif
     m3gApplyCompositingMode(sprite->appearance->compositingMode, ctx);
 
     {
@@ -483,6 +490,32 @@ static void m3gSpriteDoRender(Node *self,
      * projection */
 
     m3gPushScreenSpace(ctx, M3G_FALSE);
+
+#ifndef M3G_USE_NGL_API
+    /* Transform the sprite vertices (in NDC) back to eye coordinates, so that 
+       the fog distance will be calculated correctly in the OpenGL pipeline. */
+    {
+        GLfloat transform[16];
+        GLfloat scaleW[16] = { 0.f, 0.f, 0.f, 0.f,
+                               0.f, 0.f, 0.f, 0.f,
+                               0.f, 0.f, 0.f, 0.f,
+                               0.f, 0.f, 0.f, 0.f };
+        Matrix invProjMatrix;
+        const Matrix *projMatrix = m3gProjectionMatrix(m3gGetCurrentCamera(ctx));
+
+        m3gMatrixInverse(&invProjMatrix, projMatrix);
+		m3gGetMatrixColumns(&invProjMatrix, transform);
+        
+        glMatrixMode(GL_MODELVIEW);
+        glMultMatrixf(transform);
+        scaleW[0] = scaleW[5] = scaleW[10] = scaleW[15] = eyeSpace.w;
+        glMultMatrixf(scaleW);
+
+        glMatrixMode(GL_PROJECTION);
+        m3gGetMatrixColumns(projMatrix, transform);
+        glLoadMatrixf(transform);
+    }
+#endif
 
     /* Load indices -> draws the sprite */
     M3G_BEGIN_PROFILE(M3G_INTERFACE(ctx), M3G_PROFILE_NGL_DRAW);

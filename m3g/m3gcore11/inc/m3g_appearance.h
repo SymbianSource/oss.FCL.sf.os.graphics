@@ -125,28 +125,32 @@ static M3G_INLINE M3Gbool m3gAlphaMask(const Appearance *app)
  */
 static M3G_INLINE M3Guint m3gGetAppearanceSortKey(const Appearance *appearance)
 {
-    M3Guint key = appearance ? appearance->sortKey : 0;
+    if (appearance) {
+        M3Guint key = appearance->sortKey;
 
-    /* The blending state bit is set dynamically, as it may change
-     * without changing the appearance (we have no signaling from
-     * CompositingMode for that) */
-    
-    if (appearance->compositingMode != NULL
-        && appearance->compositingMode->blendingMode != M3G_REPLACE) {
-        key |= (1u << (32 - M3G_APPEARANCE_HARD_SORT_BITS));
-    }
-
-    if (m3gGetColorMaskWorkaround(M3G_INTERFACE(appearance))) {
-        /* Override the top 2 bits of the sorting key so that ColorMask
-         * changes are minimized */
-        if (appearance) {
-            key &= ~(0x03 << 22);
-            key |= (((M3Guint) m3gColorMask(appearance)) & 1) << 23;
-            key |= (((M3Guint) m3gAlphaMask(appearance)) & 1) << 22;
+        /* The blending state bit is set dynamically, as it may change
+         * without changing the appearance (we have no signaling from
+         * CompositingMode for that) */
+        
+        if (appearance->compositingMode != NULL
+            && appearance->compositingMode->blendingMode != M3G_REPLACE) {
+            key |= (1u << (32 - M3G_APPEARANCE_HARD_SORT_BITS));
         }
-    }
 
-    return key;
+        if (m3gGetColorMaskWorkaround(M3G_INTERFACE(appearance))) {
+            /* Override the top 2 bits of the sorting key so that ColorMask
+             * changes are minimized */
+            if (appearance) {
+                key &= ~(0x03 << 22);
+                key |= (((M3Guint) m3gColorMask(appearance)) & 1) << 23;
+                key |= (((M3Guint) m3gAlphaMask(appearance)) & 1) << 22;
+            }
+        }
+
+        return key;
+    } 
+
+    return M3G_FALSE;
 }
 
 /*!

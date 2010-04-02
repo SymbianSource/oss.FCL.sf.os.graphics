@@ -963,7 +963,7 @@ TVerdict CEglTest_Display_Positive_Multithread_Stress::doTestStepL()
     TEST(eglGetError() == EGL_SUCCESS);
     
     // launch 100 threads.
-    Test_MultiThreadL(100, EFalse);
+    Test_MultiThreadL(100, ETrue);
     
     INFO_PRINTF1(_L("Calling eglTerminate from main thread"));
     TEST_EGL_ERROR(eglTerminate(iDisplay), EGL_SUCCESS);

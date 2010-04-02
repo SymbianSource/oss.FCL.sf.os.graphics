@@ -426,8 +426,11 @@ enum TWsWindowOpcodes
 	EWsWinOpScreenNumber,
 	EWsWinOpEnableAdvancedPointers,
 #ifdef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS	
-	EWsWinOpSetSurfaceTransparency,
+	EWsWinOpSetSurfaceTransparency=EWsWinOpEnableAdvancedPointers+1, // Explicit offset to prevent clash with EWsWinOpFixNativeOrientation
 #endif
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+	EWsWinOpFixNativeOrientation=EWsWinOpEnableAdvancedPointers+2, // Offset to prevent clash with EWsWinOpSetSurfaceTransparency
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 	EWsWinOpTestLowPriorityRedraw=0x2000,  //Specific opcode for testing redraw queue priorities
 	};
 
@@ -1915,13 +1918,17 @@ union TWsClickCmdUnion
 
 enum TW32Assert	// used for w32 code errors
 	{
-	EW32AssertOddLengthData,
-	EW32AssertNotImplemented,
-	EW32AssertIllegalOpcode,
-	EW32AssertDirectMisuse,
-	EW32AssertBufferLogic,
-	EW32AssertUnexpectedOutOfRangePointerNumber, // Used for an out-of-range pointer number error within the old API's which doesn't take a pointer number.
-	EW32AssertWindowSizeCacheFailure,
+	EW32AssertOddLengthData=0,
+	EW32AssertNotImplemented=1,
+	EW32AssertIllegalOpcode=2,
+	EW32AssertDirectMisuse=3,
+	EW32AssertBufferLogic=4,
+	EW32AssertUnexpectedOutOfRangePointerNumber=5, // Used for an out-of-range pointer number error within the old API's which doesn't take a pointer number.
+	EW32AssertWindowSizeCacheFailure=6,
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+	EW32AssertWindowNativeSizeCacheFailure=7,
+	EW32AssertInvalidOrientation=8,
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 	};
 
 enum TW32Panic // used for application errors
@@ -2073,6 +2080,9 @@ enum TClientPanic
 	EWservPanicWrongScreen=82,                  // Child apps can only be constructed on the same screen as their parent. See RWindowGroup::ConstructChildApp
 	EWservPanicScreenCaptureInvalidRequest=83,  // With Screen Capture disabled, an unexpected invalid request has been received
 	EWservPanicInvalidDisplayConfiguration=84,  // Use of a display configuration without valid members
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+	EWservPanicFixNativeOrientation=85,         // Invalid use of FixNativeOrientation()
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION	
 	};
 
 #if defined(__WINS__)

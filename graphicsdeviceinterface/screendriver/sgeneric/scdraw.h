@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -61,10 +61,13 @@ public:
 	inline TInt ScreenNumber() const { return iSurface.iInternal[TSurfaceId::TScreenSurfaceUsage::EScreenField]; }
 
 	void Update();
+	void Update(TRequestStatus& aStatus);
+
 	void Update(const TRegion& aRegion);
 	void UpdateRegion(const TRect& aRect);
 	void ResetUpdateRegion();
 	void NotifyWhenAvailable(TRequestStatus& aStatus);
+	void CancelUpdateNotification();
 
 	void GetSurface(TSurfaceId& aSid) const ;
 	TUint DeviceOrientationsAvailable(const TSize& aScreenSize) const ;

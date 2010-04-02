@@ -199,6 +199,18 @@
 					<component name="Surface Update">
 						<unit bldFile="sf\os\graphics\graphicscomposition\surfaceupdate\group" mrp="sf\os\graphics\graphicscomposition\surfaceupdate\group\graphics_surfaceupdate.mrp"/>
 					</component>
+					<component name="OpenWF Support">
+						<unit bldFile="sf\os\graphics\graphicscomposition\openwfsupport\group" mrp="sf\os\graphics\graphicscomposition\openwfsupport\group\graphics_openwfsupport.mrp"/>
+					</component>
+					<component name="OpenWF Composition Conformance Tests">
+						<unit bldFile="sf\os\graphics\graphicscomposition\openwfconformancetest\group" mrp="sf\os\graphics\graphicscomposition\openwfconformancetest\CT_PortingLayer\src\Platform\Symbian\group\graphics_openwfconformancetest.mrp"/>
+					</component>
+					<component name="OpenWF Composition Interface">
+						<unit bldFile="sf\os\graphics\graphicscomposition\openwfcinterface\group" mrp="sf\os\graphics\graphicscomposition\openwfcinterface\group\graphics_openwfcinterface.mrp"/>
+					</component>
+					<component name="OpenWF Composition Engine">
+						<unit bldFile="sf\os\graphics\graphicscomposition\openwfcompositionengine\group" mrp="sf\os\graphics\graphicscomposition\openwfcompositionengine\group\graphics_openwfcompositionengine.mrp"/>
+					</component>
 				</collection>
 				<collection name="Graphics Device Interface">
 					<component name="BitGDI">

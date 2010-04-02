@@ -36,6 +36,13 @@
 
 _LIT(KBenchmarkSection, "Benchmark");
 
+#ifdef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
+const TInt KBenchmarkDrawImageThreshold = 5; //semi-arbitrary number which signifies deviation in percentage between min and max number of image drawing
+#endif
+
+
+#define ENABLE_BENCHMARK_VERBOSE_LOGGING    1
+
 //data will be used to cleanup VgImages if leaving occurs
 NONSHARABLE_CLASS(CVgImageDeleteData) : public CBase
     {
@@ -163,7 +170,7 @@ TVerdict CEglTest_Benchmark_Base::doTestStepPostambleL()
     return CEglTestStep::doTestStepPostambleL();
     }
 
-//-------
+
 
 /**
 @SYMTestCaseID GRAPHICS-EGL-0434
@@ -270,9 +277,6 @@ TVerdict CEglTest_Benchmark_CreateCloseImage::doTestStepL()
 
 #ifndef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
 	INFO_PRINTF1(_L("CEglTest_Benchmark_CreateCloseImage can only be run with SgImage-Lite"));
-	RecordTestResultL();
-	CloseTMSGraphicsStep();
-	return TestStepResult();
 #else
     TBool ret = CheckForExtensionL(KEGL_RSgimage | KEGL_KHR_image_base | KVG_KHR_EGL_image | KEGL_KHR_image_pixmap);
     if(!ret)
@@ -487,10 +491,10 @@ TVerdict CEglTest_Benchmark_CreateCloseImage::doTestStepL()
     CleanupStack::PopAndDestroy(3, vgImageDeleteData);  // vgImageDeleteData, sgImageData, eglImageDeleteData  
     
     CleanAll();
+#endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
     RecordTestResultL();
     CloseTMSGraphicsStep();
     return TestStepResult();
-#endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
     }
 
 /**
@@ -569,9 +573,6 @@ TVerdict CEglTest_Benchmark_Multi_Process_CreateCloseImage::doTestStepL()
 
 #ifndef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
 	INFO_PRINTF1(_L("CEglTest_Benchmark_Multi_Process_CreateCloseImage can only be run with SgImage-Lite"));
-	RecordTestResultL();
-	CloseTMSGraphicsStep();
-	return TestStepResult();
 #else
     TBool ret = CheckForExtensionL(KEGL_RSgimage | KEGL_KHR_image_base | KVG_KHR_EGL_image | KEGL_KHR_image_pixmap);
     if(!ret)
@@ -585,10 +586,10 @@ TVerdict CEglTest_Benchmark_Multi_Process_CreateCloseImage::doTestStepL()
     // launch 2 processes
     Test_MultiProcessL(KEglTestStepDllName, 2, TestStepName());
     
+#endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
     RecordTestResultL();
     CloseTMSGraphicsStep();
     return TestStepResult();
-#endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
     }
 
 void CEglTest_Benchmark_Multi_Process_CreateCloseImage::doProcessFunctionL(TInt aIdx)
@@ -764,7 +765,12 @@ void CEglTest_Benchmark_Multi_Process_CreateCloseImage::doProcessFunctionL(TInt 
 @SYMPREQ 2637
 
 @SYMTestCaseDesc
-    Performance test - Drawing VGImage
+    Performance test - Drawing of VGImage
+
+@SYMTestPurpose             
+Compare the relative speed of drawing a regular pre-existing VGImage with the 
+speed of mapping in a VGImage (starting with a drawable id) and then drawing that.
+
 @SYMTestActions
 Environmental settings:
 •   Image Size: w50 h50
@@ -772,195 +778,327 @@ Environmental settings:
 •   Pixel format ESgPixelFormatARGB_8888_PRE
 •   Number of benchmark iteration: N (may vary depending on hardware capacity)
 
-Creating regular VGImage
-Init EGL, create context and surface
-For i = 0 to N
-    Create VGImage[i] with size: 50x50 and format:  VG_sARGB_8888_PRE
-    SetSubData for VGImage[i] 
-End loop
-
-Draw VGImage
-For i = N to 0
-    Start timer
-    Draw VGImage[i]
-    Stop timer and record time
-End loop
-Record average time of drawing VGImage
-
-Closing regular VGImage
-For i = N to 0
-    Destroy VGImage[i]
-End loop
-
-Creating VGImage from initialized RSgImage
+From the main test process:
+Spawn two processes A and B
+From process A:
 Open RSgDriver
 Construct TSgImageInfo object with
 •   Size: 50x50
 •   PixelFormat: ESgPixelFormatARGB_8888_PRE
 •   Usage: ESgUsageBitOpenVgImage;
 
-For i = N to 0
-    Create RSgImage[i] with arguments TSgImageInfo with initialized data which were supplied to regular VGImage 
-    Create an EGLImage[i] from the RSgImage[i]
-    Create a VGImage[i] from the EGLImage[i]
+Creation of the RSgImages:
+For i = 0 to N
+      Form pixel data in such way that there will be a mixture of opaque and transparent pixels.     
+      At least one coordinate of the opaque pixel will be unique for any iteration.
+      Creating RSgImage with initialized data, size: 50x50 and format:  VG_sARGB_8888_PRE. 
+      Send RSgImage drawableID to process B
+End loop
+Close all RSgImages after they will have been opened in process B
+Close RSgDriver after process B finishes with benchmark measurement.
+
+From process B:
+
+For i = 0 to N
+     Receive and store drawableID[i] from process A
 End loop
 
-Draw VGImage which is based on RSgImage
-For i = N to 0
+Init EGL, create context and pixmap surface. Make the surface current.
+Creating regular VGImage:
+For i = 0 to N
+    Create VGImage[i] with size: 50x50 and format:  VG_sARGB_8888_PRE
+    SetSubData for VGImage[i] with the same data which were supplied on RSgImage creation
+End loop
+
+Draw regular VGImage:
+For j = 0 to 4
     Start timer
-    Draw VGImage[i]
+    For i = N to 0
+        Draw VGImage[i]
+    End loop i
     Stop timer and record time
-End loop
-Record average time of drawing VGImage
+End loop j
+Complete all outstanding requests on the current context (vgFinish)
+Record max, min, average drawing time of VGImage
+Check that deviation between max and min time doesn’t exceed 5% (max – min / mean) < 0.05
 
+Destroy all regular VGImages
+
+Open RSgDriver
+Mapping in VGImage from initialized RSgImage and perform drawing:
+For j = 0 to 4
+    Start timer
+    For i = N to 0
+        Open RSgImage[i] with drawableID[i]
+        Create an EGLImage[i] from the RSgImage[i]
+        Create a VGImage[i] from the EGLImage[i]
+        Draw VGImage[i]
+    End loop i
+    Complete all outstanding requests on the current context (vgFinish)
+    Stop timer and record time
+End loop j
+Record max, min, average mapping and drawing time of VGImage
+Check that deviation between max and min time doesn’t exceed 5% (max – min / mean) < 0.05
+
+Destroy context, surface
 Close all VGImages, EGLImages and RSgImages
+Terminate Egl environment
 Close RSgDriver
 
 @SYMTestExpectedResults
 The creation of RSgImage, EGLImage and VGImage must return no error. 
-The average drawing time of regular VGImage and VGImage with underlying RSgImage is 
-made available in an easy-to-use format for further analysis and comparison.
+The drawing speed of regular VGImage and mapping VGImage (starting from drawable id) 
+with following draw is made available in an easy-to-use format for further analysis and 
+comparison.
 */
 TVerdict CEglTest_Benchmark_DrawImage::doTestStepL()
     {
     SetTestStepID(_L("GRAPHICS-EGL-0436"));
+    SetTestStepName(KBenchmark_DrawImage);
     INFO_PRINTF1(_L("CEglTest_Benchmark_DrawImage::doTestStepL"));
 
 #ifndef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
     INFO_PRINTF1(_L("CEglTest_Benchmark_DrawImage can only be run with SgImage-Lite"));
+#else
+    TBool ret = CheckForExtensionL(KEGL_RSgimage | KEGL_KHR_image_base | KVG_KHR_EGL_image | KEGL_KHR_image_pixmap);
+    if(ret)
+        {
+        // launch 2 processes
+        Test_MultiProcessL(KEglTestStepDllName, 2, TestStepName());
+        }
+#endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
+
     RecordTestResultL();
     CloseTMSGraphicsStep();
     return TestStepResult();
-#else
-    TBool ret = CheckForExtensionL(KEGL_RSgimage | KEGL_KHR_image_base | KVG_KHR_EGL_image | KEGL_KHR_image_pixmap);
-    if(!ret)
-        {
-        // The extension is not supported
-        RecordTestResultL();
-        CloseTMSGraphicsStep();
-        return TestStepResult();
-        }
- 
-    ASSERT_TRUE(iDisplay == EGL_NO_DISPLAY);
+    }
+
+void CEglTest_Benchmark_DrawImage::doProcessFunctionL(TInt aIdx)
+    {
+#ifdef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
     GetDisplayL();
-    CreateEglSessionL();
-    iEglSess->InitializeL();
+    CreateEglSessionL(aIdx);
+    iEglSess->InitializeL();    
     iEglSess->OpenSgDriverL();
- //----create pixmap and make context curent
+
     TSgImageInfo imageInfo;
-    imageInfo.iUsage = ESgUsageBitOpenVgImage | ESgUsageBitOpenVgSurface;
+    imageInfo.iUsage = ESgUsageBitOpenVgImage;
     imageInfo.iPixelFormat = iPixelFormat;
     imageInfo.iSizeInPixels = iImageSize;
-    //create a dummy surface and context for the purpose of enabling use of VG
-    iEglSess->CreatePixmapSurfaceAndMakeCurrentAndMatchL(imageInfo, CTestEglSession::EResourceCloseSgImageLate);
-
-    const TInt KDataStride = iImageSize.iWidth * EglTestConversion::BytePerPixel(iPixelFormat);
-    const TInt KDataSizeInByte = KDataStride *  iImageSize.iHeight;
-    TInt* data = new (ELeave) TInt[KDataSizeInByte];
-    User::LeaveIfNull(data);
-    CleanupStack::PushL(data);
+    RArray<TSgDrawableId> sgIdImageList; 
     
-    Mem::Fill(data, KDataSizeInByte / 2, 0xff);
-    Mem::FillZ(data + KDataSizeInByte / 2, KDataSizeInByte / 2);
-
-    //Creating regular VGImages
-    //Create an array of VGImages and push them into cleanup stack
-    //vgImageDeleteData takes ownership of the VGImages array. 
-    //If leaving occurs or this object is destroyed from the cleanup stack 
-    //it will delete all images and then the array
-    VGImageFormat vgPixelFormat = EglTestConversion::PixelFormatToVgFormat(iPixelFormat);
-    VGImage* vgImages = NULL;
-    CVgImageDeleteData* vgImageDeleteData = new (ELeave) CVgImageDeleteData(vgImages, iNumIterations);
-    CleanupStack::PushL(vgImageDeleteData);    
-    vgImages = new (ELeave)VGImage[iNumIterations];
-    for(TInt count=iNumIterations - 1; count >= 0; --count)
-        {
-        //we will use VG_IMAGE_QUALITY_NONANTIALIASED flag to avoid OpenVG making the quality improvements
-        //at the expense of performance (for instance to create an extra buffer) 
-        vgImages[count] = vgCreateImage(vgPixelFormat, iImageSize.iWidth, iImageSize.iHeight, VG_IMAGE_QUALITY_NONANTIALIASED);
-        ASSERT_VG_TRUE(vgImages[count] !=  VG_INVALID_HANDLE);
-        
-        vgImageSubData(vgImages[count],
-                data, KDataStride,
-                vgPixelFormat,
-                0, 0, iImageSize.iWidth, iImageSize.iHeight);
-        ASSERT_VG_ERROR(VG_NO_ERROR);
-        }
-    
-    //--------- start profiling
-    iProfiler->InitResults();
-    for(TInt count=iNumIterations - 1; count >= 0; --count)
-        {
-        vgDrawImage(vgImages[count]);
-#ifdef ENABLE_CHECKING_WHILST_PROFILING
-        ASSERT_VG_ERROR(VG_NO_ERROR);
-#endif            
-        iProfiler->MarkResultSetL();
-        }
-    iProfiler->ResultsAnalysis(_L("Drawing regular VGImage"), 0, EglTestConversion::PixelFormatToDisplayMode(iPixelFormat), EglTestConversion::PixelFormatToDisplayMode(iPixelFormat), iNumIterations);   
-    //--------- stop profiling
-    
-    //destroy vgImages
-    for(TInt count=iNumIterations - 1; count >= 0; --count)
-        {
-        vgDestroyImage(vgImages[count]);
-        ASSERT_VG_ERROR(VG_NO_ERROR);
-        vgImages[count]=VG_INVALID_HANDLE;
-        }
-    
+    const TInt KNumAttempt = 5;
+    const TInt KNumImagesToDraw = iNumIterations;
     //Create an array of SgImages and push them into cleanup stack
     //sgImageData takes ownership of the SgImages array. 
     //If leaving occurs or this object is destroyed from the cleanup stack 
     //it will delete all images and then the array
-    imageInfo.iUsage = ESgUsageBitOpenVgImage;
     RSgImage* sgImages = NULL;
-    CSgImageDeleteData* sgImageData = new (ELeave)CSgImageDeleteData(sgImages, iNumIterations);
+    CSgImageDeleteData* sgImageData = new (ELeave)CSgImageDeleteData(sgImages, KNumImagesToDraw);
     CleanupStack::PushL(sgImageData);    
-    sgImages = new (ELeave) RSgImage[iNumIterations];
+    sgImages = new (ELeave) RSgImage[KNumImagesToDraw];
     
-    //Create an array of EglImages and push them into cleanup stack
-    //eglImageDeleteData takes ownership of the EglImages array. 
-    //If leaving occurs or this object is destroyed from the cleanup stack 
-    //it will delete all images and then the array
-    EGLImageKHR* eglImages = NULL;
-    CEglImageDeleteData* eglImageDeleteData = new (ELeave)CEglImageDeleteData(*this, eglImages, iDisplay, iNumIterations); 
-    CleanupStack::PushL(eglImageDeleteData);    
-    eglImages = new (ELeave) EGLImageKHR[iNumIterations];
-    
-    //Creating VGImage from initialized RSgImage
-    for(TInt count=iNumIterations-1; count >= 0; --count)
+    // the message queue will be used to pass image IDs across process boundary
+    RMsgQueue<TSgDrawableId> messageQueue;
+    User::LeaveIfError(messageQueue.Open(EProcSlotMsgQueueSgId, EOwnerProcess));
+    CleanupClosePushL(messageQueue);
+
+    //create  iNumIterations * KNumAttempt number of SgImages in one process and send them over to the second process
+    INFO_PRINTF3(_L("Process %d, Start sending %d SgImage IDs to other process..."), aIdx, iNumIterations);
+    if(aIdx == 0)
         {
-        const TInt res = sgImages[count].Create(imageInfo, data, KDataStride);
-        TESTL(res == KErrNone);
-        TESTL(!sgImages[count].IsNull());
-
-        eglImages[count]= iEglSess->eglCreateImageKhrL(iDisplay,EGL_NO_CONTEXT,EGL_NATIVE_PIXMAP_KHR,&sgImages[count],const_cast<EGLint *> (KEglImageAttribsPreservedTrue));
-        ASSERT_EGL_TRUE(eglImages[count] != EGL_NO_IMAGE_KHR)
-
-        vgImages[count] = iEglSess->vgCreateImageTargetKHR((VGeglImageKHR)eglImages[count]);
-        ASSERT_VG_TRUE(vgImages[count] != VG_INVALID_HANDLE);
+        TDisplayMode bitmapMode = EglTestConversion::PixelFormatToDisplayMode(KDefaultSourceFormat);
+        for(TInt index=0; index < KNumImagesToDraw; ++index)
+            {
+            CFbsBitmap* bitmap = iEglSess->CreateReferenceBitmapL(bitmapMode, iImageSize, index);
+            CleanupStack::PushL(bitmap);
+            ASSERT_EQUALS(sgImages[index].Create(imageInfo, bitmap->DataAddress(),bitmap->DataStride()), KErrNone);
+            messageQueue.SendBlocking(sgImages[index].Id());
+            CleanupStack::PopAndDestroy(bitmap);
+            }
         }
-    
-    //---------------start profiling
-    iProfiler->InitResults();
-    for(TInt count=iNumIterations - 1; count >= 0; --count)
+    else if(aIdx == 1)
         {
-        vgDrawImage(vgImages[count]);
+        for(TInt index=0; index < KNumImagesToDraw; ++index)
+            {
+            TSgDrawableId sgImageId;
+            messageQueue.ReceiveBlocking(sgImageId);
+            sgIdImageList.AppendL(sgImageId);
+            }
+        }
+    CleanupStack::PopAndDestroy(&messageQueue);
+    INFO_PRINTF3(_L("Process %d, Finish sending %d SgImage IDs to other process..."), aIdx, iNumIterations);
+    //We expect to reach this point from both processes simultaneously 
+    //this is because ReceiveBlocking/SendBlocking are synchronous
+    
+    if(aIdx == 1)
+        {
+        imageInfo.iUsage = ESgUsageBitOpenVgImage | ESgUsageBitOpenVgSurface;
+        //create a dummy surface and context for the purpose of enabling use of VG
+        iEglSess->CreatePixmapSurfaceAndMakeCurrentAndMatchL(imageInfo, CTestEglSession::EResourceCloseSgImageLate);
+
+        //Creating regular VGImages
+        //Create an array of VGImages and push them into cleanup stack
+        //vgImageDeleteData takes ownership of the VGImages array. 
+        //If leaving occurs or this object is destroyed from the cleanup stack 
+        //it will delete all images and then the array
+        VGImageFormat vgPixelFormat = EglTestConversion::PixelFormatToVgFormat(iPixelFormat);
+        VGImage* vgImages = NULL;
+        CVgImageDeleteData* vgImageDeleteData = new (ELeave) CVgImageDeleteData(vgImages, KNumImagesToDraw);
+        CleanupStack::PushL(vgImageDeleteData);    
+        vgImages = new (ELeave)VGImage[KNumImagesToDraw];
+        for(TInt index=KNumImagesToDraw - 1; index >= 0; --index)
+            {
+            //we will use VG_IMAGE_QUALITY_NONANTIALIASED flag to avoid OpenVG making the quality improvements
+            //at the expense of performance (for instance to create an extra buffer) 
+            vgImages[index] = vgCreateImage(vgPixelFormat, iImageSize.iWidth, iImageSize.iHeight, VG_IMAGE_QUALITY_NONANTIALIASED);
+            ASSERT_VG_TRUE(vgImages[index] !=  VG_INVALID_HANDLE);
+            
+            TDisplayMode bitmapMode = EglTestConversion::VgFormatToDisplayMode(EglTestConversion::PixelFormatToVgFormat(iPixelFormat));
+            CFbsBitmap* bitmap = iEglSess->CreateReferenceBitmapL(bitmapMode, iImageSize, index);
+            CleanupStack::PushL(bitmap);
+            // Add pixel data to the VGImage reference from the bitmap reference. 
+            // Mind the fact that CFbsBitmap and VGImages use different coordinates origin!
+            TUint8* address = reinterpret_cast<TUint8*>(bitmap->DataAddress());
+            TInt stride = bitmap->DataStride();
+            address += (iImageSize.iHeight - 1) * stride;
+            vgImageSubData(vgImages[index], address, -stride, 
+                    KDefaultSurfaceFormat, 0,0, iImageSize.iWidth, iImageSize.iHeight);
+            ASSERT_VG_ERROR(VG_NO_ERROR);
+            CleanupStack::PopAndDestroy(bitmap);
+            }
+#ifdef ENABLE_BENCHMARK_VERBOSE_LOGGING
+        iProfiler->SetStoreResultInTimingOrder(ETrue);
+#endif        
+        //--------- start profiling
+        INFO_PRINTF1(_L("Profiling of drawing of the regular VG image"));
+        iProfiler->InitResults();
+        for(TInt count = KNumAttempt - 1; count >= 0; --count)
+            {
+            for(TInt index=iNumIterations - 1; index >= 0; --index)
+                {
+                vgDrawImage(vgImages[index]);
 #ifdef ENABLE_CHECKING_WHILST_PROFILING
-        ASSERT_VG_ERROR(VG_NO_ERROR);
+                ASSERT_VG_ERROR(VG_NO_ERROR);
 #endif            
-        iProfiler->MarkResultSetL();
+                }
+            vgFinish();
+#ifdef ENABLE_CHECKING_WHILST_PROFILING
+            ASSERT_VG_ERROR(VG_NO_ERROR);
+#endif            
+            iProfiler->MarkResultSetL();
+            }
+        iProfiler->ResultsAnalysis(_L("Drawing of the regular VGImages"), 0, EglTestConversion::PixelFormatToDisplayMode(iPixelFormat), EglTestConversion::PixelFormatToDisplayMode(iPixelFormat), KNumAttempt);   
+#ifdef ENABLE_BENCHMARK_VERBOSE_LOGGING
+        iProfiler->ShowResultArrayInTimingOrder();
+        
+        const TInt KDeviationRegular = ((((TReal)(iProfiler->TimeMax())) - iProfiler->TimeMin()) / (TReal)(iProfiler->Mean())) * 100;
+        INFO_PRINTF3(_L("Deviation in percentage between min and max number of images drawing ((TimeMax - TimeMin) / Mean * 100): %d, threshold: %d "), KDeviationRegular, KBenchmarkDrawImageThreshold);
+        if(KDeviationRegular > KBenchmarkDrawImageThreshold)
+            {
+            //unfortunatelly EGL test framework currently ignores the error because this is a spawned process, and not 
+            // the main cteststep process. We could leave, but that would be too harsh in this situation
+            WARN_PRINTF1(_L("***The deviation has exceeded threshold, the number of iteration needs to be increased!!!"));
+            }
+#endif        
+        //--------- stop profiling
+        
+        //destroy vgImages
+        for(TInt index=0; index < KNumImagesToDraw; index++)
+            {
+            vgDestroyImage(vgImages[index]);
+            vgImages[index]=VG_INVALID_HANDLE;
+            ASSERT_VG_ERROR(VG_NO_ERROR);
+            }
+        
+        //Create an array of EglImages and push them into cleanup stack
+        //eglImageDeleteData takes ownership of the EglImages array. 
+        //If leaving occurs or this object is destroyed from the cleanup stack 
+        //it will delete all images and then the array
+        EGLImageKHR* eglImages = NULL;
+        CEglImageDeleteData* eglImageDeleteData = new (ELeave)CEglImageDeleteData(*this, eglImages, iDisplay, KNumImagesToDraw); 
+        CleanupStack::PushL(eglImageDeleteData);    
+        eglImages = new (ELeave) EGLImageKHR[KNumImagesToDraw];
+        
+        //---------------start profiling
+        INFO_PRINTF1(_L("Profiling of mapping in and drawing of the VG images with underlying RSgImage"));
+        iProfiler->InitResults();
+        for(TInt count = KNumAttempt - 1; count >= 0; --count)
+            {//we will run KNumAttemt times in a row and check that the set of results is consistent, 
+            // i.e. deviation between max and min time doesn't exceed KBenchmarkDrawImageThreshold percentage
+         
+            for(TInt index=iNumIterations - 1; index >= 0; --index)
+                {
+#ifdef ENABLE_CHECKING_WHILST_PROFILING
+                const TInt res = sgImages[index].Open(sgIdImageList[index]);
+                TESTL(res == KErrNone);
+                TESTL(!sgImages[index].IsNull());
+                eglImages[index]= iEglSess->eglCreateImageKhrL(iDisplay,EGL_NO_CONTEXT,EGL_NATIVE_PIXMAP_KHR,&sgImages[index],const_cast<EGLint *> (KEglImageAttribsPreservedTrue));
+                ASSERT_EGL_TRUE(eglImages[index] != EGL_NO_IMAGE_KHR)
+                vgImages[index] = iEglSess->vgCreateImageTargetKHR((VGeglImageKHR)eglImages[index]);
+                ASSERT_VG_TRUE(vgImages[index] != VG_INVALID_HANDLE);
+                vgDrawImage(vgImages[index]);
+                ASSERT_VG_ERROR(VG_NO_ERROR);
+#else                
+                const TInt res = sgImages[index].Open(sgIdImageList[index]);
+                eglImages[index]= iEglSess->eglCreateImageKhrL(iDisplay,EGL_NO_CONTEXT,EGL_NATIVE_PIXMAP_KHR,&sgImages[index],const_cast<EGLint *> (KEglImageAttribsPreservedTrue));
+                vgImages[index] = iEglSess->vgCreateImageTargetKHR((VGeglImageKHR)eglImages[index]);
+                vgDrawImage(vgImages[index]);
+                
+#endif //ENABLE_CHECKING_WHILST_PROFILING
+                }
+            vgFinish();
+#ifdef ENABLE_CHECKING_WHILST_PROFILING
+            ASSERT_VG_ERROR(VG_NO_ERROR);
+#endif            
+            iProfiler->MarkResultSetAndSuspendL(); //mark the end of the iteration. The timer will not be resumed yet 
+            
+            // Clean Sg/Vg/Egl images. 
+            // This is to ensure that expanding of the images will not impact measurement
+            for(TInt index=iNumIterations - 1; index >= 0; --index)
+                {
+                sgImages[index].Close();
+                vgDestroyImage(vgImages[index]);
+                vgImages[index] = VG_INVALID_HANDLE;
+                iEglSess->DestroyEGLImage( iDisplay, eglImages[index]);
+                eglImages[index] = EGL_NO_IMAGE_KHR;
+                }
+            
+            iProfiler->StartTimer();
+            }
+        //----------------stop profiling
+
+        const TInt KDeviation = ((((TReal)(iProfiler->TimeMax())) - iProfiler->TimeMin()) / (TReal)(iProfiler->Mean())) * 100;
+        INFO_PRINTF3(_L("Deviation in percentage between min and max number of images drawing ((TimeMax - TimeMin) / Mean * 100): %d, threshold: %d "), KDeviation, KBenchmarkDrawImageThreshold);
+        if(KDeviation > KBenchmarkDrawImageThreshold)
+            {
+			//unfortunatelly EGL test framework currently ignores the error because this is a spawned process, and not 
+			// the main cteststep process. We could leave, but that would be too harsh in this situation
+			WARN_PRINTF1(_L("***The deviation has exceeded threshold, the number of iteration needs to be increased!!!"));
+            }
+        
+        iProfiler->ResultsAnalysis(_L("Drawing VGImages with underlying RSgImage"), 0, EglTestConversion::PixelFormatToDisplayMode(iPixelFormat), EglTestConversion::PixelFormatToDisplayMode(iPixelFormat), KNumAttempt);
+#ifdef ENABLE_BENCHMARK_VERBOSE_LOGGING
+        iProfiler->ShowResultArrayInTimingOrder();
+#endif        
+        sgIdImageList.Reset();
         }
-    iProfiler->ResultsAnalysis(_L("Drawing VGImage with underlying RSgImage "), 0, EglTestConversion::PixelFormatToDisplayMode(iPixelFormat), EglTestConversion::PixelFormatToDisplayMode(iPixelFormat), iNumIterations);   
-    //----------------stop profiling
     
-    //Destroying VGImage/EGLImage/RSgImages
-    //no need to profile as we have already done this before
-    CleanupStack::PopAndDestroy(4, data);  // data, vgImageDeleteData, sgImageData, eglImageDeleteData  
-    
+    //Introduce synchronization point here to make sure that RSgImages are not closed from the 
+    //first process while the second one is busy with benchmark measurement
+    Rendezvous(aIdx);
+    if(aIdx == 0)
+        {
+        //Destroying VGImage/EGLImage/RSgImages
+        //no need to profile as we have already done this before
+        CleanupStack::PopAndDestroy(sgImageData);  // sgImageData  
+        }
+    else
+        {
+        //Destroying VGImage/EGLImage/RSgImages
+        //no need to profile as we have already done this before
+        CleanupStack::PopAndDestroy(3, sgImageData);  // sgImageData, vgImageDeleteData, eglImageDeleteData
+        }
     CleanAll();
-    RecordTestResultL();
-    CloseTMSGraphicsStep();
-    return TestStepResult();
 #endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
     }

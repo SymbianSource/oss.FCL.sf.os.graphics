@@ -28,6 +28,7 @@
 #include "CLIENT.H"
 #include "ScrDev.H"
 #include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "Graphics/wsgraphicdrawerinternal.h"
 #include "WSGRAPHICDRAWERARRAY.H"
 #include "panics.h"
 
@@ -372,7 +373,6 @@ private:	// from CServer2
 private:
 	class CDefaultAnimationScheduler;
 	CDefaultAnimationScheduler* iDefaultAnimationScheduler;
-	MWsAnimationScheduler* iCustomAnimationScheduler;
 	CWsPluginManager* iPluginManager;
 	RPointerArray<MWsMemoryRelease> iMemoryReleases;
 	/** An index to all the CWsGraphicDrawer objects.

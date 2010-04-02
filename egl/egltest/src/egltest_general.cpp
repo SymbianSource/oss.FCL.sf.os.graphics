@@ -107,9 +107,8 @@ TVerdict CEglTest_DumpStrings::doTestStepL()
 		INFO_PRINTF1(_L("Dumping OpenVG strings"));
 
 		// OpenVG needs a current VG context before it will allow the call to vgGetString
-		TUidPixelFormat pixelFormat = EglTestConversion::VgFormatToSgPixelFormat(KDefaultSurfaceFormat);
-		TSgImageInfoOpenVgTarget imageInfo = TSgImageInfoOpenVgTarget(pixelFormat, KPixmapSize);
-		eglSess->CreatePixmapSurfaceAndMakeCurrentAndMatchL(imageInfo,CTestEglSession::EResourceCloseSgImageEarly, EGL_OPENVG_API);
+        EGLConfig currentConfig = eglSess->GetConfigExactMatchL(EPBufferAttribsColor64K);
+        eglSess->CreatePbufferSurfaceAndMakeCurrentL(currentConfig, KPixmapSize, EGL_OPENVG_API);
 
 		TPtrC8 ptrVgVendor((const TText8 *)vgGetString(VG_VENDOR));
 		DumpString(_L("VG_VENDOR"), ptrVgVendor);
@@ -133,9 +132,8 @@ TVerdict CEglTest_DumpStrings::doTestStepL()
 		INFO_PRINTF1(_L("Dumping OpenGLES strings"));
 
 		// OpenGLES needs a current GLES context before it will allow the call to glGetString
-		TUidPixelFormat pixelFormat = EglTestConversion::VgFormatToSgPixelFormat(KDefaultSurfaceFormat);
-		TSgImageInfoOpenVgTarget imageInfo = TSgImageInfoOpenVgTarget(pixelFormat, KPixmapSize);
-		eglSess->CreatePixmapSurfaceAndMakeCurrentAndMatchL(imageInfo,CTestEglSession::EResourceCloseSgImageEarly, EGL_OPENGL_ES_API);
+        EGLConfig currentConfig = eglSess->GetConfigExactMatchL(EPBufferAttribsColor64K);
+        eglSess->CreatePbufferSurfaceAndMakeCurrentL(currentConfig, KPixmapSize, EGL_OPENGL_ES_API);
 
 		TPtrC8 ptrGlesVendor((const TText8 *)glGetString(GL_VENDOR));
 		DumpString(_L("GL_VENDOR"), ptrGlesVendor);
@@ -201,7 +199,7 @@ TVerdict CEglTest_QueryString_Extensions::doTestStepL()
 	INFO_PRINTF1(_L("CEglTest_QueryString_Extensions::doTestStepL"));
 
 	TInt numExtensions=0;
-	if (!GetIntFromConfig(KSectionQueryExtensions, KKeyCountExtensionsEGL, numExtensions))
+	if (!GetIntFromConfig(ConfigSection(), KKeyCountExtensionsEGL, numExtensions))
 		{
 		ERR_PRINTF2(_L("Cannot find key '%S' in INI file"), &KKeyCountExtensionsEGL);
 		User::Leave(KErrArgument);
@@ -213,7 +211,7 @@ TVerdict CEglTest_QueryString_Extensions::doTestStepL()
 	for(TInt i=0; i<numExtensions; i++)
 		{
 		bufExtensionNameKey.Format(KKeyExtensionEGLX, i);
-		if (!GetStringFromConfig(KSectionQueryExtensions, bufExtensionNameKey, ptrExtensionNameValue16))
+		if (!GetStringFromConfig(ConfigSection(), bufExtensionNameKey, ptrExtensionNameValue16))
 			{
 			ERR_PRINTF2(_L("Cannot find key '%S' in INI file"), &bufExtensionNameKey);
 			User::Leave(KErrArgument);
@@ -223,7 +221,7 @@ TVerdict CEglTest_QueryString_Extensions::doTestStepL()
 		}
 
 	numExtensions=0;
-	if (!GetIntFromConfig(KSectionQueryExtensions, KKeyCountExtensionsVG, numExtensions))
+	if (!GetIntFromConfig(ConfigSection(), KKeyCountExtensionsVG, numExtensions))
 		{
 		ERR_PRINTF2(_L("Cannot find key '%S' in INI file"), &KKeyCountExtensionsVG);
 		User::Leave(KErrArgument);

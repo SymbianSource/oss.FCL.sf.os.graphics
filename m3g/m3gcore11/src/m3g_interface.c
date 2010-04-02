@@ -68,8 +68,6 @@ struct M3GInterfaceImpl
         /*@shared@*/ m3gReleaseTargetFunc *releaseTarget;
     } func;
     
-    /*Object *objects;*/
-
     /*! \internal \brief Latest error code for this interface */
     M3Genum error;
 
@@ -90,6 +88,8 @@ struct M3GInterfaceImpl
     M3Gint glRefCount;
 #   endif
 
+    /* \internal \brief List of live objects */
+    PointerArray objects;     
     /*! \internal \brief Number of objects registered for this interface */
     M3Gint objCount;
 
@@ -946,26 +946,45 @@ static void m3gFreeTemp(Interface *m3g)
  * \internal
  * \brief
  */
-static void m3gAddChildObject(Interface *m3g)
+static void m3gAddChildObject(Interface *m3g, Object *obj)
 {
     M3G_ASSERT(!m3g->shutdown);
     M3G_ASSERT(m3gInRange(m3g->objCount, 0, 0x7FFFFFFF));
     ++m3g->objCount;
+
+    /* Add the object to the list of live objects */
+    m3gArrayAppend(&m3g->objects, obj, m3g);
 }
 
 /*!
  * \internal
  * \brief
  */
-static void m3gDelChildObject(Interface *m3g)
+static void m3gDelChildObject(Interface *m3g, Object *obj)
 {
     M3G_ASSERT(m3g->objCount > 0);
+
+    /* Remove the object from the list of live objects */
+    m3gArrayDelete(&m3g->objects, m3gArrayFind(&m3g->objects, obj));
     if (--m3g->objCount == 0 && m3g->shutdown) {
         m3gDeleteInterface(m3g);
     }
 }
 
 #if !defined(M3G_NGL_TEXTURE_API)
+/*!
+ * \internal
+ * \brief Get a list of live objects with matching class ID
+ */
+static void m3gGetObjectsWithClassID(Interface *m3g, M3GClass classID, PointerArray* objects)
+{
+    M3Gsizei i = m3gArraySize(&m3g->objects);
+    while (i > 0) {
+        M3GObject obj = (M3GObject)m3gGetArrayElement(&m3g->objects, --i);
+        if (m3gGetClass(obj) == classID)
+            m3gArrayAppend(objects, obj, m3g);
+    }
+}
 /*!
  * \internal
  * \brief Queue OpenGL texture objects for deletion
@@ -1661,6 +1680,7 @@ M3G_API M3GInterface m3gCreateInterface(
         /* All done! Now we can allocate the more trival stuff */
 
         m3g->tcache = m3gCreateTransformCache(m3g);
+        m3gInitArray(&m3g->objects);
         
         M3G_LOG1(M3G_LOG_INTERFACE,
                  "Interface 0x%08X initialized\n", (unsigned) m3g);
@@ -1690,6 +1710,7 @@ M3G_API void m3gDeleteInterface(M3GInterface interface)
         return;
     }
 
+    m3gDestroyArray(&m3g->objects, m3g);
 #   if !defined(M3G_NGL_TEXTURE_API)
     /* Free the list of dead GL objects (those will have been deleted
      * along with the owning contexts by now) */

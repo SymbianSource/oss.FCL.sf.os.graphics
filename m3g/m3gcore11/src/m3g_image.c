@@ -1302,6 +1302,12 @@ M3G_API M3GImage m3gCreateImage(/*@dependent@*/ M3GInterface interface,
                 return NULL;
             }
 
+#ifdef M3G_ENABLE_GLES_RESOURCE_HANDLING
+            /* If GLES resource freeing (see function m3gFreeGLESResources) 
+               is enabled, the GL texture might get deleted at any point, so
+			   a copy of the texture data has to be always kept in memory. */
+            img->pinned = M3G_TRUE;
+#else           
             /* Lock the image data in memory if the image is dynamic,
              * or the format has alpha information; otherwise, we'll
              * be able to get rid of an extra copy when generating a
@@ -1312,7 +1318,7 @@ M3G_API M3GImage m3gCreateImage(/*@dependent@*/ M3GInterface interface,
                     img->format != M3G_LUMINANCE)) {
                 img->pinned = M3G_TRUE;
             }
-
+#endif
             /* If the image can be used as a rendering target, clear
              * to opaque white by default */
             
@@ -1368,13 +1374,14 @@ M3G_API void m3gCommitImage(M3GImage hImage)
     
     image->flags = flags;
 
+#ifdef M3G_ENABLE_GLES_RESOURCE_HANDLING
     /* If the image format has no alpha information, we can discard
      * the image data under suitable conditions */
     
     if (image->format == M3G_RGB || image->format == M3G_LUMINANCE) {
         image->pinned = M3G_FALSE;
     }
-    
+#endif    
     M3G_LOG1(M3G_LOG_IMAGES, "Image 0x%08X made immutable\n",
              (unsigned) image);
 }

@@ -39,6 +39,11 @@ if "%1"=="?" goto help
 if "%1"=="" goto help
 if "%EPOCROOT%"=="" echo error: Variable Epocroot must be defined
 if "%EPOCROOT%"=="" goto help
+
+if  not defined EPOC_INI (
+	set EPOC_INI=%EPOCROOT%epoc32\data\epoc.ini
+)
+
 goto %1
 goto help
 
@@ -46,15 +51,15 @@ rem ================ Install ==============
 
 :install
 echo Backing up EPOC.INI.
-if not exist %EPOCROOT%epoc32\data\epoc.bak copy %EPOCROOT%epoc32\data\epoc.ini %EPOCROOT%epoc32\data\epoc.bak >nul
+if not exist %EPOC_INI%.scdvbak copy %EPOC_INI% %EPOC_INI%.scdvbak >nul
 
 rem add line to epoc.ini so that the system starter will start the emulator in the specified display mode
-echo SYMBIAN_GRAPHICS_USE_GCE ON >> %EPOCROOT%epoc32\data\epoc.ini
-echo SYMBIAN_BASE_USE_GCE ON >> %EPOCROOT%epoc32\data\epoc.ini
-echo ColorDepth Color16M >> %EPOCROOT%epoc32\data\epoc.ini
+echo SYMBIAN_GRAPHICS_USE_GCE ON >> %EPOC_INI%
+echo SYMBIAN_BASE_USE_GCE ON >> %EPOC_INI%
+echo ColorDepth Color16M >> %EPOC_INI%
 
-echo === New EPOC.INI -- %EPOCROOT%epoc32\data\epoc.ini ===
-type %EPOCROOT%epoc32\data\epoc.ini
+echo === New EPOC.INI -- %EPOC_INI% ===
+type %EPOC_INI%
 echo ======================================================
 
 goto :EOF
@@ -63,14 +68,14 @@ goto :EOF
 rem ================ Installonb ==============
 :installonb
 echo Backing up EPOC.INI.
-if not exist %EPOCROOT%epoc32\data\epoc.bak copy %EPOCROOT%epoc32\data\epoc.ini %EPOCROOT%epoc32\data\epoc.bak >nul
+if not exist %EPOC_INI%.scdvbak copy %EPOC_INI% %EPOC_INI%.scdvbak >nul
 
 rem For ONB system only add line to epoc.ini so that the system starter will start the emulator in the specified display mode
-echo. >> %EPOCROOT%epoc32\data\epoc.ini
-echo ColorDepth Color16M >> %EPOCROOT%epoc32\data\epoc.ini
+echo. >> %EPOC_INI%
+echo ColorDepth Color16M >> %EPOC_INI%
 
-echo === New EPOC.INI -- %EPOCROOT%epoc32\data\epoc.ini ===
-type %EPOCROOT%epoc32\data\epoc.ini
+echo === New EPOC.INI -- %EPOC_INI% ===
+type %EPOC_INI%
 echo ======================================================
 
 goto :EOF
@@ -79,7 +84,7 @@ rem ================ Uninstall ==============
 
 :uninstall
 echo Restoring EPOC.INI.
-if exist %EPOCROOT%epoc32\data\epoc.bak xcopy /r /y %EPOCROOT%epoc32\data\epoc.bak %EPOCROOT%epoc32\data\epoc.ini >nul
+if exist %EPOC_INI%.scdvbak xcopy /r /y %EPOC_INI%.scdvbak %EPOC_INI% >nul
 goto :EOF
 
 

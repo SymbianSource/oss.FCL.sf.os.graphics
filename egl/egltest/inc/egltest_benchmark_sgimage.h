@@ -63,6 +63,9 @@ NONSHARABLE_CLASS(CEglTest_Benchmark_DrawImage) : public CEglTest_Benchmark_Base
 public: 
     // from CTestStep
     TVerdict doTestStepL();
+protected:
+    // from CEglTestStep
+    void doProcessFunctionL(TInt aIdx);
     };
 
 #endif // __EGLTEST_BENCHMARK_SGIMAGE_H__

@@ -189,10 +189,10 @@ void TWsDecoder::DecodeWindowGroup(TBuf<LogTBufSize> &aText, TInt aOpcode, const
 	switch (aOpcode)
 		{
 	case EWsWinOpReceiveFocus:
-		aText.AppendFormat(_L("ReceiveFocus(%d)"), pData.Bool);
+		aText.AppendFormat(_L("ReceiveFocus(%d)"), *pData.Bool);
 		break;
 	case EWsWinOpAutoForeground:
-		aText.AppendFormat(_L("AutoForeground(%d)"), pData.Bool);
+		aText.AppendFormat(_L("AutoForeground(%d)"), *pData.Bool);
 		break;
 	case EWsWinOpCancelCaptureKey:
 		aText.AppendFormat(_L("CancelCaptureKey(%d)"), *pData.UInt);
@@ -781,6 +781,24 @@ void TWsDecoder::DecodeClient(TBuf<LogTBufSize> &aText, TInt aOpcode, const TAny
 		aText.AppendFormat(LogCreateGraphic);		
 		}
 		break;
+	case EWsClOpRegisterSurface:
+		{
+		TInt screenNumber = pData.SurfaceRegister->screenNumber;
+		const TSurfaceId& surfaceId = pData.SurfaceRegister->surfaceId;
+		
+		_LIT(LogRegisterSurface,"RegisterSurface(aScreenNumber(%d), TSurfaceId{%x,%x,%x,%x})");
+		aText.AppendFormat(LogRegisterSurface, screenNumber, surfaceId.iInternal[0], surfaceId.iInternal[1], surfaceId.iInternal[2], surfaceId.iInternal[3]);
+		}
+		break;
+	case EWsClOpUnregisterSurface:
+		{
+		TInt screenNumber = pData.SurfaceRegister->screenNumber;
+		const TSurfaceId& surfaceId = pData.SurfaceRegister->surfaceId;
+		
+		_LIT(LogUnregisterSurface,"UnregisterSurface(aScreenNumber(%d), TSurfaceId{%x,%x,%x,%x})");
+		aText.AppendFormat(LogUnregisterSurface, screenNumber, surfaceId.iInternal[0], surfaceId.iInternal[1], surfaceId.iInternal[2], surfaceId.iInternal[3]);
+		}
+		break;
 	case EWsClOpSetCloseProximityThresholds:
 		{
 		_LIT(LogSetCloseProximityThresholds,"SetCloseProximityThresholds(%d, %d)");
@@ -1259,19 +1277,19 @@ void TWsDecoder::decodeWindow(TBuf<LogTBufSize> &aText,TInt aOpcode,const TAny *
 	case EWsWinOpMoveToGroup:
 		{
 		_LIT(LogWinMoveToGroup,"MoveToGroup(%d)");
-		aText.AppendFormat(LogWinMoveToGroup, pData.Int);
+		aText.AppendFormat(LogWinMoveToGroup, *pData.Int);
 		}
 		break;	
 	case EWsWinOpStoreDrawCommands:
 		{
 		_LIT(LogWinStoreDrawCommands,"EnableRedrawStore(%u)");
-		aText.AppendFormat(LogWinStoreDrawCommands, pData.Bool);
+		aText.AppendFormat(LogWinStoreDrawCommands, *pData.Bool);
 		}
 		break;	
 	case EWsWinOpSetPointerCapturePriority:
 		{
 		_LIT(LogWinSetPointerCapturePriority,"SetPointerCapturePriority(%d)");
-		aText.AppendFormat(LogWinSetPointerCapturePriority, pData.Int);
+		aText.AppendFormat(LogWinSetPointerCapturePriority, *pData.Int);
 		}
 		break;	
 	case EWsWinOpGetPointerCapturePriority:
@@ -1289,7 +1307,7 @@ void TWsDecoder::decodeWindow(TBuf<LogTBufSize> &aText,TInt aOpcode,const TAny *
 	case EWsWinOpSetTransparencyPolicy:
 		{
 		_LIT(LogWinSetTransparentPolicy,"SetTransparencyPolicy(TransparencyPolicy= %d)");
-		aText.AppendFormat(LogWinSetTransparentPolicy, pData.Int);
+		aText.AppendFormat(LogWinSetTransparentPolicy, *pData.Int);
 		}
 		break;	
 	case EWsWinOpIsRedrawStoreEnabled:
@@ -1316,6 +1334,72 @@ void TWsDecoder::decodeWindow(TBuf<LogTBufSize> &aText,TInt aOpcode,const TAny *
 		aText.AppendFormat(LogClientHandle);
 		}
 		break;
+    case EWsWinOpSetBackgroundSurface:
+        {
+        _LIT(LogWinSetBackgroundSurface,"SetBackgroundSurface(TSurfaceId{%x,%x,%x,%x})");
+        aText.AppendFormat(LogWinSetBackgroundSurface, pData.Surface->iInternal[0],pData.Surface->iInternal[1],pData.Surface->iInternal[2],pData.Surface->iInternal[3]);
+        }
+        break;
+    case EWsWinOpKeyColor:
+        {
+        _LIT(LogWinKeyColor,"KeyColor()");
+        aText.AppendFormat(LogWinKeyColor);
+        }
+        break;          
+    case EWsWinOpSetBackgroundSurfaceConfig:
+        {        
+        TSurfaceConfiguration aSurfaceConfig = pData.SurfaceConfigurationAndTrigger->surfaceConfig;
+        TSurfaceId surfaceid;
+        aSurfaceConfig.GetSurfaceId(surfaceid);
+        CFbsBitGc::TGraphicsOrientation orientation = aSurfaceConfig.Orientation();
+        TRect extent;
+        aSurfaceConfig.GetExtent(extent);
+        TRect viewport;
+        aSurfaceConfig.GetViewport(viewport);
+        TBool flip = aSurfaceConfig.Flip();
+        TBool triggerRedraw = pData.SurfaceConfigurationAndTrigger->triggerRedraw;
+        
+        TLongBuf extentbuf(TDebugLogTextHandler::FormatRect(extent));
+        TLongBuf viewportbuf(TDebugLogTextHandler::FormatRect(viewport));
+        
+        _LIT(LogWinSetBackgroundSurfaceConfig,"SetBackgroundSurface({%x,%x,%x,%x},%d,%S,%S,%d,%d)");
+        aText.AppendFormat(LogWinSetBackgroundSurfaceConfig, surfaceid.iInternal[0],
+                                                             surfaceid.iInternal[1],
+                                                             surfaceid.iInternal[2],
+                                                             surfaceid.iInternal[3],
+                                                             orientation,
+                                                             &extentbuf, 
+                                                             &viewportbuf,
+                                                             flip,
+                                                             triggerRedraw);
+        }
+        break;
+    case EWsWinOpRemoveBackgroundSurface:
+        {
+        _LIT(LogWinRemoveBackgroundSurface,"RemoveBackgroundSurface(%d)");
+        aText.AppendFormat(LogWinRemoveBackgroundSurface, *(pData.Bool));
+        }
+        break;
+    case EWsWinOpGetBackgroundSurfaceConfig:
+        {
+        _LIT(LogWinGetBackgroundSurfaceConfig,"GetBackgroundSurface()");
+        aText.AppendFormat(LogWinGetBackgroundSurfaceConfig);
+        }
+        break;
+    case EWsWinOpClearRedrawStore:
+        {
+        _LIT(LogWinClearRedrawStore,"ClearRedrawStore()");
+        aText.AppendFormat(LogWinClearRedrawStore);
+        }
+        break;
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    case EWsWinOpFixNativeOrientation:
+        {
+        _LIT(LogWinFixNativeOrientation,"FixNativeOrientation()");
+        aText.AppendFormat(LogWinFixNativeOrientation);        
+        }
+        break;
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION        
 	default:
 		UnKnownOpcode(aText, aOpcode);
 		break;
@@ -1786,7 +1870,7 @@ void TWsDecoder::DecodeGc3(TBuf<LogTBufSize> &aText, TInt aOpcode, const TAny *a
 		{
 		TShortBuf buf1(TDebugLogTextHandler::FormatPoint(pData.GdiBltMasked->destination));
 		TLongBuf buf2(TDebugLogTextHandler::FormatRect(pData.GdiBltMasked->source));
-		_LIT(LogGcBitBltMasked,"BitBltMasked(%S, {%d}, %S)");
+		_LIT(LogGcBitBltMasked,"BitBltMasked(%S, {%d}, %S, {%d}, %d)");
 		aText.AppendFormat(LogGcBitBltMasked, &buf1, hHandleToValue(pData.GdiBltMasked->handle),
 										&buf2, hHandleToValue(pData.GdiBltMasked->maskHandle),
 										pData.GdiBltMasked->invertMask);
@@ -1859,7 +1943,7 @@ void TWsDecoder::DecodeGc3(TBuf<LogTBufSize> &aText, TInt aOpcode, const TAny *a
 	case EWsGcOpSetFaded:
 		{
 		_LIT(KLitGcSetFaded, "SetFaded(%d)");
-		aText.AppendFormat(KLitGcSetFaded, pData.Bool);
+		aText.AppendFormat(KLitGcSetFaded, *pData.Bool);
 		}
 		break;
 	case EWsGcOpSetFadeParams:
@@ -1884,7 +1968,7 @@ void TWsDecoder::DecodeGc3(TBuf<LogTBufSize> &aText, TInt aOpcode, const TAny *a
 	case EWsGcOpSetOpaque:
 		{
 		_LIT(KLitGcOpSetOpaque, "SetOpaque(%d)");
-		aText.AppendFormat(KLitGcOpSetOpaque, pData.Bool);
+		aText.AppendFormat(KLitGcOpSetOpaque, *pData.Bool);
 		}
 		break;
 	default:
@@ -2023,20 +2107,20 @@ void TWsDecoder::DecodeScreenDevice(TBuf<LogTBufSize> &aText, TInt aOpcode, cons
 	case EWsSdOpSetScreenMode:
 		{
 		_LIT(LogScreenDeviceSetScreenMode,"ScreenMode(%d)");
-		aText.AppendFormat(LogScreenDeviceSetScreenMode,pData.Int);
+		aText.AppendFormat(LogScreenDeviceSetScreenMode,*pData.Int);
 		}
 		break;
 	case EWsSdOpGetScreenModeSizeAndRotation:
 	case EWsSdOpGetScreenModeSizeAndRotation2:
 		{
 		_LIT(LogScreenDeviceGetScreenModeSizeAndRotation,"GetScreenModeSizeAndRotation(%d)");
-		aText.AppendFormat(LogScreenDeviceGetScreenModeSizeAndRotation,pData.Int);
+		aText.AppendFormat(LogScreenDeviceGetScreenModeSizeAndRotation,*pData.Int);
 		}
 		break;
 	case EWsSdOpSetScreenModeEnforcement:
 		{
 		_LIT(LogScreenDeviceSetScreenModeEnforcement,"SetScreenModeEnforcement(%d)");
-		aText.AppendFormat(LogScreenDeviceSetScreenModeEnforcement,pData.Int);
+		aText.AppendFormat(LogScreenDeviceSetScreenModeEnforcement,*pData.Int);
 		}
 		break;
 	case EWsSdOpScreenModeEnforcement:
@@ -2054,7 +2138,7 @@ void TWsDecoder::DecodeScreenDevice(TBuf<LogTBufSize> &aText, TInt aOpcode, cons
 	case EWsSdOpGetRotationList:
 		{
 		_LIT(LogScreenDeviceGetRotationList,"GetRotationList(%d)");
-		aText.AppendFormat(LogScreenDeviceGetRotationList,pData.Int);
+		aText.AppendFormat(LogScreenDeviceGetRotationList,*pData.Int);
 		}
 		break;
 	case EWsSdOpPaletteAttributes:
@@ -2090,13 +2174,13 @@ void TWsDecoder::DecodeScreenDevice(TBuf<LogTBufSize> &aText, TInt aOpcode, cons
 	case EWsSdOpGetScreenModeOrigin:
 		{
 		_LIT(LogScreenDeviceGetScreenModeOrigin,"GetScreenModeOrigin(%d)");
-		aText.AppendFormat(LogScreenDeviceGetScreenModeOrigin, pData.Int);
+		aText.AppendFormat(LogScreenDeviceGetScreenModeOrigin, *pData.Int);
 		}	
 		break;
 	case EWsSdOpGetScreenModeScale:
 		{
 		_LIT(LogScreenDeviceGetScreenModeScale,"GetScreenModeScale(%d)");
-		aText.AppendFormat(LogScreenDeviceGetScreenModeScale, pData.Int);
+		aText.AppendFormat(LogScreenDeviceGetScreenModeScale, *pData.Int);
 		}	
 		break;
 	case EWsSdOpGetCurrentScreenModeScale:
@@ -2108,13 +2192,13 @@ void TWsDecoder::DecodeScreenDevice(TBuf<LogTBufSize> &aText, TInt aOpcode, cons
 	case EWsSdOpSetAppScreenMode:
 		{
 		_LIT(LogScreenDeviceSetAppScreenMode,"SetAppScreenMode(%d)");
-		aText.AppendFormat(LogScreenDeviceSetAppScreenMode, pData.Int);
+		aText.AppendFormat(LogScreenDeviceSetAppScreenMode, *pData.Int);
 		}	
 		break;		
 	case EWsSdOpGetScreenModeScaledOrigin:
 		{
 		_LIT(LogScreenDeviceGetScreenModeScaledOrigin,"GetScreenModeScaledOrigin(%d)");
-		aText.AppendFormat(LogScreenDeviceGetScreenModeScaledOrigin, pData.Int);
+		aText.AppendFormat(LogScreenDeviceGetScreenModeScaledOrigin, *pData.Int);
 		}	
 		break;		
 	case EWsSdOpGetCurrentScreenModeScaledOrigin:
@@ -2151,13 +2235,13 @@ void TWsDecoder::DecodeScreenDevice(TBuf<LogTBufSize> &aText, TInt aOpcode, cons
 	case EWsSdOpGetScreenModeDisplayMode:
 		{
 		_LIT(LogScreenDeviceGetScreenModeDisplayMode,"GetScreenModeDisplayMode(%d)");
-		aText.AppendFormat(LogScreenDeviceGetScreenModeDisplayMode, pData.Int);
+		aText.AppendFormat(LogScreenDeviceGetScreenModeDisplayMode, *pData.Int);
 		}	
 		break;		
 	case EWsClOpSetBackLight:
 		{
 		_LIT(LogScreenDeviceSetBackLight,"SetBackLight(%u)");
-		aText.AppendFormat(LogScreenDeviceSetBackLight, pData.UInt);
+		aText.AppendFormat(LogScreenDeviceSetBackLight, *pData.UInt);
 		}	
 		break;		
 	default:
@@ -2272,7 +2356,7 @@ void TWsDecoder::DecodeDirect(TBuf<LogTBufSize> &aText, TInt aOpcode, const TAny
 	case EWsDirectOpGetRegion:
 		{
 		_LIT(LogDirectGetRegion,"GetRegion(%d)");
-		aText.AppendFormat(LogDirectGetRegion,pData.Int);
+		aText.AppendFormat(LogDirectGetRegion,*pData.Int);
 		}
 		break;
 	case EWsDirectOpCancel:
@@ -2341,13 +2425,13 @@ void TWsDecoder::DecodeClick(TBuf<LogTBufSize> &aText, TInt aOpcode, const TAny 
 	case EWsClickOpSetKeyClick:
 		{			
 		_LIT(LogSetKeyClick,"SetKeyClick(%u)");
-		aText.AppendFormat(LogSetKeyClick, pData.Bool);
+		aText.AppendFormat(LogSetKeyClick, *pData.Bool);
 		}
 		break;
 	case EWsClickOpSetPenClick:
 		{			
 		_LIT(LogSetPenClick,"SetPenClick(%u)");
-		aText.AppendFormat(LogSetPenClick, pData.Bool);
+		aText.AppendFormat(LogSetPenClick, *pData.Bool);
 		}	
 		break;
 	case EWsClickOpKeyClickEnabled:

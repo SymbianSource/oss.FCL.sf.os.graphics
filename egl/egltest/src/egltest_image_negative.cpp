@@ -76,13 +76,13 @@ TVerdict CEglTest_EGL_Image_eglCreateImage_Bad_Parameter::doTestStepL()
 	GetDisplayL();
 	CreateEglSessionL();
 	iEglSess->InitializeL();
-	iEglSess->OpenSgDriverL();	
-	
+	iEglSess->OpenSgDriverL();
+
 	INFO_PRINTF1(_L("Creating one EGLImage from a NULL RSgImage"));
 	EGLImageKHR imageKHR = iEglSess->eglCreateImageKhrL(iDisplay, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, NULL, KEglImageAttribsPreservedTrue);
 	ASSERT_EGL_TRUE(imageKHR == EGL_NO_IMAGE_KHR);
 	ASSERT_EGL_ERROR(EGL_BAD_PARAMETER);
-	
+
 	INFO_PRINTF1(_L("Creating one EGLImage from a not fully constructed RSgImage"));
 	RSgImage sgImage;
 	CleanupClosePushL(sgImage);
@@ -241,7 +241,7 @@ TVerdict CEglTest_EGL_Image_UsageBits_Enforcement::doTestStepL()
 	TDisplayMode bitmapMode = EglTestConversion::PixelFormatToDisplayMode(iSourceFormat);
 	CFbsBitmap* bitmap = iEglSess->CreateReferenceBitmapL(bitmapMode, KPixmapSize, 8);
 	CleanupStack::PushL(bitmap);
-	
+
 	// Create RSgImage's attributes.
 	TSgImageInfoTest imageInfo;
 	imageInfo.iSizeInPixels = KPixmapSize;
@@ -254,20 +254,22 @@ TVerdict CEglTest_EGL_Image_UsageBits_Enforcement::doTestStepL()
 	imageInfo.iCpuAccess = ESgCpuAccessNone;
 	imageInfo.iScreenId = KSgScreenIdMain;
 	imageInfo.iUserAttributes = NULL;
-	imageInfo.iUserAttributeCount = 0;	
+	imageInfo.iUserAttributeCount = 0;
 #endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
 
 	RSgImage sgImage;
 	CleanupClosePushL(sgImage);
 	ASSERT_EQUALS(sgImage.Create(imageInfo, bitmap->DataAddress(), bitmap->DataStride()), KErrNone);
 
-	//First Subtest: creation of an EGLImageKhr with wrong Usage will fail
-	INFO_PRINTF1(_L("Trying to create an EGLImage from a RSgImage that doesn't have correct iUsage, ESgUsageBitOpenVgImage|ESgUsageOpenGlesTexture2D|ESgUsageOpenGles2Texture2D"));
+	//First Subtest: Attempted creation of an EGLImageKhr from an RSgImage with the wrong Usage should fail
+	INFO_PRINTF1(_L("Attempt creation of an EGLImage from a RSgImage with incorrect iUsage ESgUsageBitOpenGlesSurface"));
+	INFO_PRINTF1(_L("Correct iUsage needs to have at least one of ESgUsageBitOpenVgImage, ESgUsageOpenGlesTexture2D or ESgUsageOpenGles2Texture2D bits set"));
+
 	EGLImageKHR imageKHR = iEglSess->eglCreateImageKhrL(iDisplay, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, &sgImage, KEglImageAttribsPreservedTrue);
 	ASSERT_EGL_TRUE(imageKHR == EGL_NO_IMAGE_KHR);
 	ASSERT_EGL_ERROR(EGL_BAD_PARAMETER);
     CleanupStack::PopAndDestroy(&sgImage);
-	
+
 	if(iEglSess->IsOpenGLES2Supported())
 	    {
 	    TSgImageInfoTest imageInfo2;
@@ -278,15 +280,15 @@ TVerdict CEglTest_EGL_Image_UsageBits_Enforcement::doTestStepL()
 #else
 		imageInfo2.iUsage = ESgUsageOpenGlesTexture2D;
 #endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
-	
+
 	    // Create a SgImage
 		RSgImage sgImage2;
 		CleanupClosePushL(sgImage2);
 		ASSERT_EQUALS(sgImage2.Create(imageInfo2, bitmap->DataAddress(), bitmap->DataStride()), KErrNone);
 
-	    // Create a EGLImage from the RSgImage
+	    // The creation of an EGLImage from a RSgImage with correct usage (ESgUsageBitOpenGles2Texture2D or ESgUsageOpenGlesTexture2D) should pass
 		EGLImageKHR imageKHR2 = iEglSess->eglCreateImageKhrL(iDisplay, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, &sgImage2, KEglImageAttribsPreservedTrue);
-		ASSERT_EGL_TRUE(imageKHR2 == EGL_NO_IMAGE_KHR);
+		ASSERT_EGL_TRUE(imageKHR2 != EGL_NO_IMAGE_KHR);
 
 	    //Create an OffScreen Pixmap, we need it to make a Context current
 	    imageInfo2.iSizeInPixels = KPixmapSize;
@@ -305,13 +307,13 @@ TVerdict CEglTest_EGL_Image_UsageBits_Enforcement::doTestStepL()
 	    ASSERT_TRUE(vgGetError()==VG_UNSUPPORTED_IMAGE_FORMAT_ERROR);
 
         CleanupStack::PopAndDestroy(&sgImage2);
-        ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, imageKHR2));		
+        ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, imageKHR2));
 	    }
-	
+
 	//cleanup
 	CleanupStack::PopAndDestroy(bitmap);
 	CleanAll();
-	
+
 	RecordTestResultL();
 	CloseTMSGraphicsStep();
 	return TestStepResult();
@@ -373,11 +375,11 @@ TVerdict CEglTest_EGL_Image_DestroyImageKHR::doTestStepL()
 	iEglSess->InitializeL();
 	iEglSess->OpenSgDriverL();
 
-	INFO_PRINTF1(_L("Creating one RSgImage"));	
+	INFO_PRINTF1(_L("Creating one RSgImage"));
 	TSgImageInfoOpenVgImage imageInfo = TSgImageInfoOpenVgImage(iSourceFormat, KPixmapSize);
 #ifndef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
 	imageInfo.iCpuAccess = ESgCpuAccessReadWrite;
-#endif	
+#endif
 	RSgImage sgImage;
 	CleanupClosePushL(sgImage);
 	ASSERT_EQUALS(sgImage.Create(imageInfo, NULL, NULL), KErrNone);
@@ -385,26 +387,26 @@ TVerdict CEglTest_EGL_Image_DestroyImageKHR::doTestStepL()
 	INFO_PRINTF1(_L("Creating one EGLImage from it"));
 	EGLImageKHR imageKHR = iEglSess->eglCreateImageKhrL(iDisplay, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, &sgImage, KEglImageAttribsPreservedTrue);
 	ASSERT_EGL_TRUE(imageKHR != EGL_NO_IMAGE_KHR);
-	
+
 	INFO_PRINTF1(_L("Calling eglDestroyImageKHR with EGL_NO_DISPLAY"));
-	ASSERT_EGL_TRUE(!iEglSess->DestroyEGLImage(EGL_NO_DISPLAY, imageKHR));		
+	ASSERT_EGL_TRUE(!iEglSess->DestroyEGLImage(EGL_NO_DISPLAY, imageKHR));
 	ASSERT_EGL_ERROR(EGL_BAD_DISPLAY);
 
 	INFO_PRINTF1(_L("Calling eglDestroyImageKHR with a random number (but not 1) as Display"));
-	ASSERT_EGL_TRUE(!iEglSess->DestroyEGLImage(7, imageKHR));		
+	ASSERT_EGL_TRUE(!iEglSess->DestroyEGLImage(7, imageKHR));
 	ASSERT_EGL_ERROR(EGL_BAD_DISPLAY);
 
 	INFO_PRINTF1(_L("Calling eglDestroyImageKHR with valid EGLImage handle (so, that should succeed)"));
-	ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, imageKHR));		
+	ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, imageKHR));
 
 	INFO_PRINTF1(_L("Calling eglDestroyImageKHR with invalid handle"));
-	ASSERT_EGL_TRUE(!iEglSess->DestroyEGLImage(iDisplay, imageKHR));		
+	ASSERT_EGL_TRUE(!iEglSess->DestroyEGLImage(iDisplay, imageKHR));
 	ASSERT_EGL_ERROR(EGL_BAD_PARAMETER);
-	
+
 	//cleanup
-    CleanupStack::PopAndDestroy(&sgImage);	
+    CleanupStack::PopAndDestroy(&sgImage);
 	CleanAll();
-	
+
 	RecordTestResultL();
 	CloseTMSGraphicsStep();
 	return TestStepResult();
@@ -464,11 +466,11 @@ TVerdict CEglTest_EGL_Image_VGImage_From_Invalid_EGLHandle::doTestStepL()
 	iEglSess->InitializeL();
 	iEglSess->OpenSgDriverL();
 
-	INFO_PRINTF1(_L("Creating one RSgImage"));	
+	INFO_PRINTF1(_L("Creating one RSgImage"));
 	TSgImageInfoOpenVgImage imageInfo = TSgImageInfoOpenVgImage(iSourceFormat, KPixmapSize);
 #ifndef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
 	imageInfo.iCpuAccess = ESgCpuAccessReadWrite;
-#endif	
+#endif
 	RSgImage sgImage;
 	CleanupClosePushL(sgImage);
 	ASSERT_EQUALS(sgImage.Create(imageInfo, NULL, NULL), KErrNone);
@@ -483,10 +485,10 @@ TVerdict CEglTest_EGL_Image_VGImage_From_Invalid_EGLHandle::doTestStepL()
 	iEglSess->CreatePixmapSurfaceAndMakeCurrentAndMatchL(imageInfo2, CTestEglSession::EResourceCloseSgImageEarly);
 
 	INFO_PRINTF1(_L("Destroying the EGLImage but retain the handle value"));
-	ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, imageKHR));		
+	ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, imageKHR));
 
 	INFO_PRINTF1(_L("Attemptimg to create a VGImage from an invalid handle"));
-	VGImage vgImage = iEglSess->vgCreateImageTargetKHR((VGeglImageKHR)imageKHR);	
+	VGImage vgImage = iEglSess->vgCreateImageTargetKHR((VGeglImageKHR)imageKHR);
 	ASSERT_VG_TRUE(vgImage == VG_INVALID_HANDLE);
 	ASSERT_TRUE(vgGetError()==VG_ILLEGAL_ARGUMENT_ERROR);
 
@@ -494,9 +496,9 @@ TVerdict CEglTest_EGL_Image_VGImage_From_Invalid_EGLHandle::doTestStepL()
 	ASSERT_TRUE(vgGetError()==VG_BAD_HANDLE_ERROR);
 
 	//cleanup
-    CleanupStack::PopAndDestroy(&sgImage);	
+    CleanupStack::PopAndDestroy(&sgImage);
 	CleanAll();
-	
+
 	RecordTestResultL();
 	CloseTMSGraphicsStep();
 	return TestStepResult();
@@ -568,8 +570,8 @@ TVerdict CEglTest_EGL_Image_Self_Drawing::doTestStepL()
 	TDisplayMode bitmapMode = EglTestConversion::PixelFormatToDisplayMode(iSourceFormat);
 	CFbsBitmap* bitmap = iEglSess->CreateReferenceBitmapL(bitmapMode, KPixmapSize, 8);
 	CleanupStack::PushL(bitmap);
-	
-	INFO_PRINTF1(_L("Creating one RSgImage"));	
+
+	INFO_PRINTF1(_L("Creating one RSgImage"));
 	TSgImageInfoTest imageInfo;
 	imageInfo.iSizeInPixels = KPixmapSize;
 	imageInfo.iPixelFormat = iSourceFormat;
@@ -589,7 +591,7 @@ TVerdict CEglTest_EGL_Image_Self_Drawing::doTestStepL()
 	INFO_PRINTF1(_L("Calling eglBindAPI(EGL_OPENVG_API)"));
 	ASSERT_EGL_TRUE(eglBindAPI(EGL_OPENVG_API));
 
-    EGLint numConfigsWithPre = 0;       
+    EGLint numConfigsWithPre = 0;
     EGLConfig configWithPre;
     const EGLint KAttribImagePre[] = { EGL_MATCH_NATIVE_PIXMAP,  reinterpret_cast<EGLint>(&sgImage),
                                        EGL_RENDERABLE_TYPE,      EGL_OPENVG_BIT,
@@ -623,7 +625,7 @@ TVerdict CEglTest_EGL_Image_Self_Drawing::doTestStepL()
 	//cleanup
 	vgDestroyImage(vgImage);
 	ASSERT_TRUE(vgGetError()==VG_NO_ERROR);
-	ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, imageKHR));		
+	ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, imageKHR));
 	CleanupStack::PopAndDestroy(2, bitmap); // bitmap, sgImage
 	//This test doesn't check the drawing because the content of the image are undefined
 	//since we are using the same buffer both as target and as source

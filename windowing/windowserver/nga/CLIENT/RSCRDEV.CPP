@@ -254,6 +254,11 @@ EXPORT_C TInt CWsScreenDevice::HorizontalTwipsToPixels(TInt aTwips) const
 	TInt64 twips=aTwips;
 	TSize displaySizeInPixels = DisplaySizeInPixels();
 	TSize physicalScreenSizeInTwips = PhysicalScreenSizeInTwips();
+	if (displaySizeInPixels.iWidth <= 0 ||
+	        physicalScreenSizeInTwips.iWidth <= 0)
+	    {
+        return 0;
+	    }
 	twips=(twips*displaySizeInPixels.iWidth+(physicalScreenSizeInTwips.iWidth/2))/physicalScreenSizeInTwips.iWidth;
 	return I64INT(twips);
 	}
@@ -267,6 +272,11 @@ EXPORT_C TInt CWsScreenDevice::VerticalTwipsToPixels(TInt aTwips) const
 	TInt64 twips=aTwips;
 	TSize displaySizeInPixels = DisplaySizeInPixels();
 	TSize physicalScreenSizeInTwips = PhysicalScreenSizeInTwips();
+   if (displaySizeInPixels.iHeight <= 0 ||
+            physicalScreenSizeInTwips.iHeight <= 0)
+        {
+        return 0;
+        }
 	twips=(twips*displaySizeInPixels.iHeight+(physicalScreenSizeInTwips.iHeight/2))/physicalScreenSizeInTwips.iHeight;
 	return I64INT(twips);
 	}
@@ -280,6 +290,11 @@ EXPORT_C TInt CWsScreenDevice::HorizontalPixelsToTwips(TInt aPixels) const
 	TInt64 pixels=aPixels;
 	TSize displaySizeInPixels = DisplaySizeInPixels();
 	TSize physicalScreenSizeInTwips = PhysicalScreenSizeInTwips();
+   if (displaySizeInPixels.iWidth <= 0 ||
+            physicalScreenSizeInTwips.iWidth <= 0)
+        {
+        return 0;
+        }
 	pixels=(pixels*physicalScreenSizeInTwips.iWidth+(displaySizeInPixels.iWidth/2))/displaySizeInPixels.iWidth;
 	return I64INT(pixels);
 	}
@@ -294,6 +309,11 @@ EXPORT_C TInt CWsScreenDevice::VerticalPixelsToTwips(TInt aPixels) const
 	TInt64 pixels=aPixels;
 	TSize displaySizeInPixels = DisplaySizeInPixels();
 	TSize physicalScreenSizeInTwips = PhysicalScreenSizeInTwips();
+   if (displaySizeInPixels.iHeight <= 0 ||
+            physicalScreenSizeInTwips.iHeight <= 0)
+        {
+        return 0;
+        }
 	pixels=(pixels*physicalScreenSizeInTwips.iHeight+(displaySizeInPixels.iHeight/2))/displaySizeInPixels.iHeight;
 	return I64INT(pixels);
 	}

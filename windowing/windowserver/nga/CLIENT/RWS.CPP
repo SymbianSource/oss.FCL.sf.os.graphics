@@ -2308,9 +2308,11 @@ EXPORT_C TInt RWsSession::NumberOfScreens() const
 	}
 	
 EXPORT_C void RWsSession::ClearAllRedrawStores()
-/** Clear the redraw store for all windows in the system
-By default Windows will recorded the drawing commands used during a redraw and use them latter if the window needs to be redrawn.
-Calling this function will cause all these stores to be thrown away redraw will then be sent to all window, visible windows will recieve them first.
+/** Clear the redraw store for all windows in the system.
+By default Windows will record the drawing commands used during a redraw and re-use them later if the window needs to be redrawn.
+Calling this function will cause all these server-side stores to be thrown away, redraw requests will then be sent to all client-side windows. Visible windows will receive them first.
+
+In most cases you should be using RWindow::ClearRedrawStore instead of this function. 
 
 This function always causes a flush of the window server buffer.*/
 	{

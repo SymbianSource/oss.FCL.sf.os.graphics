@@ -813,6 +813,14 @@ This function always causes a flush of the window server buffer.
 	return(sizePkg());
 	}
 
+EXPORT_C TSize RWindowBase::SizeForEgl() const
+/** Dummy implementation in order to preserve compatibility with WSERV NGA.
+    @internalComponent */ 
+	{
+	ASSERT(0);
+	return TSize();
+	}
+
 EXPORT_C void RWindowBase::SetPosition(const TPoint &aPos)
 /** Sets the position of a window relative to its parent. 
 
@@ -1235,6 +1243,14 @@ EXPORT_C void RWindowBase::EnableAdvancedPointers()
     @internalComponent */ 
 	{
 	ASSERT(0);	
+	}
+
+EXPORT_C TInt RWindowBase::FixNativeOrientation()
+/** Dummy implementation in order to preserve compatibility with WSERV NGA.
+    @internalComponent */ 
+	{
+	ASSERT(0);
+	return KErrNotSupported;	
 	}
 
 EXPORT_C TInt RWindowBase::AllocPointerMoveBuffer(TInt aMaxNumPoints, TUint aFlags)

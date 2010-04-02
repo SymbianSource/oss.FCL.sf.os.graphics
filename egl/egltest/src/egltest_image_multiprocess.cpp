@@ -107,7 +107,7 @@ TVerdict CEglTest_EGL_Image_Multi_Process_Sibling_Basic::doTestStepL()
 
 	// destroy sgImage
 	CleanupStack::PopAndDestroy(2, bitmap);
-	
+
 	// clean everything
 	CleanAll();
 	INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_Sibling_Basic::doTestStepL"));
@@ -117,7 +117,7 @@ TVerdict CEglTest_EGL_Image_Multi_Process_Sibling_Basic::doTestStepL()
 	}
 
 void CEglTest_EGL_Image_Multi_Process_Sibling_Basic::doProcessFunctionL(TInt aIdx,const TSgDrawableId& aSgId)
-	{	
+	{
 	INFO_PRINTF2(_L("CEglTest_EGL_Image_Multi_Process_Sibling_Basic::doProcessFunctionL, Process %d"),aIdx);
 	GetDisplayL();
 	CreateEglSessionL(aIdx);
@@ -127,12 +127,12 @@ void CEglTest_EGL_Image_Multi_Process_Sibling_Basic::doProcessFunctionL(TInt aId
 	RSgImage sgImageFromId;
 	CleanupClosePushL(sgImageFromId);
 	ASSERT_EQUALS(sgImageFromId.Open(aSgId),KErrNone);
-	
+
 	INFO_PRINTF2(_L("Process %d, Creating an EGLImage from the shared RSgImage"),aIdx);
 	EGLImageKHR eglImage = iEglSess->eglCreateImageKhrL(iDisplay, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, &sgImageFromId, KEglImageAttribsPreservedTrue);
 	ASSERT_EGL_TRUE(eglImage != EGL_NO_IMAGE_KHR);
 	CleanupStack::PopAndDestroy(&sgImageFromId);
-	
+
 	INFO_PRINTF2(_L("Process %d, EGLImage successfully created, now destroying it"),aIdx);
 	ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, eglImage));
 
@@ -155,7 +155,7 @@ Check if EGL Implementation allows two processes to work in parallel.
 
 @SYMTestActions
 Run two processes that independently perform the same actions detailed below.
-This test will check for the “VG_KHR_EGL_image” extension, if it is not 
+This test will check for the “VG_KHR_EGL_image” extension, if it is not
 supported on this platform then the test will return immediately without failure.
 Create and fully construct an RSgImage object
 •	Set the iUsage bits to ESgUsageBitOpenVgImage
@@ -166,21 +166,21 @@ Pass the RSgImage object into eglCreateImageKHR() with
 Check that eglCreateImageKHR() does NOT return EGL_NO_IMAGE_KHR
 Use vgCreateEGLImageTargetKHR() to construct a VGImage object from the EGLImage.
 •	Check for errors (VGInvalidHandle is not returned)
-Create a second RSgImage, and use it to create a pixmap surface that is 
+Create a second RSgImage, and use it to create a pixmap surface that is
 compatible as a target for the VGImage to be drawn to.
 •	Set the iUsage bit to ESgUsageBitOpenVgSurface
 •	Use the same pixel format as the RSgImage above.
-Now that a eglContext and an OpenVG context have been created, use the 
-OpenVG API vgClearImage to clear to a chosen colour the VGImage previously 
+Now that a eglContext and an OpenVG context have been created, use the
+OpenVG API vgClearImage to clear to a chosen colour the VGImage previously
 returned by eglCreateImageKHR.
-Use OpenVG to draw the just drawn VGImage to the pixmap surface currently 
+Use OpenVG to draw the just drawn VGImage to the pixmap surface currently
 linked to the context.
 Call eglWaitClient() to finish the above drawing instructions synchronously.
 Destroy the original image data
 •	Pass the VGImage into vgDestroyImage()
 •	Pass the EGLImage into eglDestroyImageKHR()
 •	Close the first RSgImage
-•	Check that the pixmap surface contains expected pixel values using 
+•	Check that the pixmap surface contains expected pixel values using
 OpenVG APIs, vgReadPixels.
 Close the second RSgImage and destroy the pixmap surface
 Check for memory and handle leaks
@@ -194,7 +194,7 @@ TVerdict CEglTest_EGL_Image_Multi_Process_Parallel::doTestStepL()
 	SetTestStepID(_L("GRAPHICS-EGL-0161"));
 	SetTestStepName(KEGL_Image_Multi_Process_Parallel);
 	INFO_PRINTF1(_L("Enter: CEglTest_EGL_Image_Multi_Process_Parallel::doTestStepL"));
-	
+
 	TBool ret = CheckForExtensionL(KEGL_RSgimage | KEGL_KHR_image_base | KEGL_KHR_image_pixmap | KVG_KHR_EGL_image);
 	if(!ret)
 		{
@@ -206,8 +206,8 @@ TVerdict CEglTest_EGL_Image_Multi_Process_Parallel::doTestStepL()
 
 	// launch 2 processes
 	Test_MultiProcessL(KEglTestStepDllName, 2, TestStepName());
-	
-	INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_Parallel::doTestStepL"));	
+
+	INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_Parallel::doTestStepL"));
 	RecordTestResultL();
 	CloseTMSGraphicsStep();
 	return TestStepResult();
@@ -218,7 +218,7 @@ void CEglTest_EGL_Image_Multi_Process_Parallel::doProcessFunctionL(TInt aIdx)
 	INFO_PRINTF2(_L("CEglTest_EGL_Image_Multi_Process_Parallel::doProcessFunctionL, Process %d"),aIdx);
 	GetDisplayL();
 	CreateEglSessionL(aIdx);
-	iEglSess->InitializeL();	
+	iEglSess->InitializeL();
 	iEglSess->OpenSgDriverL();
 
 	// create a reference bitmap (we give index 3 for example, as there's only 1 image in this test case)
@@ -238,7 +238,7 @@ void CEglTest_EGL_Image_Multi_Process_Parallel::doProcessFunctionL(TInt aIdx)
 	ASSERT_EGL_TRUE(eglImageLocal != EGL_NO_IMAGE_KHR);
 	CleanupStack::PopAndDestroy(&rSgImageLocal); 	//transferring ownership of the buffer to the EGLImage
 	CleanupStack::PopAndDestroy(bitmap);
-	
+
 	INFO_PRINTF2(_L("Process %d, Creating a Surface and a Context bound to OpenVG"),aIdx);
 	TUidPixelFormat pixelFormat = EglTestConversion::VgFormatToSgPixelFormat(KDefaultSurfaceFormat);
 	TSgImageInfoOpenVgTarget imageInfo2 = TSgImageInfoOpenVgTarget(pixelFormat, KImageSize);
@@ -265,7 +265,7 @@ void CEglTest_EGL_Image_Multi_Process_Parallel::doProcessFunctionL(TInt aIdx)
 	iEglSess->CheckVgDrawingL(KDefaultSurfaceFormat, refBitmap);
 	CleanupStack::PopAndDestroy(refBitmap);
 	INFO_PRINTF2(_L("Drawing successful, Process %d"),aIdx);
-	
+
 	// cleanup
 	CleanAll();
 	}
@@ -344,10 +344,10 @@ TVerdict CEglTest_EGL_Image_Multi_Process_Sibling_CheckContents::doTestStepL()
 	// destroy sgImage
 	CleanupStack::PopAndDestroy(&sgImage);
 	CleanupStack::PopAndDestroy(bitmap);
-	
+
 	// clean everything
 	CleanAll();
-	INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_Sibling_CheckContents::doTestStepL"));	
+	INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_Sibling_CheckContents::doTestStepL"));
     RecordTestResultL();
 	CloseTMSGraphicsStep();
 	return TestStepResult();
@@ -364,28 +364,28 @@ void CEglTest_EGL_Image_Multi_Process_Sibling_CheckContents::doProcessFunctionL(
 	RSgImage sgImageFromId;
 	CleanupClosePushL(sgImageFromId);
 	ASSERT_EQUALS(sgImageFromId.Open(aSgId),KErrNone);
-	
+
 	INFO_PRINTF2(_L("Process %d, Creating an EGLImage from the shared RSgImage"),aIdx);
 	EGLImageKHR eglImageLocal = iEglSess->eglCreateImageKhrL(iDisplay, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, &sgImageFromId, KEglImageAttribsPreservedTrue);
 	ASSERT_EGL_TRUE(eglImageLocal != EGL_NO_IMAGE_KHR);
 	CleanupStack::PopAndDestroy(&sgImageFromId);
-	
+
 	INFO_PRINTF2(_L("Process %d, Creating a Surface and a Context bound to OpenVG"),aIdx);
 	TUidPixelFormat pixelFormat = EglTestConversion::VgFormatToSgPixelFormat(KDefaultSurfaceFormat);
 	TSgImageInfoOpenVgTarget imageInfo = TSgImageInfoOpenVgTarget(pixelFormat, KImageSize);
 	// Create a pixmap surface matching the native image pixel format
 	iEglSess->CreatePixmapSurfaceAndMakeCurrentAndMatchL(imageInfo,CTestEglSession::EResourceCloseSgImageEarly);
-	
+
 	INFO_PRINTF2(_L("Process %d, Creating one VGImage from the EGLImage"),aIdx);
 	VGImage vgImageLocal = iEglSess->vgCreateImageTargetKHR((VGeglImageKHR)eglImageLocal);
 	ASSERT_VG_TRUE(vgImageLocal != VG_INVALID_HANDLE);
 	ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, eglImageLocal));
-	
+
 	if(aIdx == 0)
 		{
 		TDisplayMode bitmapMode = EglTestConversion::PixelFormatToDisplayMode(KDefaultSourceFormat);
 		CFbsBitmap* bitmap = iEglSess->CreateReferenceBitmapL(bitmapMode, KImageSize, 4);
-    	// Add pixel data to the VGImage reference from the bitmap reference. 
+    	// Add pixel data to the VGImage reference from the bitmap reference.
         // Mind the fact that CFbsBitmap and VGImages use different coordinates origin!
 		TSize bitmapSize = bitmap->SizeInPixels();
     	TUint8* address = reinterpret_cast<TUint8*>(bitmap->DataAddress());
@@ -397,10 +397,10 @@ void CEglTest_EGL_Image_Multi_Process_Sibling_CheckContents::doProcessFunctionL(
 		ASSERT_TRUE(vgGetError()==VG_NO_ERROR);
 		eglWaitClient();
 		}
-	
+
 	// Wait for both processes to reach this point (process 0 will have updated the VGImage)
 	Rendezvous(aIdx);
-	
+
 	if(aIdx == 1)
 		{
 		INFO_PRINTF2(_L("Process %d, Drawing the VGImage to the current surface"),aIdx);
@@ -472,7 +472,7 @@ TVerdict CEglTest_EGL_Image_Multi_Process_VgImage_Source::doTestStepL()
 	// launch 2 processes
 	Test_MultiProcessL(KEglTestStepDllName, 2, TestStepName());
 
-    INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_VgImage_Source::doTestStepL"));   
+    INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_VgImage_Source::doTestStepL"));
     RecordTestResultL();
     CloseTMSGraphicsStep();
     return TestStepResult();
@@ -483,7 +483,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_Source::doProcessFunctionL(TInt aI
     INFO_PRINTF2(_L("CEglTest_EGL_Image_Multi_Process_VgImage_Source::doProcessFunctionL, Process %d"),aIdx);
 	GetDisplayL();
 	CreateEglSessionL(aIdx);
-	iEglSess->InitializeL();	
+	iEglSess->InitializeL();
 	iEglSess->OpenSgDriverL();
 
     RMsgQueue<TSgDrawableId> messageQueue;
@@ -506,7 +506,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_Source::doProcessFunctionL(TInt aI
 #endif
     	ASSERT_EQUALS(rSgImageLocal.Create(imageInfo,bitmap->DataAddress(),bitmap->DataStride()), KErrNone);
         CleanupStack::PopAndDestroy(bitmap);
- 
+
         INFO_PRINTF2(_L("Process %d, Sending SgImage ID to other process..."), aIdx);
         messageQueue.SendBlocking(rSgImageLocal.Id());
         }
@@ -560,7 +560,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_Source::doProcessFunctionL(TInt aI
         INFO_PRINTF2(_L("Process %d, Changing contents of the VGImage"),aIdx);
         TDisplayMode bitmapMode = EglTestConversion::PixelFormatToDisplayMode(KDefaultSourceFormat);
         CFbsBitmap* bitmap = iEglSess->CreateReferenceBitmapL(bitmapMode, KImageSize, 4);
-        // Add pixel data to the VGImage reference from the bitmap reference. 
+        // Add pixel data to the VGImage reference from the bitmap reference.
         // Mind the fact that CFbsBitmap and VGImages use different coordinates origin!
         TSize bitmapSize = bitmap->SizeInPixels();
     	TUint8* address = reinterpret_cast<TUint8*>(bitmap->DataAddress());
@@ -575,7 +575,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_Source::doProcessFunctionL(TInt aI
 
 	// Wait for both processes to reach this point (process 0 will have updated the VGImage)
 	Rendezvous(aIdx);
-    
+
 	if(aIdx == 1)
 		{
         INFO_PRINTF2(_L("Drawing the VGImage to the current surface after changing contents of the VGImage, Process %d"),aIdx);
@@ -649,7 +649,7 @@ TVerdict CEglTest_EGL_Image_Multi_Process_VgImage_DrawAfterTerminate::doTestStep
 	// launch 2 processes
  	Test_MultiProcessL(KEglTestStepDllName, 2, TestStepName());
 
-	INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_VgImage_DrawAfterTerminate::doTestStepL"));   
+	INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_VgImage_DrawAfterTerminate::doTestStepL"));
     RecordTestResultL();
     CloseTMSGraphicsStep();
     return TestStepResult();
@@ -666,7 +666,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_DrawAfterTerminate::doProcessFunct
     RMsgQueue<TSgDrawableId> messageQueue;
     User::LeaveIfError(messageQueue.Open(EProcSlotMsgQueueSgId, EOwnerProcess));
     CleanupClosePushL(messageQueue);
-    
+
     RSgImage rSgImageLocal;
     if(aIdx == 0)
         {
@@ -683,7 +683,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_DrawAfterTerminate::doProcessFunct
 #endif
     	ASSERT_EQUALS(rSgImageLocal.Create(imageInfo,bitmap->DataAddress(),bitmap->DataStride()), KErrNone);
         CleanupStack::PopAndDestroy(bitmap);
- 
+
         INFO_PRINTF2(_L("Process %d, Sending SgImage ID to other process..."), aIdx);
         messageQueue.SendBlocking(rSgImageLocal.Id());
         }
@@ -694,7 +694,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_DrawAfterTerminate::doProcessFunct
         messageQueue.ReceiveBlocking(sgImageId);
         ASSERT_EQUALS(rSgImageLocal.Open(sgImageId),KErrNone);
         }
-    
+
 	INFO_PRINTF2(_L("Process %d, Creating an EGLImage from the shared RSgImage"),aIdx);
 	CleanupClosePushL(rSgImageLocal);
 	EGLImageKHR eglImageLocal = iEglSess->eglCreateImageKhrL(iDisplay, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, &rSgImageLocal, KEglImageAttribsPreservedTrue);
@@ -711,7 +711,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_DrawAfterTerminate::doProcessFunct
 	VGImage vgImageLocal = iEglSess->vgCreateImageTargetKHR((VGeglImageKHR)eglImageLocal);
 	ASSERT_VG_TRUE(vgImageLocal != VG_INVALID_HANDLE);
 	ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, eglImageLocal));
-    
+
     if(aIdx == 1)
         {
         INFO_PRINTF2(_L("Process %d, Drawing the VGImage to the current surface before changing contents of the VGImage"),aIdx);
@@ -719,7 +719,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_DrawAfterTerminate::doProcessFunct
     	vgSetPixels(0, 0, vgImageLocal, 0, 0, KImageSize.iWidth, KImageSize.iHeight);
     	ASSERT_TRUE(vgGetError()==VG_NO_ERROR);
     	eglWaitClient();
-    	
+
 
     	// we can now compare the VgImage to the one we expect before we apply any change to it
 		TDisplayMode bitmapMode = EglTestConversion::PixelFormatToDisplayMode(KDefaultSourceFormat);
@@ -738,7 +738,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_DrawAfterTerminate::doProcessFunct
         INFO_PRINTF2(_L("Process %d, Changing contents of the VGImage"),aIdx);
         TDisplayMode bitmapMode = EglTestConversion::PixelFormatToDisplayMode(KDefaultSourceFormat);
         CFbsBitmap* bitmap = iEglSess->CreateReferenceBitmapL(bitmapMode, KImageSize, 2);
-    	// Add pixel data to the VGImage reference from the bitmap reference. 
+    	// Add pixel data to the VGImage reference from the bitmap reference.
         // Mind the fact that CFbsBitmap and VGImages use different coordinates origin!
 		TSize bitmapSize = bitmap->SizeInPixels();
     	TUint8* address = reinterpret_cast<TUint8*>(bitmap->DataAddress());
@@ -758,7 +758,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_DrawAfterTerminate::doProcessFunct
 
 	// Wait for both processes to reach this point
     Rendezvous(aIdx);
-    
+
     if(aIdx == 1)
         {
         INFO_PRINTF2(_L("Drawing the VGImage to the current surface after changing contents of the VGImage, Process %d"),aIdx);
@@ -805,18 +805,18 @@ From the main process:
 •	EUidPixelFormatA_8  (source only)
 - Note that when using EUidPixelFormatA_8 as a source, the reference bitmap display mode used is EGray256,
   This is to enable using the reference bitmap as an alpha mask.
-- Spawn N client processes. During the process launching, pass to each process single drawable ID from the SgImages. 
-  In order to define which SgImage needs to be passed to the particular process, there will be following 
+- Spawn N client processes. During the process launching, pass to each process single drawable ID from the SgImages.
+  In order to define which SgImage needs to be passed to the particular process, there will be following
   formula applied: J = P Mod (M), where J is the sequence number of the image, P is the particular process number.
 From processes 1 to N:
 - Open SgImage by using TSgDrawableId, obtained from the SgImage which was passed from the process A.
-- Using EGL extension, create EGLImage specifying as EGLClientBuffer SgImage which was created on 
+- Using EGL extension, create EGLImage specifying as EGLClientBuffer SgImage which was created on
   previous step,  EGL_NATIVE_PIXMAP_KHR as a target and EGL_IMAGE_PRESERVED_KHR as an attribute
-- Using VG extension, create VG image based on EGLImage from the previous step. 
+- Using VG extension, create VG image based on EGLImage from the previous step.
 - Close Sg and EGL images
-- Create second SgImage with the same size and pixel format as first SgImage and usage flag is set to ESgUsageBitOpenVgSurface. 
-- Create off-screen pixmap surface with underlining second SgImage and make it current for the drawing context. 
-- Draw VGImage to the off-screen surface (note that when using EUidPixelFormatA_8 as a source, the 
+- Create second SgImage with the same size and pixel format as first SgImage and usage flag is set to ESgUsageBitOpenVgSurface.
+- Create off-screen pixmap surface with underlining second SgImage and make it current for the drawing context.
+- Draw VGImage to the off-screen surface (note that when using EUidPixelFormatA_8 as a source, the
   reference bitmap is used as an alpha mask).
 - Draw VGImage to the off-screen surface.
 - Retrieve surface data (see vgReadPixels() API)
@@ -824,7 +824,7 @@ From processes 1 to N:
 @SYMTestExpectedResults
 Creation of all drawable  resources have been completed without errors.
 Image data obtained in client processes 1-N matches to the data which have been uploaded to the SgImages buffer from
-process A. Reference counting works correctly and keeps VG image alive although bound Sg and EGL images have been destroyed. 
+process A. Reference counting works correctly and keeps VG image alive although bound Sg and EGL images have been destroyed.
 When all resources are closed, resource count maintained by RSgDriver extension is zero in all processes.
 */
 TVerdict CEglTest_EGL_Image_Multi_Process_FontServer_Upfront::doTestStepL()
@@ -868,7 +868,7 @@ TVerdict CEglTest_EGL_Image_Multi_Process_FontServer_Upfront::doTestStepL()
 			// A_8 related tests are only performed for SgImage-Lite
 			if (iSourceFormat == EUidPixelFormatA_8)
 				continue;
-#endif	
+#endif
 			doTestPartialStepL();
 			}
 		}
@@ -913,8 +913,8 @@ TVerdict CEglTest_EGL_Image_Multi_Process_FontServer_Upfront::doTestPartialStepL
 		}
 
 	INFO_PRINTF2(_L("MAIN PROCESS: About to launch %d processes..."), KNumProcesses);
-	Test_MultiProcessL(KEglTestStepDllName, KNumProcesses, TestStepName(), sgIdList); //the function will guarantee that all images will be opened before it returns 
-    CleanupStack::PopAndDestroy(2 * KNumImages + 1, &sgIdList); // KNumImages SgImages, KNumImages bitmaps, sgIdList  
+	Test_MultiProcessL(KEglTestStepDllName, KNumProcesses, TestStepName(), sgIdList); //the function will guarantee that all images will be opened before it returns
+    CleanupStack::PopAndDestroy(2 * KNumImages + 1, &sgIdList); // KNumImages SgImages, KNumImages bitmaps, sgIdList
 	INFO_PRINTF2(_L("MAIN PROCESS: All %d launched processes have completed!"), KNumProcesses);
 
 	CleanAll();
@@ -955,9 +955,9 @@ void CEglTest_EGL_Image_Multi_Process_FontServer_Upfront::doProcessFunctionL(TIn
 	ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, eglImage));
 
 	// At this point we draw the VGImage created from the SgImage to the current surface.
-	//	# if the source is a A_8, the VGImage acts as a mask and the target surface must contain 
+	//	# if the source is a A_8, the VGImage acts as a mask and the target surface must contain
 	//		as a result the pen colour set above blended with the mask
-	//	# otherwise, drawing the VGImage is just a simple copy via vgSetPixels (no blending required) 
+	//	# otherwise, drawing the VGImage is just a simple copy via vgSetPixels (no blending required)
 	INFO_PRINTF1(_L("Copying the VGImage to the surface"));
 	if (iSourceFormat == EUidPixelFormatA_8)
 		{
@@ -975,7 +975,7 @@ void CEglTest_EGL_Image_Multi_Process_FontServer_Upfront::doProcessFunctionL(TIn
 		VGuint fillColor = 0x008000ff; // opaque dark green
 		vgSetColor(fillPaint, fillColor);
 		ASSERT_EGL_TRUE(vgGetError() == VG_NO_ERROR);
-		
+
 		vgSeti(VG_IMAGE_MODE, VG_DRAW_IMAGE_STENCIL);
 		vgSeti(VG_BLEND_MODE, VG_BLEND_SRC_OVER);
 		vgDrawImage(vgImage);
@@ -996,7 +996,7 @@ void CEglTest_EGL_Image_Multi_Process_FontServer_Upfront::doProcessFunctionL(TIn
 	//    a) a reference bitmap needs to be cleared to black (same colour as the surface was cleared to)
 	//    b) a Pen bitmap, that we clear to dark green (same colour as the fillPaint used to draw to the surface)
 	//    c) a mask bitmap, which is the reference bitmap used to create the SgImage
-	//  # otherwise, the surface must contain the same pixels as the bitmap used to create the SgImage 
+	//  # otherwise, the surface must contain the same pixels as the bitmap used to create the SgImage
 	if (iSourceFormat == EUidPixelFormatA_8)
 		{
 		TDisplayMode maskMode = EglTestConversion::PixelFormatToDisplayMode(iSourceFormat);
@@ -1009,7 +1009,7 @@ void CEglTest_EGL_Image_Multi_Process_FontServer_Upfront::doProcessFunctionL(TIn
 
 		CFbsBitmap* refBitmap = iEglSess->CreateReferenceMaskedBitmapL(refbitmapMode, KRgbDarkGreen, mask);
 		CleanupStack::PushL(refBitmap);
-		
+
 		// compare the obtained reference bitmap with the surface drawn
 		iEglSess->CheckVgDrawingL(iSurfaceFormat, refBitmap);
 		CleanupStack::PopAndDestroy(2, mask); //mask, refBitmap
@@ -1051,29 +1051,29 @@ From the main process:
 •	EUidPixelFormatRGB_565
 •	EUidPixelFormatXRGB_8888
 •	EUidPixelFormatARGB_8888_PRE
-- Using EGL extension, create M EGLImage(s), specifying as EGLClientBuffer SgImage(s) which were created on 
+- Using EGL extension, create M EGLImage(s), specifying as EGLClientBuffer SgImage(s) which were created on
   first step and EGL_NATIVE_PIXMAP_KHR as a target
 - Using VG extension, create VG images based on EGLImage(s) from the previous step
 - Close Sg and EGL Images
-- Populate data in VGImages (see vgImageSubData(..) API), there will be different data uploaded for each VGImage 
-- Spawn N client processes. During the process launching, pass to each process single drawable ID from the SgImages. 
-  In order to define which SgImage(s) needs to be passed to the particular processes, there will be following 
+- Populate data in VGImages (see vgImageSubData(..) API), there will be different data uploaded for each VGImage
+- Spawn N client processes. During the process launching, pass to each process single drawable ID from the SgImages.
+  In order to define which SgImage(s) needs to be passed to the particular processes, there will be following
   formula applied: J = P Mod (M), where J is the sequence number of the image, P is the particular process number.
 From processes 1 to N:
 - Open SgImage by using TSgDrawableId, obtained from the SgImage which was passed from the process A.
-- Using EGL extension, create EGLImage specifying as EGLClientBuffer SgImage which was created on previous step,  
+- Using EGL extension, create EGLImage specifying as EGLClientBuffer SgImage which was created on previous step,
   EGL_NATIVE_PIXMAP_KHR as a target and EGL_IMAGE_PRESERVED_KHR as an attribute
-- Using VG extension, create VG image based on EGLImage from the previous step. 
+- Using VG extension, create VG image based on EGLImage from the previous step.
 - Close Sg and EGL images
-- Create second SgImage with the same size and pixel format as first SgImage and usage flag is set to ESgUsageBitOpenVgSurface. 
-- Create off-screen pixmap surface with underlining second SgImage and make it current for the drawing context. 
+- Create second SgImage with the same size and pixel format as first SgImage and usage flag is set to ESgUsageBitOpenVgSurface.
+- Create off-screen pixmap surface with underlining second SgImage and make it current for the drawing context.
 - Draw VGImage to the off-screen surface.
 - Retrieve surface data (see vgReadPixels() API)
 
 @SYMTestExpectedResults
 Creation of all drawable  resources have been completed without errors.
-Image data obtained in client processes 1-N matches to the data which have been uploaded to the SgImages buffer from 
-process A. Reference counting works correctly and keep VG image alive although bound Sg and EGL images have been closed. 
+Image data obtained in client processes 1-N matches to the data which have been uploaded to the SgImages buffer from
+process A. Reference counting works correctly and keep VG image alive although bound Sg and EGL images have been closed.
 When all resources are closed, resource count maintained by RSgDriver extension is zero in all processes.
 */
 TVerdict CEglTest_EGL_Image_Multi_Process_FontServer_Deferred::doTestStepL()
@@ -1108,7 +1108,7 @@ TVerdict CEglTest_EGL_Image_Multi_Process_FontServer_Deferred::doTestStepL()
 		// A_8 related tests are only performed for SgImage-Lite
 		if (iSourceFormat == EUidPixelFormatA_8)
 			continue;
-#endif	
+#endif
 		doTestPartialStepL();
 		}
 
@@ -1122,7 +1122,7 @@ TVerdict CEglTest_EGL_Image_Multi_Process_FontServer_Deferred::doTestPartialStep
 	{
 	INFO_PRINTF1(_L("CEglTest_EGL_Image_Multi_Process_FontServer_Deferred::doTestPartialStepL"));
 	PrintUsedPixelConfiguration();
-	
+
 	// Create display object
 	ASSERT_TRUE(iDisplay == EGL_NO_DISPLAY);
 	GetDisplayL();
@@ -1137,7 +1137,7 @@ TVerdict CEglTest_EGL_Image_Multi_Process_FontServer_Deferred::doTestPartialStep
 #else
     imageInfo.iUsage = ESgUsageOpenVgImage | ESgUsageOpenVgTarget;
    	imageInfo.iShareable = ETrue;
-#endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE	
+#endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
 	// Create a pixmap surface matching the given pixel format
 	iEglSess->CreatePixmapSurfaceAndMakeCurrentAndMatchL(imageInfo,CTestEglSession::EResourceCloseSgImageEarly);
 
@@ -1153,16 +1153,16 @@ TVerdict CEglTest_EGL_Image_Multi_Process_FontServer_Deferred::doTestPartialStep
         CleanupClosePushL(sgImages[i]);
 		ASSERT_EQUALS(sgIdList.Insert(sgImages[i].Id(),i), KErrNone);
 
-		EGLImageKHR eglImage = iEglSess->eglCreateImageKhrL(iDisplay, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, &sgImages[i], KEglImageAttribsPreservedTrue);	
+		EGLImageKHR eglImage = iEglSess->eglCreateImageKhrL(iDisplay, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, &sgImages[i], KEglImageAttribsPreservedTrue);
 		ASSERT_EGL_TRUE(eglImage != EGL_NO_IMAGE_KHR);
-		
+
 		VGImage vgImage = iEglSess->vgCreateImageTargetKHR((VGeglImageKHR)eglImage);
 		ASSERT_VG_TRUE(vgImage != VG_INVALID_HANDLE);
 		ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, eglImage));
 
 		TDisplayMode bitmapMode = EglTestConversion::PixelFormatToDisplayMode(iSourceFormat);
         CFbsBitmap* bitmap = iEglSess->CreateReferenceBitmapL(bitmapMode, KImageSize, i);
-    	// Add pixel data to the VGImage reference from the bitmap reference. 
+    	// Add pixel data to the VGImage reference from the bitmap reference.
         // Mind the fact that CFbsBitmap and VGImages use different coordinates origin!
 		TSize bitmapSize = bitmap->SizeInPixels();
     	TUint8* address = reinterpret_cast<TUint8*>(bitmap->DataAddress());
@@ -1196,7 +1196,7 @@ void CEglTest_EGL_Image_Multi_Process_FontServer_Deferred::doProcessFunctionL(TI
 	//Retrieve source formats for the launched process from the process parameters.
 	User::LeaveIfError(User::GetTIntParameter(EProcSlotSourceFormat, reinterpret_cast<TInt&>(iSourceFormat)));
 	User::LeaveIfError(User::GetTIntParameter(EProcSlotSurfaceFormat, reinterpret_cast<TInt&>(iSurfaceFormat)));
-	
+
 	RSgImage sgImageFromId;
 	CleanupClosePushL(sgImageFromId);
 	ASSERT_EQUALS(sgImageFromId.Open(aSgId), KErrNone);
@@ -1218,9 +1218,9 @@ void CEglTest_EGL_Image_Multi_Process_FontServer_Deferred::doProcessFunctionL(TI
 	ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, eglImage));
 
 	// At this point we draw the VGImage created from the SgImage to the current surface.
-	//	# if the source is a A_8, the VGImage acts as a mask and the target surface must contain 
+	//	# if the source is a A_8, the VGImage acts as a mask and the target surface must contain
 	//		as a result the pen colour set above blended with the mask
-	//	# otherwise, drawing the VGImage is just a simple copy via vgSetPixels (no blending required) 
+	//	# otherwise, drawing the VGImage is just a simple copy via vgSetPixels (no blending required)
 	INFO_PRINTF1(_L("Copying the VGImage to the surface"));
 	if (iSourceFormat == EUidPixelFormatA_8)
 		{
@@ -1238,7 +1238,7 @@ void CEglTest_EGL_Image_Multi_Process_FontServer_Deferred::doProcessFunctionL(TI
 		VGuint fillColor = 0x008000ff; // opaque dark green
 		vgSetColor(fillPaint, fillColor);
 		ASSERT_EGL_TRUE(vgGetError() == VG_NO_ERROR);
-		
+
 		vgSeti(VG_IMAGE_MODE, VG_DRAW_IMAGE_STENCIL);
 		vgSeti(VG_BLEND_MODE, VG_BLEND_SRC_OVER);
 		vgDrawImage(vgImage);
@@ -1259,7 +1259,7 @@ void CEglTest_EGL_Image_Multi_Process_FontServer_Deferred::doProcessFunctionL(TI
 	//    a) a reference bitmap needs to be cleared to black (same colour as the surface was cleared to)
 	//    b) a Pen bitmap, that we clear to dark green (same colour as the fillPaint used to draw to the surface)
 	//    c) a mask bitmap, which is the reference bitmap used to create the SgImage
-	//  # otherwise, the surface must contain the same pixels as the bitmap used to create the SgImage 
+	//  # otherwise, the surface must contain the same pixels as the bitmap used to create the SgImage
 	if (iSourceFormat == EUidPixelFormatA_8)
 		{
 		TDisplayMode maskMode = EglTestConversion::PixelFormatToDisplayMode(iSourceFormat);
@@ -1272,7 +1272,7 @@ void CEglTest_EGL_Image_Multi_Process_FontServer_Deferred::doProcessFunctionL(TI
 
 		CFbsBitmap* refBitmap = iEglSess->CreateReferenceMaskedBitmapL(refbitmapMode, KRgbDarkGreen, mask);
 		CleanupStack::PushL(refBitmap);
-		
+
 		// compare the obtained reference bitmap with the surface drawn
 		iEglSess->CheckVgDrawingL(iSurfaceFormat, refBitmap);
 		CleanupStack::PopAndDestroy(2, mask); //mask, refBitmap
@@ -1314,37 +1314,37 @@ From the main process:
 •	EUidPixelFormatRGB_565
 •	EUidPixelFormatXRGB_8888
 •	EUidPixelFormatARGB_8888_PRE
-- Choose egl config, supplying as a native pixmap type in attribute (flag EGL_MATCH_NATIVE_PIXMAP) the SgImages which 
+- Choose egl config, supplying as a native pixmap type in attribute (flag EGL_MATCH_NATIVE_PIXMAP) the SgImages which
   were created on the previous step. The EGL_RENDERABLE_TYPE of the config attributes must include EGL_OPENVG_BIT.
-- Create M pixmap surfaces based on SgImages from the first step. The surface is created with EGL_ALPHA_FORMAT_PRE 
+- Create M pixmap surfaces based on SgImages from the first step. The surface is created with EGL_ALPHA_FORMAT_PRE
   flag supplied in attribute list if the underlining SgImage was of type ESgPixelFormatARGB_8888_PRE.
 - In iteration from 1 to M perform three following steps:
 	1. Make the pixmap surface current (see eglMakeCurrent(.) API)
-	2. Draw something to the current surface, for instance, clear the whole area with color and then draw a 
-	   few graphics primitives. The drawing needs to be unique for each surface and complicated enough to 
+	2. Draw something to the current surface, for instance, clear the whole area with color and then draw a
+	   few graphics primitives. The drawing needs to be unique for each surface and complicated enough to
 	   ensure that bit comparison will reveal any mismatch
 	3. Make no surface current
 - Close all pixmap surfaces
-- Spawn N client processes. During the process launching, pass to each process single drawable ID from the SgImages. 
-  In order to define which SgImage(s) needs to be passed to the particular processes, there will be following 
+- Spawn N client processes. During the process launching, pass to each process single drawable ID from the SgImages.
+  In order to define which SgImage(s) needs to be passed to the particular processes, there will be following
   formula applied: J = P Mod (M), where J is the sequence number of the image, P is the particular process number.
 From processes 1 to N:
 - Open SgImage by TSgDrawableId obtained from the SgImage which was passed from the process A.
-- Using EGL extension, create EGLImage specifying as EGLClientBuffer SgImage which was opened on the previous 
+- Using EGL extension, create EGLImage specifying as EGLClientBuffer SgImage which was opened on the previous
   step,  EGL_NATIVE_PIXMAP_KHR as a target and EGL_IMAGE_PRESERVED_KHR as an attribute
 - Using VG extension, create VG image based on EGLImage from the previous step.
 - Close both Sg and EGL images
-- Create second SgImage with the same size and pixel format as first SgImage and usage flag is set to ESgUsageBitOpenVgSurface. 
-- Create off-screen pixmap surface with underlining second SgImage and make it current for the drawing context. 
+- Create second SgImage with the same size and pixel format as first SgImage and usage flag is set to ESgUsageBitOpenVgSurface.
+- Create off-screen pixmap surface with underlining second SgImage and make it current for the drawing context.
 - Draw VGImage to the off-screen surface.
 - Retrieve surface data (see vgReadPixels() API)
 
 @SYMTestExpectedResults
-Creation of all drawable resources has been completed without errors. 
-On return eglChooseConfig() must return EGL_OPENVG_BIT in config attribute list (actual attributes should 
+Creation of all drawable resources has been completed without errors.
+On return eglChooseConfig() must return EGL_OPENVG_BIT in config attribute list (actual attributes should
 be retrieved via call to eglGetConfigAttrib()).
 Image data obtained in client processes 1 - N matches to the pixmap surface which was drawn in the process A.
-Reference counting works correctly and keep VG image alive although bound Sg and EGL images have been closed. 
+Reference counting works correctly and keep VG image alive although bound Sg and EGL images have been closed.
 When all resources are closed, resource count maintained by RSgDriver extension is zero in all processes.
 */
 TVerdict CEglTest_EGL_Image_Multi_Process_ThemeServer::doTestStepL()
@@ -1379,7 +1379,7 @@ TVerdict CEglTest_EGL_Image_Multi_Process_ThemeServer::doTestStepL()
 		// A_8 related tests are only performed for SgImage-Lite
 		if (iSourceFormat == EUidPixelFormatA_8)
 			continue;
-#endif	
+#endif
 		doTestPartialStepL();
 		}
 
@@ -1393,7 +1393,7 @@ TVerdict CEglTest_EGL_Image_Multi_Process_ThemeServer::doTestPartialStepL()
 	{
 	INFO_PRINTF1(_L("CEglTest_EGL_Image_Multi_Process_ThemeServer::doTestPartialStepL"));
 	PrintUsedPixelConfiguration();
-	
+
 	// Create display object
 	ASSERT_TRUE(iDisplay == EGL_NO_DISPLAY);
 	GetDisplayL();
@@ -1416,22 +1416,22 @@ TVerdict CEglTest_EGL_Image_Multi_Process_ThemeServer::doTestPartialStepL()
 #else
 		imageInfo.iUsage = ESgUsageOpenVgImage | ESgUsageOpenVgTarget;
     	imageInfo.iShareable = ETrue;
-#endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE   
+#endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
 
 		ASSERT_EQUALS(sgImages[i].Create(imageInfo, NULL, NULL), KErrNone);
 	    CleanupClosePushL(sgImages[i]);
 		ASSERT_EQUALS(sgIdList.Insert(sgImages[i].Id(),i), KErrNone);
-		
+
 		INFO_PRINTF1(_L("Calling sequence - eglBindAPI(EGL_OPENVG_API) - eglCreatePixmapSurface - eglCreateContext - eglMakeCurrent"));
 	    ASSERT_EGL_TRUE(eglBindAPI(EGL_OPENVG_API));
 
-    	const EGLint KAttrib_list_image_pre[] = {   EGL_MATCH_NATIVE_PIXMAP,	reinterpret_cast<EGLint>(&sgImages[i]), 
+    	const EGLint KAttrib_list_image_pre[] = {   EGL_MATCH_NATIVE_PIXMAP,	reinterpret_cast<EGLint>(&sgImages[i]),
 													EGL_RENDERABLE_TYPE, EGL_OPENVG_BIT,
-													EGL_SURFACE_TYPE, EGL_PIXMAP_BIT | EGL_VG_ALPHA_FORMAT_PRE_BIT, 
+													EGL_SURFACE_TYPE, EGL_PIXMAP_BIT | EGL_VG_ALPHA_FORMAT_PRE_BIT,
 													EGL_NONE };
     	const EGLint KAttrib_list_image_nonpre[] = {EGL_MATCH_NATIVE_PIXMAP,	reinterpret_cast<EGLint>(&sgImages[i]),
 													EGL_RENDERABLE_TYPE, EGL_OPENVG_BIT,
-													EGL_SURFACE_TYPE, EGL_PIXMAP_BIT, 
+													EGL_SURFACE_TYPE, EGL_PIXMAP_BIT,
 													EGL_NONE };
 		EGLConfig currentConfig;
 		EGLint numconfigs =0;
@@ -1514,9 +1514,9 @@ void CEglTest_EGL_Image_Multi_Process_ThemeServer::doProcessFunctionL(TInt aIdx,
 	ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, eglImage));
 
 	// At this point we draw the VGImage created from the SgImage to the current surface.
-	//	# if the source is a A_8, the VGImage acts as a mask and the target surface must contain 
+	//	# if the source is a A_8, the VGImage acts as a mask and the target surface must contain
 	//		as a result the pen colour set above blended with the mask
-	//	# otherwise, drawing the VGImage is just a simple copy via vgSetPixels (no blending required) 
+	//	# otherwise, drawing the VGImage is just a simple copy via vgSetPixels (no blending required)
 	INFO_PRINTF1(_L("Copying the VGImage to the surface"));
 	if (iSourceFormat == EUidPixelFormatA_8)
 		{
@@ -1534,7 +1534,7 @@ void CEglTest_EGL_Image_Multi_Process_ThemeServer::doProcessFunctionL(TInt aIdx,
 		VGuint fillColor = 0x008000ff; // opaque dark green
 		vgSetColor(fillPaint, fillColor);
 		ASSERT_EGL_TRUE(vgGetError() == VG_NO_ERROR);
-		
+
 		vgSeti(VG_IMAGE_MODE, VG_DRAW_IMAGE_STENCIL);
 		vgSeti(VG_BLEND_MODE, VG_BLEND_SRC_OVER);
 		vgDrawImage(vgImage);
@@ -1555,7 +1555,7 @@ void CEglTest_EGL_Image_Multi_Process_ThemeServer::doProcessFunctionL(TInt aIdx,
 	//    a) a reference bitmap needs to be cleared to black (same colour as the surface was cleared to)
 	//    b) a Pen bitmap, that we clear to dark green (same colour as the fillPaint used to draw to the surface)
 	//    c) a mask bitmap, which is the reference bitmap used to create the SgImage
-	//  # otherwise, the surface must contain the same pixels as the bitmap used to create the SgImage 
+	//  # otherwise, the surface must contain the same pixels as the bitmap used to create the SgImage
 	if (iSourceFormat == EUidPixelFormatA_8)
 		{
 		TDisplayMode maskMode = EglTestConversion::PixelFormatToDisplayMode(iSourceFormat);
@@ -1568,7 +1568,7 @@ void CEglTest_EGL_Image_Multi_Process_ThemeServer::doProcessFunctionL(TInt aIdx,
 
 		CFbsBitmap* refBitmap = iEglSess->CreateReferenceMaskedBitmapL(refbitmapMode, KRgbDarkGreen, mask);
 		CleanupStack::PushL(refBitmap);
-		
+
 		// compare the obtained reference bitmap with the surface drawn
 		iEglSess->CheckVgDrawingL(iSurfaceFormat, refBitmap);
 		CleanupStack::PopAndDestroy(2, mask); //mask, refBitmap
@@ -1593,7 +1593,7 @@ void CEglTest_EGL_Image_Multi_Process_ThemeServer::doProcessFunctionL(TInt aIdx,
 
 
 /**
-@SYMTestCaseID GRAPHICS-EGL-0428
+@SYMTestCaseID GRAPHICS-EGL-0430
 
 @SYMTestPriority 1
 
@@ -1609,36 +1609,39 @@ To verify correct operation of RSgImage sharing across processes when the creati
 Run two processes that independently perform the actions detailed below.
 * From Process A
 	Open the RSgDriver
-	Create an RSgImage
-	Signal (by semaphore or otherwise) to process A, passing the drawable ID to it
+	Create an RSgImage passing an initialised bitmap
+	Signal (by semaphore or otherwise) to process B, passing the drawable ID to it
 
 * From Process B:
 	Open the RSgDriver
 	Using the drawable ID, open the RSgImage
-	Create an EGLImage from the RSgImage
-	Create a VGImage from the EGLImage
 	Close the RSgImage
-	Close the EGLImage
-	Create an off-screen surface
+	Re-open the RSgImage
 
 * From Process A:
 	Unexpectedly terminate process A without performing any explicit clean-up
 
 * From Process B:
-	Wait for Process A to be killed
-	Populate the VGImage with data
-	Copy the VGImage to the off-screen surface
-	Close the off-screen surface
+	Wait for Process A to be killed:
+	Create an EGLImage from the RSgImage
+	Create a VGImage from the EGLImage
+	Close the RSgImage
+	Close the EGLImage
+	Create an off-screen surface
+	Draw VGImage to the off-screen surface
+	Read the pixel data and verify that it matches the data populated by process A
+	Destroy the off-screen surface
 	Close the VGImage
 	Close the RSgDriver
+	Exit
 
 @SYMTestExpectedResults
-Process B should be able to populate the VGImage with data and copy it to the off-screen surface. 
+Process B should be able to populate the VGImage with data and copy it to the off-screen surface
 All allocated image memory should be freed
 */
 TVerdict CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate::doTestStepL()
     {
-    SetTestStepID(_L("GRAPHICS-EGL-0428"));
+    SetTestStepID(_L("GRAPHICS-EGL-0430"));
 	SetTestStepName(KEGL_Image_Multi_Process_VgImage_ProcessTerminate);
     INFO_PRINTF1(_L("Enter: CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate::doTestStepL"));
 
@@ -1655,9 +1658,9 @@ TVerdict CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate::doTestStepL(
 	PrintUsedPixelConfiguration();
 
 	// launch 2 processes
-	Test_MultiProcessL(KEglTestStepDllName, 2, TestStepName());
+ 	Test_MultiProcessL(KEglTestStepDllName, 2, TestStepName());
 
-	INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate::doTestStepL"));   
+	INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate::doTestStepL"));
     RecordTestResultL();
     CloseTMSGraphicsStep();
     return TestStepResult();
@@ -1684,216 +1687,14 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate::doProcessFunctio
     RMsgQueue<TProcessId> messageQueueProcId;
     User::LeaveIfError(messageQueueProcId.Open(EProcSlotMsgQueueProcId, EOwnerProcess));
     CleanupClosePushL(messageQueueProcId);
-    
+
     RProcess process;
     CleanupClosePushL(process);
 	TRequestStatus status;
 
-    RSgImage rSgImageLocal;
-    EGLImageKHR eglImageLocal = EGL_NO_IMAGE_KHR;
-    VGImage vgImageLocal = VG_INVALID_HANDLE;
-    if(aIdx == 0)
-        {
-    	// Create an RSgImage
-    	INFO_PRINTF2(_L("Process %d, Creating a RSgImage"),aIdx);
-    	TSgImageInfoOpenVgImage imageInfo = TSgImageInfoOpenVgImage(iSourceFormat, KImageSize);
-#ifndef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
-    	imageInfo.iShareable = ETrue;
-    	imageInfo.iCpuAccess = ESgCpuAccessReadWrite;
-#endif    	
-    	ASSERT_EQUALS(rSgImageLocal.Create(imageInfo, NULL, NULL), KErrNone);
- 
-        INFO_PRINTF2(_L("Process %d, Sending SgImage ID to other process..."), aIdx);
-        messageQueueSgId.SendBlocking(rSgImageLocal.Id());
-
-        // Sending Process ID to other process... so that the other process can identify when this one dies.
-        messageQueueProcId.SendBlocking(RProcess().Id());
-        }
-    else if(aIdx == 1)
-        {
-        INFO_PRINTF2(_L("Process %d: Receiving SgImage ID from other process..."), aIdx);
-        TSgDrawableId sgImageId;
-        messageQueueSgId.ReceiveBlocking(sgImageId);
-    	ASSERT_EQUALS(rSgImageLocal.Open(sgImageId),KErrNone);
-
-        // Also receiving RProcess ID from other process to be able to identify when it dies
-        TProcessId procId;
-        messageQueueProcId.ReceiveBlocking(procId);
-        process.Open(procId);
-        process.Logon(status);
-
-        INFO_PRINTF2(_L("Process %d, Creating an EGLImage from the shared RSgImage"),aIdx);
-    	CleanupClosePushL(rSgImageLocal);
-    	eglImageLocal = iEglSess->eglCreateImageKhrL(iDisplay, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, &rSgImageLocal, KEglImageAttribsPreservedTrue);
-    	ASSERT_EGL_TRUE(eglImageLocal != EGL_NO_IMAGE_KHR);
-    	CleanupStack::PopAndDestroy(&rSgImageLocal); 	//transferring ownership of the buffer to the EGLImage
- 
-    	INFO_PRINTF2(_L("Creating a Surface and a Context bound to OpenVG, Process %d"),aIdx);
-    	TUidPixelFormat pixelFormat = EglTestConversion::VgFormatToSgPixelFormat(iSurfaceFormat);
-    	TSgImageInfoOpenVgTarget imageInfo = TSgImageInfoOpenVgTarget(pixelFormat, KImageSize);
-    	// Create a pixmap surface matching the native image pixel format
-    	iEglSess->CreatePixmapSurfaceAndMakeCurrentAndMatchL(imageInfo,CTestEglSession::EResourceCloseSgImageEarly);
-
-    	INFO_PRINTF2(_L("Process %d, Creating one VGImage from the EGLImage"),aIdx);
-    	vgImageLocal = iEglSess->vgCreateImageTargetKHR((VGeglImageKHR)eglImageLocal);
-    	ASSERT_VG_TRUE(vgImageLocal != VG_INVALID_HANDLE);
-    	ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, eglImageLocal));
-        }
-    
-	// Wait for both processes to reach this point
-    Rendezvous(aIdx);
-
-    if(aIdx == 0)
-    	{
-    	// simulate this process being killed
-    	// note that we terminate with reason=0 (otherwise the egl test framework would think it's an error)
-       	INFO_PRINTF2(_L("Process %d, Simulate the process is being killed!"),aIdx);
-    	RProcess().Terminate(KErrNone);
-    	
-    	// this line is unreachable
-    	ASSERT(0);
-    	}
-    else if(aIdx == 1)
-        {
-        // first wait for the other process to finish
-        User::WaitForRequest(status);
-        ASSERT_EQUALS(status.Int(), KErrNone);
-
-        INFO_PRINTF2(_L("Process %d, Populate contents of the VGImage"),aIdx);
-        TDisplayMode bitmapMode = EglTestConversion::PixelFormatToDisplayMode(iSourceFormat);
-        CFbsBitmap* bitmap = iEglSess->CreateReferenceBitmapL(bitmapMode, KImageSize, 3);
-		CleanupStack::PushL(bitmap);
-		// Add pixel data to the VGImage reference from the bitmap reference. 
-        // Mind the fact that CFbsBitmap and VGImages use different coordinates origin!
-		TSize bitmapSize = bitmap->SizeInPixels();
-    	TUint8* address = reinterpret_cast<TUint8*>(bitmap->DataAddress());
-    	TInt stride = bitmap->DataStride();
-    	address += (bitmapSize.iHeight - 1) * stride;
-        vgImageSubData(vgImageLocal, address, -stride, iSurfaceFormat, 0,0, bitmapSize.iWidth, bitmapSize.iHeight);
-    	ASSERT_TRUE(vgGetError()==VG_NO_ERROR);
-    	eglWaitClient();
-
-        INFO_PRINTF2(_L("Process %d, Drawing the VGImage to the current surface before changing contents of the VGImage"),aIdx);
-        // Copy the source VGImage to the surface
-    	vgSetPixels(0, 0, vgImageLocal, 0, 0, KImageSize.iWidth, KImageSize.iHeight);
-    	ASSERT_TRUE(vgGetError()==VG_NO_ERROR);
-    	eglWaitClient();
-    	
-    	// we can now compare the VgImage to the one we expect
-		iEglSess->CheckVgDrawingL(iSurfaceFormat, bitmap);
-		CleanupStack::PopAndDestroy(bitmap);
-		INFO_PRINTF2(_L("Process %d, Drawing successful"),aIdx);
-
-		// cleanup
-		vgDestroyImage(vgImageLocal);
-    	ASSERT_TRUE(vgGetError() == VG_NO_ERROR);
-        }
-    
-    //cleanup and finish
-	CleanupStack::PopAndDestroy(3, &messageQueueSgId); //messageQueueSgId, messageQueueProcId, process
-	CleanAll();
-    }
-
-
-/**
-@SYMTestCaseID GRAPHICS-EGL-0430
-
-@SYMTestPriority 1
-
-@SYMPREQ 2637
-
-@SYMTestCaseDesc
-Functional test - Killing the RSgImage creating process
-
-@SYMTestPurpose
-To verify correct operation of RSgImage sharing across processes when the creating process is killed
-
-@SYMTestActions
-Run two processes that independently perform the actions detailed below.
-* From Process A
-	Open the RSgDriver
-	Create an RSgImage
-	Signal (by semaphore or otherwise) to process B, passing the drawable ID to it
-	
-* From Process B:
-	Open the RSgDriver
-	Using the drawable ID, open the RSgImage	
-	Close the RSgImage
-	Re-open the RSgImage
-
-* From Process A:
-	Unexpectedly terminate process A without performing any explicit clean-up
-
-* From Process B:
-	Wait for Process A to be killed:
-	Create an EGLImage from the RSgImage
-	Create a VGImage from the EGLImage
-	Close the RSgImage
-	Close the EGLImage
-	Create an off-screen surface
-	Populate the VGImage with data
-	Draw VGImage to the off-screen surface
-	Destroy the off-screen surface
-	Close the VGImage
-	Close the RSgDriver
-	Exit
-
-@SYMTestExpectedResults
-Process B should be able to populate the VGImage with data and copy it to the off-screen surface
-All allocated image memory should be freed
-*/
-TVerdict CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate2::doTestStepL()
-    {
-    SetTestStepID(_L("GRAPHICS-EGL-0430"));
-	SetTestStepName(KEGL_Image_Multi_Process_VgImage_ProcessTerminate2);
-    INFO_PRINTF1(_L("Enter: CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate2::doTestStepL"));
-
-	TBool ret = CheckForExtensionL(KEGL_RSgimage | KEGL_KHR_image_base | KEGL_KHR_image_pixmap | KVG_KHR_EGL_image);
-	if(!ret)
-		{
-		// The extension is not supported
-		RecordTestResultL();
-		CloseTMSGraphicsStep();
-		return TestStepResult();
-		}
-
-	// This test is performed for default pixel format
-	PrintUsedPixelConfiguration();
-
-	// launch 2 processes
- 	Test_MultiProcessL(KEglTestStepDllName, 2, TestStepName());
-
-	INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate2::doTestStepL"));   
-    RecordTestResultL();
-    CloseTMSGraphicsStep();
-    return TestStepResult();
-    }
-
-void CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate2::doProcessFunctionL(TInt aIdx)
-    {
-    INFO_PRINTF2(_L("CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate2::doProcessFunctionL, Process %d"),aIdx);
-    GetDisplayL();
-    CreateEglSessionL(aIdx);
-    iEglSess->InitializeL();
-    iEglSess->OpenSgDriverL();
-
-	//Retrieve source formats for the launched process from the process parameters.
-	User::LeaveIfError(User::GetTIntParameter(EProcSlotSourceFormat, reinterpret_cast<TInt&>(iSourceFormat)));
-	User::LeaveIfError(User::GetTIntParameter(EProcSlotSurfaceFormat, reinterpret_cast<TInt&>(iSurfaceFormat)));
-
-	//create the queue to send/receive SgImage ID between processes
-	RMsgQueue<TSgDrawableId> messageQueueSgId;
-    User::LeaveIfError(messageQueueSgId.Open(EProcSlotMsgQueueSgId, EOwnerProcess));
-    CleanupClosePushL(messageQueueSgId);
-
-	//create the queue to send/receive Process ID between processes
-    RMsgQueue<TProcessId> messageQueueProcId;
-    User::LeaveIfError(messageQueueProcId.Open(EProcSlotMsgQueueProcId, EOwnerProcess));
-    CleanupClosePushL(messageQueueProcId);
-    
-    RProcess process;
-    CleanupClosePushL(process);
-	TRequestStatus status;
+	TDisplayMode bitmapMode = EglTestConversion::PixelFormatToDisplayMode(iSourceFormat);
+	CFbsBitmap* bitmap = iEglSess->CreateReferenceBitmapL(bitmapMode, KImageSize, 6);
+	CleanupStack::PushL(bitmap);
 
 	RSgImage rSgImageLocal;
     if(aIdx == 0)
@@ -1905,8 +1706,8 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate2::doProcessFuncti
     	imageInfo.iShareable = ETrue;
     	imageInfo.iCpuAccess = ESgCpuAccessReadWrite;
 #endif
-    	ASSERT_EQUALS(rSgImageLocal.Create(imageInfo,NULL, NULL), KErrNone);
- 
+    	ASSERT_EQUALS(rSgImageLocal.Create(imageInfo, bitmap->DataAddress(), bitmap->DataStride()), KErrNone);
+
         INFO_PRINTF2(_L("Process %d, Sending SgImage ID to other process..."), aIdx);
         messageQueueSgId.SendBlocking(rSgImageLocal.Id());
 
@@ -1930,7 +1731,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate2::doProcessFuncti
     	rSgImageLocal.Close();
     	ASSERT_EQUALS(rSgImageLocal.Open(sgImageId),KErrNone);
         }
-    
+
 	// Wait for both processes to reach this point
     Rendezvous(aIdx);
 
@@ -1940,7 +1741,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate2::doProcessFuncti
     	// note that we terminate with reason=0 (otherwise the egl test framework would think it's an error)
        	INFO_PRINTF2(_L("Process %d, Simulate the process is being killed!"),aIdx);
     	RProcess().Terminate(KErrNone);
-    	
+
     	// this line is unreachable
     	ASSERT(0);
     	}
@@ -1949,13 +1750,13 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate2::doProcessFuncti
         // first wait for the other process to finish
         User::WaitForRequest(status);
         ASSERT_EQUALS(status.Int(), KErrNone);
-       
+
         INFO_PRINTF2(_L("Process %d, Creating an EGLImage from the shared RSgImage"),aIdx);
     	CleanupClosePushL(rSgImageLocal);
         EGLImageKHR eglImageLocal = iEglSess->eglCreateImageKhrL(iDisplay, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, &rSgImageLocal, KEglImageAttribsPreservedTrue);
     	ASSERT_EGL_TRUE(eglImageLocal != EGL_NO_IMAGE_KHR);
     	CleanupStack::PopAndDestroy(&rSgImageLocal); 	//transferring ownership of the buffer to the EGLImage
- 
+
     	INFO_PRINTF2(_L("Creating a Surface and a Context bound to OpenVG, Process %d"),aIdx);
     	TUidPixelFormat pixelFormat = EglTestConversion::VgFormatToSgPixelFormat(iSurfaceFormat);
     	TSgImageInfoOpenVgTarget imageInfo = TSgImageInfoOpenVgTarget(pixelFormat, KImageSize);
@@ -1967,38 +1768,23 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate2::doProcessFuncti
     	ASSERT_VG_TRUE(vgImageLocal != VG_INVALID_HANDLE);
     	ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, eglImageLocal));
 
-    	INFO_PRINTF2(_L("Process %d, Populate contents of the VGImage"),aIdx);
-        TDisplayMode bitmapMode = EglTestConversion::PixelFormatToDisplayMode(iSourceFormat);
-        CFbsBitmap* bitmap = iEglSess->CreateReferenceBitmapL(bitmapMode, KImageSize, 3);
-		CleanupStack::PushL(bitmap);
-		// Add pixel data to the VGImage reference from the bitmap reference. 
-        // Mind the fact that CFbsBitmap and VGImages use different coordinates origin!
-		TSize bitmapSize = bitmap->SizeInPixels();
-    	TUint8* address = reinterpret_cast<TUint8*>(bitmap->DataAddress());
-    	TInt stride = bitmap->DataStride();
-    	address += (bitmapSize.iHeight - 1) * stride;
-        vgImageSubData(vgImageLocal, address, -stride, iSurfaceFormat, 0,0, bitmapSize.iWidth, bitmapSize.iHeight);
-    	ASSERT_TRUE(vgGetError()==VG_NO_ERROR);
-    	eglWaitClient();
-
         INFO_PRINTF2(_L("Process %d, Drawing the VGImage to the current surface before changing contents of the VGImage"),aIdx);
         // Copy the source VGImage to the surface
     	vgSetPixels(0, 0, vgImageLocal, 0, 0, KImageSize.iWidth, KImageSize.iHeight);
     	ASSERT_TRUE(vgGetError()==VG_NO_ERROR);
     	eglWaitClient();
-    	
+
     	// we can now compare the VgImage to the one we expect
 		iEglSess->CheckVgDrawingL(iSurfaceFormat, bitmap);
-		CleanupStack::PopAndDestroy(bitmap);
 		INFO_PRINTF2(_L("Process %d, Drawing successful"),aIdx);
 
 		// cleanup
 		vgDestroyImage(vgImageLocal);
     	ASSERT_TRUE(vgGetError() == VG_NO_ERROR);
         }
-    
+
     //cleanup and finish
-	CleanupStack::PopAndDestroy(3, &messageQueueSgId); //messageQueueSgId, messageQueueProcId, process
+	CleanupStack::PopAndDestroy(4, &messageQueueSgId); //messageQueueSgId, messageQueueProcId, process, bitmap
 	CleanAll();
     }
 
@@ -2028,7 +1814,7 @@ Run two processes that independently perform the actions detailed below.
 
 * From Process A:
 	Unexpectedly terminate process A without performing any explicit clean-up
-	
+
 * From Process B:
 	Wait for Process A to be killed:
 	Using the drawable ID, attempt to open the RSgImage
@@ -2036,7 +1822,7 @@ Run two processes that independently perform the actions detailed below.
 	Exit
 
 @SYMTestExpectedResults
-Process B should be unable to open the RSgImage and the call to Open() should return error code KErrNotFound.  
+Process B should be unable to open the RSgImage and the call to Open() should return error code KErrNotFound.
 All allocated image memory should be freed
 */
 TVerdict CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminateNegative::doTestStepL()
@@ -2060,7 +1846,7 @@ TVerdict CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminateNegative::doTe
 	// launch 2 processes
 	Test_MultiProcessL(KEglTestStepDllName, 2, TestStepName());
 
-	INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminateNegative::doTestStepL"));   
+	INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminateNegative::doTestStepL"));
     RecordTestResultL();
     CloseTMSGraphicsStep();
     return TestStepResult();
@@ -2087,7 +1873,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminateNegative::doProces
     RMsgQueue<TProcessId> messageQueueProcId;
     User::LeaveIfError(messageQueueProcId.Open(EProcSlotMsgQueueProcId, EOwnerProcess));
     CleanupClosePushL(messageQueueProcId);
-    
+
     RProcess process;
     CleanupClosePushL(process);
 	TRequestStatus status;
@@ -2104,7 +1890,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminateNegative::doProces
     	imageInfo.iCpuAccess = ESgCpuAccessReadWrite;
 #endif
     	ASSERT_EQUALS(rSgImageLocal.Create(imageInfo,NULL, NULL), KErrNone);
- 
+
         INFO_PRINTF2(_L("Process %d, Sending SgImage ID to other process..."), aIdx);
         messageQueueSgId.SendBlocking(rSgImageLocal.Id());
 
@@ -2133,7 +1919,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminateNegative::doProces
     	// note that we terminate with reason=0 (otherwise the egl test framework would think it's an error)
        	INFO_PRINTF2(_L("Process %d, Simulate the process is being killed!"),aIdx);
     	RProcess().Terminate(KErrNone);
-    	
+
     	// this line is unreachable
     	ASSERT(0);
     	}
@@ -2145,13 +1931,13 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminateNegative::doProces
 
         // NOTE: We can't guarante when the kernel will have completed the cleanup. This process
         //	could have been notified that the other process has terminated but this does not guarantee
-        //	that all handles to the process have been released. 
+        //	that all handles to the process have been released.
         //	This is not generally a problem in single processor hardware, but can be a problem in dual
         //	processor hardware (ie, NaviEngine) where one processor could be cleaning up the terminated
         //	process, the other processor could already be issuing the notification to the waiting process
         //	Not much we can do other than adding a small delay to ensure this...
         User::After(1*1000*1000); // 1 second
-        
+
         // we're expecting it to fail with the appropriate error
         TInt ret = rSgImageLocal.Open(sgImageId);
 #ifdef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
@@ -2177,7 +1963,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminateNegative::doProces
 @SYMPREQ 2637
 
 @SYMTestCaseDesc
-Functional test - Simultaneous reading and writing of simulated glyphs. 
+Functional test - Simultaneous reading and writing of simulated glyphs.
 The rectangular area of RSgImage will be divided into the following section:
 	 -----------
     ¦ 0 ¦ 1 ¦ 2 ¦
@@ -2190,7 +1976,7 @@ The image size is taken to be 90x90 so that it is easily split between 9 sub-sec
 It is obvoious that each sub-section will therefore be of 30x30:
 
 @SYMTestPurpose
-To determine that the system can cope with simultaneous 
+To determine that the system can cope with simultaneous
 reading and writing from/to area within RSgImage without corrupting each other.
 
 @SYMTestActions
@@ -2214,7 +2000,7 @@ Run two processes that independently perform the actions detailed below.
 			Signal client process that section[i] can be read
 			Repeat until client process signal read complete
 				Shade sections surrounding section[i] to other colors e.g. when i=1, 
-				surrounding sections are section 4, 5 and 2 
+				surrounding sections are section 0, 2 and 4 
 				End loop
 			End loop
 
@@ -2231,7 +2017,7 @@ Run two processes that independently perform the actions detailed below.
 Close the VGImage and RSgImage driver
 
 @SYMTestExpectedResults
-The content of each section read by client process should match the content written by Process A. 
+The content of each section read by client process should match the content written by Process A.
 All image memory should be freed
 */
 TVerdict CEglTest_EGL_Image_Multi_Process_VgImage_ReadWrite::doTestStepL()
@@ -2258,7 +2044,7 @@ TVerdict CEglTest_EGL_Image_Multi_Process_VgImage_ReadWrite::doTestStepL()
 	// launch 2 processes
 	Test_MultiProcessL(KEglTestStepDllName, 2, TestStepName());
 
-	INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_VgImage_ReadWrite::doTestStepL"));   
+	INFO_PRINTF1(_L("Exit: CEglTest_EGL_Image_Multi_Process_VgImage_ReadWrite::doTestStepL"));
     RecordTestResultL();
     CloseTMSGraphicsStep();
     return TestStepResult();
@@ -2275,17 +2061,17 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ReadWrite::doProcessFunctionL(TInt
 	const TSize KTestReadWriteImageSize(90,90);
 	const TInt KTestReadWriteSubImageLength = KTestReadWriteImageSize.iHeight / 3;
 	const TInt KTestNumColors = 9;
-	const VGfloat KTestClearColors[KTestNumColors][4] = 
+	const VGfloat KTestClearColors[KTestNumColors][4] =
 		{
-		{0.11f, 0.13f, 0.15f, 0.17f},	// arbitrary colour 1 		
-		{0.21f, 0.23f, 0.25f, 0.27f},	// arbitrary colour 2 		
-		{0.31f, 0.33f, 0.35f, 0.37f},	// arbitrary colour 3 		
-		{0.41f, 0.43f, 0.45f, 0.47f},	// arbitrary colour 4 		
-		{0.51f, 0.53f, 0.55f, 0.57f},	// arbitrary colour 5 		
-		{0.61f, 0.63f, 0.65f, 0.67f},	// arbitrary colour 6 		
-		{0.71f, 0.73f, 0.75f, 0.77f},	// arbitrary colour 7 		
-		{0.81f, 0.83f, 0.85f, 0.87f},	// arbitrary colour 8 		
-		{0.91f, 0.93f, 0.95f, 0.97f}	// arbitrary colour 9 		
+		{0.11f, 0.13f, 0.15f, 0.17f},	// arbitrary colour 1
+		{0.21f, 0.23f, 0.25f, 0.27f},	// arbitrary colour 2
+		{0.31f, 0.33f, 0.35f, 0.37f},	// arbitrary colour 3
+		{0.41f, 0.43f, 0.45f, 0.47f},	// arbitrary colour 4
+		{0.51f, 0.53f, 0.55f, 0.57f},	// arbitrary colour 5
+		{0.61f, 0.63f, 0.65f, 0.67f},	// arbitrary colour 6
+		{0.71f, 0.73f, 0.75f, 0.77f},	// arbitrary colour 7
+		{0.81f, 0.83f, 0.85f, 0.87f},	// arbitrary colour 8
+		{0.91f, 0.93f, 0.95f, 0.97f}	// arbitrary colour 9
 		};
 
 	//Retrieve source formats for the launched process from the process parameters.
@@ -2308,7 +2094,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ReadWrite::doProcessFunctionL(TInt
     	imageInfo.iCpuAccess = ESgCpuAccessReadWrite;
 #endif
     	ASSERT_EQUALS(rSgImageLocal.Create(imageInfo,NULL, NULL), KErrNone);
- 
+
         INFO_PRINTF2(_L("Process %d, Sending SgImage ID to other process..."), aIdx);
         messageQueueSgId.SendBlocking(rSgImageLocal.Id());
         }
@@ -2319,7 +2105,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ReadWrite::doProcessFunctionL(TInt
         messageQueueSgId.ReceiveBlocking(sgImageId);
     	ASSERT_EQUALS(rSgImageLocal.Open(sgImageId),KErrNone);
         }
-    
+
     INFO_PRINTF2(_L("Process %d, Creating an EGLImage from the shared RSgImage"),aIdx);
 	CleanupClosePushL(rSgImageLocal);
 	EGLImageKHR eglImageLocal = iEglSess->eglCreateImageKhrL(iDisplay, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, &rSgImageLocal, KEglImageAttribsPreservedTrue);
@@ -2327,7 +2113,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ReadWrite::doProcessFunctionL(TInt
 	CleanupStack::PopAndDestroy(&rSgImageLocal); 	//transferring ownership of the buffer to the EGLImage
 
 	// OpenVG needs a current VG context before it will allow the call vgCreateEGLImageTargetKHR
-	// The created surface will remain un-used, hence we create it with the default pixel format, as we don't care 
+	// The created surface will remain un-used, hence we create it with the default pixel format, as we don't care
 	TUidPixelFormat pixelFormat = EglTestConversion::VgFormatToSgPixelFormat(KDefaultSurfaceFormat);
 	TSgImageInfoOpenVgTarget imageInfo = TSgImageInfoOpenVgTarget(pixelFormat, KTestReadWriteImageSize);
 	iEglSess->CreatePixmapSurfaceAndMakeCurrentAndMatchL(imageInfo,CTestEglSession::EResourceCloseSgImageEarly);
@@ -2336,7 +2122,7 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ReadWrite::doProcessFunctionL(TInt
 	VGImage vgImageLocal = iEglSess->vgCreateImageTargetKHR((VGeglImageKHR)eglImageLocal);
 	ASSERT_VG_TRUE(vgImageLocal != VG_INVALID_HANDLE);
 	ASSERT_EGL_TRUE(iEglSess->DestroyEGLImage(iDisplay, eglImageLocal));
-    
+
 	// Wait for both processes to reach this point
     Rendezvous(aIdx);
 
@@ -2348,7 +2134,8 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ReadWrite::doProcessFunctionL(TInt
         	INFO_PRINTF3(_L("Process %d, Shading section[%d]"),aIdx, section);
     		//Shade section[i] to color[i]
     	    vgSetfv(VG_CLEAR_COLOR, 4, KTestClearColors[section]);
-            vgClearImage(vgImageLocal, section%3, section/3, KTestReadWriteSubImageLength, KTestReadWriteSubImageLength);        
+            vgClearImage(vgImageLocal, (section%3)*KTestReadWriteSubImageLength, (section/3)*KTestReadWriteSubImageLength, KTestReadWriteSubImageLength, KTestReadWriteSubImageLength);        
+    		vgFinish();
     		}
 
     	// Wait for both processes to reach this point
@@ -2359,21 +2146,24 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ReadWrite::doProcessFunctionL(TInt
     		{
         	INFO_PRINTF3(_L("Process %d, Creating child vgimage for section[%d]"),aIdx, section);
 			//Create child VGImage for section[i]
-    		childImage = vgChildImage(vgImageLocal, section%3, section/3, KTestReadWriteSubImageLength, KTestReadWriteSubImageLength);
+    		childImage = vgChildImage(vgImageLocal, (section%3)*KTestReadWriteSubImageLength, (section/3)*KTestReadWriteSubImageLength, KTestReadWriteSubImageLength, KTestReadWriteSubImageLength);
     		//Read the value of child VGImage and compare it with colour[i]
-    		TUint32 vgPixel=0;
+			TUint32* vgPixel = new(ELeave) TUint32[KTestReadWriteSubImageLength];
+			CleanupArrayDeletePushL(vgPixel);
     		for (TInt i=0; i<KTestReadWriteSubImageLength; i++)
     			{
+    			// Read childImage, a line at a time
+    			vgGetImageSubData(childImage, vgPixel, 1, iSurfaceFormat, 0, i, KTestReadWriteSubImageLength, 1);
     			for (TInt j=0; j<KTestReadWriteSubImageLength; j++)
     				{
-    				vgGetImageSubData(childImage, &vgPixel, 1, iSurfaceFormat, i, j, 1, 1);
 					// Should be exact, but give a tolerance of 1 because VG rounds to nearer integer, whereas TInt rounds down 
-    				ASSERT_TRUE(Abs(((vgPixel & 0xff000000) >> 24) - (255 * KTestClearColors[section][3])) <= 1);	//alpha
-    				ASSERT_TRUE(Abs(((vgPixel & 0x00ff0000) >> 16) - (255 * KTestClearColors[section][0])) <= 1);	//red
-    				ASSERT_TRUE(Abs(((vgPixel & 0x0000ff00) >> 8) - (255 * KTestClearColors[section][1])) <= 1); 	//green
-    				ASSERT_TRUE(Abs(((vgPixel & 0x000000ff) >> 0) - (255 * KTestClearColors[section][2])) <= 1); 	//blue
+    				ASSERT_TRUE(Abs(((vgPixel[j] & 0xff000000) >> 24) - (255 * KTestClearColors[section][3])) <= 1);	//alpha
+    				ASSERT_TRUE(Abs(((vgPixel[j] & 0x00ff0000) >> 16) - (255 * KTestClearColors[section][0])) <= 1);	//red
+    				ASSERT_TRUE(Abs(((vgPixel[j] & 0x0000ff00) >> 8) - (255 * KTestClearColors[section][1])) <= 1); 	//green
+    				ASSERT_TRUE(Abs(((vgPixel[j] & 0x000000ff) >> 0) - (255 * KTestClearColors[section][2])) <= 1); 	//blue
 					}
     			}
+    		CleanupStack::PopAndDestroy(vgPixel);
     		}
     	if (aIdx==0)
     		{
@@ -2382,8 +2172,9 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ReadWrite::doProcessFunctionL(TInt
         		{
             	TInt surroundingSection = (KTestNumColors + section + k) % KTestNumColors;
         	    vgSetfv(VG_CLEAR_COLOR, 4, KTestClearColors[surroundingSection]);
-        	    vgClearImage(vgImageLocal, surroundingSection*KTestReadWriteSubImageLength, section*KTestReadWriteSubImageLength, KTestReadWriteSubImageLength, KTestReadWriteSubImageLength);        
+        	    vgClearImage(vgImageLocal, (surroundingSection%3)*KTestReadWriteSubImageLength, (surroundingSection/3)*KTestReadWriteSubImageLength, KTestReadWriteSubImageLength, KTestReadWriteSubImageLength);        
         		}
+    		vgFinish(); 
     		}
 
     	// Wait for both processes to reach this point

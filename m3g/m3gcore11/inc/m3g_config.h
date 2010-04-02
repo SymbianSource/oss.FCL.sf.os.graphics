@@ -32,6 +32,21 @@
 /* Support antialiasing */
 #define M3G_SUPPORT_ANTIALIASING    M3G_TRUE
 
+/*!
+ * \internal
+ * \def M3G_ENABLE_GLES_RESOURCE_HANDLING
+ * \brief Allow GLES resource freeing 
+ *
+ * This feature can be used with HW renderers with external memory architecture 
+ * to free all graphics resources allocated by M3G. 
+ *
+ * Enabling this feature is likely to increase host memory consumption (a copy of 
+ * all texture image data has to be kept kept in host memory), so it's advised to 
+ * undefine the flag when using SW GLES or HW GLES with unified memory architecture.
+ */
+#define M3G_ENABLE_GLES_RESOURCE_HANDLING
+
+
 #if defined(M3G_DEBUG)
 /*
 #define M3G_ENABLE_PROFILING

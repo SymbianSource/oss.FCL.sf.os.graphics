@@ -33,7 +33,6 @@ CTWindowSizeCacheTest::~CTWindowSizeCacheTest()
 void CTWindowSizeCacheTest::ConstructL()
     {}
 
-
 void CTWindowSizeCacheTest::TestCreateRWindowL(TSizeCacheStatus aEnableWindowSizeCache)
     {
     __UHEAP_MARK;
@@ -579,7 +578,12 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheCleanL(TSizeCacheSta
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
-    
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
+
     // w1 State Final
     CleanupStack::Pop();
     w1.Close();
@@ -624,10 +628,20 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheCleanSizeL(TSizeCach
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
-    
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
+
     // w1 State 1
     TSize retSize2 = w1.Size();
     TEST(retSize2 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl2 = w1.SizeForEgl();
+    TEST(retSizeForEgl2 == size1);
+#endif
 
     // w1 State Final
     CleanupStack::Pop();
@@ -670,7 +684,12 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheCleanEnableWindowSiz
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
-    
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
+
     // w1 State 1
     // Only the first call to EnableWindowSizeCacheL() should have an effect
     // All subsequent calls to EnableWindowSizeCacheL() should have no effect
@@ -717,6 +736,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheCleanEnableWindowSiz
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 1
     // Only the first call to EnableWindowSizeCacheL() should have an effect
@@ -726,6 +750,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheCleanEnableWindowSiz
     // w1 State 1
     TSize retSize2 = w1.Size();
     TEST(retSize2 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl2 = w1.SizeForEgl();
+    TEST(retSizeForEgl2 == size1);
+#endif
 
     // w1 State Final
     CleanupStack::Pop();
@@ -771,6 +800,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtySetSizeL(TSizeC
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -821,6 +855,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtySetExtentL(TSiz
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TPoint point2 (20202,223);
@@ -872,6 +911,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtySetSizeErrL(TSi
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -922,6 +966,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtySetExtentErrL(T
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TPoint point2 (20202,223);
@@ -973,6 +1022,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtySetSizeTwiceL(T
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -1027,6 +1081,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtySetSizeSetExten
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -1082,6 +1141,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtySetSizeSetSizeE
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -1136,6 +1200,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtySetSizeSetExten
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -1188,6 +1257,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtySetSizeEnableWi
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -1242,6 +1316,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetSizeL
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -1252,6 +1331,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetSizeL
     TSize retSize2 = w1.Size();
     TEST(retSize2 == size2);
 
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl2 = w1.SizeForEgl();
+    TEST(retSizeForEgl2 == size2);
+#endif
+    
     // w1 State Final
     CleanupStack::Pop();
     w1.Close();
@@ -1296,6 +1380,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetExten
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TPoint point2 (20202,223);
@@ -1307,6 +1396,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetExten
     TSize retSize2 = w1.Size();
     TEST(retSize2 == size2);
 
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl2 = w1.SizeForEgl();
+    TEST(retSizeForEgl2 == size2);
+#endif
+    
     // w1 State Final
     CleanupStack::Pop();
     w1.Close();
@@ -1351,6 +1445,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetSizeE
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -1361,6 +1460,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetSizeE
     TSize retSize2 = w1.Size();
     TEST(retSize2 == size2);
 
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl2 = w1.SizeForEgl();
+    TEST(retSizeForEgl2 == size2);
+#endif
+    
     // w1 State Final
     CleanupStack::Pop();
     w1.Close();
@@ -1405,6 +1509,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetExten
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TPoint point2 (20202,223);
@@ -1416,6 +1525,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetExten
     TSize retSize2 = w1.Size();
     TEST(retSize2 == size2);
 
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl2 = w1.SizeForEgl();
+    TEST(retSizeForEgl2 == size2);
+#endif
+    
     // w1 State Final
     CleanupStack::Pop();
     w1.Close();
@@ -1460,6 +1574,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetSizeT
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -1474,6 +1593,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetSizeT
     TSize retSize2 = w1.Size();
     TEST(retSize2 == size3);
 
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl2 = w1.SizeForEgl();
+    TEST(retSizeForEgl2 == size3);
+#endif
+    
     // w1 State Final
     CleanupStack::Pop();
     w1.Close();
@@ -1518,6 +1642,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetSizeS
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -1533,6 +1662,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetSizeS
     TSize retSize2 = w1.Size();
     TEST(retSize2 == size3);
 
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl2 = w1.SizeForEgl();
+    TEST(retSizeForEgl2 == size3);
+#endif
+    
     // w1 State Final
     CleanupStack::Pop();
     w1.Close();
@@ -1577,6 +1711,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetSizeS
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -1591,6 +1730,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetSizeS
     TSize retSize2 = w1.Size();
     TEST(retSize2 == size3);
 
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl2 = w1.SizeForEgl();
+    TEST(retSizeForEgl2 == size3);
+#endif
+    
     // w1 State Final
     CleanupStack::Pop();
     w1.Close();
@@ -1635,6 +1779,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetSizeS
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -1650,6 +1799,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetSizeS
     TSize retSize2 = w1.Size();
     TEST(retSize2 == size3);
 
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl2 = w1.SizeForEgl();
+    TEST(retSizeForEgl2 == size3);
+#endif
+    
     // w1 State Final
     CleanupStack::Pop();
     w1.Close();
@@ -1691,6 +1845,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetSizeE
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -1704,6 +1863,11 @@ void CTWindowSizeCacheTest::TestRWindowCacheEntryExistsCacheDirtyToCleanSetSizeE
     TSize retSize2 = w1.Size();
     TEST(retSize2 == size2);
 
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl2 = w1.SizeForEgl();
+    TEST(retSizeForEgl2 == size2);
+#endif
+    
     // w1 State Final
     CleanupStack::Pop();
     w1.Close();
@@ -1752,6 +1916,11 @@ void CTWindowSizeCacheTest::TestRBlankWindowSetSizeSetExtentL(TSizeCacheStatus a
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -1767,6 +1936,11 @@ void CTWindowSizeCacheTest::TestRBlankWindowSetSizeSetExtentL(TSizeCacheStatus a
     TSize retSize2 = w1.Size();
     TEST(retSize2 == size3);
 
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl2 = w1.SizeForEgl();
+    TEST(retSizeForEgl2 == size3);
+#endif
+    
     // w1 State 2
     TSize size4 (40004,423);
     w1.SetSize(size4);
@@ -1775,6 +1949,11 @@ void CTWindowSizeCacheTest::TestRBlankWindowSetSizeSetExtentL(TSizeCacheStatus a
     TSize retSize3 = w1.Size();
     TEST(retSize3 == size4);
 
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl3 = w1.SizeForEgl();
+    TEST(retSizeForEgl3 == size4);
+#endif
+    
     // w1 State Final
     CleanupStack::Pop();
     w1.Close();
@@ -1823,6 +2002,11 @@ void CTWindowSizeCacheTest::TestRBackedUpWindowSetSizeErrSetExtentErrL(TSizeCach
     // w1 State 1
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
     
     // w1 State 2
     TSize size2 (20002,223);
@@ -1839,6 +2023,11 @@ void CTWindowSizeCacheTest::TestRBackedUpWindowSetSizeErrSetExtentErrL(TSizeCach
     TSize retSize2 = w1.Size();
     TEST(retSize2 == size3);
 
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl2 = w1.SizeForEgl();
+    TEST(retSizeForEgl2 == size3);
+#endif
+    
     // w1 State 2
     TSize size4 (40004,423);
     err = w1.SetSizeErr(size4);
@@ -1848,6 +2037,11 @@ void CTWindowSizeCacheTest::TestRBackedUpWindowSetSizeErrSetExtentErrL(TSizeCach
     TSize retSize3 = w1.Size();
     TEST(retSize3 == size4);
 
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl3 = w1.SizeForEgl();
+    TEST(retSizeForEgl3 == size4);    
+#endif
+    
     // w1 State Final
     CleanupStack::Pop();
     w1.Close();
@@ -1901,6 +2095,11 @@ TUint64 CTWindowSizeCacheTest::TestRWindowSizePerformanceL(TSizeCacheStatus aEna
         // w1 State 1
         TSize retSize1 = w1.Size();
         TEST(retSize1 == size1);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+        TSize retSizeForEgl1 = w1.SizeForEgl();
+        TEST(retSizeForEgl1 == size1);  
+#endif
         }
     end.UniversalTime();
 
@@ -1989,6 +2188,11 @@ void CTWindowSizeCacheTest::RWindowPerformAction(TRWindowAction aAction, TSizeCa
             {
             TSize retSize1 = aWindow.Size();
             TEST(retSize1 == aExpectedSize);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+            TSize retSizeForEgl1 = aWindow.SizeForEgl();
+            TEST(retSizeForEgl1 == aExpectedSize);      
+#endif
             }
             break;
         case EFlushSession :
@@ -2138,6 +2342,11 @@ void CTWindowSizeCacheTest::TestRandomisedStressMultiSessionL(TSizeCacheStatus a
         rws1_expectedSizePool.AppendL(expectedSize);
         TSize retSize1 = win->Size();
         TEST(retSize1 == expectedSize);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+        TSize retSizeForEgl1 = win->SizeForEgl();
+        TEST(retSizeForEgl1 == expectedSize);     
+#endif
         }
 
     // Windows for session 2 belonging to rws2_wg1
@@ -2158,6 +2367,11 @@ void CTWindowSizeCacheTest::TestRandomisedStressMultiSessionL(TSizeCacheStatus a
         rws2_expectedSizePool.AppendL(expectedSize);
         TSize retSize1 = win->Size();
         TEST(retSize1 == expectedSize);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+        TSize retSizeForEgl1 = win->SizeForEgl();
+        TEST(retSizeForEgl1 == expectedSize);  
+#endif
         }
     
     // Windows for session 2 belonging to rws2_wg2
@@ -2180,6 +2394,11 @@ void CTWindowSizeCacheTest::TestRandomisedStressMultiSessionL(TSizeCacheStatus a
         rws2_expectedSizePool.AppendL(expectedSize);
         TSize retSize1 = win->Size();
         TEST(retSize1 == expectedSize);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+        TSize retSizeForEgl1 = win->SizeForEgl();
+        TEST(retSizeForEgl1 == expectedSize);    
+#endif
         }
 
     // Stress system by performing actions on windows
@@ -2265,6 +2484,11 @@ void CTWindowSizeCacheTest::TestRandomisedStressCacheEntryVolumeL(TSizeCacheStat
         expectedSizePool.AppendL(expectedSize);
         TSize retSize1 = win->Size();
         TEST(retSize1 == expectedSize);
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+        TSize retSizeForEgl1 = win->SizeForEgl();
+        TEST(retSizeForEgl1 == expectedSize);     
+#endif
         }
 
     // Stress system by performing actions on windows
@@ -2320,6 +2544,11 @@ void CTWindowSizeCacheTest::TestStressEnableWindowSizeCacheL(TUint aIterations)
     TSize retSize1 = w1.Size();
     TEST(retSize1 == size1);
 
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl1 = w1.SizeForEgl();
+    TEST(retSizeForEgl1 == size1);
+#endif
+    
     // w1 State 2
     TSize size2 (20002,223);
     w1.SetSize(size2); 
@@ -2336,6 +2565,11 @@ void CTWindowSizeCacheTest::TestStressEnableWindowSizeCacheL(TUint aIterations)
     TSize retSize2 = w1.Size();
     TEST(retSize2 == size2);
 
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    TSize retSizeForEgl2 = w1.SizeForEgl();
+    TEST(retSizeForEgl2 == size2);
+#endif
+    
     // w1 State Final
     CleanupStack::Pop();
     w1.Close();

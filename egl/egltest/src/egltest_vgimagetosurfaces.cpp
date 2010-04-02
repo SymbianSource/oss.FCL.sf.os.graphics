@@ -389,7 +389,7 @@ TVerdict CEglTest_EGL_Image_VgImage_To_Window::doTestPartialStepL()
 		return TestStepResult();
 		}
     User::LeaveIfError(res); // leave here if any other error was raised other than the one above.
-	iEglSess->CreateWindowSurfaceAndMakeCurrentL(config, window);
+	iEglSess->CreateWindowSurfaceAndMakeCurrentL(config, window, windowFormat == EWindowAttribsColor16MAP);
 
 	INFO_PRINTF1(_L("Creating 1 EGLImage from the RSgImage"));
 	EGLImageKHR imageKHR = iEglSess->eglCreateImageKhrL(iDisplay, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, &sgImage, KEglImageAttribsPreservedTrue);

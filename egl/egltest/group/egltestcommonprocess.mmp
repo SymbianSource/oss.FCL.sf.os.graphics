@@ -33,4 +33,6 @@ LIBRARY                 euser.lib
 LIBRARY                 libEGL.lib
 LIBRARY                 egltestcommon.lib
 
+CAPABILITY PowerMgmt
+
 SMPSAFE

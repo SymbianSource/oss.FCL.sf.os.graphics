@@ -574,4 +574,7 @@ EXPORTS
 	?Session@RWindowTreeNode@@QBEPAVRWsSession@@XZ @ 573 NONAME ; class RWsSession * RWindowTreeNode::Session(void) const
 	?HeapSetBurstFail@RWsSession@@QAEXHHH@Z @ 574 NONAME ; void RWsSession::HeapSetBurstFail(int, int, int)
 	?EnableWindowSizeCacheL@RWsSession@@QAEXXZ @ 575 NONAME ; void RWsSession::EnableWindowSizeCacheL(void)
-    ?SetSurfaceTransparency@RWindowBase@@QAEXH@Z @ 576 NONAME ; void RWindowBase::SetSurfaceTransparency(int)
+	?SetSurfaceTransparency@RWindowBase@@QAEXH@Z @ 576 NONAME ; void RWindowBase::SetSurfaceTransparency(int)
+	?SizeForEgl@RWindowBase@@QBE?AVTSize@@XZ @ 577 NONAME ; class TSize RWindowBase::SizeForEgl(void) const
+	?FixNativeOrientation@RWindowBase@@QAEHXZ @ 578 NONAME ; int RWindowBase::FixNativeOrientation(void)
+
