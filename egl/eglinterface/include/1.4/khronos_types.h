@@ -31,6 +31,11 @@ typedef TInt16  khronos_int16_t;  // short int
 typedef TUint16 khronos_uint16_t; // unsigned short int
 typedef TInt32  khronos_int32_t;  // long int
 typedef TUint32 khronos_uint32_t; // unsigned long int
-typedef TUint64 khronos_utime_nanoseconds_t;  // unsigned long long
+
+typedef TInt64  khronos_int64_t;  // long int
+typedef TUint64 khronos_uint64_t; // unsigned long int
+
+typedef TUint64	khronos_utime_nanoseconds_t;
+typedef TInt32	khronos_stime_nanoseconds_t;
 
 #endif // __KHRONOS_TYPES_H__
