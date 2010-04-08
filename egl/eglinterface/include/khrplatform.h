@@ -86,7 +86,7 @@ extern "C" {
 
 #include <e32def.h>
 
-#include <khronos_types.h> // For khronos_int8_t and similar typedefinitions.
+#include <khronos_types.h> // For khronos_int8_t and similar type definitions.
 
 /*-------------------------------------------------------------------------
  * Definition of KHRONOS_APICALL and KHRONOS_APIENTRY
