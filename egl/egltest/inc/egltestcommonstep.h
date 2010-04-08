@@ -21,6 +21,7 @@
 #ifndef EGLTESTCOMMONSTEP_H
 #define EGLTESTCOMMONSTEP_H
 
+#include <e32msgqueue.h>
 #include <EGL/egl.h>
 #include <VG/openvg.h>
 #ifdef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
@@ -40,6 +41,10 @@ const TInt KNumSemaphore = 2;
 
 class RWindow;
 
+struct TEglStepMessageBuffer
+    {
+    TInt iBuf[64];
+    };
 
 /**
 Abstract base class for Egl test steps
@@ -120,6 +125,7 @@ protected:
 	IMPORT_C void GetDisplayL();
 	IMPORT_C void TerminateDisplayL();	
 
+	virtual void ReceiveMessageFromClient(RMsgQueue<TEglStepMessageBuffer>& /*aMessageQueueClientProcParam*/) {}
 protected:
 	// Session object as required for most tests
 	CTestEglSession* 	iEglSess;

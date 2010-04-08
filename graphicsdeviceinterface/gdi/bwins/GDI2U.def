@@ -290,4 +290,34 @@ EXPORTS
 	?DrawTextVertical@CGraphicsContext@@QAEXABVTDesC16@@PBVTTextParameters@1@ABVTPoint@@H@Z @ 289  NONAME ; void CGraphicsContext::DrawTextVertical(class TDesC16 const &, class CGraphicsContext::TTextParameters const *, class TPoint const &, int)
 	?DrawTextVertical@CGraphicsContext@@QAEXABVTDesC16@@PBVTTextParameters@1@ABVTRect@@HHW4TTextAlign@1@H@Z @ 290  NONAME ; void CGraphicsContext::DrawTextVertical(class TDesC16 const &, class CGraphicsContext::TTextParameters const *, class TRect const &, int, int, enum CGraphicsContext::TTextAlign, int)
 	?TextWidthInPixels@CFont@@QBEHABVTDesC16@@PBVTMeasureTextInput@1@@Z @ 291 NONAME ; int CFont::TextWidthInPixels(class TDesC16 const &, class CFont::TMeasureTextInput const *) const
+	?Open@RFontTable@@QAEHAAVCFont@@K@Z @ 292 NONAME ABSENT ; int RFontTable::Open(class CFont &, unsigned long)
+	?Next@RGlyphOutlineIterator@@QAEHXZ @ 293 NONAME ABSENT ; int RGlyphOutlineIterator::Next(void)
+	?TableLength@RFontTable@@QBEHXZ @ 294 NONAME ABSENT ; int RFontTable::TableLength(void) const
+	?OutlineLength@RGlyphOutlineIterator@@QBEHXZ @ 295 NONAME ABSENT ; int RGlyphOutlineIterator::OutlineLength(void) const
+	?Outline@RGlyphOutlineIterator@@QBEPBEXZ @ 296 NONAME ABSENT ; unsigned char const * RGlyphOutlineIterator::Outline(void) const
+	?TableContent@RFontTable@@QBEPBEXZ @ 297 NONAME ABSENT ; unsigned char const * RFontTable::TableContent(void) const
+	?Close@RGlyphOutlineIterator@@QAEXXZ @ 298 NONAME ABSENT ; void RGlyphOutlineIterator::Close(void)
+	?Close@RFontTable@@QAEXXZ @ 299 NONAME ABSENT ; void RFontTable::Close(void)
+	??0RGlyphOutlineIterator@@QAE@XZ @ 300 NONAME ABSENT ; RGlyphOutlineIterator::RGlyphOutlineIterator(void)
+	?Open@RGlyphOutlineIterator@@QAEHAAVCFont@@PAIHH@Z @ 301 NONAME ABSENT ; int RGlyphOutlineIterator::Open(class CFont &, unsigned int *, int, int)
+	??0RFontTable@@QAE@XZ @ 302 NONAME ABSENT ; RFontTable::RFontTable(void)
+	?Image@RGlyphDataIterator@@QBEABVRSgImage@@XZ @ 303 NONAME ABSENT ; class RSgImage const & RGlyphDataIterator::Image(void) const
+	??0RGlyphMetricsArray@@QAE@XZ @ 304 NONAME ABSENT ; RGlyphMetricsArray::RGlyphMetricsArray(void)
+	?Count@RGlyphMetricsArray@@QBEHXZ @ 305 NONAME ABSENT ; int RGlyphMetricsArray::Count(void) const
+	?Metrics@RGlyphDataIterator@@QBEABVTOpenFontCharMetrics@@XZ @ 306 NONAME ABSENT ; class TOpenFontCharMetrics const & RGlyphDataIterator::Metrics(void) const
+	??0RGlyphDataIterator@@QAE@XZ @ 307 NONAME ABSENT ; RGlyphDataIterator::RGlyphDataIterator(void)
+	??ARGlyphMetricsArray@@QBEABVTOpenFontCharMetrics@@H@Z @ 308 NONAME ABSENT ; class TOpenFontCharMetrics const & RGlyphMetricsArray::operator[](int) const
+	?GlyphCode@RGlyphDataIterator@@QBEIXZ @ 309 NONAME ABSENT ; unsigned int RGlyphDataIterator::GlyphCode(void) const
+	?Rect@RGlyphDataIterator@@QBEABVTRect@@XZ @ 310 NONAME ABSENT ; class TRect const & RGlyphDataIterator::Rect(void) const
+	?Next@RGlyphDataIterator@@QAEHXZ @ 311 NONAME ABSENT ; int RGlyphDataIterator::Next(void)
+	?Close@RGlyphMetricsArray@@QAEXXZ @ 312 NONAME ABSENT ; void RGlyphMetricsArray::Close(void)
+	?Get@RGlyphMetricsArray@@QAEHAAVCFont@@PBIH@Z @ 313 NONAME ABSENT ; int RGlyphMetricsArray::Get(class CFont &, unsigned int const *, int)
+	?Close@RGlyphDataIterator@@QAEXXZ @ 314 NONAME ABSENT ; void RGlyphDataIterator::Close(void)
+	?Open@RGlyphDataIterator@@QAEHAAVCFont@@PBIH@Z @ 315 NONAME ABSENT ; int RGlyphDataIterator::Open(class CFont &, unsigned int const *, int)
+	?SetName@TTypeface@@QAEXABVTDesC16@@@Z @ 316 NONAME ; void TTypeface::SetName(class TDesC16 const &)
+	?Name@TTypeface@@QBEABVTDesC16@@XZ @ 317 NONAME ; class TDesC16 const & TTypeface::Name(void) const
+	?At@RHexTreeBase@@IBEPAXI@Z @ 318 NONAME ; void * RHexTreeBase::At(unsigned int) const
+	??0RHexTreeBase@@IAE@PAVRHeap@@@Z @ 319 NONAME ; RHexTreeBase::RHexTreeBase(class RHeap *)
+	?SetAt@RHexTreeBase@@IAEHIPAX@Z @ 320 NONAME ; int RHexTreeBase::SetAt(unsigned int, void *)
+	?ResetAndDestroy@RHexTreeBase@@QAEXXZ @ 321 NONAME ; void RHexTreeBase::ResetAndDestroy(void)
 

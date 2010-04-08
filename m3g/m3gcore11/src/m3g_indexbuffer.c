@@ -483,7 +483,7 @@ M3G_API M3Gbool m3gGetBatchIndices(M3GIndexBuffer buffer,
                                    M3Gint *indices)
 {
     M3Gint i, j, tri = 0;
-    M3Gint triIndices[4];
+    M3Gint triIndices[4] = {0, 0, 0, 0};
     M3G_VALIDATE_OBJECT(buffer);
     M3G_UNREF(batchIndex);
 

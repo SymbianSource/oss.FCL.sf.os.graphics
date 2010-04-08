@@ -29,7 +29,7 @@ A CWsGraphicDrawer can be in many such indexes, as an index does not imply owner
 */	{
 public:
 	//Placeholder for transacion record
-	class XRollBackBase;
+	struct XRollBackBase;
 	
 	//transactional manipulation methods that are deprecated because they leak 
 	IMPORT_C void AddLC(CWsGraphicDrawer* aDrawer);

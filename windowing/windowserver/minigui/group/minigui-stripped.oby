@@ -1,0 +1,100 @@
+/*
+* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+* iwanj@users.sourceforge.net - modified to make it work for Symbian^3.
+* MattD <mattd@symbian.org> - renamed file and target to minigui-stripped so we can have both present and build seperate roms. 
+* Description:
+* This OBY File is used to build miniGUI ROM Images.
+*/
+ 
+#ifndef __MINIGUI_OBY__
+#define __MINIGUI_OBY__
+ 
+define OBEYFILE minigui-stripped
+define ROMDATE	##TODAY##
+ 
+#define _ARMV5
+#define SYMBIAN_BASE_USE_GCE
+#define SYMBIAN_EXCLUDE_SCDV
+ 
+// Kernel
+//
+#include <header.iby>
+#include <base.iby>
+ 
+// NGA stack
+//
+#define SYMBIAN_GRAPHICS_USE_GCE
+#define SYMBIAN_GRAPHICS_USE_OPENWF
+#define OPENWFCLIB_DRV <openwfc_ref.iby>
+#define EGL_DRV <egl_ref.iby>
+ 
+#include <gdi.iby>
+#include <bitgdi.iby>
+#include <fntstore.iby>
+#include <fbserv.iby>
+#include <iculayoutengine.iby>
+#include <freetype.iby>
+#include <directgdi.iby>
+#include <wserv.iby>
+#include <econs_wserv.iby>
+#include <surfaceupdate.iby>
+#include <surfacemanager.iby>
+file=\epoc32\release\ARMV5\urel\_generic_scdv.dll	sys\bin\scdv.dll
+ 
+data=DATAZ_\wsini_minigui-stripped.ini	\system\data\wsini.ini
+ 
+// miniGUI shell
+//
+#include <eshell.iby>
+ 
+// And the hell breaks loose :)
+// Let's just add bare minimum items enough to get graphics stack up and running
+// wserv wants ecom
+// libwfc wants openenv
+// freetype wants stdlib
+// openenv backend wants esock etc etc
+//
+#include <bafl.iby>
+#include <ecom.iby>
+#include <store.iby>
+#include <stdlib.iby>
+#include <openenv.iby>
+ 
+#include <c32.iby>
+#include <ecuart.iby>
+#include <irda.iby>
+#include <bluetooth.iby>
+#include <inetprotutil.iby>
+#include <network.iby>	
+#include <dial.iby>
+#include <crypto.iby>
+#include <certman.iby>
+#include <logeng.iby>
+#include <filetokens.iby>
+#include <asnpkcs.iby>
+#include <emime.iby>
+#include <scs.iby>
+ 
+file=\epoc32\release\ARMV5\urel\abclient.dll 				sys\bin\abclient.dll
+file=\epoc32\release\ARMV5\urel\Http.dll 					sys\bin\http.dll
+file=\epoc32\release\ARMV5\urel\Httputils.dll 				sys\bin\httputils.dll
+file=\epoc32\release\ARMV5\urel\securitymanager.dll 		sys\bin\securitymanager.dll
+file=\epoc32\release\ARMV5\urel\ocspsupportclient.dll 		sys\bin\ocspsupportclient.dll
+file=\epoc32\release\ARMV5\urel\siscontroller.dll 			sys\bin\siscontroller.dll
+file=\epoc32\release\ARMV5\urel\devinfosupportclient.dll	sys\bin\devinfosupportclient.dll 
+file=\epoc32\release\ARMV5\urel\uissclient.dll 				sys\bin\uissclient.dll
+file=\epoc32\release\ARMV5\urel\devinfosupportcommon.dll 	sys\bin\devinfosupportcommon.dll
+file=\epoc32\release\ARMV5\urel\ipcstream.dll 				sys\bin\ipcstream.dll
+//file=\epoc32\release\ARMV5\urel\usbcsc_bil.dll 				sys\bin\usbcsc_bil.dll 
+ 
+#endif /* __MINIGUI_OBY__ */

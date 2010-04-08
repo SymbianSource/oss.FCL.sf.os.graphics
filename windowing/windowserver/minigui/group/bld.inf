@@ -20,3 +20,5 @@ PRJ_EXPORTS
 econs_wserv.iby  	  			/epoc32/rom/include/econs_wserv.iby
 minigui.oby						/epoc32/rom/include/minigui.oby
 wsini_minigui.ini				z:/
+minigui-stripped.oby  /epoc32/rom/include/minigui-stripped.oby
+wsini_minigui-stripped.ini				z:/

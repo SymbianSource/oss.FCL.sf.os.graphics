@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -162,6 +162,7 @@ enum TWservPanic
 	EWsPanicInvalidRotation = 127,			//Invalid rotation used
 	EWsPanicInvalidPointerOffset = 128,      //The pointer offset value in wsini.ini is invalid.
 	EWsPanicArrayInsertFailed = 129,	//Array insert failed.           
+	EWsPanicCompleteNullMessage = 130,		//RMessage2 is NULL prior to calling Complete().
 	};
 
 void Panic(TWservPanic aPanic);

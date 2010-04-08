@@ -649,4 +649,6 @@ EXPORTS
 	_ZN10RWsSession16HeapSetBurstFailEiii @ 648 NONAME
 	_ZN10RWsSession22EnableWindowSizeCacheLEv @ 649 NONAME
 	_ZN11RWindowBase22SetSurfaceTransparencyEi @ 650 NONAME
+	_ZN11RWindowBase20FixNativeOrientationEv @ 651 NONAME
+	_ZNK11RWindowBase10SizeForEglEv @ 652 NONAME
 

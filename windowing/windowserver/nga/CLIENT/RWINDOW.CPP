@@ -170,6 +170,12 @@ resources owned by its children are not freed. To free these resources, Close()
 	         {
 	         DestroyWindowSizeCacheEntry();
 	         }
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+	    if (WindowNativeSizeCacheEnabled())
+	         {
+	         DestroyWindowNativeSizeCacheEntry();
+	         }
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
         Write(EWsWinOpFree);
 	    }
 	iWsHandle=NULL;
@@ -840,6 +846,31 @@ This function always causes a flush of the window server buffer.
         }
 	}
 
+EXPORT_C TSize RWindowBase::SizeForEgl() const
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+/**
+@internalAll
+Disclaimer - this API is internal and is subject to change
+@prototype */
+	{
+	TSize size;
+	if (WindowNativeSizeCacheEnabled() && WindowNativeSize(size) == KErrNone)
+		{
+		return size;
+		}
+	else
+		{
+		return Size();
+		}
+	}
+#else
+    {
+    // API should not be used if macro undefined.
+    ASSERT(0);
+    return TSize();
+    }
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+
 EXPORT_C void RWindowBase::SetPosition(const TPoint &aPos)
 /** Sets the position of a window relative to its parent. 
 
@@ -1378,6 +1409,48 @@ receive only events from the emulated pointer.
 	{
 	Write(EWsWinOpEnableAdvancedPointers);
 	}
+
+/**
+@internalAll
+Disclaimer - this API is internal and is subject to change
+@prototype */
+EXPORT_C TInt RWindowBase::FixNativeOrientation()
+#if !defined(SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION) || defined (SYMBIAN_GRAPHICS_BUILD_OPENWF_WSERV) || defined (__WINS__) 
+    {
+    return KErrNotSupported;
+    }
+#else
+	{
+    TInt err = KErrNone;
+	if (!WindowNativeSizeCacheEnabled())
+		{
+		TRAP(err, EnableWindowNativeSizeCacheL());
+		if (err != KErrNone)
+		    {
+            return err;
+		    }
+		}
+	
+	const CFbsBitGc::TGraphicsOrientation orientation = static_cast<CFbsBitGc::TGraphicsOrientation>(WriteReply(EWsWinOpFixNativeOrientation));
+	switch (orientation)
+		{
+	case CFbsBitGc::EGraphicsOrientationNormal:
+    case CFbsBitGc::EGraphicsOrientationRotated180:
+		err = SetWindowNativeSize(Size());
+        break;
+	case CFbsBitGc::EGraphicsOrientationRotated90 :
+    case CFbsBitGc::EGraphicsOrientationRotated270:
+        {
+	    TSize size = Size();
+	    err = SetWindowNativeSize(TSize(size.iHeight, size.iWidth));
+        }
+		break;
+	default:
+	    Assert(EW32AssertInvalidOrientation);
+		}
+	return err;
+	}
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 
 EXPORT_C TInt RWindowBase::AllocPointerMoveBuffer(TInt aMaxNumPoints, TUint aFlags)
 /** Allocates a buffer for storing pointer movements. 

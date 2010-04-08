@@ -427,9 +427,8 @@ M3G_API M3GAppearance m3gCreateAppearance(M3GInterface hInterface)
 
         if (appearance != NULL) {
     		m3gInitObject(&appearance->object, m3g, M3G_CLASS_APPEARANCE);
+            m3gRegenerateSortKey(appearance);
         }
-
-        m3gRegenerateSortKey(appearance);
         
         return (M3GAppearance) appearance;
     }

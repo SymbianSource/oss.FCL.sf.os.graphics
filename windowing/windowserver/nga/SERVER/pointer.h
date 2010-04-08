@@ -66,6 +66,7 @@ public:
 #else
 	static TBool PreProcessDriverEvent(TRawEvent &aRawEvent);
 #endif
+	static void TranslateCoordsOnRotation(TPoint& aPoint);
 	static TBool PreProcessClientEvent(TRawEvent &aRawEvent, TBool aAdvancedPointersEnabled);
 	static TBool IsPointerEventType(TRawEvent::TType aType);
 	static void ProcessWsEvent(TWsEvent& aEvent,const CWsWindowGroup* aForceInGroup,TBool aNatural);	
@@ -229,6 +230,11 @@ private:
 	
 	/** Used to offset the y pointer */
 	static TInt iYOffset;
+	
+#if defined(__WINS__)
+	/** Tell whether to rotate pointer coords in _WINS_ builds */
+	static TBool iEmulatorRotatePointerCoords;
+#endif
 	};
 
 class CWsPointerBuffer : public CBase

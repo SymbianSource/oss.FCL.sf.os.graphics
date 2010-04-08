@@ -1,0 +1,47 @@
+// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// samplegraphicsurfacedrawer.DLL sample Surface-based Graphics ECOM plugins for Window Server
+// 
+//
+
+/**
+ @file
+*/
+
+TARGET		10285c4a.dll //samplegraphicsurfacedrawer.DLL
+TARGETTYPE	PLUGIN //ECOMIIC
+UID			0x10009D8D 0x10285C4A
+CAPABILITY	All -Tcb
+VENDORID	0x70000001
+
+MACRO		SYMBIAN_GRAPHICS_GCE
+
+#ifndef USERINCLUDE_WSGRAPHICDRAWERINTERFACE_H
+macro USERINCLUDE_WSGRAPHICDRAWERINTERFACE_H
+#endif
+
+OS_LAYER_SYSTEMINCLUDE_SYMBIAN
+
+LIBRARY		ecom.lib estor.lib fbscli.lib euser.lib
+LIBRARY		wsgraphicdrawer.lib ws32.lib w32stdgraphic.lib
+
+UNPAGED
+
+SOURCEPATH	../nga/samplegraphicsurfacedrawer
+
+RESOURCE	10285C4A.RSS
+
+SOURCE proxy.cpp graphicsurfacedrawer.CPP
+
+SMPSAFE

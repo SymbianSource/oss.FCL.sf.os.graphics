@@ -20,4 +20,4 @@ LOAD_SUITE egltestserver
 
 RUN_TEST_STEP 100 egltestserver Benchmark_CreateCloseImage
 RUN_TEST_STEP 100 egltestserver Benchmark_Multi_Process_CreateCloseImage
-RUN_TEST_STEP 100 egltestserver Benchmark_DrawImage
+RUN_TEST_STEP 300 egltestserver Benchmark_DrawImage

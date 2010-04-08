@@ -85,6 +85,7 @@ LIBRARY                 tgraphicsharness.lib
 LIBRARY                 graphicsscreencomparison.lib
 LIBRARY                 egltestcommon.lib
 LIBRARY                 tprofiler.lib
+LIBRARY                 estor.lib
 
 DEFFILE                 egltest.def
 

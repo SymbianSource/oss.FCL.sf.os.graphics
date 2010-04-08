@@ -5202,6 +5202,25 @@ void call_vector_576 ()
 	_asm mov eax, 576
 	_asm jmp common_dispatch
 	}
+
+__declspec(dllexport)
+__declspec(naked)
+void call_vector_577 ()
+	{
+	// ; class TSize RWindowBase::SizeForEgl(void) const
+	_asm mov eax, 577
+	_asm jmp common_dispatch
+	}
+
+__declspec(dllexport)
+__declspec(naked)
+void call_vector_578 ()
+	{
+	// ; int RWindowBase::FixNativeOrientation(void)
+	_asm mov eax, 578
+	_asm jmp common_dispatch
+	}
+
 }
-#define MAX_ORDINAL 577
+#define MAX_ORDINAL 579
 

@@ -52,7 +52,11 @@ TInt ChainWservSwitch()
 
 	// try to launch it
 	const TPtrC exeName = nga ?  KWservSwitchNga() : KWservSwitchNonNga();
+
+#ifdef _DEBUG
 	RDebug::Print(_L("%S: Starting \"%S\" \"%S\""), &KProcessName, &exeName, &argPtr);
+#endif
+
 	RProcess server;
 	TInt err = server.Create(exeName, argPtr, EOwnerThread);
 	delete arg;
@@ -63,7 +67,9 @@ TInt ChainWservSwitch()
 		}
 
 	// wait for server to start
+#ifdef _DEBUG
 	RDebug::Print(_L("%S: waiting on process ..."), &KProcessName);
+#endif
 	TRequestStatus stat;
 	server.Rendezvous(stat);
 
@@ -87,7 +93,9 @@ TInt E32Main()
 	// propagate error to SysStart
 	if (error)
 		{
+#ifdef _DEBUG
 		RDebug::Print(_L("%S: Failed with error %i"), &KProcessName, error);
+#endif
 		}
 	RProcess::Rendezvous(error);
 	return error;

@@ -49,7 +49,7 @@ template <class T> TInt  CGenericScreenDevice<T>::ConstructScreen(TInt , TAny *,
 		{	//Note: This will cause WServ startup to fail. WServ only accepts KErrNotSupported
 		return KErrHardwareNotAvailable;
 		}
-	TInt ret = CDrawXxxBppBitmap::Construct(aSize);
+	TInt ret = CDrawXxxBppBitmap::Construct(aSize, CDrawXxxBppBitmap::iScanLineWords << 2);
 	if (ret == KErrNone)
 		{
 		CDrawXxxBppBitmap::iBits = (TUint32*)iHelper.AddressFirstPixel();

@@ -84,6 +84,13 @@ public:
 	inline void RefreshWindowSizeCache(TInt aHandle, const TSize& aNewSize);
 	inline TInt CachedWindowSize(TInt aHandle, TSize& aSize);
 	inline void DestroyWindowSizeCacheEntry(TInt aHandle);	
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+	void EnableWindowNativeSizeCacheL();
+	inline TBool WindowNativeSizeCacheEnabled() const;
+	inline TInt SetWindowNativeSize(TInt aHandle, const TSize& aNativeSize);
+	inline TInt WindowNativeSize(TInt aHandle, TSize& aSize);
+	inline void DestroyWindowNativeSizeCacheEntry(TInt aHandle);
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
     
 private:
 	TInt DoWrite(TInt aHandle, TUint aOpcode, TBool aFlush, const TIpcArgs* aIpcArgs, const TAny* aData1=NULL, TInt aLength1=0, const TAny* aData2=NULL, TInt aLength2=0);
@@ -116,6 +123,9 @@ private:		//Added here as adding it to RWsSession breaks BC.
 	    };
 	
 	RHashMap<TInt, TWindowSizeCacheEntry>* iWindowSizeCache;
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+	RHashMap<TInt, TWindowSizeCacheEntry>* iWindowNativeSizeCache;
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 	};
 
 
@@ -184,6 +194,46 @@ inline void RWsBuffer::DestroyWindowSizeCacheEntry(TInt aHandle)
     // Otherwise, there isn't a size cache entry, and err == KErrNotFound.
     __ASSERT_DEBUG(err == KErrNone || err == KErrNotFound, Assert(EW32AssertWindowSizeCacheFailure));
     }
+
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+inline TBool RWsBuffer::WindowNativeSizeCacheEnabled() const
+    {
+    return iWindowNativeSizeCache ? ETrue : EFalse;
+    }
+
+inline TInt RWsBuffer::SetWindowNativeSize(TInt aHandle, const TSize& aNativeSize)
+    {
+    __ASSERT_ALWAYS(iWindowNativeSizeCache != NULL, Assert(EW32AssertWindowNativeSizeCacheFailure));
+    RWsBuffer::TWindowSizeCacheEntry* entry = iWindowNativeSizeCache->Find(aHandle);
+	__ASSERT_ALWAYS(!entry, Assert(EW32AssertWindowNativeSizeCacheFailure));
+    return iWindowNativeSizeCache->Insert(aHandle, RWsBuffer::TWindowSizeCacheEntry(aNativeSize));
+    }
+
+inline TInt RWsBuffer::WindowNativeSize(TInt aHandle, TSize& aSize)
+    {
+    __ASSERT_ALWAYS(iWindowNativeSizeCache != NULL, Assert(EW32AssertWindowNativeSizeCacheFailure));
+    RWsBuffer::TWindowSizeCacheEntry* entry = iWindowNativeSizeCache->Find(aHandle);
+    if (entry)
+        {
+        aSize = entry->iSize;
+        return KErrNone;
+        }
+    else
+        {
+        return KErrNotFound;
+        }
+    }
+
+inline void RWsBuffer::DestroyWindowNativeSizeCacheEntry(TInt aHandle)
+    {
+    __ASSERT_ALWAYS(iWindowNativeSizeCache != NULL, Assert(EW32AssertWindowNativeSizeCacheFailure));
+    TInt err = iWindowNativeSizeCache->Remove(aHandle);
+    // If there is a window size cache entry, then err == KErrNone.
+    // Otherwise, there isn't a size cache entry, and err == KErrNotFound.
+    __ASSERT_DEBUG(err == KErrNone || err == KErrNotFound, Assert(EW32AssertWindowNativeSizeCacheFailure));
+    }
+
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 
 
 #endif

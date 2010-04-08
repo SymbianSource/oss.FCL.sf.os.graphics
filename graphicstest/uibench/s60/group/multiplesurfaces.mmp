@@ -25,8 +25,7 @@ userinclude     ..\src\tests_flowwindow
 userinclude     ..\src\tests_zorder
 userinclude     ..\src\windows
 
-systeminclude   /epoc32/include
-systeminclude   /epoc32/include/stdapis
+MW_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 sourcepath      .
 START resource multiplesurfaces_reg.rss

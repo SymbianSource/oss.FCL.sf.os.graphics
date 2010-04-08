@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1998-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -47,8 +47,8 @@ REM FBSERV - Font & Bitmap Server
 		#define FBSERV_PAGEDDATA_CONFIG unpageddata
 	#endif
 
-	file=ABI_DIR\BUILD_DIR\fbserv_fmm.exe 	\sys\bin\fbserv.exe	FBSERV_PAGEDDATA_CONFIG
-	file=ABI_DIR\BUILD_DIR\fbscli_fmm.dll 	\sys\bin\fbscli.dll
+	file=ABI_DIR\BUILD_DIR\fbserv.exe 	\sys\bin\fbserv.exe	FBSERV_PAGEDDATA_CONFIG
+	file=ABI_DIR\BUILD_DIR\fbscli.dll 	\sys\bin\fbscli.dll
 #else
 	file=ABI_DIR\DEBUG_DIR\fbserv.exe 	sys\bin\fbserv.exe
 	file=ABI_DIR\DEBUG_DIR\fbscli.dll 	sys\bin\fbscli.dll

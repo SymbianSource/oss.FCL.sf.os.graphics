@@ -197,9 +197,10 @@ static void m3gApplyFog(const Fog *self)
     M3G_ASSERT_GL;
 }
 
+#ifdef M3G_USE_NGL_API
 /*!
  * \internal
- * \brief Applies fog to OpenGL. This is used for
+ * \brief Applies fog to NGL. This is used for
  * Sprite3D objects only.
  *
  * \param self          Fog object
@@ -232,12 +233,9 @@ static void m3gApplySpriteFog(const Fog *self, M3Gfloat eyeZ, M3Gfloat finalZ)
 
 		glEnable(GL_FOG);
 		glFogf(GL_FOG_MODE, GL_LINEAR);
-#ifdef M3G_USE_NGL_API
+
         /* NGL works differently in fog calculation */
 		glFogf(GL_FOG_START, -m3gDiv(finalZ, fogValue));
-#else
-		glFogf(GL_FOG_START, m3gAbs(m3gDiv(finalZ, fogValue)));
-#endif
 		glFogf(GL_FOG_END, 0.f);
 		glFogxv(GL_FOG_COLOR, temp);
     }
@@ -245,7 +243,7 @@ static void m3gApplySpriteFog(const Fog *self, M3Gfloat eyeZ, M3Gfloat finalZ)
 		glDisable(GL_FOG);
     }
 }
-
+#endif
 /*----------------------------------------------------------------------
  * Virtual function table
  *--------------------------------------------------------------------*/

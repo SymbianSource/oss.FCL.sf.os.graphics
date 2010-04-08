@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,7 +20,6 @@
 #include <gdi.h>
 #include <test/fontinjector.h>
 #include <test/TGraphicsHarness.h>
-#include "tfbsmultithread.h"
 
 _LIT(KTempFilename,"c:\\temp.mbm");
 _LIT(KTestBitmapOnZ,"z:\\system\\data\\tfbs.mbm");
@@ -138,10 +137,9 @@ private:
 	TInt LoadOpenFontLibraries();
 	TBool CheckTypefacesSupport(const TTypefaceSupport& aInfo1, const TTypefaceSupport& aInfo2);
 	void LoadFontsL(const TDesC& aFontsDir);
-	void CreateSecondThreadAndCheckPanicL(TFbsTestThreadInfo& aTestCase, TInt aPanicCode, TExitCategoryName aExitCategory, const TDesC &aThreadName);
-	static TInt SecondThreadStart(TAny* aTestInfo);
-	static TInt SecondThreadMainL(TFbsTestThreadInfo* aTestInfo);
-	static TInt SecondThreadPanicInvalidHandleInIpcCall();
+	void SecondThreadPanicInvalidHandleInIpcCallL();
+	void CreateSecondThreadAndCheckPanicL(void (CTFbs::*aMethodL)(), TInt aPanicCode, const TDesC& aPanicCategory, const TDesC &aThreadName);
+	static TInt MethodDelegatorThreadFunction(TAny* aDelegator);
 
 private:
 	TInt iHandle;

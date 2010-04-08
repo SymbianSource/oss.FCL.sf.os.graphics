@@ -14,7 +14,7 @@
 # Description: 
 #
 
-﻿import sys
+import sys
 # first argument is path to file to modify
 filePath=sys.argv[1]
 outFile=filePath

@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1998-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -345,10 +345,13 @@ EXPORT_C TFontSpec::TFontSpec(const TDesC& aTypefaceName,TInt aHeight):
 The object's font style is set to the default: EPostureUpright, EStrokeWeightNormal, 
 and EPrintPosNormal.
 
-@param aTypefaceName The name of the typeface (e.g. "Roman"). 
-@param aHeight The height of the typeface, in twips. */
+@param aTypefaceName The name of the typeface (e.g. "Roman"). It should be no
+	longer than KMaxTypefaceNameLength characters in length.
+@param aHeight The height of the typeface, in twips. 
+@panic GDI 6, if aTypefaceName is more than KMaxTypefaceNameLength characters long.
+*/
 	{
-	iTypeface.iName=aTypefaceName;
+	iTypeface.SetName(aTypefaceName);
 	}
 
 
@@ -603,6 +606,29 @@ EXPORT_C void TTypeface::SetScriptTypeForMetrics(TInt aScript)
 EXPORT_C TInt TTypeface::ScriptTypeForMetrics() const
 	{
 	return (KTTypefaceMaskScript & iFlags) >> KTTypefaceBitsNumAttrib;
+	}
+
+/**
+Sets the name of the typeface. This method should be used rather than
+directly accessing the iName public member.
+@param aName The name of the typeface (e.g. "Roman"). It should be no 
+	longer than KMaxTypefaceNameLength characters in length.
+@panic GDI 6, if aName is more than KMaxTypefaceNameLength characters
+	long.
+*/
+EXPORT_C void TTypeface::SetName(const TDesC& aName)
+	{
+	GDI_ASSERT_ALWAYS(aName.Length() <= KMaxTypefaceNameLength, EGdiPanic_TypefaceNameOverflow);
+	iName=aName;
+	}
+
+/**
+Returns the name of the typeface.
+@return The name of the typeface.
+*/
+EXPORT_C const TDesC& TTypeface::Name() const
+	{
+	return iName;
 	}
 
 
