@@ -72,7 +72,7 @@ used.
         
         WARNING: Enum for internal use ONLY. Compatibility is not guaranteed in future releases. */        
         ETypeLast=ETypeHollowRectangle,
-        /** Reserved for future use.
+        /** Reserved for future use. */
 		
 		/** All custom text cursors must have a type value greater than this. */
 		ETypeLastBasic = 1000,	
