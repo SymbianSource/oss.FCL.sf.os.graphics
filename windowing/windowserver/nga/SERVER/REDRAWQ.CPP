@@ -170,7 +170,9 @@ TBool CRedrawQueue::FindWindowNeedingRedrawEvent(TWsRedrawEvent& aEvent)
 	TInt invalidWindows = 0;
 	for (TInt screenNo = 0; screenNo < CWsTop::NumberOfScreens(); ++screenNo)
 		{
-		CWsRootWindow* rootWindow = CWsTop::Screen(screenNo)->RootWindow();
+		const CScreen* screen = CWsTop::Screen(screenNo);
+		WS_ASSERT_ALWAYS(screen, EWsPanicNoScreen);
+		CWsRootWindow* rootWindow = screen->RootWindow();
 		for (CWsWindowGroup *groupWin = rootWindow->Child(); groupWin; groupWin = groupWin->NextSibling())
 			{
 			if (groupWin->WsOwner() == iWsOwner)

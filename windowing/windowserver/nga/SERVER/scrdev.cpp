@@ -46,6 +46,7 @@ DWsScreenDevice::DWsScreenDevice(CWsClient* aOwner, TInt aDefaultScreenNumber, T
 		,iClientScreenDevicePointer(aClientScreenDevicePointer)
 	{
 	MWsScreen* pOI=Screen();
+	WS_ASSERT_ALWAYS(pOI, EWsPanicNoScreen);
 	iDispCont=pOI->ObjectInterface<MWsDisplayControl>();
 	iDispMap =pOI->ObjectInterface<MWsDisplayMapping>();
 	iTestScreenCapture = pOI->ObjectInterface<MWsTestScreenCapture>();

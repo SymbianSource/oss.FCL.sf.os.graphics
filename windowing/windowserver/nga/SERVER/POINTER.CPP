@@ -81,7 +81,9 @@ void TWsPointer::InitStaticsL()
 	iEmulatorRotatePointerCoords = WsIniFile->FindVar(KWSERVIniFileVarEmulatorRotPointCoords);
 #endif
 
-	iRootWindow = CWsTop::Screen()->RootWindow();
+	const CScreen* screen = CWsTop::Screen();
+	WS_ASSERT_ALWAYS(screen, EWsPanicNoScreen);
+	iRootWindow = screen->RootWindow();
 	
 	TMachineInfoV1Buf machineInfo;
 	UserHal::MachineInfo(machineInfo);

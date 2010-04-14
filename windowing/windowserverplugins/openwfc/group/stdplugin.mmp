@@ -78,6 +78,7 @@ LIBRARY	 	libEGL.lib
 //TODO Change the following line once eglsynchelper has been corrected
 //     to be available as a dynamic library
 STATICLIBRARY  eglsynchelper.lib
+LIBRARY     bitgdi.lib // needed just for CFbsDevice::DisplayMode16M call
 
 #ifdef WINS
 LIBRARY		osbwin32.lib

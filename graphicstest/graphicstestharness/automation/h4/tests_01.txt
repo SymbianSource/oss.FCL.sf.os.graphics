@@ -23,7 +23,7 @@ TESTEXECUTE, \logs\testexecute\fbstest_T_Alloc.htm,						, z:\fbstest\fbstest_T_
 TESTEXECUTE, \logs\testexecute\fbstest_T_Clean.htm,						, z:\fbstest\fbstest_T_Clean.script, 800
 TESTEXECUTE, \logs\testexecute\fbstest_T_Compressed.htm,				, z:\fbstest\fbstest_T_Compressed.script, 800
 TESTEXECUTE, \logs\testexecute\fbstest_T_Defect.htm,					, z:\fbstest\fbstest_T_Defect.script, 800
-TESTEXECUTE, \logs\testexecute\fbstest_T_Fbs.htm,						, z:\fbstest\fbstest_T_Fbs.script, 800
+# TESTEXECUTE, \logs\testexecute\fbstest_T_Fbs.htm,						, z:\fbstest\fbstest_T_Fbs.script, 800
 TESTEXECUTE, \logs\testexecute\fbstest_T_File.htm,						, z:\fbstest\fbstest_T_File.script, 800
 TESTEXECUTE, \logs\testexecute\fbstest_t_getallbitmapscapability.htm,	, z:\fbstest\fbstest_t_getallbitmapscapability.script, 800
 TESTEXECUTE, \logs\testexecute\fbstest_T_IPCTest.htm,					, z:\fbstest\fbstest_T_IPCTest.script, 800

@@ -186,7 +186,6 @@ private:
 	// Service client commands by dispatching them to the object associated with the op code
 	void DoServiceL(const RMessage2& aMessage, TBool& aCompleteRequest);
 	void DoServiceCommandBuf();
-	static TInt DoContinueDeferredServiceOfCommandBuf(TAny* aClient);
 	void DispatchCommandsInBufL();
 	void CompleteMessage(const RMessage2& aMessage,TInt aReason);
 	
@@ -302,7 +301,6 @@ private:
 	static TBuf8<EClientBufferMaxSize> iCmdBuf; // Buffer contain a block of client commands
 	static CWsObject* iDestObj;			// Current object client command is for
 	static const TUint8* iNextCmd;		// Pointer in buffer to the next command to be processed
-	static CIdle* iMoreCommands;		// Active object responsible for executing more client commands
 
 	static TInt iDefaultSystemPointerCursorIndex;		// Negative when there isn't one
 	static CWsPointerCursor* iDefaultSystemPointerCursor;

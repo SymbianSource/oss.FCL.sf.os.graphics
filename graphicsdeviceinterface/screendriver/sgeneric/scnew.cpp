@@ -276,7 +276,7 @@ EXPORT_C CFbsDrawDevice* CFbsDrawDevice::NewScreenDeviceL(TInt aScreenNo,
 */
 EXPORT_C TDisplayMode CFbsDrawDevice::DisplayMode16M()
 	{
-	return EColor16MAP;
+	return EColor16MA;
 	}
 
 

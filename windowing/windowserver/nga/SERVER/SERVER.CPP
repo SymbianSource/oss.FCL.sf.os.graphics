@@ -951,6 +951,13 @@ MWsAnimationScheduler* CWindowServer::AnimationScheduler()
 	return iDefaultAnimationScheduler;
 	}
 
+void CWindowServer::PrepareShutdown()
+	{
+	//Stop the renderloop, i.e. prevent any further calls to MWsAnimationScheduler::Animate() 
+	delete iDefaultAnimationScheduler;
+	iDefaultAnimationScheduler = NULL;
+	}
+
 TInt CWindowServer::RegisterEventHandler(CWsGraphicDrawer* aDrawer, MWsEventHandler* aHandler, TUint32 aEventMask)
 	{
 	if (!aDrawer || !aHandler || aEventMask==0)

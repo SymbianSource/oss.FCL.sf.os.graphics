@@ -41,7 +41,7 @@ TESTEXECUTE, \logs\testexecute\FreeTypeTest_T_TypeTypeTable.htm,			, z:\FreeType
 # GDI
 TESTEXECUTE, \logs\testexecute\gditest_T_BiDi.htm,						, z:\gditest\gditest_T_BiDi.script, 800
 TESTEXECUTE, \logs\testexecute\gditest_T_BiDiDefect.htm,				, z:\gditest\gditest_T_BiDiDefect.script, 800
-TESTEXECUTE, \logs\testexecute\gditest_T_GlyphSelection.htm,			, z:\gditest\gditest_T_GlyphSelection.script, 8000
+# TESTEXECUTE, \logs\testexecute\gditest_T_GlyphSelection.htm,			, z:\gditest\gditest_T_GlyphSelection.script, 8000
 TESTEXECUTE, \logs\testexecute\gditest_T_LineBreak.htm,					, z:\gditest\gditest_T_LineBreak.script, 3000
 TESTEXECUTE, \logs\testexecute\gditest_T_Rgb.htm,						, z:\gditest\gditest_T_Rgb.script, 800
 TESTEXECUTE, \logs\testexecute\gditest_T_Types.htm,						, z:\gditest\gditest_T_Types.script, 800
@@ -54,7 +54,7 @@ TESTEXECUTE, \logs\testexecute\openglestest_t_basicegl.htm,				, z:\openglestest
 TESTEXECUTE, \logs\testexecute\openglestest_t_pbufferequivegl.htm,		, z:\openglestest\openglestest_t_pbufferequivegl.script, 16000
 TESTEXECUTE, \logs\testexecute\openglestest_t_pixmapequivegl.htm,		, z:\openglestest\openglestest_t_pixmapequivegl.script, 16000
 TESTEXECUTE, \logs\testexecute\openglestest_t_stress.htm,				, z:\openglestest\openglestest_t_stress.script, 800
-TESTEXECUTE, \logs\testexecute\openglestest_t_windowresize.htm,			, z:\openglestest\openglestest_t_windowresize.script, 3200
+# TESTEXECUTE, \logs\testexecute\openglestest_t_windowresize.htm,			, z:\openglestest\openglestest_t_windowresize.script, 3200
 
 # PDRStore
 TESTEXECUTE, \logs\testexecute\pdrstoretest_T_Pdr.htm,					, z:\pdrstoretest\pdrstoretest_T_Pdr.script,  	 2000

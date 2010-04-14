@@ -45,6 +45,7 @@ void CWsDrawableSource::ConstructL(const TWsClCmdCreateDrawableSource &aParams)
 		User::Leave(KErrArgument);
 		}
 	MWsScreen* pOI=screen;
+	WS_ASSERT_ALWAYS(pOI, EWsPanicNoScreen);
 	CWsDrawableSource::iDrawResource = pOI->ObjectInterface<MWsDrawableSourceProvider>();
 	if (!iDrawResource)
 		{

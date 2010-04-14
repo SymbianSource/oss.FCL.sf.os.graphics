@@ -17,5 +17,5 @@
 # program,log,commdb,script,timeout,release,pre cmd,post cmd
 
 # UI_Bench
-TESTEXECUTE, \logs\testexecute\te_uibench.htm,				, z:\uibench\te_uibench.Script, 80000
+# TESTEXECUTE, \logs\testexecute\te_uibench.htm,				, z:\uibench\te_uibench.Script, 80000
 

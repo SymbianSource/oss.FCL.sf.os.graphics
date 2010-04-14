@@ -51,7 +51,6 @@ TInt CWsClient::iReplyOffset;
 CWsClient* CWsClient::iCurrentClient;
 CWsObject* CWsClient::iDestObj;
 const TUint8* CWsClient::iNextCmd;
-CIdle* CWsClient::iMoreCommands=NULL;
 
 TUint CWsClient::iConnectionId = CDebugLogBase::EDummyConnectionId+1;
 CArrayFixFlat<CWsClient::TWsCursorArrayItem>* CWsClient::iSystemPointerCursors = NULL;
@@ -549,7 +548,7 @@ void CWsClient::DispatchCommandsInBufL()	// (step #4)
 		// Dispatch the command to the WServ object that will process it
 		iDestObj->CommandL(opcode, cmdParams);	// (call #5)
 		} 
-	while(iNextCmd<endCmd && !TWindowServerEvent::EventReceiver()->IsReadyToRun());
+	while(iNextCmd<endCmd);
 	
 	}
 
@@ -569,21 +568,12 @@ void CWsClient::DoServiceCommandBuf() // (step #3.1)
 
 	if (iInternalFlags&(EFinishedProcessingCommands|EPanicClientAsSoonAsPossible))
 		CompleteMessage(iClientMessage,iReply);	// (finish)
-	else
-		iMoreCommands->Start(TCallBack(CWsClient::DoContinueDeferredServiceOfCommandBuf,this));	// (call #3.1.1)
 	
 	iCurrentClient=NULL;
 #if defined(_DEBUG)
 	User::Heap().Check();
 #endif
 	}
-
-TInt CWsClient::DoContinueDeferredServiceOfCommandBuf(TAny* aClient)	// (step #3.1.1)
-	{
-	static_cast<CWsClient*>(aClient)->DoServiceCommandBuf();	// (call #3.1)
-	return KErrNone;
-	}
-
 
 void CWsClient::ExecuteAsyncClientCommandL(TInt aOpcode, const RMessage2& aMessage)	// (step #3.2)
 	{
@@ -1997,7 +1987,6 @@ void CWsClient::RemoteReadL(TDes8& aDes, TInt aOffset)
 
 void CWsClient::InitStaticsL()
 	{
-	iMoreCommands=CIdle::NewL(EClientBufferPriority);
 	}
 
 void CWsClient::DeleteStatics()
@@ -2012,8 +2001,6 @@ void CWsClient::DeleteStatics()
 		iTextCursorArray = NULL;
 		}
 
-	delete iMoreCommands;
-	iMoreCommands=NULL;
 	// coverity[extend_simple_error] 
 	}
 		

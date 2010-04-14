@@ -670,7 +670,7 @@ void CTLowLevel::Test()
 	iReportIteration = 1;
 	iTotalReportIterations = KNumBlendingColors;
 	((CTLowLevelStep*)iStep)->SetTestStepID(_L("GRAPHICS-SCREENDRIVER-0002"));
-	TestWriteRgbOutlineAndShadow();
+	//TestWriteRgbOutlineAndShadow(); // commented out pending case resolution #327407
 	TRAP(err,((CTLowLevelStep*)iStep)->RecordTestResultL(););
     	if (err!=KErrNone)
     		INFO_PRINTF1(_L("Failed to record test result"));

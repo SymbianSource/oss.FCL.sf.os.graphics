@@ -20,9 +20,9 @@
 TESTEXECUTE, \logs\testexecute\openglestest_t_windowequivegl.htm,	, z:\openglestest\openglestest_t_windowequivegl.script,	600
 
 # OpenVG - Require tcsc plugin
-TESTEXECUTE, \logs\testexecute\openvgtest_t_multiplewindows.htm,	, z:\openvgtest\openvgtest_t_multiplewindows.script, 	300
+# TESTEXECUTE, \logs\testexecute\openvgtest_t_multiplewindows.htm,	, z:\openvgtest\openvgtest_t_multiplewindows.script, 	300
 TESTEXECUTE, \logs\testexecute\openvgtest_t_multiplewindows2.htm,	, z:\openvgtest\openvgtest_t_multiplewindows2.script, 	300
-TESTEXECUTE, \logs\testexecute\openvgtest_t_windowequivegl.htm,		, z:\openvgtest\openvgtest_t_windowequivegl.script, 	300
+# TESTEXECUTE, \logs\testexecute\openvgtest_t_windowequivegl.htm,		, z:\openvgtest\openvgtest_t_windowequivegl.script, 	300
 
 # Composited screen capture test - Requires tcsc plugin
 TESTEXECUTE, \logs\testexecute\wscsc.htm, 							, z:\wstest\wscsc.script, 								600
