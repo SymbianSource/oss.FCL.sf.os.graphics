@@ -567,7 +567,7 @@ void CSurfaceUtility::FillSurfaceL(TSurfaceId& aSurface, const TRgb& aColor)
 		Mem::Copy(linePtr, surfacePtr, info.iSize.iWidth * BytesPerPixelL(info.iPixelFormat));
 		}
 	
-	TInt err = iSurfaceUpdateSession.SubmitUpdate(0, aSurface, 0, NULL);
+	TInt err = iSurfaceUpdateSession.SubmitUpdate(KAllScreens, aSurface, 0, NULL);
 	if (err!=KErrNone)
 		LOG(("Error submitting update: 0x%X\n", err));
 
@@ -703,7 +703,7 @@ void CSurfaceUtility::FillRectangleL(TSurfaceId& aSurface, const TPoint& aStartP
 	{
 	FillRectangleNoUpdateL(aSurface, aStartPos, aSize, aColor);
 	
-	TInt err = iSurfaceUpdateSession.SubmitUpdate(0, aSurface, 0, NULL);
+	TInt err = iSurfaceUpdateSession.SubmitUpdate(KAllScreens, aSurface, 0, NULL);
 	if (err!=KErrNone)
 		LOG(("Error submitting update: 0x%X\n", err));
 	}
@@ -999,7 +999,7 @@ void CSurfaceUtility::GridFillSurfaceL(TSurfaceId& aSurface, const TRgb& aColor,
 			}
 		}
 
-	TInt err =iSurfaceUpdateSession.SubmitUpdate(0, aSurface, 0, NULL);
+	TInt err =iSurfaceUpdateSession.SubmitUpdate(KAllScreens, aSurface, 0, NULL);
 	if (err!=KErrNone)
 		LOG(("Error submitting update: 0x%X\n", err));
 	
@@ -1274,7 +1274,7 @@ void CSurfaceUtility::FanFillSurfaceL(TSurfaceId& aSurface, const TRgb& aColor, 
 		FanFill<TUint>(innerXY,info.iStride/4,(TUint*)surfacePtr,linesTL,linesBR,linesBL,linesTR);
 		}
 	
-	iSurfaceUpdateSession.SubmitUpdate(0, aSurface, 0, NULL);
+	iSurfaceUpdateSession.SubmitUpdate(KAllScreens, aSurface, 0, NULL);
 	
 	CleanupStack::PopAndDestroy(/* chunk */);
 	}
@@ -1361,7 +1361,7 @@ void CSurfaceUtility::LineFillSurfaceL(TSurfaceId& aSurface, const TRgb& aBackCo
 
 	chunk.Close();
 	
-	iSurfaceUpdateSession.SubmitUpdate(0, aSurface, 0, NULL);
+	iSurfaceUpdateSession.SubmitUpdate(KAllScreens, aSurface, 0, NULL);
 	}
 /**
  * Generates a bitmap equivalent to the surface.
@@ -1479,9 +1479,9 @@ Submit an update to a surface to the update server.
 @param aScreenNumber	The screen to be updated where the surface is shown.
 @param aSurface	The surface which has been updated.
 @param aRegion	The area of the surface affected, or NULL for all of it.*/
-void CSurfaceUtility::SubmitUpdate(TInt aScreenNumber, const TSurfaceId& aSurface, const TRegion* aRegion,TInt aBufferNumber)
+void CSurfaceUtility::SubmitUpdate(TInt /* aScreenNumber */, const TSurfaceId& aSurface, const TRegion* aRegion,TInt aBufferNumber)
 	{
-	TInt err =iSurfaceUpdateSession.SubmitUpdate(aScreenNumber, aSurface, aBufferNumber, aRegion); 
+	TInt err =iSurfaceUpdateSession.SubmitUpdate(KAllScreens, aSurface, aBufferNumber, aRegion); 
 	if (err!=KErrNone)
 		LOG(("Error submitting update: 0x%X\n", err));
 	}
@@ -1494,13 +1494,13 @@ Map and submit an update to a surface to the update server.
 @param aSurface	The surface which has been updated.
 @param aRegion	The area of the surface affected, or NULL for all of it.*/
 void CSurfaceUtility::MapAndSubmitUpdateL(RChunk& aChunk, 
-		                                TInt aScreenNumber, 
+		                                TInt /* aScreenNumber */, 
 		                                const TSurfaceId& aSurface, 
 		                                const TRegion* aRegion)
 	{
 	User::LeaveIfError(iManager.MapSurface(aSurface, aChunk));
 	aChunk.Close();
-	TInt err =iSurfaceUpdateSession.SubmitUpdate(aScreenNumber, aSurface, 0, aRegion); 
+	TInt err =iSurfaceUpdateSession.SubmitUpdate(KAllScreens, aSurface, 0, aRegion); 
 	if (err!=KErrNone)
 		LOG(("Error submitting update: 0x%X\n", err));
 	}
@@ -1534,7 +1534,7 @@ void CSurfaceUtility::CopyBitmapToSurfaceL(TSurfaceId& aSurface, const CFbsBitma
 		aBitmap.GetScanLine(ptr, start, size.iWidth, bmpFormat);
 		}
 
-	TInt err =iSurfaceUpdateSession.SubmitUpdate(0, aSurface, 0, NULL);
+	TInt err =iSurfaceUpdateSession.SubmitUpdate(KAllScreens, aSurface, 0, NULL);
 	if (err!=KErrNone)
 		{
 		LOG(("Error submitting update: 0x%X\n", err));

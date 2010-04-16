@@ -27,6 +27,7 @@ PRJ_EXPORTS
 surfacemanager.iby			/epoc32/rom/include/surfacemanager.iby
 surfacemanager_ref.iby		/epoc32/rom/include/surfacemanager_ref.iby
 ../inc/surfacemanager.h 	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/surfacemanager.h)
+../inc/surface_hints.h 	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/surface_hints.h)
 
 PRJ_MMPFILES
 surfacemanagerdriver.mmp

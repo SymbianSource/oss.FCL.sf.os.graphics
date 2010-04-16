@@ -1,4 +1,4 @@
-/* Copyright (c) 2009 The Khronos Group Inc.
+/* Copyright (c) 2009-2010 The Khronos Group Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -1414,6 +1414,18 @@ OWF_Image_Flip(OWF_IMAGE* image,
         maskPtr += maskLineDelta; \
         --rowCount; \
     }
+	
+#define BLENDER_INNER_LOOP_END_NO_MASK \
+                DA = blend->destinationFullyOpaque ? OWF_FULLY_OPAQUE : DA; \
+            } /* end tsColor check */ \
+            srcPtr ++; \
+            dstPtr ++; \
+            --colCount; \
+        } \
+        srcPtr += srcLineDelta; \
+        dstPtr += dstLineDelta; \
+        --rowCount; \
+    }
 
 #define TSC blend->tsColor->color
 #define SC srcPtr->color
@@ -1552,7 +1564,7 @@ OWF_Image_Blend(OWF_BLEND_INFO* blend,
                 DG = SG;
                 DB = SB;
                 DA = OWF_FULLY_OPAQUE;
-            BLENDER_INNER_LOOP_END;
+            BLENDER_INNER_LOOP_END_NO_MASK;
             break;
         }
 
@@ -1571,7 +1583,7 @@ OWF_Image_Blend(OWF_BLEND_INFO* blend,
                      OWF_ALPHA_MAX_VALUE;
                 DA = GA + (DA * (OWF_FULLY_OPAQUE - GA) + OWF_BLEND_ROUNDING_VALUE) / 
                      OWF_ALPHA_MAX_VALUE;
-            BLENDER_INNER_LOOP_END;
+            BLENDER_INNER_LOOP_END_NO_MASK;
             break;
         }
 
@@ -1586,7 +1598,7 @@ OWF_Image_Blend(OWF_BLEND_INFO* blend,
                 DG = SG + (DG * (OWF_FULLY_OPAQUE - SA) + OWF_BLEND_ROUNDING_VALUE) / OWF_ALPHA_MAX_VALUE;
                 DB = SB + (DB * (OWF_FULLY_OPAQUE - SA) + OWF_BLEND_ROUNDING_VALUE) / OWF_ALPHA_MAX_VALUE;
                 DA = SA + (DA * (OWF_FULLY_OPAQUE - SA) + OWF_BLEND_ROUNDING_VALUE) / OWF_ALPHA_MAX_VALUE;
-            BLENDER_INNER_LOOP_END;
+            BLENDER_INNER_LOOP_END_NO_MASK;
             break;
         }
 
@@ -1627,7 +1639,7 @@ OWF_Image_Blend(OWF_BLEND_INFO* blend,
                      OWF_ALPHA_MAX_VALUE;
                 DA = SAEA + (DA * (OWF_FULLY_OPAQUE - SAEA) + OWF_BLEND_ROUNDING_VALUE) /
                          OWF_ALPHA_MAX_VALUE;
-            BLENDER_INNER_LOOP_END;
+            BLENDER_INNER_LOOP_END_NO_MASK;
             break;
         }
 
@@ -1809,11 +1821,11 @@ OWF_Image_GetFormatPadding(OWF_PIXEL_FORMAT format)
         }
         default:
         {
+			OWF_ASSERT(0);
             break;
         }
     }
 
-    OWF_ASSERT(padding);
 
     return padding;
 }

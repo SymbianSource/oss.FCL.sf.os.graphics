@@ -31,6 +31,7 @@
 #include "egltest_image_multithread.h"
 #include "egltest_image_multiprocess.h"
 #include "egltest_benchmark_sgimage.h"
+#include "egltest_benchmark_swapbuffers.h"
 
 /*
 Entry point from egltest to create test step
@@ -63,7 +64,7 @@ EXPORT_C CEglTestStep* EglTestStepFactory::GetEglTestStep(const TDesC& aStepName
     else if (aStepName == KDisplay_OOM_ClientHeap)                                                  testStep = new CEglTest_Display_OOM_ClientHeap;
     else if (aStepName == KDisplay_OOM_ClientHeap_Initialize)                                       testStep = new CEglTest_Display_OOM_ClientHeap_Initialize;
 
-	//SyncObject tests excluding WaitFlush which requires OpenVG and OpenGL ES
+	// SyncObject tests excluding WaitFlush which requires OpenVG and OpenGL ES
 	else if (aStepName == KSyncObject_Positive_GetProcAddress)											testStep = new CEglTest_SyncObject_Positive_GetProcAddress;
 	else if (aStepName == KSyncObject_Positive_CreateDestroy)										testStep = new CEglTest_SyncObject_Positive_CreateDestroy;
 	else if (aStepName == KSyncObject_Positive_WaitSignal)											testStep = new CEglTest_SyncObject_Positive_WaitSignal;
@@ -101,19 +102,19 @@ EXPORT_C CEglTestStep* EglTestStepFactory::GetEglTestStep(const TDesC& aStepName
 	else if (aStepName == KCreatePixmapSurface_Alpha_bit_RSgImage)									testStep = new CEglTest_CreatePixmapSurface_Alpha_bit_RSgImage;
     else if (aStepName == KCreatePixmapSurface_RSgImage_Positive_MantadoryFormatUsageSupport)       testStep = new CEglTest_CreatePixmapSurface_RSgImage_Positive_MantadoryFormatUsageSupport;
 
-	// image tests
+	// Image tests
 	else if (aStepName == KEGL_Image_SgDriverHandle)												testStep = new CEglTest_EGL_Image_SgDriverHandle;
 	else if (aStepName == KEGL_Image_RSgImage_UseOpenVG_PersistImageData)							testStep = new CEglTest_EGL_Image_RSgImage_UseOpenVG_PersistImageData;
 	else if (aStepName == KEGL_Image_Consistent_Linked_List)										testStep = new CEglTest_EGL_Image_Consistent_Linked_List;	
 
-	// image negative tests
+	// Image negative tests
 	else if (aStepName == KEGL_Image_eglCreateImage_Bad_Parameter)									testStep = new CEglTest_EGL_Image_eglCreateImage_Bad_Parameter;
 	else if (aStepName == KEGL_Image_UsageBits_Enforcement)											testStep = new CEglTest_EGL_Image_UsageBits_Enforcement;
 	else if (aStepName == KEGL_Image_DestroyImageKHR)												testStep = new CEglTest_EGL_Image_DestroyImageKHR;	
 	else if (aStepName == KEGL_Image_VGImage_From_Invalid_EGLHandle)								testStep = new CEglTest_EGL_Image_VGImage_From_Invalid_EGLHandle;
 	else if (aStepName == KEGL_Image_Self_Drawing)													testStep = new CEglTest_EGL_Image_Self_Drawing;
 
-	//Siblings tests
+	// Siblings tests
 	else if (aStepName == KEGL_Image_Sibling_Basic)													testStep = new CEglTest_EGL_Image_Sibling_Basic;
 	else if (aStepName == KEGL_Image_Sibling_VGImage)												testStep = new CEglTest_EGL_Image_Sibling_VGImage;
 	else if (aStepName == KEGL_Image_Sibling_Two_VGImages)											testStep = new CEglTest_EGL_Image_Sibling_Two_VGImages;
@@ -122,7 +123,7 @@ EXPORT_C CEglTestStep* EglTestStepFactory::GetEglTestStep(const TDesC& aStepName
 	else if (aStepName == KEGL_Image_Sibling_VGImage_Child_CheckContents_CloseSgEarlier)			testStep = new CEglTest_EGL_Image_Sibling_VGImage_Child_CheckContents_CloseSgEarlier;
 	else if (aStepName == KEGL_Image_CreatePBufferFromClient_With_Sibling_VGImage)					testStep = new CEglTest_EGL_Image_CreatePBufferFromClient_With_Sibling_VGImage;
 
-	//VgImage to surfaces tests
+	// VgImage to surfaces tests
 	else if (aStepName == KEGL_Image_VgImage_To_Pixmap)												testStep = new CEglTest_EGL_Image_VgImage_To_Pixmap;
 	else if (aStepName == KEGL_Image_VGImage_To_Pixmap_CFbs)										testStep = new CEglTest_EGL_Image_VGImage_To_Pixmap_CFbs;
 	else if (aStepName == KEGL_Image_VgImage_To_pBuffer)											testStep = new CEglTest_EGL_Image_VgImage_To_pBuffer;
@@ -146,7 +147,6 @@ EXPORT_C CEglTestStep* EglTestStepFactory::GetEglTestStep(const TDesC& aStepName
 	else if (aStepName == KEGL_Image_Multi_Process_FontServer_Deferred)								testStep = new CEglTest_EGL_Image_Multi_Process_FontServer_Deferred;
 	else if (aStepName == KEGL_Image_Multi_Process_ThemeServer)										testStep = new CEglTest_EGL_Image_Multi_Process_ThemeServer;
 	else if (aStepName == KEGL_Image_Multi_Process_VgImage_ProcessTerminate)						testStep = new CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate;
-	else if (aStepName == KEGL_Image_Multi_Process_VgImage_ProcessTerminate2)						testStep = new CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate2;
 	else if (aStepName == KEGL_Image_Multi_Process_VgImage_ProcessTerminateNegative)				testStep = new CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminateNegative;
 	else if (aStepName == KEGL_Image_Multi_Process_VgImage_ReadWrite)								testStep = new CEglTest_EGL_Image_Multi_Process_VgImage_ReadWrite;
 
@@ -154,6 +154,7 @@ EXPORT_C CEglTestStep* EglTestStepFactory::GetEglTestStep(const TDesC& aStepName
     else if (aStepName == KBenchmark_CreateCloseImage)                                              testStep = new CEglTest_Benchmark_CreateCloseImage;
     else if (aStepName == KBenchmark_Multi_Process_CreateCloseImage)                                testStep = new CEglTest_Benchmark_Multi_Process_CreateCloseImage;
     else if (aStepName == KBenchmark_DrawImage)                                                     testStep = new CEglTest_Benchmark_DrawImage;
+    else if (aStepName == KBenchmark_SwapBuffers)                                                   testStep = new CEglTest_Benchmark_SwapBuffers;
 
 	return testStep;
 	}

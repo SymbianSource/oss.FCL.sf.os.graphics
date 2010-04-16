@@ -153,7 +153,40 @@ EXPORT_C TSize CEglTestCommonIniSettings::GetImageSize(const TDesC& aSectioName)
         {
         return size;
         }
-
     return TSize(0,0);
    }
 
+EXPORT_C TSize CEglTestCommonIniSettings::GetWindowSize(const TDesC& aSectioName)
+    {
+    _LIT(KKeyWindowWidth, "WindowWidth");
+    _LIT(KKeyWindowHeight, "WindowHeight");
+    TSize size(0, 0);
+    if(iIniData->FindVar(aSectioName, KKeyWindowWidth, size.iWidth) && 
+            iIniData->FindVar(aSectioName, KKeyWindowHeight, size.iHeight))
+        {
+        return size;
+        }
+	return TSize(0,0);
+   }
+
+EXPORT_C TInt CEglTestCommonIniSettings::GetThresholdGPUUsedMemory(const TDesC& aSectioName)
+    {
+    _LIT(KKeyThresholdGPUUsedMemory, "ThresholdGPUUsedMemory");
+    TInt thresholdGPUUsedMemory = 0;
+    if(iIniData->FindVar(aSectioName, KKeyThresholdGPUUsedMemory, thresholdGPUUsedMemory))
+        {
+        return thresholdGPUUsedMemory;
+        }
+    return 0;
+   }
+
+EXPORT_C TInt CEglTestCommonIniSettings::GetThresholdLastIteration(const TDesC& aSectioName)
+    {
+    _LIT(KKeyThresholdLastIteration, "ThresholdLastIteration");
+    TInt thresholdLastIteration = 0;
+    if(iIniData->FindVar(aSectioName, KKeyThresholdLastIteration, thresholdLastIteration))
+        {
+        return thresholdLastIteration;
+        }
+    return 0;
+   }

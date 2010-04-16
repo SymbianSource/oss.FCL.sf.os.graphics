@@ -252,7 +252,7 @@ TBool  CTPseudoAppEng::Drawing()
 	return iDrawing;
 	}
 
-void CTPseudoAppEng::SendUpdateRequest(TInt aScreen)
+void CTPseudoAppEng::SendUpdateRequest(TInt /*aScreen*/)
  	{
  	//Submit update
 	TRect rc[1] =
@@ -269,7 +269,7 @@ void CTPseudoAppEng::SendUpdateRequest(TInt aScreen)
 	iSurfaceUpdateSession.NotifyWhenDisplayed(status, timeStamp);
 	iTimeStampBefore = User::FastCounter();
 
-	TInt ret = iSurfaceUpdateSession.SubmitUpdate(aScreen, iSurfDetails.aSurfaceId, iSurfDetails.aBufferNumber, &region);
+	TInt ret = iSurfaceUpdateSession.SubmitUpdate(KAllScreens, iSurfDetails.aSurfaceId, iSurfDetails.aBufferNumber, &region);
 
 	User::WaitForRequest(status);
 

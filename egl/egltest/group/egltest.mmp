@@ -44,6 +44,8 @@ SOURCE                  egltest_image_multiprocess.cpp
 SOURCE                  egltest_image_negative.cpp
 SOURCE                  egltest_vgimagetosurfaces.cpp
 SOURCE                  egltest_benchmark_sgimage.cpp
+SOURCE                  egltest_benchmark_swapbuffers.cpp
+
 
 SOURCEPATH             ../scripts
 DOCUMENT               egltest_settings.ini
@@ -60,6 +62,7 @@ DOCUMENT               egltest_t_image_multiprocess.script
 DOCUMENT               egltest_t_vgimagetosurfaces.script
 DOCUMENT               egltest_t_image_negative.script
 DOCUMENT               egltest_t_benchmark_sgimage.script
+DOCUMENT               egltest_t_benchmark_swapbuffers.script
 
 
 LIBRARY                 rfileloggerclient.lib
@@ -85,6 +88,7 @@ LIBRARY                 tgraphicsharness.lib
 LIBRARY                 graphicsscreencomparison.lib
 LIBRARY                 egltestcommon.lib
 LIBRARY                 tprofiler.lib
+LIBRARY                 estor.lib
 
 DEFFILE                 egltest.def
 

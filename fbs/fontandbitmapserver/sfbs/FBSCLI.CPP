@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -95,27 +95,29 @@ CFbClient::~CFbClient()
 		}
 	
 	if (font_store)
+		{
 		font_store->DeleteSessionCache(iSessionHandle);
-	
-	// If the font store doesn't exist, neither will the shared heap owned by FBSERV.
-	if (font_store)
+		font_store->CleanupCacheOnFbsSessionTermination(iSessionHandle);
+		
+		// If the font store doesn't exist, neither will the shared heap owned by FBSERV.
 		iHeap->Free(iOpenFontGlyphData);
+		}
 	
 	// delete fonts hold by the client
 	delete iIx;
 	
 	// delete font files hold by the client
-    if (iFontFileIndex)
-        {
-        TInt count = iFontFileIndex->Count();
-        for (TInt index = 0;index < count; index++)
-            {
-            if (font_store)
-                font_store->RemoveFile(iFontFileIndex->At(0).iUid);
-            iFontFileIndex->Delete(0);
-            }
-        delete iFontFileIndex;
-        }
+	if (iFontFileIndex)
+		{
+		TInt count = iFontFileIndex->Count();
+		for (TInt index = 0;index < count; index++)
+			{
+			if (font_store)
+				font_store->RemoveFile(iFontFileIndex->At(0).iUid);
+			iFontFileIndex->Delete(0);
+			}
+		delete iFontFileIndex;
+		}
 
 	// Close the buffer used to hold the text thats needs shaping.
 	iTextToShape.Close();
@@ -268,6 +270,10 @@ void CFbClient::ServiceL(const RMessage2& aMessage)
 	case EFbsMessSetTwipsHeight:
 	case EFbsMessGetTwipsHeight:
 	case EFbsSetSystemDefaultTypefaceName:
+	case EFbsMessGetFontTable:
+	case EFbsMessReleaseFontTable:
+	case EFbsMessGetGlyphOutline:
+	case EFbsMessReleaseGlyphOutline: 
 #if (_DEBUG)
 	case EFbsMessSetDuplicateFail:
 #endif
@@ -792,6 +798,160 @@ TInt CFbClient::HandleMesgShapeDelete(const RMessage2& aMessage, TBool& aPanicRe
 	return KErrNone;
 	}
 
+TInt CFbClient::HandleMesgReleaseGlyphOutline(const RMessage2& aMessage, TBool& aPanicRequired)
+	{
+	TInt ret = KErrNone;
+	CFbTop* fbtop = TopLevelStore();
+	TPckgBuf<TFBSGlyphOutlineParam> params;
+	ret = aMessage.Read(0, params);
+	if (KErrNone != ret)
+		{
+		aPanicRequired = ETrue;
+		return ret;
+		}
+	CFontObject* fontptr = static_cast<CFontObject*>(iIx->At(params().iHandle, fbtop->FontConUniqueID()));
+	if(!fontptr)
+		{
+		aPanicRequired = ETrue;
+		return KErrArgument;
+		}
+	CBitmapFont* bitmapFont = fontptr->iAddressPointer;
+
+	TInt count = params().iCount;
+	TUint *glyphCodes = (TUint *)User::Alloc(count * sizeof(TUint));
+	if (NULL == glyphCodes)
+		{
+		return KErrNoMemory;
+		}
+	// copy the glyph codes out of the IPC buffer...
+	TPtr8 ptr((TUint8 *)glyphCodes, count * sizeof(TUint), count * sizeof(TUint));
+	ret = aMessage.Read(1, ptr);  
+
+	if (KErrNone == ret)
+		{
+		bitmapFont->ReleaseGlyphOutlines(count, glyphCodes,  
+				params().iHinted, iSessionHandle);
+		}
+	else 
+		{
+		aPanicRequired = ETrue;
+		}
+
+	User::Free(glyphCodes);
+	return ret;
+	}
+
+TInt CFbClient::HandleMesgGetGlyphOutline(const RMessage2& aMessage, TBool& aPanicRequired) 
+	{
+	TInt ret = KErrNone;
+	CFbTop* fbtop = TopLevelStore();
+	TPckgBuf<TFBSGlyphOutlineParam> params;
+	ret = aMessage.Read(0, params);
+	if (KErrNone != ret)
+		{
+		aPanicRequired = ETrue;
+		return ret;
+		}
+	CFontObject* fontptr = static_cast<CFontObject*>(iIx->At(params().iHandle, fbtop->FontConUniqueID()));
+	if(!fontptr)
+		{
+		aPanicRequired = ETrue;
+		return KErrArgument;
+		}
+	CBitmapFont* bitmapFont = fontptr->iAddressPointer;
+
+	TInt count = params().iCount;
+	TUint* glyphCodes = (TUint *)User::Alloc(count * sizeof(TUint));
+	if (NULL == glyphCodes)
+		{
+		return KErrNoMemory;
+		}
+	// copy the glyph codes out of the IPC buffer...
+	TPtr8 ptr((TUint8 *)glyphCodes, count * sizeof(TUint), count * sizeof(TUint));
+	ret = aMessage.Read(1, ptr);
+	if (KErrNone != ret)
+		{
+		User::Free(glyphCodes);
+		aPanicRequired = ETrue;
+		return ret;
+		}
+
+	TOffsetLen* offsetLens = 
+		(TOffsetLen *)User::Alloc(count * sizeof(TOffsetLen));
+	if (NULL == offsetLens)
+		{
+		User::Free(glyphCodes);
+		return KErrNoMemory;
+		}
+
+	TInt len = 0;
+	TAny* outline = NULL;
+	for (TInt i = 0; i < count; ++i)
+		{
+		bitmapFont->GetGlyphOutline(glyphCodes[i],  
+			params().iHinted, outline, len, iSessionHandle);
+		
+		offsetLens[i].iLen = len;
+		offsetLens[i].iOffset = PointerToOffset((outline), fbtop->HeapBase());
+		}
+	TPtr8 pkg2((TUint8 *)offsetLens, count * sizeof(TOffsetLen), 
+			count * sizeof(TOffsetLen));
+	ret = aMessage.Write(2, pkg2);
+	if (KErrNone != ret)
+		{
+		aPanicRequired = ETrue;
+		}
+
+	User::Free(glyphCodes);
+	User::Free(offsetLens);
+	return ret;  
+	}
+
+TInt CFbClient::HandleMesgReleaseFontTable(const RMessage2& aMessage, TBool& aPanicRequired)
+	{
+	CFbTop* fbtop = TopLevelStore();
+	CFontObject* fontptr = static_cast<CFontObject*>(iIx->At(aMessage.Int0(), fbtop->FontConUniqueID()));
+	if(!fontptr)
+		{
+		aPanicRequired = ETrue;
+		return KErrArgument;
+		}
+	CBitmapFont* bitmapFont = fontptr->iAddressPointer;
+
+	TUint32 tag = aMessage.Int1();
+
+	bitmapFont->ReleaseFontTable(tag, iSessionHandle);
+
+	return KErrNone;
+	}
+
+TInt CFbClient::HandleMesgGetFontTable(const RMessage2& aMessage, TBool& aPanicRequired)
+	{
+	TInt ret = KErrNone;
+	CFbTop* fbtop = TopLevelStore();
+	CFontObject* fontptr = static_cast<CFontObject*>(iIx->At(aMessage.Int0(), fbtop->FontConUniqueID()));
+	if(!fontptr)
+		{
+		aPanicRequired = ETrue;
+		return KErrArgument;
+		}
+	CBitmapFont* bitmapFont = fontptr->iAddressPointer;
+
+	TInt len = 0;
+	TAny* tablePtr = NULL;
+	ret = bitmapFont->GetFontTable((TUint32)aMessage.Int1(), tablePtr, len, iSessionHandle);
+
+	if (KErrNone == ret) 
+		{
+		TPckgBuf<TOffsetLen> params;
+		params().iLen = len;
+		params().iOffset = PointerToOffset(tablePtr, fbtop->HeapBase());
+		ret = aMessage.Write(2, params);
+		aPanicRequired = (KErrNone != ret);
+		}
+
+	return ret;
+	}
 
 void CFbClient::ProcFontMessage(const RMessage2& aMessage)
 	{
@@ -900,6 +1060,26 @@ void CFbClient::ProcFontMessage(const RMessage2& aMessage)
 				ret = KErrTooBig;
 				}
 
+			break;
+			}
+		case EFbsMessGetFontTable:
+			{
+			ret = HandleMesgGetFontTable(aMessage, panicRequired);
+			break;
+			}
+		case EFbsMessGetGlyphOutline:
+			{
+			ret = HandleMesgGetGlyphOutline(aMessage, panicRequired);
+			break;
+			}
+		case EFbsMessReleaseGlyphOutline:
+			{
+			ret = HandleMesgReleaseGlyphOutline(aMessage, panicRequired);
+			break;
+			}
+		case EFbsMessReleaseFontTable:
+			{
+			ret = HandleMesgReleaseFontTable(aMessage, panicRequired);
 			break;
 			}
 

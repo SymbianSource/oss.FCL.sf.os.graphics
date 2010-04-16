@@ -76,6 +76,7 @@ PRJ_TESTEXPORTS
 ../tfbs/scripts/fbstest_T_Secure.script							z:/fbstest/fbstest_t_secure.script
 ../tfbs/scripts/fbstest_T_File.script							z:/fbstest/fbstest_t_file.script
 ../tfbs/scripts/fbstest_T_Clean.script							z:/fbstest/fbstest_t_clean.script
+../tfbs/scripts/fbstest_t_fonttable.script						z:/fbstest/fbstest_t_fonttable.script
 ../tfbs/scripts/fbstest_T_IPCTest.script						z:/fbstest/fbstest_t_ipctest.script
 ../tfbs/scripts/ipctest_config.ini								z:/fbstest/ipctest_config.ini
 ../tfbs/scripts/fbstest_t_extendedbitmap.script					z:/fbstest/fbstest_t_extendedbitmap.script

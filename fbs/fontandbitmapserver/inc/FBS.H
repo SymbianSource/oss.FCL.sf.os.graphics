@@ -129,6 +129,12 @@ private:
 	TUint32* iSpare;
 	};
 
+/** forward declaration of some private classes. */
+class TGetFontTableParam;
+class TReleaseGlyphOutlineParam;
+class TGetGlyphOutlineParam;
+
+
 /** 
 Font managed by the font and bitmap server.
 CFbsFont objects are used for screen and off-screen bitmap fonts. They are 
@@ -193,6 +199,10 @@ private:
 	TInt DoFontGetShaping(TFontShapeFunctionParameters* aParam) const;
 	TInt DoFontDeleteShaping(TFontShapeDeleteFunctionParameters* aParam) const;
 	TInt DoTextWidthInPixels(const TDesC& aText,const TMeasureTextInput* aParam) const;
+	TInt DoGetFontTable(TGetFontTableParam * aParam) const;
+	TInt DoGetGlyphOutline(TGetGlyphOutlineParam *aParam) const;
+	TInt DoReleaseGlyphOutline(TReleaseGlyphOutlineParam *aParam) const;
+	TInt DoReleaseFontTable(TUint32 *aParam) const;
 
 protected:
 	RFbsSession* iFbs;

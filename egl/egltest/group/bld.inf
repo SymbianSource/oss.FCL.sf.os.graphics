@@ -57,4 +57,5 @@ PRJ_TESTEXPORTS
 ../scripts/egltest_t_image_multiprocess.script				z:/egltest/egltest_t_image_multiprocess.script
 ../scripts/egltest_t_vgimagetosurfaces.script 				z:/egltest/egltest_t_vgimagetosurfaces.script
 ../scripts/egltest_t_benchmark_sgimage.script				z:/egltest/egltest_t_benchmark_sgimage.script
+../scripts/egltest_t_benchmark_swapbuffers.script			z:/egltest/egltest_t_benchmark_swapbuffers.script
 

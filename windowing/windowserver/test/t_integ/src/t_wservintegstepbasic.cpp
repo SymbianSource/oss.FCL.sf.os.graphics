@@ -649,7 +649,7 @@ void CT_WServIntegStepBasic::CreateSurfaceL(TSurfaceId& aSurfaceId, TUint aColor
 
 	INFO_PRINTF1(_L("Create Surface update session"));
 	CreateSurfaceUpdateSessionL();
-	err = iSurfaceUpdateSession.SubmitUpdate(0, aSurfaceId, 0, NULL);
+	err = iSurfaceUpdateSession.SubmitUpdate(KAllScreens, aSurfaceId, 0, NULL);
 	if (err!=KErrNone)
 		{
 	   INFO_PRINTF1(_L("Fail in submitting update"));

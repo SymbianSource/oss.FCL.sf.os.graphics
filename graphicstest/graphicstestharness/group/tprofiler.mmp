@@ -22,7 +22,7 @@ SOURCEPATH		../src
 SOURCE			tprofiler.cpp
 
 USERINCLUDE		../inc
-SYSTEMINCLUDE	/epoc32/include
+MW_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 LIBRARY			euser.lib testexecuteutils.lib testexecutelogclient.lib hal.lib
 

@@ -14,7 +14,7 @@
 //
 
 // also include the s60 tests
-#include "..\s60\group\bld.inf"
+#include "../s60/group/bld.inf"
 
 
 PRJ_EXPORTS

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -66,6 +66,7 @@ public:
 #else
 	static TBool PreProcessDriverEvent(TRawEvent &aRawEvent);
 #endif
+	static void TranslateCoordsOnRotation(TPoint& aPoint);
 	static TBool PreProcessClientEvent(TRawEvent &aRawEvent, TBool aAdvancedPointersEnabled);
 	static TBool IsPointerEventType(TRawEvent::TType aType);
 	static void ProcessWsEvent(TWsEvent& aEvent,const CWsWindowGroup* aForceInGroup,TBool aNatural);	
@@ -229,6 +230,11 @@ private:
 	
 	/** Used to offset the y pointer */
 	static TInt iYOffset;
+	
+#if defined(__WINS__)
+	/** Tell whether to rotate pointer coords in _WINS_ builds */
+	static TBool iEmulatorRotatePointerCoords;
+#endif
 	};
 
 class CWsPointerBuffer : public CBase

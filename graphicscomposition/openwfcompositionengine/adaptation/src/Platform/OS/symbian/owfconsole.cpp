@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -54,6 +54,8 @@ extern "C" void xprintf(const char* aFormat, ...)
     {
     va_list list; 
     va_start(list, aFormat);
+	// Disabled Coverity warning, since it does not support vararg and throws a warning 
+	// coverity[uninit_use_in_call]
     xvprintf(aFormat, list);
     va_end(list);
     }

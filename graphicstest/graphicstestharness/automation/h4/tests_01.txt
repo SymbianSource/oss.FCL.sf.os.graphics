@@ -1,5 +1,5 @@
 # test_01.txt
-# Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
+# Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
 # All rights reserved.
 # This component and the accompanying materials are made available
 # under the terms of "Eclipse Public License v1.0"
@@ -31,6 +31,7 @@ TESTEXECUTE, \logs\testexecute\fbstest_T_Ralc.htm,						, z:\fbstest\fbstest_T_R
 TESTEXECUTE, \logs\testexecute\fbstest_T_Secure.htm,					, z:\fbstest\fbstest_T_Secure.script, 800
 TESTEXECUTE, \logs\testexecute\fbstest_T_StreamIdCache.htm,				, z:\fbstest\fbstest_T_StreamIdCache.script, 800
 TESTEXECUTE, \logs\testexecute\fbstest_t_extendedbitmap.htm,			, z:\fbstest\fbstest_t_extendedbitmap.script, 1200
+TESTEXECUTE, \logs\testexecute\fbstest_t_fonttable.htm,			        , z:\fbstest\fbstest_t_fonttable.script, 800
 
 # See also tests_95_hw00.txt
 # See also tests_95_hw02.txt

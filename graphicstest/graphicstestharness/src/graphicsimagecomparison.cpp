@@ -16,7 +16,6 @@
 /**
  @file
  @test
- @internalComponent - Internal Symbian test code
 */
 
 #include "graphicsimagecomparison.h"

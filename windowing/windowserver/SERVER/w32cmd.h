@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -134,9 +134,9 @@ enum {EMaxPolylinePoints=50}; // Max size polygon that can be drawn without allo
 
 enum {EClickLoaded=0x01, EClickLoadable=0x02};
 
-//
+////////////////////////
 // Opcodes
-//
+////////////////////////
 
 // Client opcodes
 
@@ -259,6 +259,13 @@ enum TWsClientOpcodes
 	EWsClOpGetExitHighPressureThreshold,
 	EWsClOpCreateDrawableSource,
 	EWsClOpCreateDirectScreenAccessRegionTrackingOnly,
+	EWsClOpSendEffectCommand,
+	EWsClOpRegisterTFXEffectBuf,
+	EWsClOpRegisterTFXEffectIPC,
+	EWsClOpUnregisterTFXEffect,
+	EWsClOpUnregisterAllTFXEffect,
+	EWsClOpOverrideEffectBuf,
+	EWsClOpOverrideEffectIPC,
 	EWsClOpLastEnumValue //Keep this at the end - used by test code
 	};
 	
@@ -428,6 +435,10 @@ enum TWsWindowOpcodes
 #ifdef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS	
 	EWsWinOpSetSurfaceTransparency,
 #endif
+	EWsWinOpSetPurpose,
+	EWsWinOpSendEffectCommand,
+	EWsWinOpOverrideEffectBuf,
+	EWsWinOpOverrideEffectIPC,
 	EWsWinOpTestLowPriorityRedraw=0x2000,  //Specific opcode for testing redraw queue priorities
 	};
 
@@ -712,9 +723,9 @@ enum TWsDrawableSourceOpcodes
 	EWsDrawableSourceOpFree=0x0000,
 	};
 
-//
+////////////////////////
 // Command structures
-//
+////////////////////////
 
 /** Structure used to pass commands between the client and the server.
 
@@ -958,57 +969,85 @@ struct TWsClCmdZThresholdPair
 	TInt enterThreshold;
 	TInt exitThreshold;
 	};
+struct TWsClCmdSendEffectCommand
+	{
+	inline TWsClCmdSendEffectCommand(TInt aTfxCmd,TInt aTfxCmdDataLength, TInt aWinHandle);
+	TInt tfxCmd;
+	TInt tfxCmdDataLength;
+	TInt windowHandle;
+	};
+struct TWsClCmdRegisterEffect
+    {
+    inline TWsClCmdRegisterEffect(TInt aAction, TUint aAppUid, TInt aDirStrSize, TInt aPhase1StrSize, TInt aPhase2StrSize);
+    TInt tfxAction;
+    TUint tfxAppUid;
+    TInt tfxDirStrSize;
+    TInt tfxPhase1StrSize;
+    TInt tfxPhase2StrSize;
+    };
+struct TWsClCmdOverrideEffect
+    {
+    inline TWsClCmdOverrideEffect(TBool aOneShot, TInt aAction, TInt aDirStrSize, TInt aPhase1StrSize, TInt aPhase2StrSize);
+    TBool tfxOneShot;
+    TInt tfxAction;
+    TInt tfxDirStrSize;
+    TInt tfxPhase1StrSize;
+    TInt tfxPhase2StrSize;
+    };
 typedef TRequestStatus *RqStatPtr;
 union TWsClCmdUnion
 	{
-	const TAny *any;
-	const TAny **pAny;
-	const TInt *Int;
-	const TUint *UInt;
-	const TBool *Bool;
-	const TUid *Uid;
-	const TPointerCursorMode *Mode;
-	const TXYInputType *XyInput;
-	const TPoint *Point;
-	const TRgb *rgb;
-	const RqStatPtr *RequestStatus;
-	const TRawEvent *RawEvent;
-	const TKeyEvent *KeyEvent;
-	const RWsSession::TComputeMode *ComputeMode;
-	const RWsSession::TLoggingCommand *LogCommand;
-	const TWsClCmdCreateWindow *CreateWindow;
-	const TWsClCmdCreateWindowGroup *CreateWindowGroup;
-	const TWsClCmdLoadAnimDll *LoadAnimDll;
-	const TWsClCmdCreatePointerCursor *CreatePointerCursor;
-	const TWsClCmdCustomTextCursorData *CustomTextCursorData;
-	const TWsClCmdCreateSprite *CreateSprite;
-	const TWsClCmdCreateBitmap *CreateBitmap;
-	const TWsClCmdSetHotKey *SetHotKey;
-	const TWsClCmdWindowGroupList *WindowGroupList;
-	const TWsClCmdSetWindowGroupOrdinalPosition *SetWindowGroupOrdinalPosition;
-	const TWsClCmdSetKeyboardRepeatRate *SetKeyboardRepeatRate;
-	const TWsClCmdHeapSetFail *HeapSetFail; 
-	const TWsClCmdSetDoubleClick *SetDoubleClick;
-	const TWsClCmdSetSystemPointerCursor *SetSystemPointerCursor;
-	const TWsClCmdSendEventToWindowGroup *SendEventToWindowGroup;
-	const TWsClCmdSendMessageToWindowGroup *SendMessageToWindowGroup;
+	const TAny* any;
+	const TAny** pAny;
+	const TInt* Int;
+	const TUint* UInt;
+	const TBool* Bool;
+	const TUid* Uid;
+	const TPointerCursorMode* Mode;
+    const TInt *XyInput;
+	const TPoint* Point;
+	const TRgb* rgb;
+	const RqStatPtr* RequestStatus;
+	const TRawEvent* RawEvent;
+	const TKeyEvent* KeyEvent;
+	const RWsSession::TComputeMode* ComputeMode;
+	const RWsSession::TLoggingCommand* LogCommand;
+	const TWsClCmdCreateWindow* CreateWindow;
+	const TWsClCmdCreateWindowGroup* CreateWindowGroup;
+	const TWsClCmdLoadAnimDll* LoadAnimDll;
+	const TWsClCmdCreatePointerCursor* CreatePointerCursor;
+	const TWsClCmdCustomTextCursorData* CustomTextCursorData;
+	const TWsClCmdCreateSprite* CreateSprite;
+	const TWsClCmdCreateBitmap* CreateBitmap;
+	const TWsClCmdSetHotKey* SetHotKey;
+	const TWsClCmdWindowGroupList* WindowGroupList;
+	const TWsClCmdSetWindowGroupOrdinalPosition* SetWindowGroupOrdinalPosition;
+	const TWsClCmdSetKeyboardRepeatRate* SetKeyboardRepeatRate;
+	const TWsClCmdHeapSetFail* HeapSetFail;
+	const TWsClCmdSetDoubleClick* SetDoubleClick;
+	const TWsClCmdSetSystemPointerCursor* SetSystemPointerCursor;
+	const TWsClCmdSendEventToWindowGroup* SendEventToWindowGroup;
+	const TWsClCmdSendMessageToWindowGroup* SendMessageToWindowGroup;
 	const TWsClCmdFetchMessage* FetchMessage;
-	const TWsClCmdFindWindowGroupIdentifier *FindWindowGroupIdentifier;
-	const TWsClCmdFindWindowGroupIdentifierThread *FindWindowGroupIdentifierThread;
-	const TWsClCmdGetWindowGroupNameFromIdentifier *GetWindowGroupNameFromIdentifier;
-	const TWsClCmdOffEventsToShell *OffEventsToShell;
-	const TWsClCmdSetModifierState *SetModifierState;
-	const TWsClCmdSetPointerCursorArea *SetPointerCursorArea;
-	const TWsClCmdSetSystemFaded *SetSystemFaded;
+	const TWsClCmdFindWindowGroupIdentifier* FindWindowGroupIdentifier;
+	const TWsClCmdFindWindowGroupIdentifierThread* FindWindowGroupIdentifierThread;
+	const TWsClCmdGetWindowGroupNameFromIdentifier* GetWindowGroupNameFromIdentifier;
+	const TWsClCmdOffEventsToShell* OffEventsToShell;
+	const TWsClCmdSetModifierState* SetModifierState;
+	const TWsClCmdSetPointerCursorArea* SetPointerCursorArea;
+	const TWsClCmdSetSystemFaded* SetSystemFaded;
 	const TWsClCmdCreateGraphic* CreateGraphic;
 	const TWsClCmdGdSendMessage* GraphicSendMessage;
 	const TWsClCmdGdGetId* GetGraphicId;
 	const TWsClCmdDebugInfo* DebugInfo;
 	const TWsClCmdSurfaceRegister* SurfaceRegister;
-	const TWsClCmdNumWindowGroups *NumWinGroups;
-	const TWsClCmdCreateScreenDevice *CreateScreenDevice;
-	const TWsClCmdZThresholdPair *ZThresholdPair;
+	const TWsClCmdNumWindowGroups* NumWinGroups;
+	const TWsClCmdCreateScreenDevice* CreateScreenDevice;
+	const TWsClCmdZThresholdPair* ZThresholdPair;
 	const TWsClCmdCreateDrawableSource* CreateDrawableSource;
+	const TWsClCmdSendEffectCommand* SendEffectCommand;
+	const TWsClCmdRegisterEffect* RegisterEffect;
+	const TWsClCmdOverrideEffect* OverrideEffect;
 	};
 
 // Window command structures
@@ -1219,6 +1258,8 @@ union TWsWinCmdUnion
 	const TSurfaceId *Surface;
 	const TWsWinCmdCancelPointerRepeatEventRequest *CancelPointerRepeatEventRequest;
 	const TWsWinCmdGrabControl *GrabControl;
+	const TWsClCmdSendEffectCommand *SendEffectCommand;
+	const TWsClCmdOverrideEffect* OverrideEffect;
 	};
 
 // GC command structures
@@ -1948,6 +1989,7 @@ enum TW32Panic // used for application errors
 	EW32PanicGraphicDoubleConstruction,		//Raised when Construct() is called on an already constructed client-side object
 	EW32PanicBadClientInterface,	//Debug: Trying to use an interface that is not initialised 
 	EW32PanicSizeNotExpected,		//Debug: Returned data does not match expected sizes or granularity
+	EW32PanicStringTooLong,			//A string is longer than it is allowed to be
 	};
 
 enum WservShutdown
@@ -2225,6 +2267,15 @@ inline TBool TWsWinCmdRequestPointerRepeatEvent::HasPointerNumber() const
 	{return KErrNotFound!=pointerNumber;}
 inline TWsClCmdZThresholdPair::TWsClCmdZThresholdPair(const TInt aEnterThreshold, const TInt aExitThreshold)
 :	enterThreshold(aEnterThreshold),exitThreshold(aExitThreshold)
+	{}
+inline TWsClCmdSendEffectCommand::TWsClCmdSendEffectCommand(TInt aTfxCmd,TInt aTfxCmdDataLength, TInt aWinHandle) :
+    tfxCmd(aTfxCmd), tfxCmdDataLength(aTfxCmdDataLength), windowHandle(aWinHandle)
+	{}
+inline TWsClCmdRegisterEffect::TWsClCmdRegisterEffect(TInt aAction, TUint aAppUid, TInt aDirStrSize, TInt aPhase1StrSize, TInt aPhase2StrSize) :
+	tfxAction(aAction), tfxAppUid(aAppUid), tfxDirStrSize(aDirStrSize), tfxPhase1StrSize(aPhase1StrSize), tfxPhase2StrSize(aPhase2StrSize)
+	{}
+inline TWsClCmdOverrideEffect::TWsClCmdOverrideEffect(TBool aOneShot, TInt aAction, TInt aDirStrSize, TInt aPhase1StrSize, TInt aPhase2StrSize) :
+	tfxOneShot(aOneShot), tfxAction(aAction), tfxDirStrSize(aDirStrSize), tfxPhase1StrSize(aPhase1StrSize), tfxPhase2StrSize(aPhase2StrSize)
 	{}
 inline TWsWinCmdAddKeyRect::TWsWinCmdAddKeyRect(const TRect &aRect,TInt aScanCode, TBool aActivatedByPointerSwitchOn) :
 	rect(aRect), scanCode(aScanCode), activatedByPointerSwitchOn(aActivatedByPointerSwitchOn)

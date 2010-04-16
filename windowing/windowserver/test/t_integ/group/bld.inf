@@ -13,8 +13,6 @@
 // Description:
 // @file
 // @test
-// @internalComponent
-// 
 //
 
 PRJ_TESTEXPORTS
@@ -23,6 +21,7 @@ PRJ_TESTEXPORTS
 ../scripts/graphics-wserv-integ.script			z:/graphics/graphics-wserv-integ.script
 ../scripts/graphics-wserv-integ-basic.script		z:/graphics/graphics-wserv-integ-basic.script
 ../scripts/graphics-wserv-integ-dsa.script		z:/graphics/graphics-wserv-integ-dsa.script
+../scripts/graphics-wserv-integ-dsa-h6.script		z:/graphics/graphics-wserv-integ-dsa-h6.script
 ../scripts/graphics-wserv-integ-surface.script		z:/graphics/graphics-wserv-integ-surface.script
 ../scripts/graphics-wserv-integ-surface1.script		z:/graphics/graphics-wserv-integ-surface1.script
 ../scripts/graphics-wserv-integ-surface2.script		z:/graphics/graphics-wserv-integ-surface2.script
@@ -110,10 +109,6 @@ t_pseudoapp1.mmp
 t_fpsapp.mmp
 t_pseudoappengine.mmp
 t_pseudoapppopupwindow.mmp
-t_simloadutils.mmp
-t_simloadapp1.mmp
-t_simloadapp2.mmp
-t_simloadapp3.mmp
 t_testsurfacerasterizer.mmp
 t_winutils.mmp
 t_wservintegserver.mmp

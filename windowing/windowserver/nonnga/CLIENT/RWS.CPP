@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -2040,7 +2040,7 @@ client. */
 	WriteInt(aRemove,EWsClOpRemoveKeyCode);
 	}
 
-EXPORT_C void RWsSession::SimulateXyInputType(TXYInputType aInputType)
+EXPORT_C void RWsSession::SimulateXyInputType(TInt aInputType)
 	{
 	WriteInt(aInputType,EWsClOpSimulateXyInput);
 	}
@@ -2384,6 +2384,41 @@ EXPORT_C TInt RWsSession::GetExitHighPressureThreshold() const
 EXPORT_C void RWsSession::EnableWindowSizeCacheL()
 /** Dummy implementation in order to preserve compatibility with WSERV NGA.
     @internalComponent */ 
-    {
-    ASSERT(0);
-    }
+	{
+	ASSERT(0);
+	}
+
+EXPORT_C void RWsSession::SendEffectCommand(TInt /*aTfxCmd*/,const TDesC8& /*aTfxCmdData*/)
+/** Dummy implementation in order to preserve compatibility with WSERV NGA.
+	@internalComponent */
+	{
+	ASSERT(0);
+	}
+
+EXPORT_C void RWsSession::RegisterEffect(TInt /*aAction*/, const TFileName& /*aResourceDir*/, const TFileName& /*aFilenamePhase1*/, const TFileName& /*aFilenamePhase2*/, TUint /*aAppUid*/)
+/** Dummy implementation in order to preserve compatibility with WSERV NGA.
+	@internalComponent */
+	{
+	ASSERT(0);
+	}
+
+EXPORT_C void RWsSession::UnregisterEffect(TInt /*aAction*/)
+/** Dummy implementation in order to preserve compatibility with WSERV NGA.
+	@internalComponent */
+	{
+	ASSERT(0);
+	}
+
+EXPORT_C void RWsSession::UnregisterAllEffects()
+/** Dummy implementation in order to preserve compatibility with WSERV NGA.
+	@internalComponent */
+	{
+	ASSERT(0);
+	}
+
+EXPORT_C void RWsSession::OverrideEffects(TBool /*aOneShot*/, TInt /*aAction*/, const TFileName& /*aResourceDir*/, const TFileName& /*aFilenamePhase1*/, const TFileName& /*aFilenamePhase2*/)
+	/** Dummy implementation in order to preserve compatibility with WSERV NGA.
+	@internalComponent */
+	{
+	ASSERT(0);
+	}

@@ -1,4 +1,4 @@
-/* Copyright (c) 2009 The Khronos Group Inc.
+/* Copyright (c) 2009-2010 The Khronos Group Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -141,6 +141,8 @@ WFC_Element_Create(WFC_CONTEXT* context)
 {
     static WFCint           nextElementHandle = FIRST_ELEMENT_HANDLE;
     WFC_ELEMENT*            element;
+	
+	OWF_ASSERT(context);
 
     element = (WFC_ELEMENT*)OWF_Pool_GetObject(context->elementPool);
 

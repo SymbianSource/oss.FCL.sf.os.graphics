@@ -35,6 +35,14 @@
 #define PROFILER_INFO_PRINTF6(p1, p2, p3, p4, p5, p6)        iTestStep.Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrInfo, (p1), (p2), (p3), (p4), (p5), (p6))
 #define PROFILER_INFO_PRINTF7(p1, p2, p3, p4, p5, p6, p7)    iTestStep.Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrInfo, (p1), (p2), (p3), (p4), (p5), (p6), (p7))
 
+#define PROFILER_WARN_PRINTF1(p1)                            iTestStep.Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrWarn, (p1))
+#define PROFILER_WARN_PRINTF2(p1, p2)                        iTestStep.Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrWarn, (p1), (p2))
+#define PROFILER_WARN_PRINTF3(p1, p2, p3)                    iTestStep.Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrWarn, (p1), (p2), (p3))
+#define PROFILER_WARN_PRINTF4(p1, p2, p3, p4)                iTestStep.Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrWarn, (p1), (p2), (p3), (p4))
+#define PROFILER_WARN_PRINTF5(p1, p2, p3, p4, p5)            iTestStep.Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrWarn, (p1), (p2), (p3), (p4), (p5))
+#define PROFILER_WARN_PRINTF6(p1, p2, p3, p4, p5, p6)        iTestStep.Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrWarn, (p1), (p2), (p3), (p4), (p5), (p6))
+#define PROFILER_WARN_PRINTF7(p1, p2, p3, p4, p5, p6, p7)    iTestStep.Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrWarn, (p1), (p2), (p3), (p4), (p5), (p6), (p7))
+
 #define PROFILER_ERR_PRINTF1(p1)                             iTestStep.Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrErr, (p1)) 
 #define PROFILER_ERR_PRINTF2(p1, p2)                         iTestStep.Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrErr, (p1), (p2)) 
 #define PROFILER_ERR_PRINTF3(p1, p2, p3)                     iTestStep.Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrErr, (p1), (p2), (p3)) ;
@@ -52,6 +60,7 @@ CTProfiler::CTProfiler(CTestStep& aTestStep) :
 EXPORT_C CTProfiler::~CTProfiler()
     {   
     iResults.Reset();
+    iResultsTimingOrder.Reset();
     }
 
 EXPORT_C CTProfiler* CTProfiler::NewL(CTestStep& aTestStep)
@@ -97,6 +106,7 @@ EXPORT_C void CTProfiler::InitResults()
     iResultsInitalised = ETrue;
     iDiff = 0;
     iResults.Reset();
+    iResultsTimingOrder.Reset();
     
     StartTimer();
     }
@@ -106,10 +116,36 @@ Records set current time. Can be called multiple times so an average can be take
 */
 EXPORT_C void CTProfiler::MarkResultSetL()
     {   
-    iResults.InsertInUnsignedKeyOrderAllowRepeatsL((TUint32)StopTimer());
+    TUint32 res = (TUint32)StopTimer();
+    iResults.InsertInUnsignedKeyOrderAllowRepeatsL(res);
+    if(iStoreResultInTimingOrder)
+        {
+        iResultsTimingOrder.AppendL(res);
+        }
     iDiff = 0;
     PROFILER_TEST(iResultsInitalised);
     StartTimer();
+    }
+
+/**
+Records set current time. Alike MarkResultSetL() the function doesn't 
+restart the timer at the end. The following operations will not be 
+included into benchmark mesuarment. To resume the profiling the user must 
+start the timer.
+@see StartTimer()
+@see MarkResultSetL() 
+Can be called multiple times so an average can be taken.
+*/
+EXPORT_C void CTProfiler::MarkResultSetAndSuspendL()
+    {   
+    TUint32 res = StopTimer();
+    iResults.InsertInUnsignedKeyOrderAllowRepeatsL(res);
+    if(iStoreResultInTimingOrder)
+        {
+        iResultsTimingOrder.AppendL(res);
+        }
+    iDiff = 0;
+    PROFILER_TEST(iResultsInitalised);
     }
 
 /**
@@ -118,6 +154,7 @@ Frees all memory allocated by results capturing methods like MarkResultSetL().
 EXPORT_C void CTProfiler::FreeResultsMemory()
     {
     iResults.Reset();
+    iResultsTimingOrder.Reset();
     }
 
 /**
@@ -127,12 +164,14 @@ EXPORT_C TUint32 CTProfiler::GetTrimedMean()
     {
     TInt64 total = 0;   
     if (iResults.Count() <= 50)
-        PROFILER_ERR_PRINTF2(_L("Not enough results for trimming - need more than 50, but got %d"), iResults.Count());
+        {
+        PROFILER_WARN_PRINTF2(_L("Not enough results for trimming - need more than 50, but got %d"), iResults.Count());
+        }
     if (iResults.Count() == 0)      // If iResults is zero then do nothing
         {
         return 0;
         }
-    PROFILER_TEST(iResults.Count() > 50); //Ensure we have an ability to remove some results in trimming
+
     TInt twentyPercentCount = iResults.Count()/5;
     for (TInt count = twentyPercentCount; count < iResults.Count()-twentyPercentCount; count++)
         {
@@ -149,7 +188,7 @@ EXPORT_C TInt CTProfiler::PercentageChange(TInt aFirstTime, TInt aSecondTime)
 /**
 Finds the maximum time taken
 */
-TUint32 CTProfiler::TimeMax()
+EXPORT_C TUint32 CTProfiler::TimeMax()
     {
     if (iResults.Count() == 0)
         {
@@ -167,7 +206,7 @@ TUint32 CTProfiler::TimeMax()
 /**
 Finds the minimum time taken
 */  
-TUint32 CTProfiler::TimeMin()
+EXPORT_C TUint32 CTProfiler::TimeMin()
     {
     if (iResults.Count() == 0)
         {
@@ -362,4 +401,23 @@ EXPORT_C void CTProfiler::ResultsAnalysisAverageByNumberOfIterations(const TDesC
     PROFILER_INFO_PRINTF7(_L("TID:   %S  Rot:    %i  SrcMode:    %i  DestMode:   %i  Iters: %i   TrimmedMean:    %i  us"), &aTestName, aRotation, aSrcScreenMode, aDstScreenMode, aIters,  Mean());
     PROFILER_INFO_PRINTF3(_L("Max:   %i  Min:    %i  "), TimeMax(), TimeMin());  
     iResultsInitalised = EFalse;
+    }
+
+/**
+Output all results.
+*/
+EXPORT_C void CTProfiler::ShowResultArrayInTimingOrder()
+    {
+    for(TInt i=0; i < iResultsTimingOrder.Count(); i++)
+        {
+        PROFILER_INFO_PRINTF3(_L("iResultsTimingOrder[%4d]: %8d"),i, iResultsTimingOrder[i]);
+        }
+    }
+
+/**
+ @param aStoreResultInTimingOrder Signify whether the results should be stored as they coming   
+ */
+EXPORT_C void CTProfiler::SetStoreResultInTimingOrder(TBool aStoreResultInTimingOrder)
+    {
+    iStoreResultInTimingOrder = aStoreResultInTimingOrder;
     }

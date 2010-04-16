@@ -37,6 +37,7 @@
 #include "textendedbitmaplegacy.h"
 #include "textendedbitmappanic.h"
 #include "twdp.h"
+#include "tfonttableandglyph.h"
 
  
 /* Path to the script
@@ -194,6 +195,10 @@ CTestStep* CTFbsServer::CreateTestStep(const TDesC& aStepName)
 		{
 		testStep = new CTWDPStep();
 		}
+   	else if(aStepName == KTFontTableAndGlyphStep)
+        	{
+        	testStep = new CTFontAndGlyphStep();
+        	}
 	
 	return testStep;
 	}

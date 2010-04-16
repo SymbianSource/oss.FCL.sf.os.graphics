@@ -1,4 +1,4 @@
-/* Copyright (c) 2009 The Khronos Group Inc.
+/* Copyright (c) 2009-2010 The Khronos Group Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -824,6 +824,7 @@ WFC_Device_DestroyImageProvider(WFC_DEVICE* device,
         WFC_IMAGE_PROVIDER* object;
 
         object = (WFC_IMAGE_PROVIDER*)OWF_Array_GetItemAt(&device->providers, i);
+		OWF_ASSERT(object);
         if (object->handle == handle)
         {
         

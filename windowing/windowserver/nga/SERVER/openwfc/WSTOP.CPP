@@ -897,31 +897,6 @@ void CWsTop::SetCheckHeapOnDisconnectMode(TWsCheckHeapOnDisconnectMode aCheckHea
 	iHeapCheckMode=aCheckHeapOnDisconnectMode;
 	}
 
-static void ReportAllCurrentLevelLeaks()
-    {
-    class RHeapWalk: public RHeap
-        {
-    public:
-         static void WalkCheckCell(TAny* aPtr, TCellType aType, TAny* aCell, TInt aLen)
-             {
-             RHeapWalk* heap=(RHeapWalk*)aPtr;
-             (void)aCell;
-             switch(aType)
-                 {
-                 case EGoodAllocatedCell:
-                     if ( ((SDebugCell*)aCell)->nestingLevel == heap->iNestingLevel )
-                         {
-                         RDebug::Printf("Leaked heap cell: level %i, serial %i @ %08x : len=%d", 
-                                            heap->iNestingLevel, ((SDebugCell*)aCell)->allocCount, aCell, aLen);
-                         }
-                    break;
-                 }
-             }
-        };
-    
-    User::Heap().DebugFunction(RHeap::EWalk, (TAny*)RHeapWalk::WalkCheckCell, &User::Heap());
-    }
-
 TBool CWsTop::NeedsHeapCheckAndRestart(TInt aStartHeapCount)
 	{
 	if (!iDoHeapCheckAndRestart)
@@ -932,7 +907,6 @@ TBool CWsTop::NeedsHeapCheckAndRestart(TInt aStartHeapCount)
 	    {
 	    const TUint32 orphanedCell = User::Heap().__DbgMarkEnd(aStartHeapCount);
 	    RDebug::Printf("Memory leak detected in wserv. First orphaned cell: 0x%8x", orphanedCell);
-	    ReportAllCurrentLevelLeaks();
 	    }
 	return(ETrue);
 	}

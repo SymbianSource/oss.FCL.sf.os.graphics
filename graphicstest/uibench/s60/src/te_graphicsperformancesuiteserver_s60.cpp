@@ -1,22 +1,21 @@
- // Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
- // All rights reserved.
- // This component and the accompanying materials are made available
- // under the terms of "Eclipse Public License v1.0"
- // which accompanies this distribution, and is available
- // at the URL "http://www.eclipse.org/legal/epl-v10.html".
- //
- // Initial Contributors:
- // Nokia Corporation - initial contribution.
- //
- // Contributors:
- //
- // Description:
- //
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
 
 /**
  @file
- @test
- @internalComponent - Internal Symbian test code 
+ @test 
 */
 
 #include "te_graphicsperformancesuiteserver_s60.h"
@@ -38,7 +37,6 @@
 #include "tsmallwindowstestopenvg.h"
 #include "tsmallwindowstestraster.h"
 #include "tcopyrect.h"
-#include "teglswapbuffer.h"
 
 
 /**
@@ -187,10 +185,6 @@ CTestStep* CTe_graphicsperformanceSuite_S60::CreateTestStep(const TDesC& aStepNa
 	    {
 		testStep = new CTCopyRect();
 		}
-	else if(aStepName == KTEglSwapBuffer)
-        {
-        testStep = new CTEglSwapBuffer();
-        }
 
 	return testStep;
 	}

@@ -1682,8 +1682,28 @@ EXPORT_C TRgb RWindowBase::KeyColor() const
 	return KRgbBlack;
 	}
 
+/**	Dummy implementation in order to preserve compatibility with WSERV NGA.
+	@internalComponent*/
+EXPORT_C void RWindowBase::SetPurpose(TInt /*aPurpose*/)
+	{
+	ASSERT(0);
+	}
 
-// RDrawableWindow //
+/** Dummy implementation in order to preserve compatibility with WSERV NGA.
+    @internalComponent */
+EXPORT_C void RWindowBase::SendEffectCommand(TInt /*aTfxCmd*/,const TDesC8& /*aTfxCmdData*/)
+    {
+	ASSERT(0);
+    }
+
+/** Dummy implementation in order to preserve compatibility with WSERV NGA.
+    @internalComponent */
+EXPORT_C void RWindowBase::OverrideEffects(TBool /*aOneShot*/, TInt /*aAction*/, const TFileName& /*aResourceDir*/, const TFileName& /*aFilenamePhase1*/, const TFileName& /*aFilenamePhase2*/)
+    {
+	ASSERT(0);
+    }
+
+//////////////////////////// RDrawableWindow ////////////////////////////////
 
 void RDrawableWindow::doScroll(const TRect &aClipRect, const TPoint &aOffset, const TRect &aRect, TInt aOpcode)
 	{

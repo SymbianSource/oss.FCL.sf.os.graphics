@@ -1,4 +1,4 @@
-/* Copyright (c) 2009 The Khronos Group Inc.
+/* Copyright (c) 2009-2010 The Khronos Group Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -129,8 +129,11 @@ OWF_API_CALL WFC_SCENE*
 WFC_Scene_Create(WFC_CONTEXT* context)
 {
     WFC_SCENE*              scene;
-
-    DPRINT(("WFC_Scene_Create"));
+	
+	DPRINT(("WFC_Scene_Create"));
+	
+	OWF_ASSERT(context);
+	
     scene = SCENE(OWF_Pool_GetObject(context->scenePool));
 
     OWF_ASSERT(scene);

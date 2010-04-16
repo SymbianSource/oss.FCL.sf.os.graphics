@@ -21,6 +21,7 @@
 
 #include "t_wservintegstepsurface.h"
 #include "t_wservconsts.h"
+#include <test/t_simload.h>
 
 /**
  CT_WServIntegStepSurface constructor.
@@ -47,7 +48,7 @@ enum TVerdict CT_WServIntegStepSurface::doTestStepL()
 	PrintTestStepName();
 
 	GetConfigDataL(KSimLoadData(), KSimLoadDataName());
-	PrintConfigDataL(KWServSimLoadConfigFile());
+	PrintConfigDataL(KSimLoadConfigFile());
 	CreateSimLoadProcL();
 	ClearConfigData();
 
@@ -106,7 +107,7 @@ void CT_WServIntegStepSurface::CreateSimLoadProcL()
 
 	while (simLoadAppErr == KErrNone && index <= KNumSimLoadApps)
 		{
-		tempStore.Format(KWServSimLoadApp, index++);
+		tempStore.Format(KSimLoadApp, index++);
 
 		simLoadAppErr = CreateTestProcessL(tempStore, EPriorityHigh);
 		}

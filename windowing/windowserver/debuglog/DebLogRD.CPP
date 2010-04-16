@@ -55,7 +55,8 @@ void CDebugLogPrint::WriteToLogL(const TDesC &aDes, const TDesC &aDes2)
 	buf.Copy(aDes.Mid(pos));
 	buf.Append(' ');
 	buf.Append(aDes2);
-	RDebug::Print(buf);
+	_LIT(KDebugFormatString, "%S");
+	RDebug::Print(KDebugFormatString, &buf);
 	}
 
 void CDebugLogPrint::WriteToLog8L(const TDesC8 &aDes, const TDesC8 &aDes2)
@@ -70,6 +71,7 @@ void CDebugLogPrint::WriteToLog8L(const TDesC8 &aDes, const TDesC8 &aDes2)
 	TPtr16 ptr(&buf[bufLen],buf.MaxLength()-bufLen);
 	ptr.Copy(aDes2);
 	buf.SetLength(bufLen+aDes2.Length());
-	RDebug::Print(buf);
+	_LIT(KDebugFormatString, "%S");
+	RDebug::Print(KDebugFormatString, &buf);	
 	}
 

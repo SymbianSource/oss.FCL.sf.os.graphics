@@ -46,9 +46,6 @@ SOURCE	openvgengine.cpp
 SOURCEPATH  ../src/tests_copyrect
 SOURCE	tcopyrect.cpp 
 
-SOURCEPATH  ../src/tests_egl
-SOURCE	teglswapbuffer.cpp
-
 SOURCEPATH  ../src/tests_flowwindow
 SOURCE	tflowwindowstest.cpp
 SOURCE	tflowwindowstestopenglvg.cpp 
@@ -90,10 +87,9 @@ USERINCLUDE  ../src/tests_pan
 USERINCLUDE  ../src/tests_scale
 USERINCLUDE  ../src/tests_ui_video
 USERINCLUDE  ../src/tests_zorder
-USERINCLUDE  ../src/tests_egl
 
 //system includes
-OS_LAYER_SYSTEMINCLUDE_SYMBIAN
+MW_LAYER_SYSTEMINCLUDE_SYMBIAN
 OS_LAYER_LIBC_SYSTEMINCLUDE
 
 START BITMAP videoplay2.mbm

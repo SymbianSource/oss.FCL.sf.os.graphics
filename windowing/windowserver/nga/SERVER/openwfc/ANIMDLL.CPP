@@ -83,7 +83,7 @@ CWsAnim::~CWsAnim()
 			iBitFlags.Clear(EWinAnimConstructed);
 			}
 		CWsAnim **pAnim;
-		for(pAnim= &iWindow->iAnimList;(*pAnim)!=this;pAnim= &(*pAnim)->iNextWin)
+		for(pAnim= &iWindow->iAnimList;(*pAnim)!=NULL && (*pAnim)!=this;pAnim= &(*pAnim)->iNextWin)
 			{}
 		*pAnim=iNextWin;
 		

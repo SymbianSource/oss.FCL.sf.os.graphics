@@ -32,20 +32,19 @@ _LIT8(KLogFail,"FAIL");
 void CTTMSGraphicsStep::CleanUpAndWriteResults()
 	{
 	TBuf<256> testID;
-	TBuf<8> unusableTestResult;    //In graphicstestharness it is not known whether the test was started with
-                                   //!Result=Fail or !Error=KErrSomething given as paramenter to RUN_TEST_STEP
+	TBuf<8> testResult;
 	
 	for (TInt iArrayIndex=0; iArrayIndex < iArrayTMSData.Count(); iArrayIndex++)
 		{
 		CTMSDataColumn columnData = iArrayTMSData[iArrayIndex];
 		
 		testID.Copy(columnData.iTheID);
-		unusableTestResult.Copy(columnData.iTheResult); //unusable because we don't know if the test is expected to pass or fail
+		testResult.Copy(columnData.iTheResult);
 		
 		INFO_PRINTF2(_L("START_TESTCASE %S"),&testID);
 		INFO_PRINTF2(_L("Line = 1 Command = START_TESTCASE %S"),&testID);
 		INFO_PRINTF2(_L("END_TESTCASE %S"),&testID);
-		INFO_PRINTF2(_L("Line = 1 Command = END_TESTCASE %S"),&testID);
+		INFO_PRINTF3(_L("Line = 1 Command = END_TESTCASE %S ***TestCaseResult = %S"),&testID,&testResult);
 		}
 	
 	iArrayTMSData.Close();		    

@@ -37,6 +37,7 @@ PRJ_TESTEXPORTS
 ../rom/graphics_screencomparison.iby	/epoc32/rom/include/graphics_screencomparison.iby 
 ../rom/graphics_imagecomparison.iby	/epoc32/rom/include/graphics_imagecomparison.iby  
 ../rom/graphics_tprofiler.iby  		/epoc32/rom/include/graphics_tprofiler.iby
+../rom/graphics_simload.iby  		/epoc32/rom/include/graphics_simload.iby
 
 // ONB batch files
 ../batch/retain_files.cmd z:\graphicstest\retain_files.cmd
@@ -55,6 +56,7 @@ PRJ_TESTEXPORTS
 ../inc/graphicsscreencomparison.h OS_LAYER_PLATFORM_EXPORT_PATH(test/graphicsscreencomparison.h)
 ../inc/graphicsimagecomparison.h OS_LAYER_PLATFORM_EXPORT_PATH(test/graphicsimagecomparison.h)
 ../inc/tprofiler.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(test/tprofiler.h)
+../inc/t_simload.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(test/t_simload.h)
 
 //Data files for reboot test harness
 ../rom/graphics_rebootharnesslog.htm /epoc32/data/Z/reboot/dummylog.htm
@@ -78,6 +80,11 @@ PRJ_TESTMMPFILES
 ../group/graphicsscreencomparison.mmp
 ../group/graphicsimagecomparison.mmp
 ../group/tprofiler.mmp
+t_simloadutils.mmp
+t_simloadapp1.mmp
+t_simloadapp2.mmp
+t_simloadapp3.mmp
+
 #if defined(WINS)
 ../group/fontinjector.mmp
 #endif

@@ -901,13 +901,13 @@ void CTSurfaceManagerMultiProcess::TestSurfaceInfoUsingSurfaceIdL()
 	// Set attributs for creating the surface
 	RSurfaceManager::TSurfaceCreationAttributesBuf buf;
 	RSurfaceManager::TSurfaceCreationAttributes& attributes=buf();
-	attributes.iSize = TSize(200,200);
-	attributes.iBuffers = 1;				
-	attributes.iPixelFormat = EUidPixelFormatARGB_1555;		
-	attributes.iStride = 415;				
-	attributes.iOffsetToFirstBuffer = 80;	
-	attributes.iAlignment = 8;			
-	attributes.iContiguous=ETrue;
+    attributes.iSize = TSize(100,100);
+    attributes.iBuffers = 1;                // number of buffers in the surface
+    attributes.iPixelFormat = EUidPixelFormatYUV_422SemiPlanar;     // 2bpp
+    attributes.iStride = 400;               // Number of bytes between start of one line and start of next
+    attributes.iOffsetToFirstBuffer = 0;    // way of reserving space before the surface pixel data
+    attributes.iAlignment = 2;          // alignment, 1,2,4,8,16,32,64 byte aligned or EPageAligned
+    attributes.iContiguous=ETrue; 
 	
 	RSurfaceManager::THintPair hints[2];	// two hint pairs specified
 	attributes.iHintCount = 2;

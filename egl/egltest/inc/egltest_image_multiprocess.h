@@ -129,17 +129,6 @@ protected:
     void doProcessFunctionL(TInt aIdx);
     };
 
-_LIT(KEGL_Image_Multi_Process_VgImage_ProcessTerminate2, "EGL_Image_Multi_Process_VgImage_ProcessTerminate2");
-NONSHARABLE_CLASS(CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminate2) : public CEglTestStep
-    {
-public:
-	// from CTestStep
-	TVerdict doTestStepL();
-protected:
-    // from CEglTestStep
-    void doProcessFunctionL(TInt aIdx);
-    };
-
 _LIT(KEGL_Image_Multi_Process_VgImage_ProcessTerminateNegative, "EGL_Image_Multi_Process_VgImage_ProcessTerminateNegative");
 NONSHARABLE_CLASS(CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminateNegative) : public CEglTestStep
     {

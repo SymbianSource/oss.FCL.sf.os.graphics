@@ -185,6 +185,10 @@ private:
 	TInt HandleMesgHasCharacter(const RMessage2& aMessage, TBool& aPanicRequired);
 	TInt HandleMesgShapeText(const RMessage2& aMessage, TBool& aPanicRequired);
 	TInt HandleMesgShapeDelete(const RMessage2& aMessage, TBool& aPanicRequired);
+	TInt HandleMesgGetFontTable(const RMessage2& aMessage, TBool& aPanicRequired);
+	TInt HandleMesgGetGlyphOutline(const RMessage2& aMessage, TBool& aPanicRequired);
+	TInt HandleMesgReleaseGlyphOutline(const RMessage2& aMessage, TBool& aPanicRequired);
+	TInt HandleMesgReleaseFontTable(const RMessage2& aMessage, TBool& aPanicRequired);
 
 protected:
 	TUint iConnectionHandle;

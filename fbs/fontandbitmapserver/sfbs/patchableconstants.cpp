@@ -32,8 +32,13 @@ Up to the value of the constant, the size of the virtual address range reserved 
 equals the amount of physical RAM memory. As available hardware RAM sizes increase in the future,
 it may become impossible to reserve a virtual address range that big, hence the need for an upper limit.
 @note	Default value: 64MB (0x04000000)
+@note   Emulator value 2MB (0x0200000)
 */
+#ifdef __WINS__
+EXPORT_C extern const TInt KFbServSharedHeapMaxSize = 0x00200000;
+#else
 EXPORT_C extern const TInt KFbServSharedHeapMaxSize = 0x04000000;
+#endif
 
 /**
 @SYMPatchable

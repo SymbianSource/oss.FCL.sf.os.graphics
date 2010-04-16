@@ -48,6 +48,7 @@ extern "C"
 #define COMMITTED_ATTR_VALUE_INDEX 0
 #define WORKING_ATTR_VALUE_INDEX 1
 #define SNAPSHOT_ATTR_VALUE_INDEX 2
+#define COMMIT_ATTR_DIRECT_FROM_WORKING -1
 
 typedef enum {
     ATTR_ERROR_NONE             = 0,
@@ -87,8 +88,8 @@ typedef struct {
     OWFuint                 dirty: 1;
     OWFuint                 dirtysnapshot: 1;
     OWFuint                 readonly: 1;
-    OWFuint                 size;                       //Size of one primitive
-    OWFuint                 length: ATTR_LENGTH_BITS;   //Number of primitives in vector
+    OWFuint                 size;                       /* Size of one primitive */
+    OWFuint                 length: ATTR_LENGTH_BITS;   /* Number of primitives in vector */
 } OWF_ATTRIBUTE_INFO;
 
 /*

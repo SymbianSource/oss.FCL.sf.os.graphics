@@ -20,6 +20,7 @@
 #include "CLIENT.H"
 #include "w32comm.h"
 #include <graphics/surface.h>
+#include "rtfxeffect.h"
 
 RWindowTreeNode::RWindowTreeNode()
 /** Protected default constructor.
@@ -1859,7 +1860,54 @@ EXPORT_C TRgb RWindowBase::KeyColor() const
 	return argb;
 	}
 
-// RDrawableWindow //
+EXPORT_C void RWindowBase::SetPurpose(TInt aPurpose)
+/** 
+Sets specific window  purpose to the TFX layer. The purpose passed 
+by the client API will be directed to MWsTfxLayer::SetPurpose. 
+@param aPurpose The window purpose information. 
+@see MWsTfxLayer
+@publishedPartner
+@prototype
+*/
+	{
+	WriteInt(aPurpose,EWsWinOpSetPurpose);
+	}
+
+EXPORT_C void RWindowBase::SendEffectCommand(TInt aTfxCmd,const TDesC8& aTfxCmdData)
+/** 
+Sets specific effect data or execute commands to the TFX layer.
+The data or command passed by the client API will be directed to MWsTfxLayer::SendEffectCommand.
+MWsTfxLayer will accept only window specific commands and data.
+@param aTfxCmd TFX layer command.
+@param aTfxCmdData Data structure related to the specified value of aTfxCmd. The default value is KNullDesC8.
+@publishedPartner
+*/
+    {
+    __ASSERT_ALWAYS(aTfxCmdData.Length()<=KMaxWservStringSize, Panic(EW32PanicStringTooLong));
+    TWsClCmdSendEffectCommand params(aTfxCmd,aTfxCmdData.Size(),this->iWsHandle);
+    Write(&params,sizeof(params),aTfxCmdData.Ptr(),aTfxCmdData.Size(),EWsWinOpSendEffectCommand);
+    }
+
+EXPORT_C void RWindowBase::OverrideEffects(TBool aOneShot, TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2)
+/**
+Overides the default animation for current window's transition effect by sent animation description.
+Please refer RWsSession::RegisterEffect() comments for more information on animation description.
+
+@param aOneShot A flag to see if the specified override should be applied once or on an ongoing basis
+@param aAction The particular transition to set the animation for.
+@param aResourceDir The name of the directory that contains the animation description files.
+@param aFilenamePhase1 The file containing the description of the animation for the first phase(Phase1) of the transition.
+					   Specify KNullDesC for no Phase1 effect.
+@param aFilenamePhase2 The file containing the description of the animation for the second phase(Phase2) of the transition.
+					   Specify KNullDesC for no Phase2 effect.
+
+@publishedPartner
+*/
+	{
+	RTFXEffect tfxEffect(iWsHandle, iBuffer);
+	tfxEffect.OverrideTFXEffect(aOneShot, aAction, aResourceDir, aFilenamePhase1, aFilenamePhase2, RTFXEffect::ETFXWindow);
+	}
+//////////////////////////// RDrawableWindow ////////////////////////////////
 
 void RDrawableWindow::doScroll(const TRect &aClipRect, const TPoint &aOffset, const TRect &aRect, TInt aOpcode)
 	{

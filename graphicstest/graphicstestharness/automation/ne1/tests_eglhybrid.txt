@@ -25,7 +25,7 @@ TESTEXECUTE, \logs\testexecute\egltest_t_internalapi.htm,                       
 TESTEXECUTE, \logs\testexecute\egltest_t_lowmemory.htm,                         , z:\egltest\egltest_t_lowmemory.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_windowresize.htm,                      , z:\egltest\egltest_t_windowresize.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_swapbehavior.htm,                      , z:\egltest\egltest_t_swapbehavior.script, 600
-TESTEXECUTE, \logs\testexecute\egltest_t_swapbuffers.htm,                       , z:\egltest\egltest_t_swapbuffers.script, 600
+TESTEXECUTE, \logs\testexecute\egltest_t_benchmark_swapbuffers.htm,             , z:\egltest\egltest_t_benchmark_swapbuffers.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_unittest.htm,                          , z:\egltest\egltest_t_unittest.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_texturing.htm,                         , z:\egltest\egltest_t_texturing.script, 600
 

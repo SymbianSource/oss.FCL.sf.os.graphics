@@ -44,10 +44,16 @@ extern "C" {
 FARPROC vector[MAX_ORDINAL+1];		// 1 additional entry: vector[0] to set the initialised state
 
 
+#ifdef _DEBUG
 void Stop(char* aErrorMessage)
+#else
+void Stop(char* /*aErrorMessage*/)
+#endif
 	{
 	int err = GetLastError();
+#ifdef _DEBUG
 	RDebug::Printf("%S, (last error = %i)", aErrorMessage, err);
+#endif
 	_asm int 3;
 	}
 
@@ -71,14 +77,13 @@ void fill_vector(HINSTANCE aDll)
 		{
 		Stop("... has too few exported functions");
 		}
-
-	// next position should be empty
+	
+  // next position should be empty
 	address = GetProcAddress(aDll, (LPCSTR)(MAX_ORDINAL+2));
 	if (address != NULL)
 		{
 		Stop("... has too many exported functions");
 		}
-	
 	// Set initialised
 	vector[0] = (FARPROC)1;	
 	}
@@ -102,8 +107,10 @@ void init_vector()
 		library = "libegl_nongce.dll";
 		}
 
+#ifdef _DEBUG
 	RDebug::Printf("Redirecting libEGL.dll to \"%s\" ...\n", library);
-	
+#endif
+  	
 	Emulator::Escape();		// prevent deadlock between EKA2 scheduler and MS kernel
 	// try to load selected DLL
 	HINSTANCE instance = LoadLibraryA(library);
@@ -116,7 +123,9 @@ void init_vector()
 	else
 		{
 		fill_vector(instance);
+#ifdef _DEBUG
 		RDebug::Printf("... DLL loaded successfully");
+#endif
 		}
 	}
 

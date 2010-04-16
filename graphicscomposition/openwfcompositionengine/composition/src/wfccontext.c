@@ -279,8 +279,9 @@ WFC_Context_InitializeAttributes(WFC_CONTEXT* context,
         OWF_ASSERT(attribError==ATTR_ERROR_NO_MEMORY);
         return attribError;
         }
-    
-    /* The composition code uses the member variables directly, 
+
+  
+    /* The composition code reads the member variables directly, 
      * not via the attribute engine.
      */
     OWF_Attribute_Initi(&context->attributes,
@@ -313,6 +314,14 @@ WFC_Context_InitializeAttributes(WFC_CONTEXT* context,
                         (OWFint*) &context->lowestElement,
                         OWF_TRUE);
     attribError=OWF_AttributeList_GetError(&context->attributes);
+	
+	/* After commit to working, writable attribute abstracted variables
+	must not be written to directly. */
+    OWF_AttributeList_Commit(&context->attributes,
+                             WFC_CONTEXT_TYPE,
+                             WFC_CONTEXT_BG_COLOR,
+		             WORKING_ATTR_VALUE_INDEX );
+	
     return attribError;
 }
 

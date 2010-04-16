@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -83,6 +83,12 @@ enum TFbsMessage
 	EFbsMessFetchLinkedTypeface, //Retrieve linked typeface specification from rasterizer (PREQ2146)
 	EFbsMessSetDuplicateFail, //Test Only - cause font duplicate to fail, or reset this
 	EFbsMessUpdateLinkedTypeface, //Update an existing linked typeface specification with rasterizer; file valid after reboot
+	EFbsMessGetFontTable,
+	EFbsMessReleaseFontTable,
+	EFbsMessGetGlyphOutline,
+	EFbsMessReleaseGlyphOutline,
+	// If you are adding new messages don't forget to check that the 
+	// security permissions are set correctly (KRanges & KElementsIndex in server.cpp)
 	};
 
 #endif // __FBSMESSAGE_H__

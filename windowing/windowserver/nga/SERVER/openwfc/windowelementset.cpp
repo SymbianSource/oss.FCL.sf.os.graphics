@@ -353,7 +353,7 @@ TInt CWindowElement::SetElement(MWsElement& aElement, const TSurfaceConfiguratio
 	//as that would propagate a client panic in SetBackgroundSurface which did not previously occur.
 	aElement.SetSourceRotation(GcToElementRotation(aSurfaceConfiguration.Orientation()));
 	// Set or clear flip if the element flags are changing
-	if (aSurfaceConfiguration.Flip() != aElement.SourceFlipping()) 
+	if ( (!aSurfaceConfiguration.Flip()) != (!aElement.SourceFlipping()) ) 
 	    {
         aElement.SetSourceFlipping(!aElement.SourceFlipping());
 	    }

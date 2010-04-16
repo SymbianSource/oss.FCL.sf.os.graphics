@@ -247,7 +247,7 @@ TESTEXECUTE, C:\logs\testexecute\egltest_t_internalapi.htm,					, z:\egltest\egl
 TESTEXECUTE, C:\logs\testexecute\egltest_t_lowmemory.htm,					, z:\egltest\egltest_t_lowmemory.script, 					600, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\egltest_t_windowresize.htm,				, z:\egltest\egltest_t_windowresize.script, 			    600, , z\graphicstest\minigui.cmd z\graphics\t_graphics_config_inifiles.bat install csc_nga, z\graphicstest\unminigui.cmd z\graphicstest\retain_files.cmd logs\testexecute\screencomparison screencomparison z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\egltest_t_swapbehavior.htm,                , z:\egltest\egltest_t_swapbehavior.script, 				300, , z\graphicstest\minigui.cmd z\graphics\t_graphics_config_inifiles.bat install csc_nga, z\graphicstest\unminigui.cmd z\graphicstest\retain_files.cmd logs\testexecute\screencomparison screencomparison z\graphics\t_graphics_config_inifiles.bat uninstall
-TESTEXECUTE, C:\logs\testexecute\egltest_t_swapbuffers.htm,				, z:\egltest\egltest_t_swapbuffers.script, 						120, , z\graphicstest\minigui.cmd z\graphics\t_graphics_config_inifiles.bat install csc_nga, z\graphicstest\unminigui.cmd z\graphics\t_graphics_config_inifiles.bat uninstall
+TESTEXECUTE, C:\logs\testexecute\egltest_t_benchmark_swapbuffers.htm,		, z:\egltest\egltest_t_benchmark_swapbuffers.script,		120, , z\graphicstest\minigui.cmd z\graphics\t_graphics_config_inifiles.bat install csc_nga, z\graphicstest\unminigui.cmd z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\egltest_t_unittest.htm,                    , z:\egltest\egltest_t_unittest.script, 					300, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\egltest_t_texturing.htm,                   , z:\egltest\egltest_t_texturing.script, 					300, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 # EGL - Hybrid Graphics Implementation (Common tests)
@@ -490,4 +490,3 @@ TESTEXECUTE, C:\logs\testexecute\uilayerdrawing_tests_noautoclear.htm,	, z:\tlay
 
 # UIBENCH S60
 #TESTEXECUTE, C:\logs\testexecute\te_uibench_s60_techview_emulator.htm,	, c:\uibench_s60\te_uibench_s60_techview_emulator.script, 900
-#TESTEXECUTE, C:\logs\testexecute\te_uibench_s60_teglswapbuffer.htm,		, c:\uibench_s60\te_uibench_s60_teglswapbuffer.script, 900

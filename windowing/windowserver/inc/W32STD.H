@@ -1,4 +1,4 @@
-// Copyright (c) 1994-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1994-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1201,13 +1201,15 @@ class MWsClientClass
 @publishedAll
 @released */
 	{
+	friend class RTFXEffect;
 public:
 	MWsClientClass();
 	MWsClientClass(RWsBuffer *aBuffer);
 	inline TInt WsHandle() const;
 protected:
-	void Write(const TAny *aData, TInt aLength,const TAny *aData2, TInt aLength2,TUint aOpcode) const;
-	void Write(const TAny *aBuf, TInt aBufLen,TUint aOpcode) const;
+	void Write(const TAny *aData1,TInt aLength1,TInt aLength2,TUint aOpcode) const;
+	void Write(const TAny *aData, TInt aLength,const TAny *aData2, TInt aLength2,TUint aOpcode,const TIpcArgs* aIpcArgs=NULL) const;
+	void Write(const TAny *aBuf, TInt aBufLen,TUint aOpcode,const TIpcArgs* aIpcArgs=NULL) const;
 	void Write(TUint aOpcode) const;
 	void WriteInt(TInt aInt, TUint aOpcode) const;
 	void WriteRect(const TRect &aRect, TUint aOpcode) const;
@@ -1230,6 +1232,9 @@ protected:
     void RefreshWindowSizeCache(const TSize& aNewSize) const;
     TInt CachedWindowSize(TSize& aSize) const;
     void DestroyWindowSizeCacheEntry();
+
+private:
+    void AppendData(const TAny *aData,TInt aLength,TBool aFinished);
 	
 protected:
 	TInt32 iWsHandle;	/**< WARNING: Member variable for internal use ONLY. Compatibility is not guaranteed in future releases. Please access using the provided get/set APIs only. */
@@ -1496,7 +1501,7 @@ public:
 #if defined(__WINS__)
 // Function for WINS behaviour only
 	IMPORT_C void SetRemoveKeyCode(TBool aRemove);
-	IMPORT_C void SimulateXyInputType(TXYInputType aInputType);		//Only for testing WSERV
+	IMPORT_C void SimulateXyInputType(TInt aInputType);		//Only for testing WSERV
 #endif
 //
 	IMPORT_C void SimulateRawEvent(TRawEvent aEvent);
@@ -1524,6 +1529,13 @@ public:
 	IMPORT_C TInt GetExitHighPressureThreshold() const;
 //
     IMPORT_C void EnableWindowSizeCacheL();
+	IMPORT_C void SendEffectCommand(TInt aTfxCmd, const TDesC8& aTfxCmdData=KNullDesC8);
+
+// Registering/Unregistering of TFX effect, to allow animations to be associated with each transition
+	IMPORT_C void RegisterEffect(TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2, TUint aAppUid = NULL);
+	IMPORT_C void UnregisterEffect(TInt aAction);
+	IMPORT_C void UnregisterAllEffects();
+	IMPORT_C void OverrideEffects(TBool aOneShot, TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2);
 	
 // functions not exported, used by CWsGraphic
 	void GraphicMessageReady(TRequestStatus *aStat);
@@ -1712,6 +1724,9 @@ public:
 	IMPORT_C void SetSurfaceTransparency(TBool aSurfaceTransparency);
 	IMPORT_C TRgb KeyColor() const;
 	IMPORT_C void EnableAdvancedPointers();
+	IMPORT_C void SetPurpose(TInt aPurpose);
+	IMPORT_C void SendEffectCommand(TInt aTfxCmd, const TDesC8& aTfxCmdData=KNullDesC8);
+	IMPORT_C void OverrideEffects(TBool aOneShot, TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2);
 protected:
 	TInt construct(const RWindowTreeNode &parent,TUint32 aHandle, TInt aType, TDisplayMode aDisplayMode);
 	};

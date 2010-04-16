@@ -33,6 +33,7 @@
 #include <graphics_screencomparison.iby>
 #include <graphics_imagecomparison.iby>
 #include <graphics_tprofiler.iby>
+#include <graphics_simload.iby>
 
 // test server
 file=ABI_DIR\DEBUG_DIR\egltest.dll                              sys\bin\egltest.dll
@@ -56,6 +57,7 @@ data=DATAZ_\egltest\egltest_t_image_multithread.script			 \egltest\egltest_t_ima
 data=DATAZ_\egltest\egltest_t_image_multiprocess.script			 \egltest\egltest_t_image_multiprocess.script
 data=DATAZ_\egltest\egltest_t_image_negative.script              \egltest\egltest_t_image_negative.script
 data=DATAZ_\egltest\egltest_t_benchmark_sgimage.script           \egltest\egltest_t_benchmark_sgimage.script
+data=DATAZ_\egltest\egltest_t_benchmark_swapbuffers.script		 \egltest\egltest_t_benchmark_swapbuffers.script
 data=DATAZ_\egltest\egltest_run.bat                          	\egltest_run.bat
 
 #endif // __EGLTEST_IBY__

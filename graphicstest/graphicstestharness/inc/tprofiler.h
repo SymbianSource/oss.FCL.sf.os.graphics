@@ -37,6 +37,7 @@ public:
     IMPORT_C TInt64 StopTimer();
     IMPORT_C void InitResults();
     IMPORT_C void MarkResultSetL();
+    IMPORT_C void MarkResultSetAndSuspendL();
     IMPORT_C TUint32 GetTrimedMean();
     IMPORT_C TUint32 Mean();
     IMPORT_C TInt PercentageChange(TInt aFirstTime, TInt aSecondTime);
@@ -49,20 +50,25 @@ public:
     IMPORT_C void ResultsAnalysisScreenRotationRate(const TDesC & aTestName, TInt aRotation, TInt aSrcScreenMode, TInt aDstScreenMode, TInt aIters, TInt aNumPixels);
     IMPORT_C void ResultsAnalysisZorderSwitchingRate(const TDesC & aTestName, TInt aZorderSwitching, TInt aSrcScreenMode, TInt aDstScreenMode, TInt aIters, TInt aNumPixels);
 	IMPORT_C void FreeResultsMemory();
+	IMPORT_C TUint32 TimeMax();
+	IMPORT_C TUint32 TimeMin();
+	IMPORT_C void ShowResultArrayInTimingOrder();
+	IMPORT_C void SetStoreResultInTimingOrder(TBool aStoreResultInTimingOrder);
 
 private:
     CTProfiler(CTestStep& aTestStep);
     void ConstructL();
-    TUint32 TimeMax();
-    TUint32 TimeMin();
+    
 private:
     TUint32             iStart;
     TUint32             iEnd;
     TUint32             iDiff;
     TInt                iFreq;  
     RArray<TUint32>     iResults;
+    RArray<TUint32>     iResultsTimingOrder;
     TBool               iResultsInitalised;
     CTestStep&          iTestStep;
+    TBool               iStoreResultInTimingOrder;
     };
 
 #endif

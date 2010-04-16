@@ -351,7 +351,7 @@ void CScreenDeviceHelper::Update()
 	if (iUpdateRegion.IsEmpty())
 		return;
 
-	iSurfaceUpdateSession.SubmitUpdate(ScreenNumber(), iSurface, 0, &iUpdateRegion);
+	iSurfaceUpdateSession.SubmitUpdate(KAllScreens, iSurface, 0, &iUpdateRegion);
 	iUpdateRegion.Clear();
 	}
 

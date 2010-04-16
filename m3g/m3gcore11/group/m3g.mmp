@@ -26,14 +26,14 @@ MACRO           M3G_BUILD_DLL
 CAPABILITY      CAP_GENERAL_DLL
 
 // Modify default options to optimize for speed over size in this module.
-OPTION ARMCC -O3
-OPTION ARMCC -Otime
+OPTION ARMCC -O3 -Otime
 ALWAYS_BUILD_AS_ARM
 
 // Uncomment the following flags to enable ARMv6 and/or VFP optimizations.
 //#define __ARMV6_SUPPORT
 //#define __VFPV2_SUPPORT
 
+#ifdef ARMCC
 #ifdef __ARMV6_SUPPORT
 MACRO			M3G_HW_ARMV6
 OPTION_REPLACE ARMCC --cpu 6
@@ -43,6 +43,7 @@ OPTION_REPLACE ARMCC --cpu 6
 MACRO			M3G_HW_FLOAT
 MACRO			M3G_HW_FLOAT_VFPV2
 OPTION_REPLACE ARMCC --fpu softvfp+vfpv2 --fpmode fast
+#endif
 #endif
 
 
@@ -62,10 +63,12 @@ USERINCLUDE     ../inc
 // layer specific include directories
 OS_LAYER_SYSTEMINCLUDE
 
-SYSTEMINCLUDE   /EPOC32/INCLUDE/LIBC
+SYSTEMINCLUDE   /epoc32/include/libc
 SYSTEMINCLUDE   ../../../inc
 SYSTEMINCLUDE   ../../inc
 
 LIBRARY         euser.lib estlib.lib fbscli.lib
 LIBRARY         efsrv.lib ws32.lib
-LIBRARY         libgles_cm.lib ezlib.lib
+LIBRARY         libGLESv1_CM.lib ezlib.lib libEGL.lib
+
+SMPSAFE

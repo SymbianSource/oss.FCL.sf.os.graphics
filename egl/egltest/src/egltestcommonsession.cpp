@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -15,7 +15,7 @@
 
 /**
  @file
- @test 
+ @test
 */
 
 #include "egltestcommonsession.h"
@@ -82,7 +82,7 @@ EXPORT_C CTestEglSession::~CTestEglSession()
                 {
                 WARN_PRINTF3(_L("thread %d: eglMakeCurrent returned error = %x ~CTestEglSession..."), iThreadIdx, eglGetError());
                 }
-            
+
             // Warn because this should be done by the test, rather than relying on the d'tor
             // which may not leave if there is an error (so no CHECK_EXPECTED_ERROR)
             WARN_PRINTF2(_L("thread %d: Calling eglDestroyContext() from ~CTestEglSession..."), iThreadIdx);
@@ -90,7 +90,7 @@ EXPORT_C CTestEglSession::~CTestEglSession()
             if(ret == EGL_FALSE)
                 {
                 WARN_PRINTF3(_L("thread %d: eglDestroyContext returned error = %x ~CTestEglSession..."), iThreadIdx, eglGetError());
-                }   
+                }
 		    }
 
 		if (iSurface != EGL_NO_SURFACE)
@@ -102,9 +102,9 @@ EXPORT_C CTestEglSession::~CTestEglSession()
 			if(ret == EGL_FALSE)
 				{
 				WARN_PRINTF3(_L("thread %d: eglDestroySurface returned error = %x ~CTestEglSession..."), iThreadIdx, eglGetError());
-				}	
+				}
 			}
-		
+
 		if (iTerminateDisplay)
 			{
 			INFO_PRINTF1(_L("Calling eglTerminate..."));
@@ -113,14 +113,14 @@ EXPORT_C CTestEglSession::~CTestEglSession()
 			if(ret == EGL_FALSE)
 				{
 				WARN_PRINTF3(_L("thread %d: eglTerminate returned error = %x ~CTestEglSession..."), iThreadIdx, eglGetError());
-				}	
+				}
 			}
 		}
 
 	// Only destroy native resource after the surface and context that wraps it has been destroyed.
 	delete iFbsBitmap;
 	CloseFbsSession();
-	
+
 	iSgImage.Close();
 	CloseSgDriver();
 	}
@@ -129,7 +129,7 @@ EXPORT_C void CTestEglSession::SetExpectedError(EGLint aExpectedErrorCode)
 	{
 	VERBOSE_INFO_PRINTF3(_L("thread %d: Setting the expected error code for the next EGL call to %x"), iThreadIdx, aExpectedErrorCode);
 		{
-		iExpectedErrorCode = aExpectedErrorCode; 
+		iExpectedErrorCode = aExpectedErrorCode;
 		}
 	}
 
@@ -149,15 +149,15 @@ EXPORT_C TBool CTestEglSession::CheckExpectedError(EGLint aFunctionReturnValue)
 	{
 	TBool isExpectedError = ETrue;
 	EGLint eglErr = eglGetError();
-	
+
 	// First check that we got the correct return value
 	if ((iExpectedErrorCode == EGL_SUCCESS) && !aFunctionReturnValue)
 		{
 		ERR_PRINTF3(_L("thread %d: Wrong function return value: %d"), iThreadIdx, aFunctionReturnValue);
 		isExpectedError = EFalse;
 		}
-	// Also check that we got the 
-	if (eglErr != iExpectedErrorCode) 
+	// Also check that we got the
+	if (eglErr != iExpectedErrorCode)
 		{
 		ERR_PRINTF4(_L("thread %d: eglGetError() returned %x, but expected %x"), iThreadIdx, eglErr, iExpectedErrorCode);
 		isExpectedError = EFalse;
@@ -166,18 +166,18 @@ EXPORT_C TBool CTestEglSession::CheckExpectedError(EGLint aFunctionReturnValue)
 		{
 		VERBOSE_INFO_PRINTF3(_L("thread %d: eglGetError() returned %x, as expected"), iThreadIdx, eglErr);
 		}
-	
+
 	// Reset the expected error
 	ResetExpectedError();
-	
+
 	return isExpectedError;
 	}
 
 EXPORT_C void CTestEglSession::CheckExpectedErrorL(EGLint aExpectedErrorCode)
 	{
-	EGLint eglErr = eglGetError();	
+	EGLint eglErr = eglGetError();
 	// check that we got the expected error
-	if (eglErr != aExpectedErrorCode) 
+	if (eglErr != aExpectedErrorCode)
 		{
 		ERR_PRINTF4(_L("thread %d: eglGetError() returned %x, but expected %x"), iThreadIdx, eglErr, aExpectedErrorCode);
 		User::Leave(KErrTEFUnitFail);
@@ -188,7 +188,7 @@ void CTestEglSession::QueryExtensionsL(TExtensionsGroups aExtensionBelongsTo)
 	{
 	// reset the cached extensions
 	iExtensionStrings.Reset();
-	
+
 	const char* extensionsString = NULL;
 	if(aExtensionBelongsTo == EIsEGL)
 		{
@@ -196,19 +196,13 @@ void CTestEglSession::QueryExtensionsL(TExtensionsGroups aExtensionBelongsTo)
 		extensionsString = eglQueryString(iDisplay, EGL_EXTENSIONS);
 		}
 	else if(aExtensionBelongsTo == EIsVG)
-		{	
+		{
 		INFO_PRINTF2(_L("thread %d: Calling vgGetString for VG_EXTENSIONS)"), iThreadIdx);
 
 		// OpenVG needs a current VG context before it will allow the call to vgGetString
-		TSgImageInfoOpenVgTarget imageInfo;
-		imageInfo.iSizeInPixels = KPixmapSize;
-		imageInfo.iPixelFormat = EUidPixelFormatXRGB_8888;
-#ifdef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
-		imageInfo.iUsage = ESgUsageBitOpenVgSurface;
-#else
-        imageInfo.iUsage = ESgUsageOpenVgTarget;
-#endif		
-		CreatePixmapSurfaceAndMakeCurrentAndMatchL(imageInfo,CTestEglSession::EResourceCloseSgImageEarly);
+		// The created surface will remain un-used, hence we create it with an arbitrary pixel format 
+        EGLConfig currentConfig = GetConfigExactMatchL(EPBufferAttribsColor64K);
+        CreatePbufferSurfaceAndMakeCurrentL(currentConfig, TSize(1,1), EGL_OPENVG_API);
 
 		extensionsString = (const char*) vgGetString(VG_EXTENSIONS);
 
@@ -220,13 +214,17 @@ void CTestEglSession::QueryExtensionsL(TExtensionsGroups aExtensionBelongsTo)
 		ERR_PRINTF2(_L("CTestEglSession::QueryExtensionsL() - Unknown extension group provided (%d)."), aExtensionBelongsTo);
 		User::Leave(KErrArgument);
 		}
-	CHECK_EXPECTED_ERROR(extensionsString!=NULL);	
-	
+	CHECK_EXPECTED_ERROR(extensionsString!=NULL);
+
 	TPtrC8 ptrExtensions((const TUint8 *) extensionsString );
-	TBuf16<128> bufExtensions;
-	bufExtensions.Copy(ptrExtensions.Left(128));
-	INFO_PRINTF3(_L("thread %d: QueryExtensionsL: \"%S\""), iThreadIdx, &bufExtensions);
-	
+
+	RBuf buffer;
+    buffer.CreateL(ptrExtensions.Length());
+    buffer.CleanupClosePushL();
+    buffer.Copy(ptrExtensions);
+	INFO_PRINTF3(_L("thread %d: QueryExtensionsL: \"%S\""), iThreadIdx, &buffer);
+    CleanupStack::PopAndDestroy(&buffer);
+
 	TInt posSpace=1;
 	while (posSpace > 0 && ptrExtensions.Length() > 0)
 		{
@@ -244,7 +242,7 @@ void CTestEglSession::QueryExtensionsL(TExtensionsGroups aExtensionBelongsTo)
 			{
 			iExtensionStrings.Append(ptrExtensions);
 			}
-		} 
+		}
 	}
 
 TBool CTestEglSession::FindExtensionStringL(TExtensionsGroups aExtensionBelongsTo, const TDesC8& aExtensionString)
@@ -255,7 +253,7 @@ TBool CTestEglSession::FindExtensionStringL(TExtensionsGroups aExtensionBelongsT
 		QueryExtensionsL(aExtensionBelongsTo); // Load extension info
 		iExtensionGroupCached = aExtensionBelongsTo;
 		}
-	
+
 	TInt countExtensionStrings = iExtensionStrings.Count();
 	for(TUint i=0; i<countExtensionStrings; i++)
 		{
@@ -270,7 +268,7 @@ TBool CTestEglSession::FindExtensionStringL(TExtensionsGroups aExtensionBelongsT
 	const TInt KBufLenMissingExtension=128;
 	TBuf16<KBufLenMissingExtension> bufMissingExtension16;
 	bufMissingExtension16.Copy(aExtensionString.Left(KBufLenMissingExtension));
-	
+
 	WARN_PRINTF2(_L("EGL extension missing: [%S]"), &bufMissingExtension16);
 	return EFalse;
 	}
@@ -300,11 +298,11 @@ EXPORT_C void CTestEglSession::ViewConfigsL()
 	INFO_PRINTF1(_L("Checking number of configs..."));
 	ASSERT_TRUE(numConfigs >= 1);
 	INFO_PRINTF2(_L("Found %d configs"), numConfigs);
-	
+
 	// Get the configs
 	INFO_PRINTF1(_L("Calling eglGetConfigs to get configs..."));
 	CHECK_EXPECTED_ERROR(eglGetConfigs(iDisplay, configs, KMaxEglConfigs, &numConfigs));
-	
+
 	for(TUint index = 0; index < numConfigs; index++)
 		{
 		EGLint EGL_BUFFER_SIZE_value;
@@ -381,14 +379,14 @@ EXPORT_C void CTestEglSession::ViewConfigsL()
 
 		TBool good = ETrue;
 
-		INFO_PRINTF7(_L("(idx: %3d) RGBA=(%2d) %2d,%2d,%2d,%2d"), index, EGL_BUFFER_SIZE_value, 
-				EGL_RED_SIZE_value, EGL_GREEN_SIZE_value, EGL_BLUE_SIZE_value, 
+		INFO_PRINTF7(_L("(idx: %3d) RGBA=(%2d) %2d,%2d,%2d,%2d"), index, EGL_BUFFER_SIZE_value,
+				EGL_RED_SIZE_value, EGL_GREEN_SIZE_value, EGL_BLUE_SIZE_value,
 				EGL_ALPHA_SIZE_value);
 		if (!(EGL_RED_SIZE_value == 8 && EGL_GREEN_SIZE_value == 8 && EGL_BLUE_SIZE_value == 8 && EGL_ALPHA_SIZE_value == 0))
 			{
 			continue;
 			}
-		
+
 		INFO_PRINTF2(_L("\n\n^^^^^^ CONFIG [%d] VALUES ******"), index);
 		if (EGL_SURFACE_TYPE_value & EGL_PIXMAP_BIT)
 			{
@@ -399,7 +397,7 @@ EXPORT_C void CTestEglSession::ViewConfigsL()
 			INFO_PRINTF2(_L("EGL_SURFACE_TYPE=%d. <<< BAD (not pixmap)"), EGL_SURFACE_TYPE_value);
 			good = EFalse;
 			}
-		
+
 		if (EGL_RENDERABLE_TYPE_value & EGL_OPENVG_BIT)
 			{
 			INFO_PRINTF2(_L("EGL_RENDERABLE_TYPE=%d. <<< Has EGL_OPENVG_BIT"), EGL_RENDERABLE_TYPE_value);
@@ -409,7 +407,7 @@ EXPORT_C void CTestEglSession::ViewConfigsL()
 			INFO_PRINTF2(_L("EGL_RENDERABLE_TYPE=%d. <<< BAD (not open vg)"), EGL_RENDERABLE_TYPE_value);
 			good = EFalse;
 			}
-		
+
 		if (good)
 			{
 			INFO_PRINTF1(_L("^^^^^^^ GOOD ^^^^^^^"));
@@ -453,10 +451,10 @@ EXPORT_C void CTestEglSession::ViewConfigsL()
 		}
 	}
 
-EXPORT_C static TEglConfigMatchType GetMatchType(EGLint aAttrib, TEglConfigMatchRule aMatchRule)
+EXPORT_C TEglConfigMatchType GetMatchType(EGLint aAttrib, TEglConfigMatchRule aMatchRule)
 	{
 	const TConfigMatchRuleItem* curMatchRuleItem = KConfigMatchRules[aMatchRule];
-			
+
 	while(curMatchRuleItem->iAttrib != EGL_NONE)
 		{
 		if (aAttrib == curMatchRuleItem->iAttrib)
@@ -473,7 +471,7 @@ EXPORT_C static TEglConfigMatchType GetMatchType(EGLint aAttrib, TEglConfigMatch
 /**
  Returns the first index of a config that matches the requested config extactly
  */
-TInt CTestEglSession::GetFullMatchConfigIndex(EGLDisplay aDisplay, EGLConfig *aConfigs, TInt aNumConfigs, 
+TInt CTestEglSession::GetFullMatchConfigIndex(EGLDisplay aDisplay, EGLConfig *aConfigs, TInt aNumConfigs,
 											  const EGLint aWantedAttribs[], TEglConfigMatchRule aMatchRule)
 	{
 	EGLint value=0;
@@ -481,7 +479,7 @@ TInt CTestEglSession::GetFullMatchConfigIndex(EGLDisplay aDisplay, EGLConfig *aC
 		{
 		const EGLint *curAttrib = aWantedAttribs;
 		TBool match = ETrue;
-		
+
 		while(*curAttrib != EGL_NONE && match)
 			{
 			ASSERT_EGL_TRUE(eglGetConfigAttrib(aDisplay, aConfigs[idxConfig], *curAttrib, &value));
@@ -492,7 +490,7 @@ TInt CTestEglSession::GetFullMatchConfigIndex(EGLDisplay aDisplay, EGLConfig *aC
 					if (value != curAttrib[1])
 						{
 						match = EFalse;
-						}		
+						}
 					break;
 				case eMatchAtLeast:
 					if (value < curAttrib[1])   // Note, we detect "failure to match", hence "<" not ">="!
@@ -508,17 +506,17 @@ TInt CTestEglSession::GetFullMatchConfigIndex(EGLDisplay aDisplay, EGLConfig *aC
 					break;
 				case eMatchAlways:
 				    break;
-				    
+
 				default:
 					// We should not get here.
-				    ASSERT(FALSE); 
+				    ASSERT(FALSE);
 				    break;
 				}
 			curAttrib += 2;
 			}
-		
-		// If we get here with match set, we have matched all attributes, and have found a match. 
-		if (match) 
+
+		// If we get here with match set, we have matched all attributes, and have found a match.
+		if (match)
 			{
 			return idxConfig;
 			}
@@ -539,7 +537,7 @@ const TMapEglConfigToPixelFormat& CTestEglSession::ConfigToPixelFormatTable(TInt
 /**
  Returns pixel format inforamtion for a given EGL config.
  @param aConfig The EGL config for which pixel format information will be returned.
- @return A pointer to the pixel format information for the given EGL config.  
+ @return A pointer to the pixel format information for the given EGL config.
          Tf the config cannot be mapped, then NULL is returned.
  */
 EXPORT_C const TMapEglConfigToPixelFormat* CTestEglSession::GetPixelFormatFromEglConfigL(EGLConfig aConfig)
@@ -561,7 +559,7 @@ EXPORT_C const TMapEglConfigToPixelFormat* CTestEglSession::GetPixelFormatFromEg
 	CHECK_EXPECTED_ERROR(eglGetConfigAttrib(iDisplay, aConfig, EGL_SURFACE_TYPE, &surfaceType));
 
 	INFO_PRINTF7(_L(">>>>> Config info: %d, %d, %d,%d,%d, 0x%x"), bufferSize, alphaSize, redSize, greenSize, blueSize, colorBufferType);
-	
+
 	for(TUint i=0; i<ConfigToPixelFormatTableLength(); i++)
 		{
 		if ((ConfigToPixelFormatTable(i).iBufferSize == bufferSize)
@@ -632,7 +630,7 @@ EXPORT_C EGLConfig CTestEglSession::GetConfigExactMatchL(TEglTestConfig aConfigA
 		ERR_PRINTF1(_L("Attribute index out of range, please check the INI file"));
 		User::Leave(KErrArgument);
 		}
-	
+
 	EGLConfig configs[KMaxEglConfigs];
 	EGLint numConfigs=0;
 	ASSERT_EGL_TRUE(eglChooseConfig(iDisplay, KConfigAttribs[aConfigAttribIndex], configs, KMaxEglConfigs, &numConfigs));
@@ -642,7 +640,7 @@ EXPORT_C EGLConfig CTestEglSession::GetConfigExactMatchL(TEglTestConfig aConfigA
 		WARN_PRINTF1(_L("GetConfigExactMatchL - Could not find a matching config, eglChooseConfig returned 0 configs!"));
 		User::Leave(KTestNoMatchingConfig);
 		}
-	
+
 	// Check that any of the configs returned matches the desired attributes
 	TInt match = GetFullMatchConfigIndex(iDisplay, configs, numConfigs, KConfigAttribs[aConfigAttribIndex], aMatchRule);
 	if (match == KErrNotFound)
@@ -671,10 +669,10 @@ EXPORT_C void CTestEglSession::TryUsePixmapCFbsBitmapOpenVgL(EGLConfig aConfig, 
 	{
 	CreatePixmapSurfaceAndMakeCurrentL(aConfig, aSize, aDisplayMode);
 	DrawOpenVgL();
-	
+
 	// Wait for the drawing to complete
 	eglWaitClient();
-	
+
 	CheckImageDataL(iFbsBitmap);
 	CheckImageDataVgL(VG_sRGB_565);
 	CleanupSurfaceFbsBitmapL();
@@ -688,10 +686,10 @@ EXPORT_C void CTestEglSession::TryUsePixmapCFbsBitmapOpenGlesL(EGLConfig aConfig
 	{
 	CreatePixmapSurfaceAndMakeCurrentL(aConfig, aSize, aDisplayMode,EGL_OPENGL_ES_API, aRenderVersion);
 	DrawOpenGLesL();
-	
+
 	// Wait for the drawing to complete
 	eglWaitClient();
-	
+
 	CheckImageDataFullRedishL(iFbsBitmap);
 	CleanupSurfaceFbsBitmapL();
 	CloseFbsSession();
@@ -707,7 +705,7 @@ EXPORT_C void CTestEglSession::TryUsePixmapRSgImageL()
 	imageInfo.iSizeInPixels = KPixmapSize;
 	imageInfo.iPixelFormat = EUidPixelFormatXRGB_8888;
 	// will draw to and read from the image using OpenVg
-#ifdef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE	
+#ifdef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
 	imageInfo.iUsage = ESgUsageBitOpenVgSurface | ESgUsageBitOpenVgImage;
 #else
     // will also read from the image using DirectGdi
@@ -720,11 +718,11 @@ EXPORT_C void CTestEglSession::TryUsePixmapRSgImageL()
 #endif
 	CreatePixmapSurfaceAndMakeCurrentAndMatchL(imageInfo, EResourceCloseSgImageLate);
 	DrawOpenVgL();
-	            
+
 	// Wait for the drawing to complete
 	 eglWaitClient();
-	    
-	//we can't retrieve data directly from the SgImage as 
+
+	//we can't retrieve data directly from the SgImage as
 	//non-unified architecture doesn't allow readback from the GPU
 	CheckImageDataVgL(VG_sXRGB_8888);
 	CleanupSurfaceSgImageL();
@@ -734,18 +732,18 @@ EXPORT_C void CTestEglSession::TryUsePixmapRSgImageL()
 EXPORT_C TBool CTestEglSession::TryUsePixmapRSgImageOpenGlesL(EGLConfig aConfig, const TSgImageInfo& aImageInfo, TResourceCloseRule aResourceCloseRule, TInt aRenderVersion)
 	{
 	CreatePixmapSurfaceAndMakeCurrentL(aConfig, aImageInfo, aResourceCloseRule ,EGL_OPENGL_ES_API, aRenderVersion);
-		
+
 	DrawOpenGLesL();
-			
+
 	// Wait for the drawing to complete
 	eglWaitClient();
 
-	//we can't retrieve data directly from SgImage as non-unified 
+	//we can't retrieve data directly from SgImage as non-unified
 	//architecture doesn't allow readback from the GPU
-	
-	if (aImageInfo.iPixelFormat == EUidPixelFormatXRGB_8888  || 
+
+	if (aImageInfo.iPixelFormat == EUidPixelFormatXRGB_8888  ||
 		aImageInfo.iPixelFormat == EUidPixelFormatARGB_8888_PRE)
-		{	
+		{
 		CheckImageDataGLesL();
 		}
 
@@ -767,13 +765,13 @@ It cleans up the pixmap surface it destroyed.
 EXPORT_C TBool CTestEglSession::TryUsePixmapRSgImageOpenVgL(EGLConfig aConfig, const TSgImageInfo& aImageInfo, TResourceCloseRule aResourceCloseRule)
 	{
 	CreatePixmapSurfaceAndMakeCurrentL(aConfig, aImageInfo, aResourceCloseRule);
-		
+
 	DrawOpenVgL();
-			
+
 	// Wait for the drawing to complete
 	eglWaitClient();
-	
-	//we can't retrieve data directly from the SgImage as 
+
+	//we can't retrieve data directly from the SgImage as
 	//non-unified architecture doesn't allow readback from the GPU
 	CheckImageDataVgL(VG_sXRGB_8888);
 	CleanupSurfaceSgImageL();
@@ -781,26 +779,24 @@ EXPORT_C TBool CTestEglSession::TryUsePixmapRSgImageOpenVgL(EGLConfig aConfig, c
 	return ETrue;
 	}
 
-EXPORT_C void CTestEglSession::CreateWindowSurfaceAndMakeCurrentL(EGLConfig aConfig, RWindow& aWindow, EGLenum aBindAPI, TInt aRenderVersionNumber)
+EXPORT_C void CTestEglSession::CreateWindowSurfaceAndMakeCurrentL(EGLConfig aConfig, RWindow& aWindow, TBool aVgAlphaFormatPre, EGLenum aBindAPI, TInt aRenderVersionNumber)
 	{
 	ASSERT_EQUALS(iSurface, EGL_NO_SURFACE);
 	ASSERT_EQUALS(iContext, EGL_NO_CONTEXT);
-	
+
 	ASSERT_EGL_TRUE(eglBindAPI(aBindAPI));
-		
+
 	// Create a Window surface from the native image
-	EGLint EGL_RENDERABLE_TYPE_value = 0;
-	ASSERT_EGL_TRUE(eglGetConfigAttrib(iDisplay, aConfig, EGL_RENDERABLE_TYPE, &EGL_RENDERABLE_TYPE_value));
-	const EGLint* pixmapAttribs = ((aWindow.DisplayMode() == EColor16MAP) && (EGL_RENDERABLE_TYPE_value & EGL_OPENVG_BIT)) ? KPixmapAttribsVgAlphaFormatPre : KPixmapAttribsNone;
-	iSurface = eglCreateWindowSurface(iDisplay, aConfig, &aWindow, pixmapAttribs);
+	const EGLint* windowAttribs = (aVgAlphaFormatPre && aBindAPI == EGL_OPENVG_API) ? KPixmapAttribsVgAlphaFormatPre : KPixmapAttribsNone;
+	iSurface = eglCreateWindowSurface(iDisplay, aConfig, &aWindow, windowAttribs);
 	ASSERT_EGL_TRUE(iSurface != EGL_NO_SURFACE);
 
 	// Create a context for drawing to/reading from the pixmap surface and make it current
 	const EGLint KAttribsListCtxNone[] = { EGL_NONE };;
 	const EGLint KAttribsListCtxGles2[] = { EGL_CONTEXT_CLIENT_VERSION, aRenderVersionNumber, EGL_NONE };
-	const EGLint* attrib_list_ctx = (aBindAPI == EGL_OPENGL_ES_API && aRenderVersionNumber == 2) ? KAttribsListCtxGles2 : KAttribsListCtxNone; 
+	const EGLint* attrib_list_ctx = (aBindAPI == EGL_OPENGL_ES_API && aRenderVersionNumber == 2) ? KAttribsListCtxGles2 : KAttribsListCtxNone;
 	iContext = eglCreateContext(iDisplay, aConfig, EGL_NO_CONTEXT, attrib_list_ctx);
-	ASSERT_EGL_TRUE(iContext != EGL_NO_CONTEXT);	
+	ASSERT_EGL_TRUE(iContext != EGL_NO_CONTEXT);
 	ASSERT_EGL_TRUE(eglMakeCurrent(iDisplay, iSurface, iSurface, iContext));
 	}
 
@@ -816,7 +812,7 @@ EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentAndMatchL(const 
 	{
 	ASSERT_EQUALS(iSurface, EGL_NO_SURFACE);
 	ASSERT_EQUALS(iContext, EGL_NO_CONTEXT);
-	
+
     OpenSgDriverL();
     ASSERT_EQUALS(iSgImage.Create(aImageInfo, NULL, 0), KErrNone);
 
@@ -838,7 +834,7 @@ EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentAndMatchL(const 
 		ERR_PRINTF1(_L("CreatePixmapSurfaceAndMakeCurrentAndMatchL - Unkown API requested!"));
 		User::Leave(KErrArgument);
 		}
-	EGLint attrib_list[] = { 
+	EGLint attrib_list[] = {
 			  EGL_MATCH_NATIVE_PIXMAP,(TInt)&iSgImage,
 			  EGL_RENDERABLE_TYPE,renderableType,
 			  EGL_SURFACE_TYPE,EGL_PIXMAP_BIT,
@@ -865,25 +861,25 @@ EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentAndMatchL(const 
 	const EGLint* pixmapAttribs = ((aImageInfo.iPixelFormat == EUidPixelFormatARGB_8888_PRE) && (EGL_RENDERABLE_TYPE_value & EGL_OPENVG_BIT)) ? KPixmapAttribsVgAlphaFormatPre : KPixmapAttribsNone;
 	iSurface = eglCreatePixmapSurface(iDisplay, config, &iSgImage, pixmapAttribs);
 	ASSERT_EGL_TRUE(iSurface != EGL_NO_SURFACE);
-	
+
 	if (aResourceCloseRule == EResourceCloseSgImageEarly)
 		{
 		// EGL should have taken its own reference to the SgImage, so it should be able to continue
 		// to use the underlying data after this local image has been closed.
 		iSgImage.Close();
 		}
-	
+
 	if (aResourceCloseRule == EResourceCloseSgDriverAndImageEarly)
 		{
 		// EGL should have taken its own reference to the SgDriver, so it should be able to continue
-		// to use its reference to the image resource after this local reference to the driver has 
+		// to use its reference to the image resource after this local reference to the driver has
 		// been closed.
 		iSgImage.Close();
-		CloseSgDriver();		
+		CloseSgDriver();
 		}
 
 	// Create a context for drawing to/reading from the pixmap surface and make it current
-	const EGLint KAttribsListCtxNone[] = { EGL_NONE };;
+	const EGLint KAttribsListCtxNone[] = { EGL_NONE };
 	const EGLint KAttribsListCtxGles2[] = { EGL_CONTEXT_CLIENT_VERSION, aRenderVersionNumber, EGL_NONE };
 	const EGLint* attrib_list_ctx = (aBindAPI == EGL_OPENGL_ES_API && aRenderVersionNumber == 2) ? KAttribsListCtxGles2 : KAttribsListCtxNone; 
 	iContext = eglCreateContext(iDisplay, config, EGL_NO_CONTEXT, attrib_list_ctx);
@@ -892,12 +888,12 @@ EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentAndMatchL(const 
 	}
 
 /**
-Compound operation that constructs an RSgImage and uses it to create a pixmap suface. 
+Compound operation that constructs an RSgImage and uses it to create a pixmap suface.
 It then makes it current to the thread.
 @param aConfig The EGL config to be used when creating the pixmap surface
 @param aImageInfo Used to create the RSgImage pixmap
 @param aCloseNativeImageEarly When ETrue, the RSgImage is closed as soon as the pixmap surface has been
-		created.  Otherwise, the RSgImage is left to be destroyed later by some other method 
+		created.  Otherwise, the RSgImage is left to be destroyed later by some other method
 		- e.g at the same time as destroying the surface.
 @return Whether it was possible to create an iSgImage for the given aImageInfo
 */
@@ -905,10 +901,10 @@ EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentL(EGLConfig aCon
 	{
 	ASSERT_EQUALS(iSurface, EGL_NO_SURFACE);
 	ASSERT_EQUALS(iContext, EGL_NO_CONTEXT);
-	
+
 	OpenSgDriverL();
     ASSERT_EQUALS(iSgImage.Create(aImageInfo, NULL, 0), KErrNone);
-		
+
 	ASSERT_EGL_TRUE(eglBindAPI(aBindAPI));
 
 	// Create a pixmap surface from the native image
@@ -917,7 +913,7 @@ EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentL(EGLConfig aCon
 	const EGLint* pixmapAttribs = ((aImageInfo.iPixelFormat == EUidPixelFormatARGB_8888_PRE) && (EGL_RENDERABLE_TYPE_value & EGL_OPENVG_BIT)) ? KPixmapAttribsVgAlphaFormatPre : KPixmapAttribsNone;
 	iSurface = eglCreatePixmapSurface(iDisplay, aConfig, &iSgImage, pixmapAttribs);
 	ASSERT_EGL_TRUE(iSurface != EGL_NO_SURFACE);
-	
+
 	if (aResourceCloseRule == EResourceCloseSgImageEarly)
 		{
 		// EGL should have taken its own reference to the SgImage, so it should be able to continue
@@ -927,18 +923,18 @@ EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentL(EGLConfig aCon
 	if (aResourceCloseRule == EResourceCloseSgDriverAndImageEarly)
 		{
 		// EGL should have taken its own reference to the SgDriver, so it should be able to continue
-		// to use its reference to the image resource after this local reference to the driver has 
+		// to use its reference to the image resource after this local reference to the driver has
 		// been closed.
 		iSgImage.Close();
-		CloseSgDriver();		
+		CloseSgDriver();
 		}
-	
+
 	// Create a context for drawing to/reading from the pixmap surface and make it current
 	const EGLint KAttribsListCtxNone[] = { EGL_NONE };;
 	const EGLint KAttribsListCtxGles2[] = { EGL_CONTEXT_CLIENT_VERSION, aRenderVersionNumber, EGL_NONE };
-	const EGLint* attrib_list_ctx = (aBindAPI == EGL_OPENGL_ES_API && aRenderVersionNumber == 2) ? KAttribsListCtxGles2 : KAttribsListCtxNone; 
+	const EGLint* attrib_list_ctx = (aBindAPI == EGL_OPENGL_ES_API && aRenderVersionNumber == 2) ? KAttribsListCtxGles2 : KAttribsListCtxNone;
 	iContext = eglCreateContext(iDisplay, aConfig, EGL_NO_CONTEXT, attrib_list_ctx);
-	ASSERT_EGL_TRUE(iContext != EGL_NO_CONTEXT);	
+	ASSERT_EGL_TRUE(iContext != EGL_NO_CONTEXT);
 	ASSERT_EGL_TRUE(eglMakeCurrent(iDisplay, iSurface, iSurface, iContext));
 	}
 
@@ -946,7 +942,7 @@ EXPORT_C TInt CTestEglSession::CreateBitmap(CFbsBitmap* aFbsBitmap, const TSize&
 	{
 	//Fist try with CreateHardwareBitmap to check whether we are on hardware
 	TInt result = aFbsBitmap->CreateHardwareBitmap(aSize, aDisplayMode, KUidEglTestServer);
-	
+
 	if(result == KErrNotSupported)
 		{
 		//we are not on hardware
@@ -959,12 +955,12 @@ EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentL(EGLConfig aCon
 	{
 	ASSERT_EQUALS(iSurface, EGL_NO_SURFACE);
 	ASSERT_EQUALS(iContext, EGL_NO_CONTEXT);
-	
+
 	// Create an empty native CFbsBitmap
 	OpenFbsSessionL();
 	iFbsBitmap = new(ELeave)CFbsBitmap;
 	ASSERT_EQUALS(CreateBitmap(iFbsBitmap, aSize, displayMode), KErrNone);
-	
+
     const EGLint* attrib_list = NULL;
 	if(aBindAPI == EGL_OPENVG_API)
 		{
@@ -985,28 +981,28 @@ EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentL(EGLConfig aCon
 		User::Leave(KErrArgument);
 		}
 	ASSERT_EGL_TRUE(eglBindAPI(aBindAPI));
-	
+
 	// Create a pixmap surface from the native image
 	EGLint EGL_RENDERABLE_TYPE_value = 0;
 	ASSERT_EGL_TRUE(eglGetConfigAttrib(iDisplay, aConfig, EGL_RENDERABLE_TYPE, &EGL_RENDERABLE_TYPE_value));
 	const EGLint* pixmapAttribs = ((displayMode == EColor16MAP) && (EGL_RENDERABLE_TYPE_value & EGL_OPENVG_BIT)) ? KPixmapAttribsVgAlphaFormatPre : KPixmapAttribsNone;
 	iSurface = eglCreatePixmapSurface(iDisplay, aConfig, iFbsBitmap, pixmapAttribs);
 	ASSERT_EGL_TRUE(iSurface != EGL_NO_SURFACE);
-	
+
 	// Create a context for drawing to/reading from the pixmap surface and make it current
 	iContext = eglCreateContext(iDisplay, aConfig, EGL_NO_CONTEXT, attrib_list);
-	ASSERT_EGL_TRUE(iContext != EGL_NO_CONTEXT);	
+	ASSERT_EGL_TRUE(iContext != EGL_NO_CONTEXT);
 	ASSERT_EGL_TRUE(eglMakeCurrent(iDisplay, iSurface, iSurface, iContext));
 	}
 
-EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentAndMatchL(const TSize& aSize, TDisplayMode displayMode, EGLenum aBindAPI, TInt aRenderVersionNumber)
+EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentAndMatchL(const TSize& aSize, TDisplayMode aDisplayMode, EGLenum aBindAPI, TInt aRenderVersionNumber)
 	{
 	ASSERT_EQUALS(iSurface, EGL_NO_SURFACE);
 	ASSERT_EQUALS(iContext, EGL_NO_CONTEXT);
-	
+
 	OpenFbsSessionL();
 	iFbsBitmap = new(ELeave)CFbsBitmap;
-	ASSERT_EQUALS(CreateBitmap(iFbsBitmap, aSize, displayMode), KErrNone);
+	ASSERT_EQUALS(CreateBitmap(iFbsBitmap, aSize, aDisplayMode), KErrNone);
 
 	EGLint renderableType = 0;
 	if(aBindAPI == EGL_OPENVG_API)
@@ -1026,7 +1022,7 @@ EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentAndMatchL(const 
 		ERR_PRINTF1(_L("CreatePixmapSurfaceAndMakeCurrentAndMatchL - Unkown API requested!"));
 		User::Leave(KErrArgument);
 		}
-	EGLint attrib_list[] = { 
+	EGLint attrib_list[] = {
 			  EGL_MATCH_NATIVE_PIXMAP,(TInt)iFbsBitmap,
 			  EGL_RENDERABLE_TYPE,renderableType,
 			  EGL_SURFACE_TYPE,EGL_PIXMAP_BIT,
@@ -1048,18 +1044,16 @@ EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentAndMatchL(const 
 		}
 
 	// Create a pixmap surface from the native image
-	EGLint EGL_RENDERABLE_TYPE_value = 0;
-	ASSERT_EGL_TRUE(eglGetConfigAttrib(iDisplay, config, EGL_RENDERABLE_TYPE, &EGL_RENDERABLE_TYPE_value));
-	const EGLint* pixmapAttribs = ((displayMode == EColor16MAP) && (EGL_RENDERABLE_TYPE_value & EGL_OPENVG_BIT)) ? KPixmapAttribsVgAlphaFormatPre : KPixmapAttribsNone;
+	const EGLint* pixmapAttribs = (aDisplayMode == EColor16MAP && aBindAPI == EGL_OPENVG_API) ? KPixmapAttribsVgAlphaFormatPre : KPixmapAttribsNone;
 	iSurface = eglCreatePixmapSurface(iDisplay, config, iFbsBitmap, pixmapAttribs);
 	ASSERT_EGL_TRUE(iSurface != EGL_NO_SURFACE);
-	
+
 	// Create a context for drawing to/reading from the pixmap surface and make it current
 	const EGLint KAttribsListCtxNone[] = { EGL_NONE };;
 	const EGLint KAttribsListCtxGles2[] = { EGL_CONTEXT_CLIENT_VERSION, aRenderVersionNumber, EGL_NONE };
-	const EGLint* attrib_list_ctx = (aBindAPI == EGL_OPENGL_ES_API && aRenderVersionNumber == 2) ? KAttribsListCtxGles2 : KAttribsListCtxNone; 
+	const EGLint* attrib_list_ctx = (aBindAPI == EGL_OPENGL_ES_API && aRenderVersionNumber == 2) ? KAttribsListCtxGles2 : KAttribsListCtxNone;
 	iContext = eglCreateContext(iDisplay, config, EGL_NO_CONTEXT, attrib_list_ctx);
-	ASSERT_EGL_TRUE(iContext != EGL_NO_CONTEXT);	
+	ASSERT_EGL_TRUE(iContext != EGL_NO_CONTEXT);
 	ASSERT_EGL_TRUE(eglMakeCurrent(iDisplay, iSurface, iSurface, iContext));
 	}
 
@@ -1070,27 +1064,27 @@ EXPORT_C void CTestEglSession::CreatePbufferSurfaceAndMakeCurrentL(EGLConfig aCo
 
 	ASSERT_EQUALS(iSurface, EGL_NO_SURFACE);
 	ASSERT_EQUALS(iContext, EGL_NO_CONTEXT);
-	
+
 	ASSERT_EGL_TRUE(eglBindAPI(aBindAPI));
-	
+
 	//	PBuffer attribs options are:
 	//		EGL_WIDTH, EGL_HEIGHT, EGL_LARGEST_PBUFFER,
 	//		EGL_TEXTURE_FORMAT, EGL_TEXTURE_TARGET, EGL_MIPMAP_TEXTURE,
 	//		EGL_VG_COLORSPACE, and EGL_VG_ALPHA_FORMAT
 	// Create a pbuffer surface of the given size
-	const EGLint KPbufferAttribs[] = { 
+	const EGLint KPbufferAttribs[] = {
 			EGL_WIDTH,	aSize.iWidth,
 			EGL_HEIGHT,	aSize.iHeight,
 			EGL_NONE };
-	iSurface = eglCreatePbufferSurface(iDisplay, aConfig, KPbufferAttribs);	
+	iSurface = eglCreatePbufferSurface(iDisplay, aConfig, KPbufferAttribs);
 	ASSERT_EGL_TRUE(iSurface != EGL_NO_SURFACE);
 
 	// Create a context for drawing to/reading from the pixmap surface and make it current
 	const EGLint KAttribsListCtxNone[] = { EGL_NONE };;
 	const EGLint KAttribsListCtxGles2[] = { EGL_CONTEXT_CLIENT_VERSION, aRenderVersionNumber, EGL_NONE };
-	const EGLint* attrib_list_ctx = (aBindAPI == EGL_OPENGL_ES_API && aRenderVersionNumber == 2) ? KAttribsListCtxGles2 : KAttribsListCtxNone; 
+	const EGLint* attrib_list_ctx = (aBindAPI == EGL_OPENGL_ES_API && aRenderVersionNumber == 2) ? KAttribsListCtxGles2 : KAttribsListCtxNone;
 	iContext = eglCreateContext(iDisplay, aConfig, EGL_NO_CONTEXT, attrib_list_ctx);
-	ASSERT_EGL_TRUE(iContext != EGL_NO_CONTEXT);	
+	ASSERT_EGL_TRUE(iContext != EGL_NO_CONTEXT);
 	ASSERT_EGL_TRUE(eglMakeCurrent(iDisplay, iSurface, iSurface, iContext));
 	}
 
@@ -1098,14 +1092,14 @@ EXPORT_C void CTestEglSession::DrawOpenVgL()
 	{
 	ASSERT_TRUE(iSurface != EGL_NO_SURFACE);
 	ASSERT_TRUE(iContext != EGL_NO_CONTEXT);
-	
-	// Draw to the pixmap surface 
+
+	// Draw to the pixmap surface
 	// Clear it: redish
 	VGfloat colorBackground[4];
 	ConvertColor(KRgbReddish, colorBackground);
 	vgSetfv(VG_CLEAR_COLOR, 4, colorBackground);
 	vgClear(0, 0, KPixmapSize.iWidth, KPixmapSize.iHeight);
-	
+
 	// And add a square: greenish
 	VGfloat colorSquare[4];
 	ConvertColor(KRgbGreenish, colorSquare);
@@ -1126,16 +1120,16 @@ EXPORT_C void CTestEglSession::DrawOpenGLesL()
 	const GLfloat glGreenBits = 255.f;
 	const GLfloat glBlueBits  = 255.f;
 	const GLfloat glAlphaBits = 255.f;
-	
+
 	// Disable  cdither - when using exact comparison to reference bitmap
 	// because reference bitmap cannot be created to match dither exactly
-	glDisable(GL_DITHER);	
+	glDisable(GL_DITHER);
 	// Clear the surface to the colour specified
 	glClearColor((glRed)/glRedBits, (glGreen)/glGreenBits, (glBlue)/glBlueBits, glAlpha/glAlphaBits);
-	
+
 	//glColor3f(KRgbGreenish.Red(),KRgbGreenish.Green(),KRgbGreenish.Blue());
 	//glRectf(KPixmapSquare.iTl.iX, KPixmapSquare.iTl.iY,KPixmapSquare.iTl.iX + KPixmapSquare.Width(),KPixmapSquare.iTl.iY + KPixmapSquare.Height());
-	
+
 	glClear(GL_COLOR_BUFFER_BIT);
 	}
 
@@ -1148,7 +1142,7 @@ EXPORT_C void CTestEglSession::CheckImageDataL(CFbsBitmap* aFbsBitmap)
 	ASSERT_TRUE(PixelsMatch(KRgbReddish, rgbPixelSample, EFalse));
 	aFbsBitmap->GetPixel(rgbPixelSample, TPoint(90,90));
 	ASSERT_TRUE(PixelsMatch(KRgbReddish, rgbPixelSample, EFalse));
-	
+
 	// Inside the square
 	aFbsBitmap->GetPixel(rgbPixelSample, TPoint(30,30));
 	ASSERT_TRUE(PixelsMatch(KRgbGreenish, rgbPixelSample, EFalse));
@@ -1165,7 +1159,7 @@ EXPORT_C void CTestEglSession::CheckImageDataFullRedishL(CFbsBitmap* aFbsBitmap)
 	ASSERT_TRUE(PixelsMatch(KRgbReddish, rgbPixelSample, EFalse));
 	aFbsBitmap->GetPixel(rgbPixelSample, TPoint(90,90));
 	ASSERT_TRUE(PixelsMatch(KRgbReddish, rgbPixelSample, EFalse));
-	
+
 	// Inside the square
 	aFbsBitmap->GetPixel(rgbPixelSample, TPoint(30,30));
 	ASSERT_TRUE(PixelsMatch(KRgbReddish, rgbPixelSample, EFalse));
@@ -1184,13 +1178,13 @@ EXPORT_C void CTestEglSession::CheckImageDataVgL(VGImageFormat aDataFormat)
 		case VG_sRGB_565:
 			{
 			TUint16 intPixelSample=0;
-			
+
 			// Outside the square
 			vgReadPixels(&intPixelSample, 1, aDataFormat, 10,10, 1,1);
 			ASSERT_TRUE(PixelsMatch(KRgbReddish, TRgb::Color64K(intPixelSample), EFalse));
 			vgReadPixels(&intPixelSample, 1, aDataFormat, 90,90, 1,1);
 			ASSERT_TRUE(PixelsMatch(KRgbReddish, TRgb::Color64K(intPixelSample), EFalse));
-			
+
 			// Inside the square
 			vgReadPixels(&intPixelSample, 1, aDataFormat, 30,30, 1,1);
 			ASSERT_TRUE(PixelsMatch(KRgbGreenish, TRgb::Color64K(intPixelSample), EFalse));
@@ -1198,16 +1192,16 @@ EXPORT_C void CTestEglSession::CheckImageDataVgL(VGImageFormat aDataFormat)
 			ASSERT_TRUE(PixelsMatch(KRgbGreenish, TRgb::Color64K(intPixelSample), EFalse));
 			break;
 			}
-		case VG_sXRGB_8888:		
+		case VG_sXRGB_8888:
 			{
 			TUint32 intPixelSample=0;
-	
+
 			// Outside the square
 			vgReadPixels(&intPixelSample, 1, aDataFormat, 10,10, 1,1);
 			ASSERT_TRUE(PixelsMatch(KRgbReddish, TRgb::Color16MU(intPixelSample), EFalse));
 			vgReadPixels(&intPixelSample, 1, aDataFormat, 90,90, 1,1);
 			ASSERT_TRUE(PixelsMatch(KRgbReddish, TRgb::Color16MU(intPixelSample), EFalse));
-			
+
 			// Inside the square
 			vgReadPixels(&intPixelSample, 1, aDataFormat, 30,30, 1,1);
 			ASSERT_TRUE(PixelsMatch(KRgbGreenish, TRgb::Color16MU(intPixelSample), EFalse));
@@ -1218,13 +1212,13 @@ EXPORT_C void CTestEglSession::CheckImageDataVgL(VGImageFormat aDataFormat)
 		case VG_sARGB_8888:
 			{
 			TUint32 intPixelSample=0;
-	
+
 			// Outside the square
 			vgReadPixels(&intPixelSample, 1, aDataFormat, 10,10, 1,1);
 			ASSERT_TRUE(PixelsMatch(KRgbReddish, TRgb::Color16MA(intPixelSample), EFalse));
 			vgReadPixels(&intPixelSample, 1, aDataFormat, 90,90, 1,1);
 			ASSERT_TRUE(PixelsMatch(KRgbReddish, TRgb::Color16MA(intPixelSample), EFalse));
-			
+
 			// Inside the square
 			vgReadPixels(&intPixelSample, 1, aDataFormat, 30,30, 1,1);
 			ASSERT_TRUE(PixelsMatch(KRgbGreenish, TRgb::Color16MA(intPixelSample), EFalse));
@@ -1247,8 +1241,8 @@ EXPORT_C void CTestEglSession::CheckImageDataGLesL()
 	TUint32 intPixelSample;
 	glReadPixels(10,10,1,1,GL_RGBA,GL_UNSIGNED_BYTE ,&intPixelSample);
 	SwapChannels(intPixelSample);
-	ASSERT_TRUE(PixelsMatch(KRgbReddish, TRgb::Color16MU(intPixelSample), EFalse));	
-	
+	ASSERT_TRUE(PixelsMatch(KRgbReddish, TRgb::Color16MU(intPixelSample), EFalse));
+
 	glReadPixels(45,45,1,1,GL_RGBA,GL_UNSIGNED_BYTE ,&intPixelSample);
 	SwapChannels(intPixelSample);
 	ASSERT_TRUE(PixelsMatch(KRgbReddish, TRgb::Color16MU(intPixelSample), EFalse));
@@ -1266,7 +1260,7 @@ EXPORT_C void CTestEglSession::CheckImageDataGLesL()
 EXPORT_C void CTestEglSession::SwapChannels(TUint32 &aSwapMe)
 	{
 	TUint32 buff = aSwapMe;
-	
+
 	aSwapMe = 0;
 	aSwapMe |= (buff & 0x000000FF) << 16;
 	aSwapMe |= (buff & 0x0000FF00);
@@ -1290,12 +1284,12 @@ Resets the internal surface and context handles without destroying them.
 Also closes the internal RSgImage handled that is associated to the surface.
 
 EGL destroys all surface and context handles associated with a display when
-eglTerminate() is called. 
+eglTerminate() is called.
 */
 EXPORT_C void CTestEglSession::ResetSurfaceAndContextSgImageL()
 	{
 	INFO_PRINTF1(_L("CTestEglSession::ResetSurfaceAndContextSgImageL()"));
-	
+
 	iContext = EGL_NO_CONTEXT;
 	iSurface = EGL_NO_SURFACE;
 	iSgImage.Close();
@@ -1304,7 +1298,7 @@ EXPORT_C void CTestEglSession::ResetSurfaceAndContextSgImageL()
 /**
  Check that the pixel values match within a predefined tolerance
  @param aExpected the expected pixel colour vaule
- @param aActual the actual pixel colour value 
+ @param aActual the actual pixel colour value
  @param aCheckAlpha Whether to check the alpha channel value
  @return Whether the pixel values match - within the allowed tolerance
  */
@@ -1314,10 +1308,10 @@ EXPORT_C TBool CTestEglSession::PixelsMatch(const TRgb& aExpected, const TRgb& a
 	//	differences, while too low will be too strict to allow for pixel conversions, i.e. from 16bpp to 32bpp
 	const TInt KPixelTolerance = 8;
 
-	if (aCheckAlpha && aExpected.Alpha()== 0 && 
-		aActual.Red() == 0 && 
-		aActual.Green() == 0 && 
-		aActual.Blue() == 0 && 
+	if (aCheckAlpha && aExpected.Alpha()== 0 &&
+		aActual.Red() == 0 &&
+		aActual.Green() == 0 &&
+		aActual.Blue() == 0 &&
 		aActual.Alpha() == 0)
 		{
 		// if the expected value for alpha is 0, all actual values should be 0
@@ -1346,7 +1340,7 @@ EXPORT_C void CTestEglSession::InitializeL(TBool aTerminateDisplay)
 	CHECK_EXPECTED_ERROR(eglInitialize(iDisplay, &major, &minor));
 	// Remember if the user wants us to terminate the display.
 	iTerminateDisplay = aTerminateDisplay;
-	
+
 	INFO_PRINTF4(_L("thread %d: Initialised: EGL Version %d.%d"), iThreadIdx, major, minor);
 	}
 
@@ -1379,11 +1373,11 @@ EXPORT_C void CTestEglSession::OpenSgDriverL()
 	if (!iSgDriverOpen)
 		{
 		VERBOSE_INFO_PRINTF2(_L("CTestEglSession<0x%08x> Opening SgDriver"), this);
-#ifdef  SYMBIAN_GRAPHICS_EGL_SGIMAGELITE 		
+#ifdef  SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
 		TInt ret=iSgDriver.Open();
 #else
 		TInt ret=SgDriver::Open();
-#endif	//SYMBIAN_GRAPHICS_EGL_SGIMAGELITE	
+#endif	//SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
 		ASSERT_EQUALS(ret, KErrNone);
 		iSgDriverOpen = ETrue;
 		}
@@ -1394,10 +1388,10 @@ EXPORT_C void CTestEglSession::CloseSgDriver()
 	if (iSgDriverOpen)
 		{
 		VERBOSE_INFO_PRINTF2(_L("CTestEglSession<0x%08x> Closing SgDriver"), this);
-#ifdef  SYMBIAN_GRAPHICS_EGL_SGIMAGELITE        
+#ifdef  SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
         iSgDriver.Close();
 #else
-        SgDriver::Close(); 
+        SgDriver::Close();
 #endif  //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
 		iSgDriverOpen = EFalse;
 		}
@@ -1444,7 +1438,7 @@ EXPORT_C EGLImageKHR CTestEglSession::eglCreateImageKhrL(EGLDisplay aDisplay,EGL
 	TBool bSuccess = FetchProcEglCreateImageKhr();
 	ASSERT_TRUE(bSuccess);
 	VERBOSE_INFO_PRINTF2(_L("thread %d: Calling eglCreateImageKHR"), iThreadIdx);
-	EGLImageKHR eglImage = ipfnEglCreateImageKHR(aDisplay,aContext,aTarget,reinterpret_cast<EGLClientBuffer>(aSgImage),const_cast<EGLint *>(aAttr_List));	
+	EGLImageKHR eglImage = ipfnEglCreateImageKHR(aDisplay,aContext,aTarget,reinterpret_cast<EGLClientBuffer>(aSgImage),const_cast<EGLint *>(aAttr_List));
 	return eglImage;
 	}
 
@@ -1454,7 +1448,7 @@ EXPORT_C EGLImageKHR CTestEglSession::eglCreateImageKhrL(EGLDisplay aDisplay,EGL
 	ASSERT_TRUE(bSuccess);
 	INFO_PRINTF2(_L("thread %d: Calling eglCreateImageKHR, with CFBsBitmap)"), iThreadIdx);
 	//the following call to eglCreateImageKHR MUST fail, error handling is made outside
-	EGLImageKHR eglImage = ipfnEglCreateImageKHR(aDisplay,aContext,aTarget,reinterpret_cast<EGLClientBuffer>(&aCFbsBitmap),const_cast<EGLint *>(aAttr_List));	
+	EGLImageKHR eglImage = ipfnEglCreateImageKHR(aDisplay,aContext,aTarget,reinterpret_cast<EGLClientBuffer>(&aCFbsBitmap),const_cast<EGLint *>(aAttr_List));
 	return eglImage;
 	}
 
@@ -1486,7 +1480,7 @@ EXPORT_C TBool CTestEglSession::FetchProcvgCreateImageTargetKhr()
 	if (!ipfnvgCreateImageTargetKHR)
 		{
 		INFO_PRINTF2(_L("thread %d: Calling eglGetProcAddress (\"vgCreateEGLImageTargetKHR\")"), iThreadIdx);
-		ipfnvgCreateImageTargetKHR = reinterpret_cast<TFPtrVgCreateEglImageTargetKhr>(eglGetProcAddress("vgCreateEGLImageTargetKHR"));		
+		ipfnvgCreateImageTargetKHR = reinterpret_cast<TFPtrVgCreateEglImageTargetKhr>(eglGetProcAddress("vgCreateEGLImageTargetKHR"));
 		if (ipfnvgCreateImageTargetKHR==NULL)
 			{
 			EGLint eglError = eglGetError();
@@ -1514,32 +1508,32 @@ EXPORT_C TBool CTestEglSession::IsACompatibleConfig(EGLConfig aConfig,RSgImage& 
 	EGLint EGL_SURFACE_TYPE_value;
 	EGLint EGL_RENDERABLE_TYPE_value;
 	EGLint EGL_CONFIG_ID_value;
-	
+
 	eglGetConfigAttrib(iDisplay, aConfig, EGL_CONFIG_ID, &EGL_CONFIG_ID_value);
 	eglGetConfigAttrib(iDisplay, aConfig, EGL_BUFFER_SIZE, &EGL_BUFFER_SIZE_value);
 	eglGetConfigAttrib(iDisplay, aConfig, EGL_ALPHA_SIZE, &EGL_ALPHA_SIZE_value);
 	eglGetConfigAttrib(iDisplay, aConfig, EGL_BLUE_SIZE, &EGL_BLUE_SIZE_value);
 	eglGetConfigAttrib(iDisplay, aConfig, EGL_GREEN_SIZE, &EGL_GREEN_SIZE_value);
 	eglGetConfigAttrib(iDisplay, aConfig, EGL_RED_SIZE, &EGL_RED_SIZE_value);
-	eglGetConfigAttrib(iDisplay, aConfig, EGL_SURFACE_TYPE, &EGL_SURFACE_TYPE_value);	
+	eglGetConfigAttrib(iDisplay, aConfig, EGL_SURFACE_TYPE, &EGL_SURFACE_TYPE_value);
 	eglGetConfigAttrib(iDisplay, aConfig, EGL_RENDERABLE_TYPE, &EGL_RENDERABLE_TYPE_value);
 #ifdef PRINTG_CONFIGS_LOG
-	INFO_PRINTF7(_L("(Config: %3d) RGBA=(%2d) %2d,%2d,%2d,%2d"), EGL_CONFIG_ID_value, EGL_BUFFER_SIZE_value, 
-					EGL_RED_SIZE_value, EGL_GREEN_SIZE_value, EGL_BLUE_SIZE_value, 
+	INFO_PRINTF7(_L("(Config: %3d) RGBA=(%2d) %2d,%2d,%2d,%2d"), EGL_CONFIG_ID_value, EGL_BUFFER_SIZE_value,
+					EGL_RED_SIZE_value, EGL_GREEN_SIZE_value, EGL_BLUE_SIZE_value,
 					EGL_ALPHA_SIZE_value);
 	INFO_PRINTF2(_L("RENDERABLE_TYPE %d"),EGL_RENDERABLE_TYPE_value);
 #endif
-	
+
 	if(!(EGL_SURFACE_TYPE_value & EGL_PIXMAP_BIT))
 		{
 		return EFalse;
 		}
-	
+
 	TBool good = ETrue;
 	//requested usage bits
 	TSgImageInfo requestedImageInfo;
 	aImage.GetInfo(requestedImageInfo);
-	
+
 #ifndef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
 	//potential usage bits
     RSgImage potential;
@@ -1547,22 +1541,22 @@ EXPORT_C TBool CTestEglSession::IsACompatibleConfig(EGLConfig aConfig,RSgImage& 
     TSgImageInfo potentialImageInfo;
     potential.GetInfo(potentialImageInfo);
     potential.Close();
-#endif    
-	
+#endif
+
 	switch(requestedImageInfo.iPixelFormat)
-		{			
+		{
 		case EUidPixelFormatRGB_565:
 			if (!(EGL_RED_SIZE_value == 5 && EGL_GREEN_SIZE_value == 6 && EGL_BLUE_SIZE_value == 5 && EGL_ALPHA_SIZE_value == 0))
 				{
 				good = EFalse;
 				}
-			break;			
+			break;
 		case EUidPixelFormatXRGB_8888:
 			if (!(EGL_RED_SIZE_value == 8 && EGL_GREEN_SIZE_value == 8 && EGL_BLUE_SIZE_value == 8 && EGL_ALPHA_SIZE_value == 0))
 				{
 				good = EFalse;
-				}				
-			break;			
+				}
+			break;
 		case EUidPixelFormatARGB_8888_PRE:
 			if (!(EGL_RED_SIZE_value == 8 && EGL_GREEN_SIZE_value == 8 && EGL_BLUE_SIZE_value == 8 && EGL_ALPHA_SIZE_value == 8))
 				{
@@ -1595,17 +1589,17 @@ EXPORT_C TBool CTestEglSession::IsACompatibleConfig(EGLConfig aConfig,RSgImage& 
 		}
 
 #ifdef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
-	// 
+	//
 	//Check if strict matching requirements are met:
-	//- All the supported APIs included in the EGL_RENDERABLE_TYPE of the 
+	//- All the supported APIs included in the EGL_RENDERABLE_TYPE of the
 	// EGLConfig must be matched by the corresponding iUsage of RSgImage
-	//- The following usages included in the iUsage of the RSgImage must be 
-	// matched by the corresponding API in EGL_RENDERABLE_TYPE of the EGLConfig: 
+	//- The following usages included in the iUsage of the RSgImage must be
+	// matched by the corresponding API in EGL_RENDERABLE_TYPE of the EGLConfig:
 	//         ESgUsageBitOpenGlSurface-> EGL_OPENGL_BIT
 	//         ESgUsageBitOpenGlesSurface-> EGL_OPENGL_ES_BIT
 	//         ESgUsageBitOpenGles2Surface-> EGL_OPENGL_ES2_BIT
 	//         ESgUsageBitOpenVgSurface->EGL_OPENVG_BIT
-	
+
 	EGLint usageBitsMask = 0;
 	if(requestedImageInfo.iUsage & ESgUsageBitOpenVgSurface)
 		{
@@ -1647,9 +1641,9 @@ EXPORT_C TBool CTestEglSession::IsACompatibleConfig(EGLConfig aConfig,RSgImage& 
         {
         return EFalse;
         }
-    
+
     // potential usage >= RENDERABLE_TYPE
-    
+
     EGLint potentialUsageBitsMask = 0;
     if(potentialImageInfo.iUsage & ESgUsageOpenVgTarget)
         {
@@ -1663,13 +1657,13 @@ EXPORT_C TBool CTestEglSession::IsACompatibleConfig(EGLConfig aConfig,RSgImage& 
         {
         potentialUsageBitsMask |= EGL_OPENGL_ES2_BIT;
         }
-    
+
     potentialUsageBitsMask = EGL_RENDERABLE_TYPE_value &~ potentialUsageBitsMask;
     if(potentialUsageBitsMask)
         {
         return EFalse;
         }
-#endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE	
+#endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
 	return good;
 	}
 
@@ -1751,8 +1745,8 @@ EXPORT_C TBool  CTestEglSession::CheckNeededExtensionL(TInt aExtension, const TD
             }
         }
 #endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
-    
-	return ETrue;	
+
+	return ETrue;
 	}
 
 EXPORT_C CFbsBitmap* CTestEglSession::CreateReferenceBitmapL(TDisplayMode aMode)
@@ -1803,8 +1797,8 @@ EXPORT_C CFbsBitmap* CTestEglSession::CreateReferenceMaskedBitmapL(TDisplayMode 
 	fbsBitGc->Activate(bitmapDevice);
 	fbsBitGc->SetBrushColor(KRgbBlack);
 	fbsBitGc->Clear();
-	
-	// create the penBitmap (same size as the mask bitmap)	
+
+	// create the penBitmap (same size as the mask bitmap)
 	CFbsBitmap* penBitmap = new(ELeave) CFbsBitmap();
 	CleanupStack::PushL(penBitmap);
 	User::LeaveIfError(penBitmap->Create(aMaskBitmap->SizeInPixels(), aRefBitmapMode));
@@ -1817,9 +1811,9 @@ EXPORT_C CFbsBitmap* CTestEglSession::CreateReferenceMaskedBitmapL(TDisplayMode 
 	penBitGc->Clear();
 
 	// perform a masked bitmap transfer to the active refBitmap
-	TRect bmpRect(TPoint(0, 0), refBitmap->SizeInPixels()); 
+	TRect bmpRect(TPoint(0, 0), refBitmap->SizeInPixels());
 	fbsBitGc->Activate(bitmapDevice);
-	fbsBitGc->BitBltMasked(TPoint(0, 0), penBitmap, bmpRect, aMaskBitmap, EFalse);	
+	fbsBitGc->BitBltMasked(TPoint(0, 0), penBitmap, bmpRect, aMaskBitmap, EFalse);
 
 	CleanupStack::PopAndDestroy(5, bitmapDevice);
 	CleanupStack::Pop(refBitmap);
@@ -1837,7 +1831,7 @@ EXPORT_C CFbsBitmap* CTestEglSession::CreateReferenceBitmapL(TDisplayMode aMode,
 	TInt height = bitmap->SizeInPixels().iHeight;
 	TInt width  = bitmap->SizeInPixels().iWidth;
 
-	// Initialise colour values to a random value (guarantees pixel uniqueness if update is done accordingly)  
+	// Initialise colour values to a random value (guarantees pixel uniqueness if update is done accordingly)
 	TInt red=0;
 	TInt green=127;
 	TInt blue=127;
@@ -1883,29 +1877,29 @@ EXPORT_C CFbsBitmap* CTestEglSession::CreateReferenceBitmapL(TDisplayMode aMode,
 					{
 					// We should not get here - colour mode not supported by these tests
 					ERR_PRINTF1(_L("CTestEglSession::CreateReferenceBitmapL - Colour mode not supported!"));
-				    ASSERT(FALSE); 
+				    ASSERT(FALSE);
 					}
 				}
 			bmpUtil.IncYPos();
 
-			// Update red bit 
-			red = ++red + aIndex; 
-			if (red>255) 
+			// Update red bit
+			red = ++red + aIndex;
+			if (red>255)
 				red = red - 256;
-			
+
 			// Update green bit
-			green = --green - aIndex; 
-			if (green<0) 
+			green = --green - aIndex;
+			if (green<0)
 				green = green + 256;
-			
+
 			// Update blue bit
-			blue = ++blue + aIndex; 
-			if (blue>255) 
+			blue = ++blue + aIndex;
+			if (blue>255)
 				blue = blue - 256;
-			
+
 			// Update alpha bit
-			alpha = --alpha - aIndex; 
-			if (alpha<0) 
+			alpha = --alpha - aIndex;
+			if (alpha<0)
 				alpha = alpha + 256;
 			}
 		}
@@ -1923,14 +1917,14 @@ EXPORT_C void CTestEglSession::CheckVgDrawingL(VGImageFormat aDataFormat, const 
 	switch(aDataFormat)
 		{
 		case VG_sRGB_565:
-			{			
+			{
 			TUint16* vgPixel = new(ELeave) TUint16[width];
 			CleanupArrayDeletePushL(vgPixel);
 			for (TInt y=0; y < height; y++)
 				{
                 // Mind the fact that CFbsBitmap and VGImages use different coordinates origin!
                 vgReadPixels(vgPixel, 1, aDataFormat, 0,height-y-1, width,1);
-				
+
 				for (TInt x=0; x < width; x++)
 					{
 					aReferenceBitmap->GetPixel(refPixel, TPoint(x,y));
@@ -1938,21 +1932,21 @@ EXPORT_C void CTestEglSession::CheckVgDrawingL(VGImageFormat aDataFormat, const 
 						{
 						User::Leave(KErrTEFUnitFail);
 						}
-					}		
+					}
 				}
 			CleanupStack::PopAndDestroy(vgPixel);
 			break;
 			}
 
-		case VG_sXRGB_8888:		
-			{			
+		case VG_sXRGB_8888:
+			{
 			TUint32* vgPixel = new(ELeave) TUint32[width];
 			CleanupArrayDeletePushL(vgPixel);
 			for (TInt y=0; y < height; y++)
 				{
                 // Mind the fact that CFbsBitmap and VGImages use different coordinates origin!
                 vgReadPixels(vgPixel, 1, aDataFormat, 0,height-y-1, width,1);
-			
+
 				for (TInt x=0; x < width; x++)
 					{
 					aReferenceBitmap->GetPixel(refPixel, TPoint(x,y));
@@ -1960,21 +1954,21 @@ EXPORT_C void CTestEglSession::CheckVgDrawingL(VGImageFormat aDataFormat, const 
 						{
 						User::Leave(KErrTEFUnitFail);
 						}
-					}		
+					}
 				}
 			CleanupStack::PopAndDestroy(vgPixel);
 			break;
 			}
-			
-		case VG_sARGB_8888:		
-			{			
+
+		case VG_sARGB_8888:
+			{
 			TUint32* vgPixel = new(ELeave) TUint32[width];
 			CleanupArrayDeletePushL(vgPixel);
 			for (TInt y=0; y < height; y++)
 				{
                 // Mind the fact that CFbsBitmap and VGImages use different coordinates origin!
                 vgReadPixels(vgPixel, 1, aDataFormat, 0,height-y-1, width,1);
-			
+
 				for (TInt x=0; x < width; x++)
 					{
 					aReferenceBitmap->GetPixel(refPixel, TPoint(x,y));
@@ -1982,21 +1976,21 @@ EXPORT_C void CTestEglSession::CheckVgDrawingL(VGImageFormat aDataFormat, const 
 						{
 						User::Leave(KErrTEFUnitFail);
 						}
-					}		
+					}
 				}
 			CleanupStack::PopAndDestroy(vgPixel);
 			break;
 			}
-			
-		case VG_sARGB_8888_PRE:		
-			{			
+
+		case VG_sARGB_8888_PRE:
+			{
 			TUint32* vgPixel = new(ELeave) TUint32[width];
 			CleanupArrayDeletePushL(vgPixel);
 			for (TInt y=0; y < height; y++)
 				{
                 // Mind the fact that CFbsBitmap and VGImages use different coordinates origin!
                 vgReadPixels(vgPixel, 1, aDataFormat, 0,height-y-1, width,1);
-                
+
 				for (TInt x=0; x < width; x++)
 					{
 					aReferenceBitmap->GetPixel(refPixel, TPoint(x,y));
@@ -2004,7 +1998,7 @@ EXPORT_C void CTestEglSession::CheckVgDrawingL(VGImageFormat aDataFormat, const 
 						{
 						User::Leave(KErrTEFUnitFail);
 						}
-					}		
+					}
 				}
 			CleanupStack::PopAndDestroy(vgPixel);
 			break;
@@ -2013,21 +2007,21 @@ EXPORT_C void CTestEglSession::CheckVgDrawingL(VGImageFormat aDataFormat, const 
 		default:
 			// We should not get here - colour mode not supported by these tests
 			ERR_PRINTF1(_L("CTestEglSession::CheckVgDrawingL - Colour mode not supported!"));
-		    ASSERT(FALSE); 
+		    ASSERT(FALSE);
 			break;
 		}
 	}
 
-EXPORT_C TBool CTestEglSession::IsOpenGLESSupported() 
-    { 
+EXPORT_C TBool CTestEglSession::IsOpenGLESSupported()
+    {
     if(!iIsSupportedRenderInitialized)
         {
         CheckAllAvailableRenders();
         }
     return iIsOpenGLESSupported;
-    } 
+    }
 
-EXPORT_C TBool CTestEglSession::IsOpenGLES2Supported() 
+EXPORT_C TBool CTestEglSession::IsOpenGLES2Supported()
     {
     if(!iIsSupportedRenderInitialized)
         {
@@ -2035,7 +2029,7 @@ EXPORT_C TBool CTestEglSession::IsOpenGLES2Supported()
         }
     return iIsOpenGLES2Supported;
     }
-EXPORT_C TBool CTestEglSession::IsOpenVGSupported() 
+EXPORT_C TBool CTestEglSession::IsOpenVGSupported()
     {
     if(!iIsSupportedRenderInitialized)
         {
@@ -2049,7 +2043,7 @@ void CTestEglSession::CheckAllAvailableRenders()
     ASSERT_EGL_TRUE(iDisplay != EGL_NO_DISPLAY);
     TPtrC8 ptrEglClientApis((const TText8 *)eglQueryString(iDisplay, EGL_CLIENT_APIS));
     _LIT8(KOpenGLES, "OpenGL_ES");
-    EGLint numConfigs= 0;       
+    EGLint numConfigs= 0;
     EGLConfig config;
     if(ptrEglClientApis.Find(KOpenGLES) != KErrNotFound)
         {
@@ -2076,7 +2070,7 @@ void CTestEglSession::CheckAllAvailableRenders()
     _LIT8(KOpenVG, "OpenVG");
     if(ptrEglClientApis.Find(KOpenVG) != KErrNotFound)
         {
-        numConfigs= 0;       
+        numConfigs= 0;
         //check VG
         const EGLint KAttrib_list_vg[] = { EGL_RENDERABLE_TYPE, EGL_OPENVG_BIT,
                                            EGL_NONE };

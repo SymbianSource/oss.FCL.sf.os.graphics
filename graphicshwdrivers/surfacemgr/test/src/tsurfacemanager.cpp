@@ -1242,7 +1242,10 @@ void CTSurfaceManager::TestCreateSurfaceNewChunk1L()
 
 	//contiguous attribute is not valid on emulator
 #ifndef __WINS__
-	TEST(iInfo.iContiguous == attributes.iContiguous);
+	if(attributes.iContiguous)
+	    TEST(iInfo.iContiguous == attributes.iContiguous);
+	else
+	    INFO_PRINTF1(_L("We didn't ask for contiguous memory so we don't care how it's going to be (can be contiguous or not)\n"));
 #else
 	INFO_PRINTF1(_L("Contiguous attribute test is not valid on emulator\n"));
 #endif
@@ -1369,7 +1372,10 @@ void CTSurfaceManager::CheckAttributesL(RSurfaceManager::TSurfaceCreationAttribu
 	TEST(aAttributes.iBuffers==iInfo.iBuffers);
 	TEST(aAttributes.iPixelFormat==iInfo.iPixelFormat);
 	TEST(aAttributes.iStride==iInfo.iStride);
-	TEST(aAttributes.iContiguous==iInfo.iContiguous);
+    if(aAttributes.iContiguous)
+        TEST(iInfo.iContiguous == aAttributes.iContiguous);
+    else
+        INFO_PRINTF1(_L("We didn't ask for contiguous memory so we don't care how it's going to be (can be contiguous or not)\n"));	
 	TEST(aAttributes.iCacheAttrib==iInfo.iCacheAttrib);
 	
 	//Test the chunk size is big enough to hold the surface when we create it 
@@ -4433,4 +4439,3 @@ void CTSurfaceManager::testBooleanTrueL(TBool aCondition, const TText8* aFile, T
     if(!aCondition)
         User::Leave(TEST_ERROR_CODE);   // leave with standard error code
     }
-

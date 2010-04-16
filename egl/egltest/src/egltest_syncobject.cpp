@@ -77,7 +77,6 @@ TVerdict CEglTest_SyncObject_Base::doTestStepPreambleL()
 		}
 	INFO_PRINTF2(_L("Tick period in micro seconds %d"), iTickPeriodMicroSeconds);
 	
-	_LIT(KSectionSyncObject, "SyncObject");
 	_LIT(KKeyThreshold, "Threshold");
 	_LIT(KKeyDelaySignalling, "DelaySignalling");
 	_LIT(KKeyWaitSyncTimeout, "WaitSyncTimeout");
@@ -85,11 +84,11 @@ TVerdict CEglTest_SyncObject_Base::doTestStepPreambleL()
 	_LIT(KKeyNumStressIterations, "NumIterations");
 
 	//retrive all setting from INI file
-	GetIntFromConfig(KSectionSyncObject, KKeyThreshold, iThreshold);
-	GetIntFromConfig(KSectionSyncObject, KKeyDelaySignalling, iDelaySignalling);
-	GetIntFromConfig(KSectionSyncObject, KKeyWaitSyncTimeout, iWaitSyncTimeout);
-	GetIntFromConfig(KSectionSyncObject, KKeyLongDelaySignalling, iLongDelaySignalling);
-	GetIntFromConfig(KSectionSyncObject, KKeyNumStressIterations, iNumStressIterations);
+	GetIntFromConfig(ConfigSection(), KKeyThreshold, iThreshold);
+	GetIntFromConfig(ConfigSection(), KKeyDelaySignalling, iDelaySignalling);
+	GetIntFromConfig(ConfigSection(), KKeyWaitSyncTimeout, iWaitSyncTimeout);
+	GetIntFromConfig(ConfigSection(), KKeyLongDelaySignalling, iLongDelaySignalling);
+	GetIntFromConfig(ConfigSection(), KKeyNumStressIterations, iNumStressIterations);
 	
 	INFO_PRINTF2(_L("Level of tolerance %d"), iThreshold);
 	INFO_PRINTF2(_L("Delay before the signal occurs  %d"), iDelaySignalling);

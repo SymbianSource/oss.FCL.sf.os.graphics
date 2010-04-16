@@ -24,6 +24,8 @@ TARGET			dlog.dll
 CAPABILITY PowerMgmt ReadDeviceData WriteDeviceData ProtServ
 TARGETTYPE		dll
 
+MACRO       SYMBIAN_GRAPHICS_GCE
+
 SOURCEPATH		../debuglog
 SOURCE			DEBUGLOG.CPP DECODER.CPP TXTHNDLR.CPP
 

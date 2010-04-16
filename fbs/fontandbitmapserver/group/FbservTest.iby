@@ -19,6 +19,7 @@
 #define __FBSERVTEST_IBY__
 
 #include <graphics_testharness.iby>
+#include <internaltestfonts.iby>  
 
 // batch file that runs all automatic fbserv tests
 data=DATAZ_\fbstest\fbstest_run.bat		\fbstest_run.bat
@@ -38,6 +39,7 @@ data=DATAZ_\fbstest\fbstest_T_Secure.script						\fbstest\fbstest_T_Secure.scrip
 data=DATAZ_\fbstest\fbstest_T_File.script						\fbstest\fbstest_T_File.script
 data=DATAZ_\fbstest\fbstest_t_getallbitmapscapability.script	\fbstest\fbstest_t_getallbitmapscapability.script
 data=DATAZ_\fbstest\fbstest_T_Clean.script						\fbstest\fbstest_T_Clean.script
+data=DATAZ_\fbstest\fbstest_t_fonttable.script					\fbstest\fbstest_t_fonttable.script
 data=DATAZ_\fbstest\fbstest_T_IPCTest.script					\fbstest\fbstest_T_IPCTest.script
 data=DATAZ_\fbstest\ipctest_config.ini							\fbstest\ipctest_config.ini
 data=DATAZ_\fbstest\fbstest_t_extendedbitmap.script				\fbstest\fbstest_t_extendedbitmap.script

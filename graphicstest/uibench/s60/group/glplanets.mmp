@@ -22,8 +22,7 @@ vendorid        0x70000001
 userinclude     .
 userinclude     ../src
 userinclude     ../src/tests_zorder
-systeminclude   /epoc32/include
-systeminclude   /epoc32/include/stdapis
+MW_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 sourcepath      .
 START resource glplanets_reg.rss

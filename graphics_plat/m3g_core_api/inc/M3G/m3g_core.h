@@ -31,16 +31,18 @@ extern "C" {
  * binding layer.
  */
 
-#if defined (__ARMCC_2_2__)
-#   define M3G_API __declspec(dllimport)
-#endif
-
-#if defined(M3G_BUILD_DLL)
-#   define M3G_API __declspec(dllexport)
-#endif
-    
-#if !defined(M3G_API)
-#   define M3G_API
+#if (__ARMCC_VERSION >= 220000)
+#   if defined(M3G_BUILD_DLL)
+#       define M3G_API __declspec(dllexport)
+#   else
+#       define M3G_API __declspec(dllimport)
+#   endif
+#else
+#   if defined(M3G_BUILD_DLL)
+#       define M3G_API __declspec(dllexport)
+#   else
+#       define M3G_API
+#   endif
 #endif
     
 /*----------------------------------------------------------------------

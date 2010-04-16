@@ -1,4 +1,4 @@
-// Copyright (c) 1996-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1996-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,6 +18,11 @@
 #include "tipctest.h"
 #include "fbsdefs.h"
 
+// Invalid parameters to be passed in SendCommand() calls.
+const TInt KInvalidParam1 = 963955448;
+const TInt KInvalidParam2 = 963955368;
+const TInt KInvalidParam3 = 963955300;
+const TInt KInvalidParam4 = 963955232;
 
 CTIPCTest::CTIPCTest(CTestStep* aStep):
 	CTGraphicsBase(aStep),
@@ -104,6 +109,21 @@ void CTIPCTest::ConstructL()
 	21. EFbsMessShapeDelete
 	22. EFbsMessSetTwipsHeight
 	23. EFbsMessGetTwipsHeight	
+	@SYMTestExpectedResults
+    Test should pass
+
+    @SYMTestCaseID
+    TI18N-GDI-CIT-4086
+
+    @SYMTestCaseDesc
+    Test if FBS can handle invalid messages correctly
+    and panic the client as needed.
+
+    @SYMTestActions
+	24. EFbsMessGetFontTable
+	25. EFbsMessReleaseFontTable
+	26. EFbsMessGetGlyphOutline
+	27.EFbsMessReleaseGlyphOutline
 	
 	@SYMTestExpectedResults
 	Test should pass
@@ -158,7 +178,7 @@ void CTIPCTest::RunTestCaseL(TInt aCurTestCase)
 		break;
 	case 7:
 		INFO_PRINTF1(_L("Add font store file with huge length\r\n"));
-		iFbs->SendCommand(EFbsMessAddFontStoreFile, 963955448, 963955368, 963955300, 963955232);
+		iFbs->SendCommand(EFbsMessAddFontStoreFile, KInvalidParam1, KInvalidParam2, KInvalidParam3, KInvalidParam4);
 		TEST(EFalse);
 		TestComplete();
 		break;
@@ -170,7 +190,7 @@ void CTIPCTest::RunTestCaseL(TInt aCurTestCase)
 		break;
 	case 9:
 		INFO_PRINTF1(_L("Install font store file with huge length\r\n"));
-		iFbs->SendCommand(EFbsMessInstallFontStoreFile, 963955448, 963955368, 963955300, 963955232);
+		iFbs->SendCommand(EFbsMessInstallFontStoreFile, KInvalidParam1, KInvalidParam2, KInvalidParam3, KInvalidParam4);
 		TEST(EFalse);
 		TestComplete();
 		break;
@@ -189,25 +209,25 @@ void CTIPCTest::RunTestCaseL(TInt aCurTestCase)
 		break;
 	case 12:
 		INFO_PRINTF1(_L("Rasterize with invalid bitmap handle\r\n"));
-		iFbs->SendCommand(EFbsMessRasterize, 963955448, 963955368, 963955300, 963955232);
+		iFbs->SendCommand(EFbsMessRasterize, KInvalidParam1, KInvalidParam2, KInvalidParam3, KInvalidParam4);
 		TEST(EFalse);
 		TestComplete();
 		break;
 	case 13:
 		INFO_PRINTF1(_L("Face Attribute with invalid bitmap handle\r\n"));
-		iFbs->SendCommand(EFbsMessFaceAttrib, 963955448, 963955368, 963955300, 963955232);
+		iFbs->SendCommand(EFbsMessFaceAttrib, KInvalidParam1, KInvalidParam2, KInvalidParam3, KInvalidParam4);
 		TEST(EFalse);
 		TestComplete();
 		break;
 	case 14:
 		INFO_PRINTF1(_L("Has Character with invalid bitmap handle\r\n"));
-		iFbs->SendCommand(EFbsMessHasCharacter, 963955448, 963955368, 963955300, 963955232);
+		iFbs->SendCommand(EFbsMessHasCharacter, KInvalidParam1, KInvalidParam2, KInvalidParam3, KInvalidParam4);
 		TEST(EFalse);
 		TestComplete();
 		break;
 	case 15:
 		INFO_PRINTF1(_L("Name Alias with huge alias name length\r\n"));
-		iFbs->SendCommand(EFbsMessFontNameAlias, 963955448, 963955368, 963955300, 963955232);
+		iFbs->SendCommand(EFbsMessFontNameAlias, KInvalidParam1, KInvalidParam2, KInvalidParam3, KInvalidParam4);
 		TEST(EFalse);
 		TestComplete();
 		break;
@@ -237,19 +257,19 @@ void CTIPCTest::RunTestCaseL(TInt aCurTestCase)
 		break;
 	case 20:
 		INFO_PRINTF1(_L("Shape text with invalid bitmap font handle\r\n"));
-		iFbs->SendCommand(EFbsMessShapeText, 963955448, 963955368, 963955300, 963955232);
+		iFbs->SendCommand(EFbsMessShapeText, KInvalidParam1, KInvalidParam2, KInvalidParam3, KInvalidParam4);
 		TEST(EFalse);
 		TestComplete();
 		break;
 	case 21:
 		INFO_PRINTF1(_L("Shape delete with invalid bitmap font handle\r\n"));
-		iFbs->SendCommand(EFbsMessShapeDelete, 963955448, 963955368, 963955300, 963955232);
+		iFbs->SendCommand(EFbsMessShapeDelete, KInvalidParam1, KInvalidParam2, KInvalidParam3, KInvalidParam4);
 		TEST(EFalse);
 		TestComplete();
 		break;
 	case 22:
 		INFO_PRINTF1(_L("Set twips height with invalid font handle\r\n"));
-		iFbs->SendCommand(EFbsMessSetTwipsHeight, 963955448, 963955368, 963955300, 963955232);
+		iFbs->SendCommand(EFbsMessSetTwipsHeight, KInvalidParam1, KInvalidParam2, KInvalidParam3, KInvalidParam4);
 		TEST(EFalse);
 		TestComplete();
 		break;
@@ -258,11 +278,35 @@ void CTIPCTest::RunTestCaseL(TInt aCurTestCase)
 		((CTIPCTestStep*)iStep)->SetOverallTestStepID(_L("GRAPHICS-FBSERV-0603"));
 		((CTIPCTestStep*)iStep)->RecordTestResultL();
 		((CTIPCTestStep*)iStep)->CloseTMSGraphicsStep();
-		iFbs->SendCommand(EFbsMessGetTwipsHeight, 963955448, 963955368, 963955300, 963955232);
+		iFbs->SendCommand(EFbsMessGetTwipsHeight, KInvalidParam1, KInvalidParam2, KInvalidParam3, KInvalidParam4);
 		TEST(EFalse);
 		TestComplete();
 		break;	
 	case 24:
+		INFO_PRINTF1(_L("Get Font Table with wrong msg\r\n"));
+		iFbs->SendCommand(EFbsMessGetFontTable, KInvalidParam1, KInvalidParam2, KInvalidParam3, KInvalidParam4);   
+		TEST(EFalse); 
+		TestComplete();
+		break;
+	case 25:
+		INFO_PRINTF1(_L("Release Font Table with wrong msg\r\n"));
+		iFbs->SendCommand(EFbsMessReleaseFontTable, KInvalidParam1, KInvalidParam2, KInvalidParam3, KInvalidParam4);   
+		TEST(EFalse); 
+		TestComplete();
+		break;    
+	case 26:
+		INFO_PRINTF1(_L("Get Glyph outline with wrong msg\r\n"));
+		iFbs->SendCommand(EFbsMessGetGlyphOutline,KInvalidParam1, KInvalidParam2, KInvalidParam3, KInvalidParam4);   
+		TEST(EFalse); 
+		TestComplete();
+		break;
+	case 27:
+		INFO_PRINTF1(_L("Release Glyph outline with wrong msg\r\n"));
+		iFbs->SendCommand(EFbsMessReleaseGlyphOutline, KInvalidParam1, KInvalidParam2, KInvalidParam3, KInvalidParam4);   
+		TEST(EFalse); 
+		TestComplete();
+		break;
+	case 28:
 		TestComplete();
 		break;
 		}
@@ -320,50 +364,7 @@ void RIPCTestFbservClient::SendInvalidNameLength(TInt aFunctionNumber)
 	args.Set(0, &ptr1);	
 	SendReceive(aFunctionNumber, args);
 	}
-	
-	
-void CTIPCTest::LoadFontsL(const TDesC& aFontsDir)
-	{
-	RFs fileSys;
-	User::LeaveIfError(fileSys.Connect());
 
-	TFindFile fileFinder(fileSys);
-	CDir* foundFileList = NULL;
-	
-	_LIT(KFBSERVFontFilePattern, "*");
-	TInt findFileComplete = fileFinder.FindWildByDir(KFBSERVFontFilePattern,aFontsDir,foundFileList);
-
-	TRAPD(addFileError, LoadFontFromFilelistL(findFileComplete, foundFileList, fileFinder));
-	TEST(addFileError == KErrNone);
-		
-	fileSys.Close();
-	}
-
-void CTIPCTest::LoadFontFromFilelistL(TInt aFindFileComplete, CDir* aFoundFileList, TFindFile& aFileFinder)
-	{
-	TUid id1 = TUid::Uid(0);
-	while (!aFindFileComplete)
-		{
-		CleanupStack::PushL(aFoundFileList);
-
-		const TInt foundFileCount = aFoundFileList->Count();
-		for (TInt i = 0; i < foundFileCount; i++)
-			{			
-			TParse parse;
-			if (parse.Set((*aFoundFileList)[i].iName,&aFileFinder.File(),NULL) == KErrNone)
-				{
-				// Get filename and extension of font proposing to be loaded
-				TPtrC fontFilename = parse.NameAndExt();
-				id1=iFs->AddFileL(parse.FullName());
-				
-				iFs->RemoveFile(KNullUid);
-				
-				}
-			}
-		CleanupStack::PopAndDestroy(aFoundFileList); 
-		aFindFileComplete = aFileFinder.FindWild(aFoundFileList);
-		}
-	}
 
 //--------------
 __CONSTRUCT_STEP__(IPCTest)

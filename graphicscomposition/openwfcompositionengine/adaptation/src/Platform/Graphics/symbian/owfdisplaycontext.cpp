@@ -1,4 +1,4 @@
-/* Copyright (c) 2009 The Khronos Group Inc.
+/* Copyright (c) 2009-2010 The Khronos Group Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -62,7 +62,8 @@ OWF_DISPCTX OWF_DisplayContext_Create(TInt screenNum)
             {
             priority = updateReceiverPriorityTable[screenNum];
             }
-
+		// False positive leaving function is in a TRAPD
+		// coverity[leave_without_push]
         TInt err = SymbianStreamRegisterScreenNotifications(screenNum, priority, KInternalVersion);
         if (!(err == KErrNone || err == KErrNotReady || err == KErrAlreadyExists))
             {

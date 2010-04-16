@@ -1,4 +1,4 @@
-/* Copyright (c) 2009 The Khronos Group Inc.
+/* Copyright (c) 2009-2010 The Khronos Group Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -34,34 +34,39 @@ extern "C" {
 
 #include "owfattributes.h"
 #include "owfmemory.h"
+#include "owfdebug.h"
 
 #define OWF_ATTRIB_RANGE_START            (0)
 #define OWF_ATTRIB_RANGE_UNINITIALIZED    (-1)
 
 static OWFint OWF_Attribute_Commit(OWF_ATTRIBUTE* aAttr, OWFint aDirtyFlag, OWFint aCopyTo,OWFint aCopyFrom);
-
-/*
- This attribute class is currently only used for context attributes.
- Why isn't it used for element attributes? 
-     - Because elements are completely cloned in the committed scene.
- [This class could be replaced with 3 copies of a much simpler writable attributes raw 
- structure with simple data members, and the whole structure copied each commit.] 
- Normal attribute values have three pointers indexed via an array:
-    COMMITTED_ATTR_VALUE_INDEX:
-        Attribute values used by the scene 
-            - points to named variables directly used by the compositor
-    WORKING_ATTR_VALUE_INDEX:
-        Attribute values that may be set by the client, if they are not read-only.
-    SNAPSHOT_ATTR_VALUE_INDEX
-        A copy of the client-set attribute values following a client call to wfcCommit
-        The copy is then protected against further modification by the client until 
-        the committed scene is updated and displayed.
- The Working and Snapshot writable attributes require additional cache storage, 
- which is managed by the lifetime of the attribute list.
- Read-only attributes point all three pointers at the named compositor variables.
- Currently, there are relatively few writable attributes so it is reasonable 
- to individually dynamically allocate each cache. It would be better to allocate 
- a single block sized after the attributes have been registered.  
+ 
+  /*
+  This attribute class is not used for WFC element attributes because elements are 
+  completely cloned in the committed scene.
+  [This class could be replaced with 3 copies of a much simpler writable attributes raw 
+  structure with simple data members, and the whole structure copied each commit.] 
+  Normal attribute values have three pointers indexed via an array:
+     COMMITTED_ATTR_VALUE_INDEX:
+         Attribute values used by the scene 
+             - points to named variables directly used by the compositor
+     WORKING_ATTR_VALUE_INDEX:
+         Attribute values that may be set by the client, if they are not read-only.
+     SNAPSHOT_ATTR_VALUE_INDEX
+         A copy of the client-set attribute values following a client call to wfcCommit
+         The copy is then protected against further modification by the client until 
+         the committed scene is updated and displayed.
+  The Working and Snapshot writable attributes require additional cache storage, 
+  which is managed by the lifetime of the attribute list.
+  Read-only attributes point all three pointers at the named compositor variables.
+  Currently, there are relatively few writable attributes so it is reasonable 
+  to individually dynamically allocate each cache. It would be better to allocate 
+  a single block sized after the attributes have been registered.  
+  
+  Internal code is expected to read or write to member variables that are abstracted 
+  by read-only attributes. However they must not write directly to member variables 
+  masked by writable attributes after the initial "commit" to working. The code does 
+  not currently use const instances to enforce this behavior.
  */
 #define COND_FAIL_NR(ctx, condition, error) \
     if (!(condition)) { \
@@ -76,6 +81,19 @@ static OWFint OWF_Attribute_Commit(OWF_ATTRIBUTE* aAttr, OWFint aDirtyFlag, OWFi
         if (ctx) { \
             (ctx)->last_error = error; \
         } \
+        return r; \
+    }
+	
+// NS here means No Set as we are not setting the last_error member of the context.
+// These are used when we are testing the context itself so setting the last_error
+// member is itself is an error
+#define COND_FAIL_NR_NS(condition) \
+    if (!(condition)) { \
+        return; \
+    }
+
+#define COND_FAIL_NS(condition, r) \
+    if (!(condition)) { \
         return r; \
     }
 
@@ -134,7 +152,7 @@ OWF_AttributeList_Create(OWF_ATTRIBUTE_LIST* aContext,
 {
     OWF_ATTRIBUTE*          temp = NULL;
 
-    COND_FAIL_NR(aContext, aContext, ATTR_ERROR_INVALID_ARGUMENT);
+    COND_FAIL_NR_NS(aContext);
     COND_FAIL_NR(aContext, aEnd >= 0, ATTR_ERROR_INVALID_ARGUMENT);
     COND_FAIL_NR(aContext, aEnd >= aStart, ATTR_ERROR_INVALID_ARGUMENT);
 
@@ -170,11 +188,12 @@ OWF_AttributeList_Destroy(OWF_ATTRIBUTE_LIST* aContext)
     OWFint                 at = 0;
     OWFint                 cache = 0;
 
-    COND_FAIL_NR(aContext, aContext, ATTR_ERROR_INVALID_ARGUMENT);
+    COND_FAIL_NR_NS(aContext);
     COND_FAIL_NR(aContext, aContext->attributes, ATTR_ERROR_INVALID_CONTEXT);
 
     count = aContext->range_end - aContext->range_start;
     for (at = 0; at <= count; at++) {
+
         OWF_ATTRIBUTE* attr = &aContext->attributes[at];
         if (!attr->attr_info.readonly)
             {
@@ -229,27 +248,28 @@ static void OWF_Attribute_Init(OWF_ATTRIBUTE_LIST* aContext,
     OWFint                  itemSize;
     OWFint                  arraySize;
     OWFint                  copy;
-    OWFint                  index = aName - aContext->range_start;
-
-    COND_FAIL_NR(aContext, aContext, ATTR_ERROR_INVALID_ARGUMENT);
-    CHECK_INDEX_NR(aContext, aName, ATTR_ERROR_INVALID_ATTRIBUTE);
+    OWFint                  index;
+	
+	COND_FAIL_NR_NS(aContext);
+	CHECK_INDEX_NR(aContext, aName, ATTR_ERROR_INVALID_ATTRIBUTE);
     COND_FAIL_NR(aContext, aContext->attributes, ATTR_ERROR_INVALID_CONTEXT);
     COND_FAIL_NR(aContext, aLength < MAX_ATTR_LENGTH, ATTR_ERROR_CANT_HANDLE);
     COND_FAIL_NR(aContext, aType != AT_UNDEFINED, ATTR_ERROR_INVALID_ARGUMENT);
+	
+	index = aName - aContext->range_start;
 
     attr = &aContext->attributes[index];
     
     memset(attr, 0, sizeof(OWF_ATTRIBUTE));
-    
+
     /* when allocin', size DOES matter */
-    
     if (aType == AT_INTEGER || aType == AT_BOOLEAN) {
         itemSize = sizeof(OWFint);
     } else {
         itemSize = sizeof(OWFfloat);
     }
     arraySize=itemSize*aLength;
-    
+
     /* don't allocate cache for read-only 'butes */
     attr->attr_info.type        = aType;
     attr->attr_info.length      = aLength;
@@ -277,13 +297,7 @@ static void OWF_Attribute_Init(OWF_ATTRIBUTE_LIST* aContext,
                 attr->attr_value[copy].gen_ptr = cache;
                 }
              }
-        OWF_Attribute_Commit(attr,1,
-                WORKING_ATTR_VALUE_INDEX,COMMITTED_ATTR_VALUE_INDEX);
        }
-
-
-
-    
 
     SET_ERROR(aContext, ATTR_ERROR_NONE);
 
@@ -422,12 +436,13 @@ OWF_Attribute_GetValuei(OWF_ATTRIBUTE_LIST* aContext,
     OWF_ATTRIBUTE*          attr = 0;
     OWFint                  result = 0;
 
-    COND_FAIL(aContext, aContext, ATTR_ERROR_INVALID_ARGUMENT, 0);
-    CHECK_BAD(aContext, aName, 0);
-    COND_FAIL(aContext,
+    COND_FAIL_NS(aContext, 0); 
+	COND_FAIL(aContext,
               aContext->attributes,
               ATTR_ERROR_INVALID_CONTEXT,
               0);
+    CHECK_BAD(aContext, aName, 0);
+
 
     index = aName - aContext->range_start;
     attr = &aContext->attributes[index];
@@ -494,12 +509,13 @@ OWF_Attribute_GetValuef(OWF_ATTRIBUTE_LIST* aContext,
     OWF_ATTRIBUTE*          attr = NULL;
     OWFfloat                result = 0.f;
 
-    COND_FAIL(aContext, aContext, ATTR_ERROR_INVALID_ARGUMENT, 0);
-    CHECK_BAD(aContext, aName, 0);
+    COND_FAIL_NS(aContext, 0);
     COND_FAIL(aContext,
               aContext->attributes,
               ATTR_ERROR_INVALID_CONTEXT,
               0);
+    CHECK_BAD(aContext, aName, 0);
+
 
     index = aName - aContext->range_start;
     attr = &aContext->attributes[index];
@@ -552,12 +568,13 @@ OWF_Attribute_GetValueiv(OWF_ATTRIBUTE_LIST* aContext,
     OWF_ATTRIBUTE*          attr = NULL;
     OWFint                 count = 0;
 
-    COND_FAIL(aContext, aContext, ATTR_ERROR_INVALID_ARGUMENT, 0);
-    CHECK_BAD(aContext, aName, 0);
+    COND_FAIL_NS(aContext, 0);
     COND_FAIL(aContext,
               aContext->attributes,
               ATTR_ERROR_INVALID_CONTEXT,
               0);
+    CHECK_BAD(aContext, aName, 0);
+
 
     index = aName - aContext->range_start;
     attr = &aContext->attributes[index];
@@ -622,12 +639,13 @@ OWF_Attribute_GetValuefv(OWF_ATTRIBUTE_LIST* aContext,
     OWF_ATTRIBUTE*          attr = NULL;
     OWFint                 count = 0;
 
-    COND_FAIL(aContext, aContext, ATTR_ERROR_INVALID_ARGUMENT, 0);
-    CHECK_BAD(aContext, aName, 0);
+    COND_FAIL_NS(aContext, 0);
     COND_FAIL(aContext,
               aContext->attributes,
               ATTR_ERROR_INVALID_CONTEXT,
               0);
+    CHECK_BAD(aContext, aName, 0);
+
 
     index = aName - aContext->range_start;
     attr = &aContext->attributes[index];
@@ -694,9 +712,10 @@ OWF_Attribute_SetValuei(OWF_ATTRIBUTE_LIST* aContext,
     OWFint                 index = 0;
     OWF_ATTRIBUTE*          attr = NULL;
 
-    COND_FAIL_NR(aContext, aContext, ATTR_ERROR_INVALID_ARGUMENT);
-    CHECK_BAD_NR(aContext, aName);
+    COND_FAIL_NR_NS(aContext);
     COND_FAIL_NR(aContext, aContext->attributes, ATTR_ERROR_INVALID_CONTEXT);
+    CHECK_BAD_NR(aContext, aName);
+
 
     index = aName - aContext->range_start;
     attr = &aContext->attributes[index];
@@ -746,9 +765,10 @@ OWF_Attribute_SetValuef(OWF_ATTRIBUTE_LIST* aContext,
     OWFint                 index = 0;
     OWF_ATTRIBUTE*          attr = NULL;
 
-    COND_FAIL_NR(aContext, aContext, ATTR_ERROR_INVALID_ARGUMENT);
-    CHECK_BAD_NR(aContext, aName);
+    COND_FAIL_NR_NS(aContext);
     COND_FAIL_NR(aContext, aContext->attributes, ATTR_ERROR_INVALID_CONTEXT);
+    CHECK_BAD_NR(aContext, aName);
+
 
     index = aName - aContext->range_start;
     attr = &aContext->attributes[index];
@@ -819,7 +839,7 @@ OWF_Attribute_SetValueiv(OWF_ATTRIBUTE_LIST* aContext,
     OWF_ATTRIBUTE*          attr = NULL;
     OWFint                 count = 0;
 
-    COND_FAIL_NR(aContext, aContext, ATTR_ERROR_INVALID_ARGUMENT);
+    COND_FAIL_NR_NS(aContext);
     COND_FAIL_NR(aContext, aValue, ATTR_ERROR_INVALID_ARGUMENT);
     COND_FAIL_NR(aContext, aContext->attributes, ATTR_ERROR_INVALID_CONTEXT);
     CHECK_BAD_NR(aContext, aName);
@@ -888,7 +908,7 @@ OWF_Attribute_SetValuefv(OWF_ATTRIBUTE_LIST* aContext,
     OWF_ATTRIBUTE*          attr = NULL;
     OWFint                 count = 0;
 
-    COND_FAIL_NR(aContext, aContext, ATTR_ERROR_INVALID_ARGUMENT);
+    COND_FAIL_NR_NS(aContext);
     COND_FAIL_NR(aContext, aValue, ATTR_ERROR_INVALID_ARGUMENT);
     COND_FAIL_NR(aContext, aContext->attributes, ATTR_ERROR_INVALID_CONTEXT);
     CHECK_BAD_NR(aContext, aName);
@@ -945,6 +965,10 @@ static OWFint OWF_Attribute_Commit(OWF_ATTRIBUTE* aAttr,
                             OWFint aCopyTo,
                             OWFint aCopyFrom )
     {
+	OWF_ASSERT(aCopyTo >= 0);
+	OWF_ASSERT(aCopyTo < NUM_ATTR_VALUE_COPIES);
+	OWF_ASSERT(aCopyFrom >= 0);
+	OWF_ASSERT(aCopyFrom < NUM_ATTR_VALUE_COPIES);
     /* if type is undefined, it means there're gaps in the attribute
        range (e.g. reservations for future use and such.) ignore them. */
     if (aAttr->attr_info.type != AT_UNDEFINED && aDirtyFlag) 
@@ -961,11 +985,12 @@ static OWFint OWF_Attribute_Commit(OWF_ATTRIBUTE* aAttr,
         }
     }
 
+
 OWF_API_CALL void
 OWF_AttributeList_Commit(OWF_ATTRIBUTE_LIST* aContext,
                      OWFint aStart,
                      OWFint aEnd,
-                     OWFint aCopyTo )
+		     OWFint aCopyTo )
 {
     OWFint                 index = 0;
     /* Attribute commit works like the element list commit
@@ -976,19 +1001,20 @@ OWF_AttributeList_Commit(OWF_ATTRIBUTE_LIST* aContext,
      * Could in future use copy-back technique to avoid having to wait substantially, 
      * in which case the index of the working attribute set would switch after each invoked commit,
      * instead of being a constant.
+     *
      * The same number of copies would still need to take place  
      * but would not need exclusive access to the list.
      */
-    COND_FAIL_NR(aContext, aContext, ATTR_ERROR_INVALID_ARGUMENT);
+
+    COND_FAIL_NR_NS(aContext);
     COND_FAIL_NR(aContext, aStart <= aEnd, ATTR_ERROR_INVALID_ARGUMENT);
     COND_FAIL_NR(aContext, aContext->attributes, ATTR_ERROR_INVALID_CONTEXT);
     CHECK_BAD_NR(aContext, aStart);
     CHECK_BAD_NR(aContext, aEnd);
 
-
     switch (aCopyTo)
         {
-        case COMMITTED_ATTR_VALUE_INDEX: //Used in composition thread to set displayed scene attributes 
+        case COMMITTED_ATTR_VALUE_INDEX: /* Used in composition thread to set displayed scene attributes */
             for (index = aStart; index <= aEnd; index++) 
                 {
                 OWF_ATTRIBUTE* attr = &aContext->attributes[index - aContext->range_start];
@@ -997,7 +1023,7 @@ OWF_AttributeList_Commit(OWF_ATTRIBUTE_LIST* aContext,
                             COMMITTED_ATTR_VALUE_INDEX,SNAPSHOT_ATTR_VALUE_INDEX);
                 }
             break;
-        case SNAPSHOT_ATTR_VALUE_INDEX: //Used in API threads to make a snapshot of the client attributes
+        case SNAPSHOT_ATTR_VALUE_INDEX: /* Used in API threads to make a snapshot of the client attributes */
              for (index = aStart; index <= aEnd; index++) 
                  {
                  OWF_ATTRIBUTE* attr = &aContext->attributes[index - aContext->range_start];
@@ -1008,7 +1034,7 @@ OWF_AttributeList_Commit(OWF_ATTRIBUTE_LIST* aContext,
                              SNAPSHOT_ATTR_VALUE_INDEX,WORKING_ATTR_VALUE_INDEX);
                  }
              break;
-        case WORKING_ATTR_VALUE_INDEX:   //Used in initialisation to copy displayed attributes to client copies
+        case WORKING_ATTR_VALUE_INDEX:   /* Used in initialisation to copy displayed attributes to client copies */
              for (index = aStart; index <= aEnd; index++) 
                  {
                  OWF_ATTRIBUTE* attr = &aContext->attributes[index - aContext->range_start];
@@ -1016,8 +1042,18 @@ OWF_AttributeList_Commit(OWF_ATTRIBUTE_LIST* aContext,
                          WORKING_ATTR_VALUE_INDEX,COMMITTED_ATTR_VALUE_INDEX);
                  }
              break;
-            
-        }
+	case COMMIT_ATTR_DIRECT_FROM_WORKING: /* Used in WFD to commit new working values directly in 1 step. */
+            for (index = aStart; index <= aEnd; index++) 
+                {
+                OWF_ATTRIBUTE* attr = &aContext->attributes[index - aContext->range_start];
+                attr->attr_info.dirty=
+                    OWF_Attribute_Commit(attr,attr->attr_info.dirty,
+                            COMMITTED_ATTR_VALUE_INDEX,WORKING_ATTR_VALUE_INDEX);
+                }
+            break;
+	default:
+			COND_FAIL_NR(aContext, 0, ATTR_ERROR_INVALID_ARGUMENT);
+          }
     
     SET_ERROR(aContext, ATTR_ERROR_NONE);
 }

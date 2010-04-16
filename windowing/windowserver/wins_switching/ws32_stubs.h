@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -5202,6 +5202,79 @@ void call_vector_576 ()
 	_asm mov eax, 576
 	_asm jmp common_dispatch
 	}
+
+__declspec(dllexport)
+__declspec(naked)
+void call_vector_577 ()
+	{
+	// ; void RWindowBase::SetPurpose(int)
+	_asm mov eax, 577
+	_asm jmp common_dispatch
+	}
+
+__declspec(dllexport)
+__declspec(naked)
+void call_vector_578 ()
+	{
+	// ; void RWindowBase::SendEffectCommand(int, class TDesC8 const &)
+	_asm mov eax, 578
+	_asm jmp common_dispatch
+	}
+
+__declspec(dllexport)
+__declspec(naked)
+void call_vector_579 ()
+	{
+	// ; void RWsSession::SendEffectCommand(int, class TDesC8 const &)
+	_asm mov eax, 579
+	_asm jmp common_dispatch
+	}
+
+__declspec(dllexport)
+__declspec(naked)
+void call_vector_580 ()
+	{
+	// ; void RWsSession::RegisterEffect(int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &, unsigned int)
+	_asm mov eax, 580
+	_asm jmp common_dispatch
+	}
+
+__declspec(dllexport)
+__declspec(naked)
+void call_vector_581 ()
+	{
+	// ; void RWindowBase::OverrideEffects(int, int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &)
+	_asm mov eax, 581
+	_asm jmp common_dispatch
+	}
+
+__declspec(dllexport)
+__declspec(naked)
+void call_vector_582 ()
+	{
+	// ; void RWsSession::OverrideEffects(int, int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &)
+	_asm mov eax, 582
+	_asm jmp common_dispatch
+	}
+
+__declspec(dllexport)
+__declspec(naked)
+void call_vector_583 ()
+	{
+	// ; void RWsSession::UnregisterEffect(int)
+	_asm mov eax, 583
+	_asm jmp common_dispatch
+	}
+
+__declspec(dllexport)
+__declspec(naked)
+void call_vector_584 ()
+	{
+	// ; void RWsSession::UnregisterAllEffects(void)
+	_asm mov eax, 584
+	_asm jmp common_dispatch
+	}
+
 }
-#define MAX_ORDINAL 577
+#define MAX_ORDINAL 585
 

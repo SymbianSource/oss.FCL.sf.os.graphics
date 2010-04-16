@@ -17,6 +17,7 @@
 #define __SURFACEUPDATECLIENT_H__
 
 #include <e32std.h>
+#include <graphics/suerror.h>
 #ifdef TEST_SURFACE_UPDATE
 #include "surfaceupdate.h"
 #include "surfaceupdatetest.h"
@@ -88,9 +89,7 @@ public:
 	@see RSurfaceUpdateSession::NotifyWhenDisplayed 
 	@see RSurfaceUpdateSession::NotifyWhenDisplayedXTimes  
 
-	@param aScreen Screen number. Varies from 0 to N-1, where N is a total number of screens 
-	    in the system. If pre-defined constant KAllScreens is passed, the submission will 
-	    be broadcast to all screens. 
+	@param aScreen Screen number. KAllScreens is the only allowed parameter. 
 	@param aSurfaceId Secure 128-bit surface unique  identifier, which fully specified the 
 	    surface. Surface ID must be assigned and registered with the GCE.
 	@param aBuffer Current buffer for composition. Varies from 0 to N-1, where N is the 

@@ -138,8 +138,10 @@ COpenWfcWrapper::COpenWfcWrapper(CDisplayPolicy* aDisplayPolicy)
 
 void COpenWfcWrapper::ConstructL(TInt aScreenId)
 	{
+#ifdef _DEBUG
     _LIT(KOpenWfcLog, "+ COpenWfcWrapper::ConstructL");
     RDebug::Print(KOpenWfcLog);
+#endif
 
     iScreenNumber = aScreenId;
     WFCint filterList[] = { WFC_DEVICE_FILTER_SCREEN_NUMBER, iScreenNumber, WFC_NONE};

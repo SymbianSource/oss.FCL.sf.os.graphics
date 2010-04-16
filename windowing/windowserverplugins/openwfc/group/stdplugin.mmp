@@ -74,7 +74,7 @@ LIBRARY     wsgraphicdrawer.lib
 LIBRARY     libwfc.lib
 LIBRARY     wfcinterop.lib
 LIBRARY     surfacemanager.lib
-LIBRARY	 	libegl.lib
+LIBRARY	 	libEGL.lib
 //TODO Change the following line once eglsynchelper has been corrected
 //     to be available as a dynamic library
 STATICLIBRARY  eglsynchelper.lib

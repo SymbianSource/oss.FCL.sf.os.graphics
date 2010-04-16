@@ -77,7 +77,7 @@ void CTFlowWindow::RenderL()
     CTWindow::RenderL();
     TRequestStatus status;
     iUpdateSession.NotifyWhenAvailable(status);
-    User::LeaveIfError(iUpdateSession.SubmitUpdate(KSgScreenIdMain, 
+    User::LeaveIfError(iUpdateSession.SubmitUpdate(KAllScreens, 
             iImageCollection.SurfaceId(), 0, &DirtyRegion()));
     User::WaitForRequest(status);
     }

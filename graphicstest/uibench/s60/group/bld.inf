@@ -37,7 +37,6 @@ PRJ_TESTEXPORTS
 ../scripts/te_uibench_s60_tuiandvideo.script							c:/uibench_s60/te_uibench_s60_tuiandvideo.script
 ../scripts/te_uibench_s60_tzorder.script								c:/uibench_s60/te_uibench_s60_tzorder.script
 ../scripts/te_uibench_s60_dphone79.script								c:/uibench_s60/te_uibench_s60_dphone79.script
-../scripts/te_uibench_s60_teglswapbuffer.script							c:/uibench_s60/te_uibench_s60_teglswapbuffer.script
 ../scripts/te_uibench_s60_techview_emulator.script						c:/uibench_s60/te_uibench_s60_techview_emulator.script
 
 ../bitmaps/cat0.png                                						z:/resource/apps/cat0.png

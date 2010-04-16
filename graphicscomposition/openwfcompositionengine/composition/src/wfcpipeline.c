@@ -1,4 +1,4 @@
-/* Copyright (c) 2009 The Khronos Group Inc.
+/* Copyright (c) 2009-2010 The Khronos Group Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -591,7 +591,6 @@ WFC_Pipeline_ExecuteCropStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state)
     }
     else
     {
-
         /* Source rectangle */
         OWF_Rect_Set(&sourceRect,
                      state->oversizedCropRect.x, state->oversizedCropRect.y,
@@ -617,7 +616,7 @@ OWF_API_CALL void
 WFC_Pipeline_ExecuteFlipStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state)
 {
     OWF_FLIP_DIRECTION      flipping;
-    
+	
     if (NULL == context || NULL == state)
     {
         DPRINT(("WFC_Context_ExecuteFlipStage: context = %p, state = %p",
@@ -625,7 +624,6 @@ WFC_Pipeline_ExecuteFlipStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state)
     }
     else
     {
-        OWF_ASSERT(state);
         flipping = state->sourceFlip > 0.0f ? OWF_FLIP_VERTICALLY
                                           : OWF_FLIP_NONE;
         
@@ -646,14 +644,12 @@ WFC_Pipeline_ExecuteRotationStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state
     OWF_RECTANGLE           rect;    
     WFCRotation             rotation;
 
-
     if (NULL == context || NULL == state)
     {
         DPRINT(("WFC_Context_ExecuteRotationStage: context = %p, state = %p",
                context, state));
         return;
     }
-    OWF_ASSERT(state);
 
     rotation = state->rotation;
     DPRINT(("  Element rotation = %d", rotation));
@@ -723,7 +719,7 @@ WFC_Pipeline_ExecuteScalingStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state)
                             cropRect;
     OWF_FILTERING           filteringMode = OWF_FILTER_POINT_SAMPLING;
     WFCScaleFilter          filter;
-
+	
     DPRINT(("WFC_Context_ExecuteScalingStage(%p,%p)", context, state));
 
     if (NULL == context || NULL == state)
@@ -732,8 +728,6 @@ WFC_Pipeline_ExecuteScalingStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state)
                context, state));
         return;
     }
-
-    OWF_ASSERT(state);
 
     filter = state->sourceScaleFilter;
 
@@ -800,7 +794,7 @@ WFC_Pipeline_ExecuteBlendingStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state
 {
     OWF_TRANSPARENCY        blendMode = OWF_TRANSPARENCY_NONE;
     WFCbitfield             transparency = 0;
-
+	
     DPRINT(("WFC_Pipeline_ExecuteBlendingStage"));
 
     if (NULL == context || NULL == state)
@@ -810,8 +804,6 @@ WFC_Pipeline_ExecuteBlendingStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state
 
     DPRINT(("  context = %d, state = %d",
            context->handle, state));
-
-    OWF_ASSERT(state);
 
     transparency = state->transparencyTypes;
     blendMode = OWF_TRANSPARENCY_NONE;

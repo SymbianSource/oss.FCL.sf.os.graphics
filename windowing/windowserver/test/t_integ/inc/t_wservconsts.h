@@ -16,7 +16,6 @@
 /**
  @file
  @test
- @internalComponent
 */
 
 #ifndef __T_WSERV_CONSTS_H__
@@ -35,7 +34,6 @@ const TUid KUidSimLoadUtilsDll      = {0x102834D8};
 const TUid KUidTApp1                = {0x102834DE};
 const TUid KUidWServApiStep         = {0x102834E1};
 
-_LIT(KWServSimLoadConfigFile,   "c:\\graphics\\tsimloadconfig.ini");
 _LIT(KWServPseudoAppConfigFile, "c:\\graphics\\tpseudoappconfig.ini");
 _LIT(KWServPseudoAppResultFile, "c:\\graphics\\tpseudoappresults.txt");
 _LIT(KWServPseudoAppFinishFile, "c:\\graphics\\tpseudoappfinish.txt");
@@ -53,12 +51,8 @@ _LIT(KWServDsaAppLogFile,    "c:\\graphics\\tdsaapplog.txt");
 _LIT(KWServTApp1ConfigFile,  "c:\\graphics\\tapp1config.ini");
 _LIT(KWServTApp1ResultsFile, "c:\\graphics\\tapp1results.txt");
 
-_LIT(KDefaultSectionName,"default");
-
-_LIT(KConfigSimLoadValue, "SimLoadValue");
-_LIT(KConfigSimLoadType,  "SimLoadType");
-_LIT(KConfigSimLoadStatic,"KSimLoadStatic");
-_LIT(KConfigSimLoadSpiked,"KSimLoadSpiked");
 _LIT(KWservDsaSemaphoreName,"DSASemaphore");
+
+ _LIT(KDefaultSectionName, "default");
 
 #endif // __T_WSERV_CONSTS_H__

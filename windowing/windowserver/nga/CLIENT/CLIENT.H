@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -54,9 +54,10 @@ public:
 	void SetMaxBufferSizeL(TInt aMaxBufSize);
 	TInt Flush(const TIpcArgs* aIpcArgs=NULL,TBool aRequestFinish=EFalse);
 	TBool SetAutoFlush(TBool aState);
-	void Write(TInt handle,TUint opcode,const TAny *pData, TInt length,const TAny *pData2, TInt length2);
-	void Write(TInt handle,TUint opcode,const TAny *buf, TInt bufLen);
+	void Write(TInt aHandle, TUint aOpcode, const TAny *aData, TInt aLength, const TAny *aData2, TInt aLength2, const TIpcArgs* aIpcArgs=NULL);
+	void Write(TInt aHandle, TUint aOpcode, const TAny *aData, TInt aLength, const TIpcArgs* aIpcArgs=NULL);
 	void Write(TInt handle,TUint opcode);
+	void AppendData(const TAny *aData, TInt aLength, TBool aFinished);
 	TInt WriteReply(TInt handle,TUint opcode, const TIpcArgs* aIpcArgs=NULL);
 	TInt WriteReply(TInt handle,TUint opcode,const TAny *buf, TInt bufLen, const TIpcArgs* aIpcArgs=NULL);
 	TInt WriteReply(TInt handle,TUint opcode,const TAny *buf, TInt bufLen,const TAny *buf2, TInt buflen2, const TIpcArgs* aIpcArgs=NULL);
@@ -101,6 +102,9 @@ private:
 	TInt iPreviousHandle;
 	TInt iBufSize;				// current buffer size, DoWrite can expand this up to iMaxBufize
 	TInt iMaxBufSize;			// maximum buffer size, set by SetBufferSizeL or SetMaxBufferSizeL
+#if defined(_DEBUG)
+	TInt iAppendDataLength;
+#endif
 private:		//Added here as adding it to RWsSession breaks BC.
 	TInt iDirectAcessCount;
 	RArray<TInt> iBitmapArray;

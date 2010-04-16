@@ -14,7 +14,7 @@
 // OpenWFC adaptation features specific to the Symbian architecture.
 //
 
-TARGET			WFCinterop.dll
+TARGET			wfcinterop.dll
 TARGETTYPE		dll
 CAPABILITY 		PowerMgmt ReadDeviceData WriteDeviceData ProtServ
 UID				0x1000008d 0x10286FC5

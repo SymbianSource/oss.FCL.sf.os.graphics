@@ -17,4 +17,9 @@ EXPORTS
 	?ResultsAnalysisFrameRate@CTProfiler@@QAEXABVTDesC16@@HHHHH@Z @ 16 NONAME ; void CTProfiler::ResultsAnalysisFrameRate(class TDesC16 const &, int, int, int, int, int)
 	?StartTimer@CTProfiler@@QAEXXZ @ 17 NONAME ; void CTProfiler::StartTimer(void)
 	?FreeResultsMemory@CTProfiler@@QAEXXZ @ 18 NONAME ; void CTProfiler::FreeResultsMemory(void)
+	?TimeMin@CTProfiler@@QAEKXZ @ 19  NONAME ; unsigned long CTProfiler::TimeMin(void)
+	?TimeMax@CTProfiler@@QAEKXZ @ 20  NONAME ; unsigned long CTProfiler::TimeMax(void)
+	?MarkResultSetAndSuspendL@CTProfiler@@QAEXXZ @ 21  NONAME ; void CTProfiler::MarkResultSetAndSuspendL(void)
+	?SetStoreResultInTimingOrder@CTProfiler@@QAEXH@Z @ 22  NONAME ; void CTProfiler::SetStoreResultInTimingOrder(int)
+	?ShowResultArrayInTimingOrder@CTProfiler@@QAEXXZ @ 23  NONAME ; void CTProfiler::ShowResultArrayInTimingOrder(void)
 

@@ -286,7 +286,7 @@ void CDisplayRenderStage::End(TRequestStatus* aFinished)
 		// If composition is due, then we will let the compositor drive the finished signal.
 		if (!compositionDue && aFinished)
 			iSurfaceUpdateSession.NotifyWhenDisplayed(*aFinished, iTimeStamp);
-		iSurfaceUpdateSession.SubmitUpdate(ScreenNumber(), surfaceId, 0, iUpdateRegion);
+		iSurfaceUpdateSession.SubmitUpdate(KAllScreens, surfaceId, 0, iUpdateRegion);
 		}
 	else if (!compositionDue && aFinished) 
 		{

@@ -70,7 +70,8 @@ enum TFbsPanic
 	EFbsInvalidCompressionThreshold,
 	EFbsTypefaceIndexOutOfRange,
 	EFbsPanicBitmapDataCopy,
-	EFbsPanicBitmapReadOnly
+	EFbsPanicBitmapReadOnly,
+	EFbsPanicInvalidBitmapType
 	};
 
 class TScanLine
@@ -236,6 +237,32 @@ enum TFbsWritableDataPagingMode
 	EFbsWdpPageBitmapDataChunkOnly=0x03, //SYMBIAN_GRAPHICS_FBSERV_PAGE_BITMAP_DATA_ONLY was specified.
 	EFbsWdpPageBitmapDataAndSharedHeapChunksOnly=0x04, //SYMBIAN_GRAPHICS_FBSERV_PAGE_BITMAP_DATA_AND_SHARED_HEAP_ONLY was specified.
 	};
+
+
+/*
+Structure used to pass parameters from FBS client to FBS server.
+Used when opening/closing an outline iterator.
+@internalTechnology
+*/
+class TFBSGlyphOutlineParam 
+    {
+public:
+    TInt iHandle;
+    TInt iCount;
+    TBool iHinted;
+    };
+
+/*
+Structure used to pass font table/glyph outlines from FBS to FBS client.
+Used when opening an font table or an outline iterator.
+@internalTechnology
+*/
+class TOffsetLen 
+    {
+public:
+    TInt iOffset;
+    TInt iLen;
+    };
 
 #endif
 

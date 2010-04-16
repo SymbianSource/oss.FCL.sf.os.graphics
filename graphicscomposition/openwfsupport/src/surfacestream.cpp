@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1225,6 +1225,8 @@ TBool CSurfaceStream::NotifyComposerContext(TInt32 aScreenNumber, TInt aOp, SYMO
             NFLOG(("###CSurfaceStream::NotifyComposerContext() ESOWF_EventUpdated aParam(%d)", aParam? aParam->id: -1));
             entry.iCallBackFunction(ToHandle(), ESOWF_EventUpdated, entry.iCallBackClientParam, aParam);
             ret = ETrue;
+			// We are meant to hold this lock when we leave this function so coverity warning is false
+			//coverity[lock]
             iRefCountMutex.Wait();
             }
         }

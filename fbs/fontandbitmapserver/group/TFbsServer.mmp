@@ -55,6 +55,7 @@ SOURCE		textendedbitmapnegative.cpp
 SOURCE 		textendedbitmaplegacy.cpp
 SOURCE 		textendedbitmappanic.cpp
 SOURCE 		twdp.cpp
+SOURCE		tfonttableandglyph.cpp
 
 
 SOURCEPATH		../sfbs

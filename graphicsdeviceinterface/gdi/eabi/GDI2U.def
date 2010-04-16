@@ -361,4 +361,34 @@ EXPORTS
 	_ZN16CGraphicsContext8DrawTextERK7TDesC16PKNS_15TTextParametersERK6TPoint @ 360 NONAME
 	_ZN16CGraphicsContext8DrawTextERK7TDesC16PKNS_15TTextParametersERK6TPointRKNS_14TDrawTextParamE @ 361 NONAME
 	_ZNK5CFont17TextWidthInPixelsERK7TDesC16PKNS_17TMeasureTextInputE @ 362 NONAME
+	_ZN10RFontTable4OpenER5CFontm @ 363 NONAME
+	_ZN10RFontTable5CloseEv @ 364 NONAME
+	_ZN10RFontTableC1Ev @ 365 NONAME
+	_ZN10RFontTableC2Ev @ 366 NONAME
+	_ZN21RGlyphOutlineIterator4NextEv @ 367 NONAME
+	_ZN21RGlyphOutlineIterator4OpenER5CFontPjii @ 368 NONAME
+	_ZN21RGlyphOutlineIterator5CloseEv @ 369 NONAME
+	_ZN21RGlyphOutlineIteratorC1Ev @ 370 NONAME
+	_ZN21RGlyphOutlineIteratorC2Ev @ 371 NONAME
+	_ZNK10RFontTable11TableLengthEv @ 372 NONAME
+	_ZNK10RFontTable12TableContentEv @ 373 NONAME
+	_ZNK21RGlyphOutlineIterator13OutlineLengthEv @ 374 NONAME
+	_ZNK21RGlyphOutlineIterator7OutlineEv @ 375 NONAME
+	_ZN18RGlyphDataIterator4NextEv @ 376 NONAME ABSENT
+	_ZN18RGlyphDataIterator4OpenER5CFontPKji @ 377 NONAME ABSENT
+	_ZN18RGlyphDataIterator5CloseEv @ 378 NONAME ABSENT
+	_ZN18RGlyphDataIteratorC1Ev @ 379 NONAME ABSENT
+	_ZN18RGlyphDataIteratorC2Ev @ 380 NONAME ABSENT
+	_ZN18RGlyphMetricsArray3GetER5CFontPKji @ 381 NONAME ABSENT
+	_ZN18RGlyphMetricsArray5CloseEv @ 382 NONAME ABSENT
+	_ZN18RGlyphMetricsArrayC1Ev @ 383 NONAME ABSENT
+	_ZN18RGlyphMetricsArrayC2Ev @ 384 NONAME ABSENT
+	_ZNK18RGlyphDataIterator4RectEv @ 385 NONAME ABSENT
+	_ZNK18RGlyphDataIterator5ImageEv @ 386 NONAME ABSENT
+	_ZNK18RGlyphDataIterator7MetricsEv @ 387 NONAME ABSENT
+	_ZNK18RGlyphDataIterator9GlyphCodeEv @ 388 NONAME ABSENT
+	_ZNK18RGlyphMetricsArray5CountEv @ 389 NONAME ABSENT
+	_ZNK18RGlyphMetricsArrayixEi @ 390 NONAME ABSENT
+	_ZN9TTypeface7SetNameERK7TDesC16 @ 391 NONAME
+	_ZNK9TTypeface4NameEv @ 392 NONAME
 
