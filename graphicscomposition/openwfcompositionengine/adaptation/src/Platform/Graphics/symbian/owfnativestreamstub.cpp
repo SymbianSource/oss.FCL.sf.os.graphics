@@ -94,6 +94,11 @@ static TSurfaceId createSurface(khronos_int32_t width,
                 bytesPerPixel = -8;
                 b.iAlignment = max(4,format->rowPadding);
                 break;
+            case OWF_IMAGE_UYVY:
+                b.iPixelFormat = EUidPixelFormatYUV_422Interleaved;
+                bytesPerPixel = 1;
+                b.iAlignment = max(4,format->rowPadding);
+                break;
             default:
                 return surface;
             }   
@@ -290,6 +295,13 @@ static TInt PixelFormatConversion(TUidPixelFormat aBaseFormat, OWF_IMAGE_FORMAT&
                 aFormat.premultiplied = OWF_FALSE;
                 aFormat.rowPadding = 4;
                 aFormat.pixelFormat = OWF_IMAGE_L1;          
+                break;
+
+            case EUidPixelFormatYUV_422Interleaved :
+                aFormat.linear = OWF_FALSE;
+                aFormat.premultiplied = OWF_FALSE;
+                aFormat.rowPadding = 1;
+                aFormat.pixelFormat = OWF_IMAGE_UYVY;          
                 break;
             default:
                 aFormat.linear = OWF_FALSE;

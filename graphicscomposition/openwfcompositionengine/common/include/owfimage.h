@@ -31,6 +31,7 @@ extern "C" {
 
 typedef void*   OWF_DISPCTX;
 
+#define CLIP(a) if (a < 0) a = 0; else if (a > 255) a = 255;
 
 #undef USE_FLOAT_PIXEL
 
@@ -201,6 +202,7 @@ typedef struct _OWF_BLEND_INFO {
     OWFpixel*               tsColor;
 } OWF_BLEND_INFO;
 
+#define CLIP(a) if (a < 0) a = 0; else if (a > 255) a = 255;
 
 /*!---------------------------------------------------------------------------
  *  \brief Initialize image object

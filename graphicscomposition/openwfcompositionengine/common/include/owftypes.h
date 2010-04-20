@@ -73,6 +73,7 @@ typedef enum {
     OWF_IMAGE_L16           = 0xA16,
     OWF_IMAGE_L8            = 0xA8,
     OWF_IMAGE_L1            = 0xA1,
+    OWF_IMAGE_UYVY          = 0x422, /* EUidPixelFormatYUV_422Interleaved */
     OWF_IMAGE_ARGB_INTERNAL = 0x666 /* OWFpixel rep */
 } OWF_PIXEL_FORMAT;
 
