@@ -40,7 +40,7 @@ LIBRARY       	euser.lib
 LIBRARY       	bitgdi.lib
 LIBRARY			fbscli.lib
 LIBRARY			hal.lib
-LIBRARY			cinidata.lib
+LIBRARY			iniparser.lib
 LIBRARY			ws32.lib
 
 SMPSAFE

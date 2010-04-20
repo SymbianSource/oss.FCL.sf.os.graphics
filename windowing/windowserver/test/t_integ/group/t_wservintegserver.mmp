@@ -48,7 +48,7 @@ LIBRARY			testexecutelogclient.lib
 LIBRARY			efsrv.lib
 LIBRARY			bafl.lib
 LIBRARY			estor.lib
-LIBRARY			cinidata.lib
+LIBRARY			iniparser.lib
 LIBRARY			surfacemanager.lib
 LIBRARY			surfaceupdateclient.lib
 LIBRARY			ws32.lib

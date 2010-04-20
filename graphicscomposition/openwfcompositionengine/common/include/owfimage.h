@@ -66,6 +66,7 @@ typedef OWFfloat            OWFsubpixel; /* subpixel representation */
 #define OWF_BLEND_ROUNDING_VALUE 0.0f
 #define OWF_PREMUL_ROUNDING_FACTOR  0.0f
 #define OWF_SOURCE_CONVERSION_ROUNDING_VALUE 0.0f
+#define OWF_ALPHA_MIN_STEP_VALUE (1.0f/256.0f)
 
 #else
 #undef OWF_IMAGE_INTERNAL_PIXEL_IS_FLOAT
@@ -89,6 +90,7 @@ typedef OWFuint8            OWFsubpixel; /* subpixel representation */
 #define OWF_SOURCE_CONVERSION_ROUNDING_VALUE 0.5f
 #define OWF_BLEND_ROUNDING_VALUE (OWF_ALPHA_MAX_VALUE/2)
 #define OWF_PREMUL_ROUNDING_FACTOR (OWF_ALPHA_MAX_VALUE/2)
+#define OWF_ALPHA_MIN_STEP_VALUE 1
 
 #endif
 

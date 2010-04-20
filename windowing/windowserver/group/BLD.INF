@@ -19,6 +19,8 @@
  @file
 */
 
+#include <platform_paths.hrh>
+
 PRJ_PLATFORMS
 
 DEFAULT

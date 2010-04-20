@@ -294,6 +294,7 @@ OWF_Image_SourceFormatConversion(OWF_IMAGE* dst, OWF_IMAGE* src)
         {
             case OWF_IMAGE_ARGB8888:
             {
+#ifdef USE_FLOAT_PIXEL
                 OWFuint32* srcPtr = (OWFuint32*) srcLinePtr;
     
                 while (count > 0)
@@ -310,6 +311,9 @@ OWF_Image_SourceFormatConversion(OWF_IMAGE* dst, OWF_IMAGE* src)
                     srcPtr ++;
                     count--;
                 }
+#else
+                memcpy(dstLinePtr, srcLinePtr, src->stride);
+#endif
                 break;
             }
     
@@ -319,6 +323,7 @@ OWF_Image_SourceFormatConversion(OWF_IMAGE* dst, OWF_IMAGE* src)
                 
                 while (count > 0)
                 {
+#ifdef USE_FLOAT_PIXEL
                     dstPtr->color.alpha = OWF_FULLY_OPAQUE;
                     dstPtr->color.red   = (OWFsubpixel)
                         OWF_RED_MAX_VALUE * ((*srcPtr & ARGB8888_RED_MASK) >> ARGB8888_RED_SHIFT) / OWF_BYTE_MAX_VALUE;
@@ -326,6 +331,9 @@ OWF_Image_SourceFormatConversion(OWF_IMAGE* dst, OWF_IMAGE* src)
                         OWF_GREEN_MAX_VALUE * ((*srcPtr & ARGB8888_GREEN_MASK) >> ARGB8888_GREEN_SHIFT) / OWF_BYTE_MAX_VALUE;
                     dstPtr->color.blue  = (OWFsubpixel)
                         OWF_BLUE_MAX_VALUE * ((*srcPtr & ARGB8888_BLUE_MASK) >> ARGB8888_BLUE_SHIFT) / OWF_BYTE_MAX_VALUE;
+#else
+                    *(OWFuint32*)dstPtr = *srcPtr | ARGB8888_ALPHA_MASK;
+#endif
                     dstPtr ++;
                     srcPtr ++;
                     count--;
@@ -450,6 +458,7 @@ OWF_Image_DestinationFormatConversion(OWF_IMAGE* dst, OWF_IMAGE* src)
     OWFint                  countY;
     OWFuint32*              dstPtr;
     OWFpixel*               srcPtr;
+    OWFuint8*               destination;
 
     OWF_ASSERT(dst != 0 && dst->data != NULL);
     OWF_ASSERT(src != 0 && src->data != NULL);
@@ -478,16 +487,17 @@ OWF_Image_DestinationFormatConversion(OWF_IMAGE* dst, OWF_IMAGE* src)
         OWF_Image_UnpremultiplyAlpha(src);
     }
 
+    destination = (OWFuint8*) dst->data;
     for (countY = 0; countY < src->height; countY++)
     {   
-        OWFuint8* destination = (OWFuint8*) dst->data;
-        destination += countY*dst->stride;
         dstPtr = (OWFuint32*) destination;    
-    
+        destination += dst->stride;
+
         switch (dst->format.pixelFormat)
         {
             case OWF_IMAGE_ARGB8888:
             {
+#ifdef USE_FLOAT_PIXEL
                 OWFint countX;
                 OWFuint32 dstPixel = 0;               
                 
@@ -505,11 +515,16 @@ OWF_Image_DestinationFormatConversion(OWF_IMAGE* dst, OWF_IMAGE* src)
                     dstPtr ++;
                     srcPtr ++;
                 }
+#else
+                memcpy(dstPtr, srcPtr, src->stride);
+                srcPtr = (OWFpixel*)((OWFuint8*)srcPtr + src->stride);
+#endif
                 break;
             }
     
             case OWF_IMAGE_XRGB8888:
             {
+#ifdef USE_FLOAT_PIXEL
                 OWFint countX;
                 OWFuint32 dstPixel = 0;
                 
@@ -526,6 +541,10 @@ OWF_Image_DestinationFormatConversion(OWF_IMAGE* dst, OWF_IMAGE* src)
                     dstPtr ++;
                     srcPtr ++;
                 }
+#else
+                memcpy(dstPtr, srcPtr, src->stride);
+                srcPtr = (OWFpixel*)((OWFuint8*)srcPtr + src->stride);
+#endif
                 break;
             }
     
@@ -1406,6 +1425,18 @@ OWF_Image_Flip(OWF_IMAGE* image,
             } /* end tsColor check */ \
             srcPtr ++; \
             dstPtr ++; \
+            --colCount; \
+        } \
+        srcPtr += srcLineDelta; \
+        dstPtr += dstLineDelta; \
+        --rowCount; \
+    }
+
+#define BLENDER_INNER_LOOP_END_WITH_MASK \
+                DA = blend->destinationFullyOpaque ? OWF_FULLY_OPAQUE : DA; \
+            } /* end tsColor check */ \
+            srcPtr ++; \
+            dstPtr ++; \
             maskPtr++; \
             --colCount; \
         } \
@@ -1538,11 +1569,17 @@ OWF_Image_Blend(OWF_BLEND_INFO* blend,
     srcLineDelta = src->width - srect.width;
     dstLineDelta = dst->width - drect.width;
 
+    if ((transparency & OWF_TRANSPARENCY_GLOBAL_ALPHA) && (GA > (OWF_ALPHA_MAX_VALUE - OWF_ALPHA_MIN_STEP_VALUE)))
+        {
+        /* Fully opaque, so ignore global alpha */
+        transparency &= ~OWF_TRANSPARENCY_GLOBAL_ALPHA;
+        }
     /* inner loops */
     switch (transparency)
     {
         case OWF_TRANSPARENCY_NONE:
         {
+#ifdef SLOW_CODE
             /*
             rgb     = src.rgb
             alpha    = 1
@@ -1553,6 +1590,9 @@ OWF_Image_Blend(OWF_BLEND_INFO* blend,
                 DB = SB;
                 DA = OWF_FULLY_OPAQUE;
             BLENDER_INNER_LOOP_END;
+#else
+            memcpy(dstPtr, srcPtr, drect.height*drect.width*4);
+#endif
             break;
         }
 
@@ -1582,10 +1622,28 @@ OWF_Image_Blend(OWF_BLEND_INFO* blend,
             alpha    = src.alpha + dst.alpha * (1 - src.alpha)
             */
             BLENDER_INNER_LOOP_BEGIN;
-                DR = SR + (DR * (OWF_FULLY_OPAQUE - SA) + OWF_BLEND_ROUNDING_VALUE) / OWF_ALPHA_MAX_VALUE;
-                DG = SG + (DG * (OWF_FULLY_OPAQUE - SA) + OWF_BLEND_ROUNDING_VALUE) / OWF_ALPHA_MAX_VALUE;
-                DB = SB + (DB * (OWF_FULLY_OPAQUE - SA) + OWF_BLEND_ROUNDING_VALUE) / OWF_ALPHA_MAX_VALUE;
-                DA = SA + (DA * (OWF_FULLY_OPAQUE - SA) + OWF_BLEND_ROUNDING_VALUE) / OWF_ALPHA_MAX_VALUE;
+                if (SA > (OWF_ALPHA_MAX_VALUE - OWF_ALPHA_MIN_STEP_VALUE))
+                    {
+                    /* Fully opaque source pixel */
+                    DR = SR;
+                    DG = SG;
+                    DB = SB;
+                    DA = OWF_FULLY_OPAQUE;
+                    }
+                else
+                    {
+                    if (SA >= OWF_ALPHA_MIN_STEP_VALUE)
+                        {
+                        /* Not fully transparent source pixel */
+                       /*
+                        * DR = SR + (DR * (OWF_FULLY_OPAQUE - SA) + OWF_BLEND_ROUNDING_VALUE) / OWF_ALPHA_MAX_VALUE;
+                        */ 
+                        DR = SR + (DR * (OWF_FULLY_OPAQUE - SA) + OWF_BLEND_ROUNDING_VALUE) >> 8;
+                        DG = SG + (DG * (OWF_FULLY_OPAQUE - SA) + OWF_BLEND_ROUNDING_VALUE) >> 8;
+                        DB = SB + (DB * (OWF_FULLY_OPAQUE - SA) + OWF_BLEND_ROUNDING_VALUE) >> 8;
+                        DA = SA + (DA * (OWF_FULLY_OPAQUE - SA) + OWF_BLEND_ROUNDING_VALUE) >> 8;
+                        }
+                    }
             BLENDER_INNER_LOOP_END;
             break;
         }
@@ -1605,7 +1663,7 @@ OWF_Image_Blend(OWF_BLEND_INFO* blend,
                      OWF_ALPHA_MAX_VALUE;
                 DA = MA + (DA * (OWF_FULLY_OPAQUE - MA) + OWF_BLEND_ROUNDING_VALUE) / 
                      OWF_ALPHA_MAX_VALUE;
-            BLENDER_INNER_LOOP_END;
+            BLENDER_INNER_LOOP_END_WITH_MASK;
             break;
         }
 
@@ -1651,7 +1709,7 @@ OWF_Image_Blend(OWF_BLEND_INFO* blend,
                      OWF_ALPHA_MAX_VALUE;
                 //No need to check with OWF_ALPHA_MIN_VALUE as it is zero
                 OWF_ASSERT(GA <= OWF_ALPHA_MAX_VALUE);
-            BLENDER_INNER_LOOP_END;
+            BLENDER_INNER_LOOP_END_WITH_MASK;
             break;
         }
 

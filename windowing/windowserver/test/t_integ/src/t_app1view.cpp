@@ -20,7 +20,7 @@
 */
 
 #include <eikenv.h>
-#include <techview/eikmenup.h>
+#include <eikmenup.h>
 #include <t_app1.rsg>
 #include "t_app1view.h"
 #include "t_app1eng.h"

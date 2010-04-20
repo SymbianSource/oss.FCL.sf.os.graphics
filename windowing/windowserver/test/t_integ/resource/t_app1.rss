@@ -22,8 +22,8 @@
 
 NAME SMPL
 
-#include <techview/eikon.rh>
-#include <uiklafgt/eikcore.rsg>
+#include <eikon.rh>
+#include <eikcore.rsg>
 #include <appinfo.rh>
 #include "t_app1.hrh"
 
