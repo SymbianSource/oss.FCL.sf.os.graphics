@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -14,6 +14,8 @@
 //
 
 #include "BMDRAW.H"
+#include <graphics/lookuptable.h>
+#include <graphics/blendingalgorithms.h>
 
 /**
 Performs a blend based on the PD method, with 2* 16 bit in one 32 bit operation optimisation.
@@ -37,6 +39,10 @@ And finally add a 0.5 rounding to the result.
 I do this multiply after the CSrc*MulSrc, while I still have a 16bit intermediate result.
 It is possible to generate a faster, less accurate result by exhaustively finding
 the highest value that can be added instead of rb = rb+((rb>>8)&0x00ff00ff)+0x00800080; without causing an overflow.
+@param aBeneath non-premultiplied color with alpha of the destination 
+@param aSrcColor non-premultiplied color with alpha of the source
+@param aMaskBuffer mask
+@return pre multiplied color resulting from the blending operation
 */
 FORCEINLINE TUint32 OptimizedBlend32A(TUint32 aBeneath,TUint32 aSrcColor,TUint8 aMaskBuffer)
  	{
@@ -636,9 +642,11 @@ TInt CDrawThirtyTwoBppBitmapAlpha::WriteRgbOutlineAndShadow(TInt aX, TInt aY, co
 	TInt blendedRedColor;
 	TInt blendedGreenColor;
 	TInt blendedBlueColor;
+	TInt blendedAlpha;
 	TUint8 index = 0;
 	TUint32 finalColor;
-	
+	const TUint16* normTable = PtrTo16BitNormalisationTable();
+
 	//Get red color. Equivalent to TRgb::Red()
 	const TInt redOutlinePenColor = (aOutlinePenColor & 0xff0000) >> 16;
 	const TInt redShadowColor = (aShadowColor & 0xff0000) >> 16;
@@ -653,7 +661,11 @@ TInt CDrawThirtyTwoBppBitmapAlpha::WriteRgbOutlineAndShadow(TInt aX, TInt aY, co
 	const TInt blueOutlinePenColor = aOutlinePenColor & 0xff;
 	const TInt blueShadowColor = aShadowColor & 0xff;
 	const TInt blueFillColor = aFillColor & 0xff;
-	const TInt alpha = aOutlinePenColor >> 24;
+
+	//Get alpha color. Equivalent to TRgb::Alpha()
+	const TInt alphaOutlinePenColor = aOutlinePenColor >> 24;
+	const TInt alphaShadowColor = aShadowColor >> 24;
+	const TInt alphaFillColor = aFillColor >> 24;
 
 	while (aDataBuffer < dataBufferPtrLimit)
 		{
@@ -661,47 +673,53 @@ TInt CDrawThirtyTwoBppBitmapAlpha::WriteRgbOutlineAndShadow(TInt aX, TInt aY, co
 		if(255 == FourColorBlendLookup[index][KBackgroundColorIndex])
 			{
 			//background colour
-			//No drawing required so move on to next pixel.
-			pixelPtr += pixelPtrInc;
-			continue;
+			//No drawing required
 			}
 		else if (255 == FourColorBlendLookup[index][KFillColorIndex])
 			{
 			//Use fill colour to draw
-			finalColor = aFillColor;
+			finalColor = OptimizedBlend32A(*pixelPtr, aFillColor, alphaFillColor);
+			*pixelPtr = PMA2NonPMAPixel(finalColor, normTable);
 			}
 		else if (255 == FourColorBlendLookup[index][KShadowColorIndex])
 			{
 			//Use shadow colour to draw
-			finalColor = aShadowColor;
+			finalColor = OptimizedBlend32A(*pixelPtr, aShadowColor, alphaShadowColor);
+			*pixelPtr = PMA2NonPMAPixel(finalColor, normTable);
 			}
 		else if (255 == FourColorBlendLookup[index][KOutlineColorIndex])
 			{
 			//Use outline colour to draw
-			finalColor = aOutlinePenColor;
+			finalColor = OptimizedBlend32A(*pixelPtr, aOutlinePenColor, alphaOutlinePenColor);
+			*pixelPtr = PMA2NonPMAPixel(finalColor, normTable);
 			}
 		else
 			{
-			const TUint32 backgroundColor = *pixelPtr;
-			
-			blendedRedColor = (redOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] + 
-						   		redShadowColor * FourColorBlendLookup[index][KShadowColorIndex] +
-						  		redFillColor * FourColorBlendLookup[index][KFillColorIndex] + 
-						  		((backgroundColor & 0xff0000) >> 16) * FourColorBlendLookup[index][KBackgroundColorIndex]) >> 8;
+			blendedRedColor = (redOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] * alphaOutlinePenColor + 
+								redShadowColor * FourColorBlendLookup[index][KShadowColorIndex] * alphaShadowColor +
+								redFillColor * FourColorBlendLookup[index][KFillColorIndex] * alphaFillColor) >> 16;
+	
+			blendedGreenColor = (greenOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] * alphaOutlinePenColor  + 
+								greenShadowColor * FourColorBlendLookup[index][KShadowColorIndex] * alphaShadowColor +
+								greenFillColor * FourColorBlendLookup[index][KFillColorIndex] * alphaFillColor) >> 16;
+	
+			blendedBlueColor = (blueOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] * alphaOutlinePenColor  + 
+								blueShadowColor * FourColorBlendLookup[index][KShadowColorIndex] * alphaShadowColor +
+								blueFillColor * FourColorBlendLookup[index][KFillColorIndex] * alphaFillColor) >> 16;
+	
+			blendedAlpha = (alphaOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] + 
+							alphaShadowColor * FourColorBlendLookup[index][KShadowColorIndex] +
+							alphaFillColor * FourColorBlendLookup[index][KFillColorIndex]) >> 8;
 
-			blendedGreenColor = (greenOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] + 
-								greenShadowColor * FourColorBlendLookup[index][KShadowColorIndex] +
-								greenFillColor * FourColorBlendLookup[index][KFillColorIndex] + 
-								((backgroundColor & 0xff00) >> 8) * FourColorBlendLookup[index][KBackgroundColorIndex]) >> 8;
-
-			blendedBlueColor = (blueOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] + 
-								blueShadowColor * FourColorBlendLookup[index][KShadowColorIndex] +
-								blueFillColor * FourColorBlendLookup[index][KFillColorIndex] + 
-								(backgroundColor & 0xff) * FourColorBlendLookup[index][KBackgroundColorIndex]) >> 8;
-
-			finalColor = (blendedRedColor << 16) | (blendedGreenColor << 8) | blendedBlueColor | 0xff000000;
+			// The blended colours have been alpha multiplied, hence the resulting colour is 16MAP
+			// Before doing the OptimizedBlend with the destination, note the following
+			//	- The source alpha is set as fully opaque so that the blend is just with the mask
+			//	- Input parameters for OptimizedBlend are NON-PRE, hence conversion from PRE to NON-PRE beforehand
+			//	- output parameter for OptimizedBlend is PRE, hence conversion from PRE to NON-PRE afterwards
+			finalColor = PMA2NonPMAPixel((blendedAlpha << 24) | (blendedRedColor << 16) | (blendedGreenColor << 8) | blendedBlueColor, normTable);
+			finalColor = OptimizedBlend32A(*pixelPtr, finalColor | 0xff000000, blendedAlpha);
+			*pixelPtr = PMA2NonPMAPixel(finalColor, normTable);
 			}
-		*pixelPtr = OptimizedBlend32A(*pixelPtr, finalColor, alpha);
 		pixelPtr += pixelPtrInc;
 		}
 	return KErrNone;

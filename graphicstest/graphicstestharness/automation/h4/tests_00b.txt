@@ -20,4 +20,4 @@ TESTEXECUTE, \logs\testexecute\fntstoretest_T_LinkedFonts.htm,				, z:\fntstoret
 TESTEXECUTE, \logs\testexecute\fntstoretest_T_LinkedFontUpdateStage2.htm,	, z:\fntstoretest\fntstoretest_T_LinkedFontUpdateStage2.script, 600
 
 # PREQ1543 bitgdi
-TESTEXECUTE, \logs\testexecute\bitgdiTest_T_outlineandshadowfonts.htm,		, z:\bitgdiTest\bitgdiTest_T_outlineandshadowfonts.script,	2000
+# TESTEXECUTE, \logs\testexecute\bitgdiTest_T_outlineandshadowfonts.htm,		, z:\bitgdiTest\bitgdiTest_T_outlineandshadowfonts.script,	2000

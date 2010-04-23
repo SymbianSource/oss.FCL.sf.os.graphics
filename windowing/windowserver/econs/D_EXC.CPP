@@ -104,8 +104,6 @@ void TDllList::FindDlls()
 	}
 
 _LIT(KFormatStackInfo,"Stack %08x-%08x (? %d?), sp=%08x\r");
-//_LIT(KGrabStack,"Capture stack data");
-//_LIT(KNoStack,"Don't risk it");
 
 HBufC8* GrabStack(const TDesC& /*aLine1*/, TThreadId aId, TUint aSp, TInt& aStackBase, TInt& aStackSize)
 	{
@@ -148,18 +146,7 @@ HBufC8* GrabStack(const TDesC& /*aLine1*/, TThreadId aId, TUint aSp, TInt& aStac
 
 	TBuf<0x100> line2;
 	line2.Format(KFormatStackInfo, aStackBase, aStackBase+aStackSize-1, aStackSize, aSp);
-    //Don't ask the user just do it for WSERV
-	/*RNotifier ask;
-	if (ask.Connect() != KErrNone)
-		return 0;
-	TRequestStatus status;
-	TInt buttonval=1;
-	ask.Notify(aLine1,line2,KGrabStack,KNoStack,buttonval,status);
-	User::WaitForRequest(status);
-	ask.Close();
-	if (status.Int()!=KErrNone || buttonval != 0)
-		return 0;*/
-
+    
 	// OK - let stack grabbing commence
 	HBufC8* stackbuf = HBufC8::New(aStackSize);
 	if (stackbuf==0)
@@ -193,9 +180,9 @@ GLDEF_C TInt E32Main()
 	TBuf<0x100> line2;
 	SDebugInfo info;
 	struct SRegisterInfo reginfo;
-	TUint pc;
+	TUint pc = 0;
 	TUint regs[16];
-	const TDll* faultDll;
+	const TDll* faultDll = NULL;
 
 	_LIT(KInfo1, "D_EXC started");
 	User::InfoPrint(KInfo1);
@@ -204,7 +191,7 @@ GLDEF_C TInt E32Main()
 //	FOREVER
 	for (TInt rep=0; rep<2; rep++)	// die after two exceptions
 		{
-		TInt err;
+		TInt err = KErrNone;
 		// wait for any thread to panic...
 
 
@@ -240,7 +227,7 @@ GLDEF_C TInt E32Main()
 		// assume that it's KERN-EXEC 3 and try to use the 
 		// full RDebug support to locate the faulting instruction
 
-		HBufC8* stack=0;
+		HBufC8* stack = NULL;
 		TInt stackbase=0;
 		TInt stacksize=0;
 
@@ -257,14 +244,15 @@ GLDEF_C TInt E32Main()
 				{
 				RDebug::GetRegister(info.iId,reginfo.iNumberOfPcRegister, pc);
 				for (int i=0; i<16; i++)
+				    {
 					RDebug::GetRegister(info.iId, i, regs[i]);
+				    }
 				}
 
 			TDllList::FindDlls();
 
 			stack=GrabStack(line1, info.iId, regs[KStackPointerReg], stackbase, stacksize);
 
-			//RDebug::KillThread(info.iId);
 			RDebug::Close();
 			}
 
@@ -275,28 +263,37 @@ GLDEF_C TInt E32Main()
 		_LIT(KFormatOther,	"pc=%08x, iCodeAddr=%08x\r");
 		_LIT(KFormatError,	"(Unable to determine pc)\r");
 
+
 		if ((pc&3) == 0)
 			{
 			if (pc >= 0x20000000 && pc < 0x30000000)
+			    {
 				line2.Format(KFormatEXE, pc, pc-0x20000000+0x400010);
-			else
-			if (pc >= 0x50000000 && pc < 0x60000000)
-				line2.Format(KFormatROM, pc);
-			else
-			if (TDllList::Match(pc, faultDll)==KErrNone)
+			    }
+			else if (pc >= 0x50000000 && pc < 0x60000000)
+				{
+                line2.Format(KFormatROM, pc);
+				}
+			else if (TDllList::Match(pc, faultDll)==KErrNone)
+			    {
 				line2.Format(KFormatDll, pc, &faultDll->iName, pc-(faultDll->iBase)+0x10000010);
-
+			    }
 			else
+			    {
 				line2.Format(KFormatOther, pc, info.iCodeAddr);
-
+			    }
 			}
 		else
+		    {
 			line2.Copy(KFormatError);
-
+		    }
+		
 		RFs fs;
 		err = fs.Connect();
 		if (err!=KErrNone)
+		    {
 			break;
+		    }
 
 		_LIT(KFormatFilename,"d:\\d_exc_%d.txt");
 		_LIT(KFormatStackname,"d:\\d_exc_%d.stk");
@@ -309,7 +306,10 @@ GLDEF_C TInt E32Main()
 		RFile file;
 		err=file.Replace(fs, name, EFileWrite+EFileShareAny+EFileStreamText);
 		if (err!=KErrNone)
-			break;
+		    {
+            fs.Close();
+            break;
+		    }
 
 		TFileText textfile;
 		textfile.Set(file);

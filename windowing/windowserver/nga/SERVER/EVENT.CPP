@@ -1021,7 +1021,9 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
 		case TRawEvent::EKeyDown:
 			{
 			_LIT(KWSERVDebugLogKeyDownArrival,"Key down arrives %d");
-			if(CDebugBar* dbg = CWsTop::Screen()->DebugBar())
+			CScreen* screen = CWsTop::Screen();
+			WS_ASSERT_ALWAYS(screen, EWsPanicNoScreen);
+			if(CDebugBar* dbg = screen->DebugBar())
 				dbg->OnKeyEvent();
 			if (wsDebugLog)
 				wsDebugLog->MiscMessage(CDebugLogBase::ELogEverything,KWSERVDebugLogKeyDownArrival,aRawEvent.ScanCode());
@@ -1037,7 +1039,9 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
 		case TRawEvent::EKeyUp:
 			{
 			_LIT(KWSERVDebugLogKeyUpArrival,"Key up arrives %d");
-			if(CDebugBar* dbg = CWsTop::Screen()->DebugBar())
+			CScreen* screen = CWsTop::Screen();
+			WS_ASSERT_ALWAYS(screen, EWsPanicNoScreen);
+			if(CDebugBar* dbg = screen->DebugBar())
 				dbg->OnKeyEvent();
 			if (wsDebugLog)
 				wsDebugLog->MiscMessage(CDebugLogBase::ELogEverything,KWSERVDebugLogKeyUpArrival,aRawEvent.ScanCode());

@@ -16,7 +16,7 @@ TESTEXECUTE, C:\logs\testexecute\animationtest_t_synch.htm,     , z:\animationte
 
 # BMPANIM TESTS
 TESTEXECUTE, C:\logs\testexecute\bmpanimtest_t_autoan.htm,      , z:\bmpanimtest\bmpanimtest_t_autoan.script,     600
-TESTEXECUTE, C:\logs\testexecute\bmpanimtest_t_bmpanim.htm,     , z:\bmpanimtest\bmpanimtest_t_bmpanim.script,    600
+# TESTEXECUTE, C:\logs\testexecute\bmpanimtest_t_bmpanim.htm,     , z:\bmpanimtest\bmpanimtest_t_bmpanim.script,    600
 
 # CLOCK TESTS
 TESTEXECUTE, C:\logs\testexecute\clocktest_t_clck0.htm,         , z:\clocktest\clocktest_t_clck0.script,          600
@@ -62,7 +62,7 @@ TESTEXECUTE, C:\logs\testexecute\egultest_t_digitwidth.htm,     , z:\egultest\eg
 
 # ETUL TESTS
 TESTEXECUTE, C:\logs\testexecute\etultest_t_addressstringtokenizer.htm,      ,z:\etultest\etultest_t_addressstringtokenizer.script,        800
-TESTEXECUTE, C:\logs\testexecute\etultest_t_phonenumberutils.htm,         , z:\etultest\etultest_t_phonenumberutils.script,           800
+# TESTEXECUTE, C:\logs\testexecute\etultest_t_phonenumberutils.htm,         , z:\etultest\etultest_t_phonenumberutils.script,           800
 TESTEXECUTE, C:\logs\testexecute\etultest_t_textresourceutils.htm,          , z:\etultest\etultest_t_textresourceutils.script,            800
 
 # FEPBASE TESTS
@@ -147,7 +147,7 @@ TESTEXECUTE, C:\logs\testexecute\fbstest_T_Bitmap.htm,					, z:\fbstest\fbstest_
 TESTEXECUTE, C:\logs\testexecute\fbstest_T_Clean.htm,					, z:\fbstest\fbstest_T_Clean.script, 600
 TESTEXECUTE, C:\logs\testexecute\fbstest_T_Compressed.htm,				, z:\fbstest\fbstest_T_Compressed.script, 600
 TESTEXECUTE, C:\logs\testexecute\fbstest_T_Defect.htm,					, z:\fbstest\fbstest_T_Defect.script, 600
-TESTEXECUTE, C:\logs\testexecute\fbstest_T_Fbs.htm,						, z:\fbstest\fbstest_T_Fbs.script, 600
+# TESTEXECUTE, C:\logs\testexecute\fbstest_T_Fbs.htm,						, z:\fbstest\fbstest_T_Fbs.script, 600
 TESTEXECUTE, C:\logs\testexecute\fbstest_T_File.htm,					, z:\fbstest\fbstest_T_File.script, 600
 TESTEXECUTE, C:\logs\testexecute\fbstest_t_getallbitmapscapability.htm,	, z:\fbstest\fbstest_t_getallbitmapscapability.script, 600
 TESTEXECUTE, C:\logs\testexecute\fbstest_T_IPCTest.htm,					, z:\fbstest\fbstest_T_IPCTest.script, 600
@@ -269,7 +269,7 @@ TESTEXECUTE, C:\logs\testexecute\egltest_t_benchmark_sgimage.htm,        	, z:\e
 
 # GCE
 TESTEXECUTE, C:\logs\testexecute\functionaltest_mandatory.htm,	, z:\gcetest\functionaltest_mandatory.script,  600, , z\gcetest\gcetest_setup_emu.bat install dabs, z\gcetest\gcetest_setup_emu.bat uninstall dabs
-TESTEXECUTE, C:\logs\testexecute\functionaltest_optional.htm,	, z:\gcetest\functionaltest_optional.script,  600, , z\gcetest\gcetest_setup_emu.bat install dabs, z\gcetest\gcetest_setup_emu.bat uninstall dabs
+# TESTEXECUTE, C:\logs\testexecute\functionaltest_optional.htm,	, z:\gcetest\functionaltest_optional.script,  600, , z\gcetest\gcetest_setup_emu.bat install dabs, z\gcetest\gcetest_setup_emu.bat uninstall dabs
 TESTEXECUTE, C:\logs\testexecute\fastpath.htm,					, z:\gcetest\fastpath.script, 2000, , z\gcetest\gcetest_setup_emu.bat install dabs, z\gcetest\gcetest_setup_emu.bat uninstall dabs
 TESTEXECUTE, C:\logs\testexecute\stresstest.htm,				, z:\gcetest\stresstest.script,  4800, , z\gcetest\gcetest_setup_emu.bat install dabs, z\gcetest\gcetest_setup_emu.bat uninstall dabs
 
@@ -292,9 +292,9 @@ TESTEXECUTE, C:\logs\testexecute\openvgtest_t_MultipleThreads.htm,		, z:\openvgt
 TESTEXECUTE, C:\logs\testexecute\openvgtest_t_PBufferEquivEGL.htm,		, z:\openvgtest\openvgtest_t_PBufferEquivEGL.script,	300, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\openvgtest_t_PixmaxEquvEGL.htm,		, z:\openvgtest\openvgtest_t_PixmaxEquvEGL.script,		300, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\openvgtest_t_Stress.htm,				, z:\openvgtest\openvgtest_t_Stress.script,				300, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
-TESTEXECUTE, C:\logs\testexecute\openvgtest_t_multiplewindows.htm,		, z:\openvgtest\openvgtest_t_multiplewindows.script, 	300, , z\graphicstest\minigui.cmd z\graphics\t_graphics_config_inifiles.bat install csc_nga, z\graphicstest\unminigui.cmd z\graphicstest\retain_files.cmd logs\testexecute\multiplewindows1 multiplewindows z\graphics\t_graphics_config_inifiles.bat uninstall
+# TESTEXECUTE, C:\logs\testexecute\openvgtest_t_multiplewindows.htm,		, z:\openvgtest\openvgtest_t_multiplewindows.script, 	300, , z\graphicstest\minigui.cmd z\graphics\t_graphics_config_inifiles.bat install csc_nga, z\graphicstest\unminigui.cmd z\graphicstest\retain_files.cmd logs\testexecute\multiplewindows1 multiplewindows z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\openvgtest_t_multiplewindows2.htm,		, z:\openvgtest\openvgtest_t_multiplewindows2.script, 	300, , z\graphicstest\minigui.cmd z\graphics\t_graphics_config_inifiles.bat install csc_nga, z\graphicstest\unminigui.cmd z\graphicstest\retain_files.cmd logs\testexecute\multiplewindows2 multiplewindows2 z\graphics\t_graphics_config_inifiles.bat uninstall
-TESTEXECUTE, C:\logs\testexecute\openvgtest_t_windowequivegl.htm,		, z:\openvgtest\openvgtest_t_windowequivegl.script, 	300, , z\graphicstest\minigui.cmd z\graphics\t_graphics_config_inifiles.bat install csc_nga, z\graphicstest\unminigui.cmd z\graphics\t_graphics_config_inifiles.bat uninstall
+# TESTEXECUTE, C:\logs\testexecute\openvgtest_t_windowequivegl.htm,		, z:\openvgtest\openvgtest_t_windowequivegl.script, 	300, , z\graphicstest\minigui.cmd z\graphics\t_graphics_config_inifiles.bat install csc_nga, z\graphicstest\unminigui.cmd z\graphics\t_graphics_config_inifiles.bat uninstall
 
 # ScreenDriver
 TESTEXECUTE, C:\logs\testexecute\scdvtest_t_DirectScreenBitmap.htm,		, z:\scdvtest\scdvtest_t_DirectScreenBitmap.script, 600, , z\scdvtest\scdvtest_mnt.cmd installonb, z\scdvtest\scdvtest_mnt.cmd uninstall
@@ -372,7 +372,7 @@ TESTEXECUTE, C:\logs\testexecute\wstest_t_client_s1_nga.htm,			, z:\wstest\wstes
 TESTEXECUTE, C:\logs\testexecute\wstest_t_crp_s1_nga.htm,				, z:\wstest\wstest_t_crp_s1_nga.script, 			1000, , z\wstest\wstest_config.cmd install, z\wstest\wstest_config.cmd uninstall
 TESTEXECUTE, C:\logs\testexecute\wstest_t_cursor_s1_nga.htm,	, z:\wstest\wstest_t_cursor_s1_nga.script, 1000, , z\wstest\wstest_config.cmd install, z\wstest\wstest_config.cmd uninstall
 TESTEXECUTE, C:\logs\testexecute\wstest_t_draw_s1_nga.htm,				, z:\wstest\wstest_t_draw_s1_nga.script, 			1000, , z\wstest\wstest_config.cmd install, z\wstest\wstest_config.cmd uninstall
-TESTEXECUTE, C:\logs\testexecute\wstest_t_dsa_s1_nga.htm,				, z:\wstest\wstest_t_dsa_s1_nga.script, 			1000, , z\wstest\wstest_config.cmd install, z\wstest\wstest_config.cmd uninstall
+# TESTEXECUTE, C:\logs\testexecute\wstest_t_dsa_s1_nga.htm,				, z:\wstest\wstest_t_dsa_s1_nga.script, 			1000, , z\wstest\wstest_config.cmd install, z\wstest\wstest_config.cmd uninstall
 TESTEXECUTE, C:\logs\testexecute\wstest_t_event_s1_nga.htm,				, z:\wstest\wstest_t_event_s1_nga.script, 			1000, , z\wstest\wstest_config.cmd install, z\wstest\wstest_config.cmd uninstall
 TESTEXECUTE, C:\logs\testexecute\wstest_t_fade_s1_nga.htm,				, z:\wstest\wstest_t_fade_s1_nga.script, 			1000, , z\wstest\wstest_config.cmd install, z\wstest\wstest_config.cmd uninstall
 TESTEXECUTE, C:\logs\testexecute\wstest_t_gdi_s1_nga.htm,			, z:\wstest\wstest_t_gdi_s1_nga.script, 			1000, , z\wstest\wstest_config.cmd install, z\wstest\wstest_config.cmd uninstall
@@ -435,7 +435,7 @@ TESTEXECUTE, C:\logs\testexecute\wstest_t_client_s1_nga.htm,			, z:\wstest\wstes
 TESTEXECUTE, C:\logs\testexecute\wstest_t_crp_s1_nga.htm,				, z:\wstest\wstest_t_crp_s1_nga.script, 			1000, , z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Install, z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Uninstall
 TESTEXECUTE, C:\logs\testexecute\wstest_t_cursor_s1_nga.htm,	, z:\wstest\wstest_t_cursor_s1_nga.script, 1000, , z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Install, z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Uninstall
 TESTEXECUTE, C:\logs\testexecute\wstest_t_draw_s1_nga.htm,				, z:\wstest\wstest_t_draw_s1_nga.script, 			1000, , z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Install, z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Uninstall
-TESTEXECUTE, C:\logs\testexecute\wstest_t_dsa_s1_nga.htm,				, z:\wstest\wstest_t_dsa_s1_nga.script, 			1000, , z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Install, z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Uninstall
+# TESTEXECUTE, C:\logs\testexecute\wstest_t_dsa_s1_nga.htm,				, z:\wstest\wstest_t_dsa_s1_nga.script, 			1000, , z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Install, z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Uninstall
 TESTEXECUTE, C:\logs\testexecute\wstest_t_event_s1_nga.htm,				, z:\wstest\wstest_t_event_s1_nga.script, 			1000, , z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Install, z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Uninstall
 TESTEXECUTE, C:\logs\testexecute\wstest_t_fade_s1_nga.htm,				, z:\wstest\wstest_t_fade_s1_nga.script, 			1000, , z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Install, z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Uninstall
 TESTEXECUTE, C:\logs\testexecute\wstest_t_gdi_s1_nga.htm,			, z:\wstest\wstest_t_gdi_s1_nga.script, 			1000, , z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Install, z\wstest\tbitgdirenderstage\wstest_t_bitgdirenderstage.bat Uninstall
@@ -471,13 +471,13 @@ TESTEXECUTE, C:\logs\testexecute\tdisplaychannel.htm,	, z:\gcetest\tdisplaychann
 TESTEXECUTE, C:\logs\testexecute\talf_unittests.htm,	, z:\talf\talf_unittests.script, 600,	, z\talf\t_graphics_wserv_alf.bat install, z\talf\t_graphics_wserv_alf.bat uninstall  
 
 # PREQ2585
-TESTEXECUTE, C:\logs\testexecute\changetracking_per_screen.htm,	, z:\talf\changetracking_per_screen.script, 600,	, z\talf\t_graphics_wserv_CT_per_screen.bat install, z\talf\t_graphics_wserv_CT_per_screen.bat uninstall  
+# TESTEXECUTE, C:\logs\testexecute\changetracking_per_screen.htm,	, z:\talf\changetracking_per_screen.script, 600,	, z\talf\t_graphics_wserv_CT_per_screen.bat install, z\talf\t_graphics_wserv_CT_per_screen.bat uninstall  
 
 # Wserv autotests with Changetracking - Screen0
 TESTEXECUTE, C:\logs\testexecute\wstest_t_alpha_s0_nga.htm,				, z:\wstest\wstest_t_alpha_s0_nga.script, 			1000, , z\wstest\wstest_config.cmd install  changetracking, z\wstest\wstest_config.cmd uninstall
 TESTEXECUTE, C:\logs\testexecute\wstest_t_client_s0_nga.htm,			, z:\wstest\wstest_t_client_s0_nga.script, 			1000, , z\wstest\wstest_config.cmd install changetracking, z\wstest\wstest_config.cmd uninstall
 TESTEXECUTE, C:\logs\testexecute\wstest_t_crp_s0_nga.htm,				, z:\wstest\wstest_t_crp_s0_nga.script, 			1000, , z\wstest\wstest_config.cmd install changetracking, z\wstest\wstest_config.cmd uninstall
-TESTEXECUTE, C:\logs\testexecute\wstest_t_draw_s0_nga.htm,				, z:\wstest\wstest_t_draw_s0_nga.script, 			1000, , z\wstest\wstest_config.cmd install changetracking, z\wstest\wstest_config.cmd uninstall
+# TESTEXECUTE, C:\logs\testexecute\wstest_t_draw_s0_nga.htm,				, z:\wstest\wstest_t_draw_s0_nga.script, 			1000, , z\wstest\wstest_config.cmd install changetracking, z\wstest\wstest_config.cmd uninstall
 TESTEXECUTE, C:\logs\testexecute\wstest_t_event_s0_nga.htm,				, z:\wstest\wstest_t_event_s0_nga.script, 			1000, , z\wstest\wstest_config.cmd install changetracking, z\wstest\wstest_config.cmd uninstall
 TESTEXECUTE, C:\logs\testexecute\wstest_t_key_s0_nga.htm,				, z:\wstest\wstest_t_key_s0_nga.script, 			1000, , z\wstest\wstest_config.cmd install changetracking, z\wstest\wstest_config.cmd uninstall
 TESTEXECUTE, C:\logs\testexecute\wstest_t_oom_s0_nga.htm,				, z:\wstest\wstest_t_oom_s0_nga.script, 			1000, , z\wstest\wstest_config.cmd install changetracking, z\wstest\wstest_config.cmd uninstall

@@ -27,6 +27,7 @@
 #if defined(__WINS__) && defined(_DEBUG)
 #include "debugbardrawer.h"
 #endif
+#include <bitdev.h>
 
 #if defined(__WINS__) && defined(_DEBUG)
 #define DEBUGOSB iRenderTarget->UpdateDebugWin();
@@ -249,7 +250,6 @@ TAny* CDisplayRenderStage::ResolveObjectInterface(TUint aTypeId)
 				return NULL;
 				}
 			}
-		
 		}
 
 	TAny* interface = NULL;
@@ -312,7 +312,19 @@ TInt CDisplayRenderStage::ScreenNumber() const
 
 TDisplayMode CDisplayRenderStage::DisplayMode() const
 	{
-	return iRenderTarget->DisplayMode();
+    // MWsScreenDevice::DisplayMode is queried by Wserv to reply to CWsScreenDevice::DisplayMode calls from apps or when Wserv creates
+    // CFbsScreenDevice whenever there are DSA clients.
+    // Screendriver default display mode for 32bpp has been changed from 16MAP to 16MA to maintain compatibility with 3rd party apps,
+    // therefore we have to report the supported screen device format instead of UI surface format.
+    //
+    // However, this method is also used by flickerbuffer render stage to determine pixel format for off-screen rendering target,
+    // which must match UI surface format. Since we cannot return two different values in 32bpp case, this method will always return the
+    // value from screendriver. Flickerbuffer render stage need to change to deal with this.
+    //
+    const TInt KThirtyTwoBpp = 32;
+    const TDisplayMode dm = iRenderTarget->DisplayMode();
+    const TInt bpp = TDisplayModeUtils::NumDisplayModeBitsPerPixel(dm);
+    return bpp == KThirtyTwoBpp ? CFbsDevice::DisplayMode16M() : dm;
 	}
 
 TSize CDisplayRenderStage::SizeInPixels() const

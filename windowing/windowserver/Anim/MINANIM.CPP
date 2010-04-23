@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -11,7 +11,6 @@
 // Contributors:
 //
 // Description:
-// MBMANIM.CPP
 // Template for writing Anim DLL's
 // 
 //
@@ -39,16 +38,14 @@ CAnim *CMinAnimDll::CreateInstanceL(TInt aType)
         {
     case EMinAnimWindow:
 	    return new(ELeave) CMinWindowAnim();
+	    
     case EMinAnimHandwriting:
 	    return new(ELeave) CMinHandAnim();
-    default:;       //To stop a warning
+	    
+    default:         
+        User::Leave(KErrArgument);
         }
-	}
-
-
-/*CMinWindowAnim*/
-
-	iAnimator->Animate();
+    return NULL;    // dummy return to prevent compiler error
 	}
 
 
@@ -96,12 +93,6 @@ void CAnimateMbm::Animate(TDateTime* /*aDateTime*/)
 void CAnimateMbm::Redraw()
 	{
 	iGc->BitBlt(TPoint(),iBitmap);
-	/*if (1>0)
-		{
-		iGc->SetBrushStyle(CGraphicsContext::ESolidBrush);
-		iGc->SetBrushColor(TRgb::Gray16(iIndex));
-		iGc->DrawRect(TRect(5,5,300,300));
-		}*/
 	}
 
 void CAnimateMbm::Command(TInt aOpcode,TAny *aParams)
@@ -126,7 +117,6 @@ void CAnimateMbm::Command(TInt aOpcode,TAny *aParams)
 	case EMbmOpSetFileName:
 		iName=*STATIC_CAST(TBuf<32>*,aParams);
 		iIndex=0;
-		//User::LeaveIfError(LoadBitmap());
 		break;
 	default:
 		iFunctions->Panic();
@@ -139,10 +129,5 @@ void CAnimateMbm::FocusChanged(TBool )
 
 TInt CAnimateMbm::CommandReplyL(TInt /*aOpcode*/,TAny* /*aParams*/)
 	{
-	/*switch (aOpcode)
-		{
-		default:
-			iFunctions->Panic();
-		}*/
 	return KErrNone;
 	}
