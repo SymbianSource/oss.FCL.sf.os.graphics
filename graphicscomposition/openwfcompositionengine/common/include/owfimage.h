@@ -198,8 +198,6 @@ typedef struct _OWF_BLEND_INFO {
 
     OWF_IMAGE*              mask;
     OWFsubpixel             globalAlpha;
-    OWFboolean              destinationFullyOpaque;
-    OWFpixel*               tsColor;
 } OWF_BLEND_INFO;
 
 #define CLIP(a) if (a < 0) a = 0; else if (a > 255) a = 255;
