@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -80,6 +80,7 @@ private:
 	void FontDuplicateL();
 	void FontGetNearestFontToDesignHeightInPixelsL(const TDesC& aFontName, const TDesC& aTestName);	
 	void AddAndRemoveFilesL(TBool aTestOpenFont);
+	void DoAddAndRemoveFilesL(TBool aTestOpenFont, CFontStore* aFontStore);
 	void AddingOpenedFontFilesL(TBool aTestOpenFont);
 	void FontDrawTextGlyphCacheL(const TDesC& aFontName, const TDesC& aTestName, const TDesC& aOutputText);
 	void FontDrawStringWithoutGlyphCacheL(const TDesC& aFontName, const TDesC& aTestName, TInt aFontHeight,const TDesC& aOutputString);

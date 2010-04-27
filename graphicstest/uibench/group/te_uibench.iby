@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -23,7 +23,6 @@
 // MCL profiler is not built for SMP
 #include <profiler.iby>
 #endif
-#include <dummyfonts.iby>
 #ifdef SYMBIAN_GRAPHICS_USE_GCE
 #include <directgdi.iby>
 #include <directgdiadapter.iby>
@@ -61,6 +60,10 @@ data=DATAZ_\resource\32bit20col.mbm  	\resource\32bit20col.mbm
 
 REM test font files for fbsfonthandleperf.cpp
 data=DATAZ_\PlatTest\Graphics\TestData\ceurope.gdr			\PlatTest\Graphics\TestData\ceurope.gdr
+data=DATAZ_\PlatTest\Graphics\TestData\dummy_fonts\dummyFont		\PlatTest\Graphics\TestData\dummy_fonts\dummyFont
+data=DATAZ_\PlatTest\Graphics\TestData\dummy_fonts\dummyFont_b		\PlatTest\Graphics\TestData\dummy_fonts\dummyFont_b
+data=DATAZ_\PlatTest\Graphics\TestData\dummy_fonts\dummyFont_i		\PlatTest\Graphics\TestData\dummy_fonts\dummyFont_i
+data=DATAZ_\PlatTest\Graphics\TestData\dummy_fonts\dummyFont_bi		\PlatTest\Graphics\TestData\dummy_fonts\dummyFont_bi
 
 REM sprite animation dll file for sprite performance tests
 file=ABI_DIR\DEBUG_DIR\te_spriteanimdll.dll	system\libs\te_spriteanimdll.dll
