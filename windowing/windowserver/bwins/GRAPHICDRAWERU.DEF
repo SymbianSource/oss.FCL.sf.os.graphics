@@ -59,11 +59,11 @@ EXPORTS
 	?DrawingRegion@TWservCrEvent@@QBEPBVTRegion@@XZ @ 58 NONAME ; class TRegion const * TWservCrEvent::DrawingRegion(void) const
 	?WindowGroupIdentifier@TWservCrEvent@@QBEHXZ @ 59 NONAME ; int TWservCrEvent::WindowGroupIdentifier(void) const
 	?Add@CWsGraphicDrawerArray@@QAEHPAVCWsGraphicDrawer@@@Z @ 60 NONAME ; int CWsGraphicDrawerArray::Add(class CWsGraphicDrawer *)
-	?AddTLC@CWsGraphicDrawerArray@@QAEPAVXRollBackBase@1@PAVCWsGraphicDrawer@@@Z @ 61 NONAME ; struct CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::AddTLC(class CWsGraphicDrawer *)
-	?CommitP@CWsGraphicDrawerArray@@QAEXPAVXRollBackBase@1@@Z @ 62 NONAME ; void CWsGraphicDrawerArray::CommitP(struct CWsGraphicDrawerArray::XRollBackBase *)
-	?RemoveTLC@CWsGraphicDrawerArray@@QAEPAVXRollBackBase@1@ABUTGraphicDrawerId@@@Z @ 63 NONAME ; struct CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::RemoveTLC(struct TGraphicDrawerId const &)
+	?AddTLC@CWsGraphicDrawerArray@@QAEPAUXRollBackBase@1@PAVCWsGraphicDrawer@@@Z @ 61 NONAME ; struct CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::AddTLC(class CWsGraphicDrawer *)
+	?CommitP@CWsGraphicDrawerArray@@QAEXPAUXRollBackBase@1@@Z @ 62 NONAME ; void CWsGraphicDrawerArray::CommitP(struct CWsGraphicDrawerArray::XRollBackBase *)
+	?RemoveTLC@CWsGraphicDrawerArray@@QAEPAUXRollBackBase@1@ABUTGraphicDrawerId@@@Z @ 63 NONAME ; struct CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::RemoveTLC(struct TGraphicDrawerId const &)
 	?Swap@CWsGraphicDrawerArray@@QAEHPAVCWsGraphicDrawer@@@Z @ 64 NONAME ; int CWsGraphicDrawerArray::Swap(class CWsGraphicDrawer *)
-	?SwapTLC@CWsGraphicDrawerArray@@QAEPAVXRollBackBase@1@PAVCWsGraphicDrawer@@@Z @ 65 NONAME ; struct CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::SwapTLC(class CWsGraphicDrawer *)
+	?SwapTLC@CWsGraphicDrawerArray@@QAEPAUXRollBackBase@1@PAVCWsGraphicDrawer@@@Z @ 65 NONAME ; struct CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::SwapTLC(class CWsGraphicDrawer *)
 	?Orientation@TWservCrEvent@@QBE?AW4TGraphicsOrientation@CFbsBitGc@@XZ @ 66 NONAME ; enum CFbsBitGc::TGraphicsOrientation TWservCrEvent::Orientation(void) const
 	?FinalClose@WsGraphicDrawer@@SAXXZ @ 67 NONAME ; void WsGraphicDrawer::FinalClose(void)
 	?WasVisible@TWservCrEvent@@QBEHXZ @ 68 NONAME ; int TWservCrEvent::WasVisible(void) const
