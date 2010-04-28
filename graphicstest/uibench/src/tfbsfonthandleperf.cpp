@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -790,6 +790,7 @@ The time to create an aliased font is obtained.
 	SetTestStepID(_L("GRAPHICS-UI-BENCH-0140"));
 	AliasedFontCreationL();
 	RecordTestResultL();
+	CloseTMSGraphicsStep();
 	return TestStepResult();
 	}
 
@@ -857,46 +858,24 @@ void CTFbsFontHandlePerf::AddAndRemoveFilesL(TBool aTestOpenFont)
 	CleanupStack::PushL(dummyRasterizer);
 	fontStore->InstallRasterizerL(dummyRasterizer);
 	CleanupStack::Pop();
-
+	
+	// Check font files exist before testing
+	TRAPD(err, DoAddAndRemoveFilesL(aTestOpenFont, fontStore));
+	if (err != KErrNone)
+        {
+        _LIT(KLog,"Failed to load font files. Error code: %d");
+        INFO_PRINTF2(KLog,err);
+        User::Leave(err);
+        }
+	
+	// Perform the iterations to test
 	iProfiler->InitResults();
 	for(TInt count=KIterationsToTest; count>=0; --count)
 		{
-		if (aTestOpenFont)
-			{
-			//Add font files to fontstore
-			TUid id1 = fontStore->AddFileL(KFontDummy);
-			TUid id2 = fontStore->AddFileL(KFontDummy_b);
-			TUid id3 = fontStore->AddFileL(KFontDummy_i);
-			TUid id4 = fontStore->AddFileL(KFontDummy_bi);
-			//Remove font files from fontstore
-			fontStore->RemoveFile(id1);
-			fontStore->RemoveFile(id2);
-			fontStore->RemoveFile(id3);
-			fontStore->RemoveFile(id4);
-			}
-		else
-			{
-			//Add & remove font file to fontstore
-			TUid id1=TUid::Null();
-			TRAPD(err,id1=fontStore->AddFileL(KBitmapFont));
-			if (err!=KErrNone)
-				{
-				_LIT(KLog,"Loading font file %S gave error %d");
-				INFO_PRINTF3(KLog,&KBitmapFont,err);
-				User::Leave(err);
-				}
-			fontStore->RemoveFile(id1);
-			// total of 4 times, for comparison with Open Font test
-			TUid id2 = fontStore->AddFileL(KBitmapFont);
-			fontStore->RemoveFile(id2);
-			TUid id3 = fontStore->AddFileL(KBitmapFont);
-			fontStore->RemoveFile(id3);
-			TUid id4 = fontStore->AddFileL(KBitmapFont);
-			fontStore->RemoveFile(id4);
-			}
-
+        DoAddAndRemoveFilesL(aTestOpenFont, fontStore);
 		iProfiler->MarkResultSetL();
 		}
+	
 	TInt64 duration=iProfiler->GetTrimedMean();
 	if (aTestOpenFont)
 		{
@@ -910,6 +889,36 @@ void CTFbsFontHandlePerf::AddAndRemoveFilesL(TBool aTestOpenFont)
 
 	heap->Close();
 	}
+
+// Do the add and removing files.
+void CTFbsFontHandlePerf::DoAddAndRemoveFilesL(TBool aTestOpenFont, CFontStore* aFontStore)
+    {
+    if (aTestOpenFont)
+        {
+        //Add font files to fontstore
+        TUid id1 = aFontStore->AddFileL(KFontDummy);
+        TUid id2 = aFontStore->AddFileL(KFontDummy_b);
+        TUid id3 = aFontStore->AddFileL(KFontDummy_i);
+        TUid id4 = aFontStore->AddFileL(KFontDummy_bi);
+        //Remove font files from fontstore
+        aFontStore->RemoveFile(id1);
+        aFontStore->RemoveFile(id2);
+        aFontStore->RemoveFile(id3);
+        aFontStore->RemoveFile(id4);
+        }
+    else
+        {
+        //Add & remove font file to fontstore a total of 4 times, for comparison with Open Font test
+        TUid id1 = aFontStore->AddFileL(KBitmapFont);
+        aFontStore->RemoveFile(id1);
+        TUid id2 = aFontStore->AddFileL(KBitmapFont);
+        aFontStore->RemoveFile(id2);
+        TUid id3 = aFontStore->AddFileL(KBitmapFont);
+        aFontStore->RemoveFile(id3);
+        TUid id4 = aFontStore->AddFileL(KBitmapFont);
+        aFontStore->RemoveFile(id4);
+        }
+    }
 
 // Add fontfile that is already opened.
 void CTFbsFontHandlePerf::AddingOpenedFontFilesL(TBool aTestOpenFont)

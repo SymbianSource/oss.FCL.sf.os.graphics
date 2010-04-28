@@ -1,4 +1,4 @@
-// Copyright (c) 1994-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1994-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -15,6 +15,17 @@
 
 #ifndef ADVANCEDPOINTEREVENT_H
 #define ADVANCEDPOINTEREVENT_H
+
+#ifndef __E32STD_H__
+#include <e32std.h>
+#endif
+#ifndef __E32KEYS_H__
+#include <e32keys.h>
+#endif
+#ifndef POINTEREVENT_H
+#include <pointerevent.h>
+#endif
+
 
 /** Subclass of TPointerEvent created in order to maintain binary compatibility while
 extending TPointerEvent with new data:
@@ -140,4 +151,7 @@ inline const TAdvancedPointerEvent* TPointerEvent::AdvancedPointerEvent() const
 	{
 	return (iModifiers&EModifierAdvancedPointerEvent ? static_cast<const TAdvancedPointerEvent*>(this) : NULL);	
 	}
+
+#include "advancedpointerevent.inl"
+
 #endif /* ADVANCEDPOINTEREVENT_H */

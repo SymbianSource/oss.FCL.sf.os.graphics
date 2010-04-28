@@ -1,5 +1,5 @@
 # tests_05a.txt
-# Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
+# Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
 # All rights reserved.
 # This component and the accompanying materials are made available
 # under the terms of "Eclipse Public License v1.0"
@@ -17,5 +17,5 @@
 # program,log,commdb,script,timeout,release,pre cmd,post cmd
 
 # UI_Bench
-# TESTEXECUTE, \logs\testexecute\te_uibench.htm,				, z:\uibench\te_uibench.Script, 80000
+TESTEXECUTE, \logs\testexecute\te_uibench.htm,				, z:\uibench\te_uibench.Script, 80000
 
