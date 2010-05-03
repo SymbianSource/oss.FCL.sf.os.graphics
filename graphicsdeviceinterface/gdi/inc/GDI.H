@@ -2268,14 +2268,16 @@ public:
 	
 	Note:
 	
-	The pen is used to draw lines, the outlines of filled shapes, and text. The 
-	class provides member functions to set the colour of the pen, the style of 
+	The pen is used to draw lines, the outlines of filled shapes, and text. In case
+	of outlined text, the pen is used to draw the outline of the font.
+	
+	The	class provides member functions to set the colour of the pen, the style of 
 	line and the line size drawn.
 	
 	@param aColor An RGB colour for the pen. 
 	@see CGraphicsContext::SetDrawMode() */
 	virtual void SetPenColor(const TRgb& aColor)=0;
-
+ 
 	/** Sets the line drawing style for the pen. 
 	
 	There are 6 pen styles. If no pen style is set, then the default is 
@@ -2361,8 +2363,9 @@ public:
 	
 	Notes:
 	
-	The brush is used for filling shapes and the background of text boxes. The 
-	brush has colour, style, pattern and pattern origin parameters.
+	The brush is used for filling shapes and the background of text boxes. In 
+	case of outlined text, the brush is used for filling the font. The brush 
+	has colour, style, pattern and pattern origin parameters.
 	
 	If no brush colour has been set, it defaults to white. However the default 
 	brush style is null, so when drawing to a window the default appears to be 

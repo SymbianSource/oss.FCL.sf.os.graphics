@@ -652,9 +652,9 @@ EXPORTS
 	_ZN10RWsSession17SendEffectCommandEiRK6TDesC8 @ 651 NONAME
 	_ZN11RWindowBase10SetPurposeEi @ 652 NONAME
 	_ZN11RWindowBase17SendEffectCommandEiRK6TDesC8 @ 653 NONAME
-	_ZN10RWsSession14RegisterEffectEiRK4TBufILi256EES3_S3_j @ 654 NONAME
-	_ZN10RWsSession15OverrideEffectsEiiRK4TBufILi256EES3_S3_ @ 655 NONAME
-	_ZN10RWsSession16UnregisterEffectEi @ 656 NONAME
+	_ZN10RWsSession14RegisterEffectEiiRK4TBufILi256EES3_S3_j10TBitFlagsTImE @ 654 NONAME
+	_ZN10RWsSession15OverrideEffectsEiiRK4TBufILi256EES3_S3_10TBitFlagsTImE @ 655 NONAME
+	_ZN10RWsSession16UnregisterEffectEiij @ 656 NONAME
 	_ZN10RWsSession20UnregisterAllEffectsEv @ 657 NONAME
-	_ZN11RWindowBase15OverrideEffectsEiiRK4TBufILi256EES3_S3_ @ 658 NONAME
+	_ZN11RWindowBase15OverrideEffectsEiRK4TBufILi256EES3_S3_10TBitFlagsTImE @ 658 NONAME
 

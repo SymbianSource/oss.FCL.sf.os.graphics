@@ -283,12 +283,12 @@ EXPORTS
 	?SetShadowColor@CGraphicsContext@@QAEHABVTRgb@@@Z @ 282 NONAME ; int CGraphicsContext::SetShadowColor(class TRgb const &)
 	?GetShadowColor@CGraphicsContext@@QAEHAAVTRgb@@@Z @ 283 NONAME ; int CGraphicsContext::GetShadowColor(class TRgb &)
 	?IsFbsBitGc@CGraphicsContext@@QBEHXZ @ 284 NONAME ; int CGraphicsContext::IsFbsBitGc(void) const
-	?DrawText@CGraphicsContext@@QAEXABVTDesC16@@PBVTTextParameters@1@ABVTPoint@@@Z @ 285  NONAME ; void CGraphicsContext::DrawText(class TDesC16 const &, class CGraphicsContext::TTextParameters const *, class TPoint const &)
-	?DrawText@CGraphicsContext@@QAEXABVTDesC16@@PBVTTextParameters@1@ABVTPoint@@ABUTDrawTextParam@1@@Z @ 286  NONAME ; void CGraphicsContext::DrawText(class TDesC16 const &, class CGraphicsContext::TTextParameters const *, class TPoint const &, struct CGraphicsContext::TDrawTextParam const &)
-	?DrawText@CGraphicsContext@@QAEXABVTDesC16@@PBVTTextParameters@1@ABVTRect@@HW4TTextAlign@1@H@Z @ 287  NONAME ; void CGraphicsContext::DrawText(class TDesC16 const &, class CGraphicsContext::TTextParameters const *, class TRect const &, int, enum CGraphicsContext::TTextAlign, int)
-	?DrawTextExtended@CGraphicsContext@@QAEHABVTDesC16@@PBVTTextParameters@1@ABVTPoint@@ABUTDrawTextExtendedParam@1@@Z @ 288  NONAME ; int CGraphicsContext::DrawTextExtended(class TDesC16 const &, class CGraphicsContext::TTextParameters const *, class TPoint const &, struct CGraphicsContext::TDrawTextExtendedParam const &)
-	?DrawTextVertical@CGraphicsContext@@QAEXABVTDesC16@@PBVTTextParameters@1@ABVTPoint@@H@Z @ 289  NONAME ; void CGraphicsContext::DrawTextVertical(class TDesC16 const &, class CGraphicsContext::TTextParameters const *, class TPoint const &, int)
-	?DrawTextVertical@CGraphicsContext@@QAEXABVTDesC16@@PBVTTextParameters@1@ABVTRect@@HHW4TTextAlign@1@H@Z @ 290  NONAME ; void CGraphicsContext::DrawTextVertical(class TDesC16 const &, class CGraphicsContext::TTextParameters const *, class TRect const &, int, int, enum CGraphicsContext::TTextAlign, int)
+	?DrawText@CGraphicsContext@@QAEXABVTDesC16@@PBVTTextParameters@1@ABVTPoint@@@Z @ 285 NONAME ; void CGraphicsContext::DrawText(class TDesC16 const &, class CGraphicsContext::TTextParameters const *, class TPoint const &)
+	?DrawText@CGraphicsContext@@QAEXABVTDesC16@@PBVTTextParameters@1@ABVTPoint@@ABUTDrawTextParam@1@@Z @ 286 NONAME ; void CGraphicsContext::DrawText(class TDesC16 const &, class CGraphicsContext::TTextParameters const *, class TPoint const &, struct CGraphicsContext::TDrawTextParam const &)
+	?DrawText@CGraphicsContext@@QAEXABVTDesC16@@PBVTTextParameters@1@ABVTRect@@HW4TTextAlign@1@H@Z @ 287 NONAME ; void CGraphicsContext::DrawText(class TDesC16 const &, class CGraphicsContext::TTextParameters const *, class TRect const &, int, enum CGraphicsContext::TTextAlign, int)
+	?DrawTextExtended@CGraphicsContext@@QAEHABVTDesC16@@PBVTTextParameters@1@ABVTPoint@@ABUTDrawTextExtendedParam@1@@Z @ 288 NONAME ; int CGraphicsContext::DrawTextExtended(class TDesC16 const &, class CGraphicsContext::TTextParameters const *, class TPoint const &, struct CGraphicsContext::TDrawTextExtendedParam const &)
+	?DrawTextVertical@CGraphicsContext@@QAEXABVTDesC16@@PBVTTextParameters@1@ABVTPoint@@H@Z @ 289 NONAME ; void CGraphicsContext::DrawTextVertical(class TDesC16 const &, class CGraphicsContext::TTextParameters const *, class TPoint const &, int)
+	?DrawTextVertical@CGraphicsContext@@QAEXABVTDesC16@@PBVTTextParameters@1@ABVTRect@@HHW4TTextAlign@1@H@Z @ 290 NONAME ; void CGraphicsContext::DrawTextVertical(class TDesC16 const &, class CGraphicsContext::TTextParameters const *, class TRect const &, int, int, enum CGraphicsContext::TTextAlign, int)
 	?TextWidthInPixels@CFont@@QBEHABVTDesC16@@PBVTMeasureTextInput@1@@Z @ 291 NONAME ; int CFont::TextWidthInPixels(class TDesC16 const &, class CFont::TMeasureTextInput const *) const
 	?Open@RFontTable@@QAEHAAVCFont@@K@Z @ 292 NONAME ; int RFontTable::Open(class CFont &, unsigned long)
 	?Next@RGlyphOutlineIterator@@QAEHXZ @ 293 NONAME ; int RGlyphOutlineIterator::Next(void)
@@ -299,7 +299,7 @@ EXPORTS
 	?Close@RGlyphOutlineIterator@@QAEXXZ @ 298 NONAME ; void RGlyphOutlineIterator::Close(void)
 	?Close@RFontTable@@QAEXXZ @ 299 NONAME ; void RFontTable::Close(void)
 	??0RGlyphOutlineIterator@@QAE@XZ @ 300 NONAME ; RGlyphOutlineIterator::RGlyphOutlineIterator(void)
-	?Open@RGlyphOutlineIterator@@QAEHAAVCFont@@PAIHH@Z @ 301 NONAME ; int RGlyphOutlineIterator::Open(class CFont &, unsigned int *, int, int)
+	?Open@RGlyphOutlineIterator@@QAEHAAVCFont@@PBIHH@Z @ 301 NONAME ; int RGlyphOutlineIterator::Open(class CFont &, unsigned int const *, int, int)
 	??0RFontTable@@QAE@XZ @ 302 NONAME ; RFontTable::RFontTable(void)
 	?Image@RGlyphDataIterator@@QBEABVRSgImage@@XZ @ 303 NONAME ABSENT ; class RSgImage const & RGlyphDataIterator::Image(void) const
 	??0RGlyphMetricsArray@@QAE@XZ @ 304 NONAME ABSENT ; RGlyphMetricsArray::RGlyphMetricsArray(void)
@@ -316,4 +316,5 @@ EXPORTS
 	?Open@RGlyphDataIterator@@QAEHAAVCFont@@PBIH@Z @ 315 NONAME ABSENT ; int RGlyphDataIterator::Open(class CFont &, unsigned int const *, int)
 	?SetName@TTypeface@@QAEXABVTDesC16@@@Z @ 316 NONAME ; void TTypeface::SetName(class TDesC16 const &)
 	?Name@TTypeface@@QBEABVTDesC16@@XZ @ 317 NONAME ; class TDesC16 const & TTypeface::Name(void) const
+	
 

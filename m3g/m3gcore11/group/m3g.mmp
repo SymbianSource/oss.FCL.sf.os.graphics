@@ -30,8 +30,8 @@ OPTION ARMCC -O3 -Otime
 ALWAYS_BUILD_AS_ARM
 
 // Uncomment the following flags to enable ARMv6 and/or VFP optimizations.
-//#define __ARMV6_SUPPORT
-//#define __VFPV2_SUPPORT
+#define __ARMV6_SUPPORT
+#define __VFPV2_SUPPORT
 
 #ifdef ARMCC
 #ifdef __ARMV6_SUPPORT

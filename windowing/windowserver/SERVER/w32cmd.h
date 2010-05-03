@@ -978,21 +978,31 @@ struct TWsClCmdSendEffectCommand
 	};
 struct TWsClCmdRegisterEffect
     {
-    inline TWsClCmdRegisterEffect(TInt aAction, TUint aAppUid, TInt aDirStrSize, TInt aPhase1StrSize, TInt aPhase2StrSize);
+    inline TWsClCmdRegisterEffect(TInt aAction, TInt aPurpose, TInt aDirStrSize, TInt aPhase1StrSize, TInt aPhase2StrSize, TUint aAppUid, TBitFlags aFlags);
     TInt tfxAction;
-    TUint tfxAppUid;
+    TInt tfxPurpose;
     TInt tfxDirStrSize;
     TInt tfxPhase1StrSize;
     TInt tfxPhase2StrSize;
+    TUint tfxAppUid;
+    TBitFlags tfxFlags;
+    };
+struct TWsClCmdUnRegisterEffect
+    {
+    inline TWsClCmdUnRegisterEffect(TInt aAction, TInt aPurpose, TUint aAppUid);
+    TInt tfxAction;
+    TInt tfxPurpose;
+    TUint tfxAppUid;
     };
 struct TWsClCmdOverrideEffect
     {
-    inline TWsClCmdOverrideEffect(TBool aOneShot, TInt aAction, TInt aDirStrSize, TInt aPhase1StrSize, TInt aPhase2StrSize);
-    TBool tfxOneShot;
+    inline TWsClCmdOverrideEffect(TInt aAction, TInt aPurpose, TInt aDirStrSize, TInt aPhase1StrSize, TInt aPhase2StrSize, TBitFlags aFlags);
     TInt tfxAction;
+    TInt tfxPurpose;
     TInt tfxDirStrSize;
     TInt tfxPhase1StrSize;
     TInt tfxPhase2StrSize;
+    TBitFlags tfxFlags;
     };
 typedef TRequestStatus *RqStatPtr;
 union TWsClCmdUnion
@@ -1047,6 +1057,7 @@ union TWsClCmdUnion
 	const TWsClCmdCreateDrawableSource* CreateDrawableSource;
 	const TWsClCmdSendEffectCommand* SendEffectCommand;
 	const TWsClCmdRegisterEffect* RegisterEffect;
+	const TWsClCmdUnRegisterEffect* UnRegisterEffect; 
 	const TWsClCmdOverrideEffect* OverrideEffect;
 	};
 
@@ -2271,11 +2282,14 @@ inline TWsClCmdZThresholdPair::TWsClCmdZThresholdPair(const TInt aEnterThreshold
 inline TWsClCmdSendEffectCommand::TWsClCmdSendEffectCommand(TInt aTfxCmd,TInt aTfxCmdDataLength, TInt aWinHandle) :
     tfxCmd(aTfxCmd), tfxCmdDataLength(aTfxCmdDataLength), windowHandle(aWinHandle)
 	{}
-inline TWsClCmdRegisterEffect::TWsClCmdRegisterEffect(TInt aAction, TUint aAppUid, TInt aDirStrSize, TInt aPhase1StrSize, TInt aPhase2StrSize) :
-	tfxAction(aAction), tfxAppUid(aAppUid), tfxDirStrSize(aDirStrSize), tfxPhase1StrSize(aPhase1StrSize), tfxPhase2StrSize(aPhase2StrSize)
+inline TWsClCmdRegisterEffect::TWsClCmdRegisterEffect(TInt aAction, TInt aPurpose, TInt aDirStrSize, TInt aPhase1StrSize, TInt aPhase2StrSize, TUint aAppUid, TBitFlags aFlags) :
+	tfxAction(aAction), tfxPurpose(aPurpose), tfxDirStrSize(aDirStrSize), tfxPhase1StrSize(aPhase1StrSize), tfxPhase2StrSize(aPhase2StrSize), tfxAppUid(aAppUid), tfxFlags(aFlags) 
 	{}
-inline TWsClCmdOverrideEffect::TWsClCmdOverrideEffect(TBool aOneShot, TInt aAction, TInt aDirStrSize, TInt aPhase1StrSize, TInt aPhase2StrSize) :
-	tfxOneShot(aOneShot), tfxAction(aAction), tfxDirStrSize(aDirStrSize), tfxPhase1StrSize(aPhase1StrSize), tfxPhase2StrSize(aPhase2StrSize)
+inline TWsClCmdUnRegisterEffect::TWsClCmdUnRegisterEffect(TInt aAction, TInt aPurpose, TUint aAppUid) :
+	tfxAction(aAction), tfxPurpose(aPurpose), tfxAppUid(aAppUid)
+	{}
+inline TWsClCmdOverrideEffect::TWsClCmdOverrideEffect(TInt aAction, TInt aPurpose, TInt aDirStrSize, TInt aPhase1StrSize, TInt aPhase2StrSize, TBitFlags aFlags) :
+	tfxAction(aAction), tfxPurpose(aPurpose), tfxDirStrSize(aDirStrSize), tfxPhase1StrSize(aPhase1StrSize), tfxPhase2StrSize(aPhase2StrSize), tfxFlags(aFlags)
 	{}
 inline TWsWinCmdAddKeyRect::TWsWinCmdAddKeyRect(const TRect &aRect,TInt aScanCode, TBool aActivatedByPointerSwitchOn) :
 	rect(aRect), scanCode(aScanCode), activatedByPointerSwitchOn(aActivatedByPointerSwitchOn)

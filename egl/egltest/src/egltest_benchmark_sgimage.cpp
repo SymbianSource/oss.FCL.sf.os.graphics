@@ -875,6 +875,7 @@ TVerdict CEglTest_Benchmark_DrawImage::doTestStepL()
 
 void CEglTest_Benchmark_DrawImage::doProcessFunctionL(TInt aIdx)
     {
+    INFO_PRINTF2(_L("CEglTest_Benchmark_DrawImage::doProcessFunctionL, Process %d"),aIdx);
 #ifdef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
     GetDisplayL();
     CreateEglSessionL(aIdx);

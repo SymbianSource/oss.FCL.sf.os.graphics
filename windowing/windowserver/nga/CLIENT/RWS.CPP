@@ -2309,9 +2309,11 @@ EXPORT_C TInt RWsSession::NumberOfScreens() const
 	}
 	
 EXPORT_C void RWsSession::ClearAllRedrawStores()
-/** Clear the redraw store for all windows in the system
-By default Windows will recorded the drawing commands used during a redraw and use them latter if the window needs to be redrawn.
-Calling this function will cause all these stores to be thrown away redraw will then be sent to all window, visible windows will recieve them first.
+/** Clear the redraw store for all windows in the system.
+By default Windows will record the drawing commands used during a redraw and re-use them later if the window needs to be redrawn.
+Calling this function will cause all these server-side stores to be thrown away, redraw requests will then be sent to all client-side windows. Visible windows will receive them first.
+
+In most cases you should be using RWindow::ClearRedrawStore instead of this function. 
 
 This function always causes a flush of the window server buffer.*/
 	{
@@ -2489,6 +2491,9 @@ EXPORT_C void RWsSession::SendEffectCommand(TInt aTfxCmd,const TDesC8& aTfxCmdDa
  TFX Render Stage will accept only TFX application specific commands and data.
 @param aTfxCmd TFX Render Stage command.
 @param aTfxCmdData Structure related to the specified value of aTfxCmd, the default value is KNullDesC8.
+
+@capability WriteDeviceData Only if aTfxCmd has value ETfxCmdEnableAllTransitions or ETfxCmdDisableAllTransitions
+
 @publishedPartner
 */
 	{
@@ -2497,7 +2502,7 @@ EXPORT_C void RWsSession::SendEffectCommand(TInt aTfxCmd,const TDesC8& aTfxCmdDa
 	Write(&params,sizeof(params),aTfxCmdData.Ptr(),aTfxCmdData.Size(),EWsClOpSendEffectCommand);
 	}
 
-EXPORT_C void RWsSession::RegisterEffect(TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2, TUint aAppUid)
+EXPORT_C void RWsSession::RegisterEffect(TInt aAction, TInt aPurpose, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TUint aAppUid, TBitFlags aFlags)
 /**
 Sets a specific animation for a particular transition effect.
 
@@ -2506,39 +2511,51 @@ Transition effect is represented by one of the values of enum TTfxTransitionActi
 An animation is specified by a filename and directory; the file will contain a description of the animation 
 for that transition.  In fact each transition can have two animations associated with it, for example 
 an App shut down could have one animation with the old application disappearing and then another animation 
-for the App Launcher (or home screen) appearing.  In this API these are referred to as “Phase1” and “Phase2”.
+for the App Launcher (or home screen) appearing.
 
 Animation can be applied to all App's Transition effect or to a specfic App by providing its AppUid.
 
 @param aAction Particular transition to register the animation for.
+@param aPurpose The purpose of the window.
 @param aResourceDir The name of the directory that contains the animation description files.
-@param aFilenamePhase1 The file containing the description of the animation for the first phase(Phase1) of the transition. 
-					   Specify KNullDesC for no Phase1 effect.
-@param aFilenamePhase2 The file containing the description of the animation for the second phase(Phase2) of the transition. 
-					   Specify KNullDesC for no Phase2 effect.
+@param aFilenameOutgoing The file containing the description of the animation for the outgoing phase of the transition. 
+						 Specify KNullDesC for no outgoing phase effect.
+@param aFilenameIncoming The file containing the description of the animation for the incoming phase of the transition. 
+						 Specify KNullDesC for no incoming phase effect.
 @param aAppUid The Application UID this effect applies to. Set to zero to specify that all apps will use default effect.
+@param aFlags Flag for the effect. Please see TTfxFlags for values this flag parameter can use.
+
+@capability WriteDeviceData This API does nothing if the client does not possess required Capability
 
 @publishedPartner
 */
 	{
 	RTFXEffect tfxEffect(iWsHandle, iBuffer);
-	tfxEffect.RegisterTFXEffect(aAction, aResourceDir, aFilenamePhase1, aFilenamePhase2, aAppUid);
+	tfxEffect.RegisterTFXEffect(aAction, aPurpose, aResourceDir, aFilenameOutgoing, aFilenameIncoming, aAppUid, aFlags);
 	}
 
-EXPORT_C void RWsSession::UnregisterEffect(TInt aAction)
+EXPORT_C void RWsSession::UnregisterEffect(TInt aAction, TInt aPurpose, TUint aAppUid)
 /**
-Unregister already set animation for a particular transition effect.
+Unregister already set animation for a particular transition effect
 
 @param aAction Particular transition to unregister the animation for.
+@param aPurpose The purpose of the window.
+@param aAppUid The Application UID this effect applies to. Set to 0 to specify the default effect will be unregistered.
+
+@capability WriteDeviceData This API does nothing if the client does not possess required Capability
+
 @publishedPartner
 */
 	{
-	WriteInt(aAction, EWsClOpUnregisterTFXEffect);
+	TWsClCmdUnRegisterEffect unregisterEffect(aAction, aPurpose, aAppUid);
+	Write(&unregisterEffect, sizeof(unregisterEffect), EWsClOpUnregisterTFXEffect);
 	}
 
 EXPORT_C void RWsSession::UnregisterAllEffects()
 /**
 Unregister animation for all transition effects.
+
+@capability WriteDeviceData This API does nothing if the client does not possess required Capability
 
 @publishedPartner
 */
@@ -2546,22 +2563,25 @@ Unregister animation for all transition effects.
 	Write(EWsClOpUnregisterAllTFXEffect);
 	}
 	
-EXPORT_C void RWsSession::OverrideEffects(TBool aOneShot, TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2)
+EXPORT_C void RWsSession::OverrideEffects(TInt aAction, TInt aPurpose, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TBitFlags aFlags)
 /**
 Overides the default animation for given app's transition effect by sent animation description.
 Please refer RWsSession::RegisterEffect() comments for more information on animation description.
 
-@param aOneShot A flag to see if the specified override should be applied once or on an ongoing basis
 @param aAction The particular transition to set the animation for.
+@param aPurpose This override only effects the window/layers owned by the application that have the specified purpose.
 @param aResourceDir The name of the directory that contains the animation description files.
-@param aFilenamePhase1 The file containing the description of the animation for the first phase(Phase1) of the transition.
-					   Specify KNullDesC for no Phase1 effect.
-@param aFilenamePhase2 The file containing the description of the animation for the second phase(Phase2) of the transition.
-					   Specify KNullDesC for no Phase2 effect.
+@param aFilenameOutgoing The file containing the description of the animation for the outgoing phase of the transition. 
+						 Specify KNullDesC for no outgoing phase effect.
+@param aFilenameIncoming The file containing the description of the animation for the incoming phase of the transition. 
+						 Specify KNullDesC for no incoming phase effect.
+@param aFlags Flag for the effect. Please see TTfxFlags for values this flag parameter can use.
+
+@capability WriteDeviceData This API does nothing if the client does not possess required Capability
 
 @publishedPartner
 */
 	{
 	RTFXEffect tfxEffect(iWsHandle, iBuffer);
-	tfxEffect.OverrideTFXEffect(aOneShot, aAction, aResourceDir, aFilenamePhase1, aFilenamePhase2, RTFXEffect::ETFXSession);
+	tfxEffect.OverrideTFXEffect(RTFXEffect::ETFXSession, aAction, aPurpose, aResourceDir, aFilenameOutgoing, aFilenameIncoming, aFlags);
 	}

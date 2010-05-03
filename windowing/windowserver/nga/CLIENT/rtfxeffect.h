@@ -45,12 +45,11 @@ public:
 		ETFXWindow
 		};
 	RTFXEffect(TInt aHandle, RWsBuffer* aBuffer);
-	void CheckFileNameAndSetSizes(const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2);
-	void RegisterTFXEffect(TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2, TUint aAppUid);
-	void OverrideTFXEffect(TBool aOneShot, TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2, TFXEffect aCalledFor);
-	void AppendFileNameData(const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2);
-	void WriteDataUsingIPC(TWsClCmdRegisterEffect* aForRegister, TWsClCmdOverrideEffect* aForOverride, 
-		const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2, TFXEffect aCalledFrom);
+	void CheckFileNameAndSetSizes(const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming);
+	void RegisterTFXEffect(TInt aAction, TInt aPurpose, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TUint aAppUid=0, TBitFlags aFlags=0);
+	void OverrideTFXEffect(TFXEffect aCalledFrom, TInt aAction, TInt aPurpose, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TBitFlags aFlags=0);
+	void AppendFileNameData(const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming);
+	void WriteDataUsingIPC(TWsClCmdRegisterEffect* aForRegister, TWsClCmdOverrideEffect* aForOverride, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TFXEffect aCalledFrom);
 	TBool CheckCombinedSizeWithCurrentBuffer(TInt aSize) const;
 	
 private:

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -696,10 +696,6 @@ TInt CDrawThirtyTwoBppBitmapAlphaPM::WriteRgbOutlineAndShadow(TInt aX, TInt aY, 
 															TUint32 aOutlinePenColor, TUint32 aShadowColor,
 															TUint32 aFillColor, const TUint8* aDataBuffer)
 	{
-	const TUint alphaShifted = aOutlinePenColor & 0xff000000;
-	const TUint alpha = alphaShifted>>24;
-	if (alpha==0 || aLength<=0)
-		return KErrNone;
 	DeOrientate(aX,aY);
 	TUint32* pixelPtr = PixelAddress(aX,aY);
 	const TInt pixelPtrInc = PixelAddressIncrement();
@@ -707,6 +703,7 @@ TInt CDrawThirtyTwoBppBitmapAlphaPM::WriteRgbOutlineAndShadow(TInt aX, TInt aY, 
 	TInt blendedRedColor;
 	TInt blendedGreenColor;
 	TInt blendedBlueColor;
+	TInt blendedAlpha;
 	TUint8 index = 0;
 	TUint32 finalColor;
 
@@ -724,81 +721,63 @@ TInt CDrawThirtyTwoBppBitmapAlphaPM::WriteRgbOutlineAndShadow(TInt aX, TInt aY, 
 	const TInt blueOutlinePenColor = aOutlinePenColor & 0xff;
 	const TInt blueShadowColor = aShadowColor & 0xff;
 	const TInt blueFillColor = aFillColor & 0xff;
-	const TUint16* normTable = PtrTo16BitNormalisationTable();
+
+	//Get alpha color. Equivalent to TRgb::Alpha()
+	const TInt alphaOutlinePenColor = aOutlinePenColor >> 24;
+	const TInt alphaShadowColor = aShadowColor >> 24;
+	const TInt alphaFillColor = aFillColor >> 24;
 
 	// Calculate PMA values for aFillColor & aOutlinePenColor that we can use for fast blending in the simple cases
 	// Don't pre calculate PMA version of aShadowColor as it is presumed not to be used enough to make this worthwhile
-	const TUint32 pmaFillColor = NonPMA2PMAPixel((aFillColor&0x00FFFFFF)|alphaShifted);
+	const TUint32 pmaFillColor = NonPMA2PMAPixel(aFillColor);
 	const TUint32 pmaOutlineColor = NonPMA2PMAPixel(aOutlinePenColor);
+
 	while (aDataBuffer < dataBufferPtrLimit)
 		{
-		TUint backgroundAlpha;
-		TUint outlineAlpha;
-		TUint shadowAlpha;
-		TUint fillAlpha;
 		index = *aDataBuffer++;
-		backgroundAlpha = FourColorBlendLookup[index][KBackgroundColorIndex];
-		if (backgroundAlpha == 255)
+		if (255 == FourColorBlendLookup[index][KBackgroundColorIndex])
 			{
 			//background colour
-			//No drawing required so move on to next pixel.
-			pixelPtr += pixelPtrInc;
-			continue;
+			//No drawing required
 			}
-		fillAlpha=FourColorBlendLookup[index][KFillColorIndex];
-		if (fillAlpha == 255)
+		else if (255 == FourColorBlendLookup[index][KFillColorIndex])
 			{
 			//Use fill colour to draw
 			finalColor = pmaFillColor;
-oneColorBlend:
-			if (alpha==0xFF)
-				*pixelPtr=finalColor;
-			else
-				PMABlend_noChecksInplace(*pixelPtr, finalColor, alpha);
-			pixelPtr += pixelPtrInc;
-			continue;
+			PMAInplaceBlend(*pixelPtr, finalColor);
 			}
-		outlineAlpha = FourColorBlendLookup[index][KOutlineColorIndex];
-		if (outlineAlpha == 255)
+		else if (255 == FourColorBlendLookup[index][KOutlineColorIndex])
 			{
 			//Use outline colour to draw
 			finalColor = pmaOutlineColor;
-			goto oneColorBlend;
+			PMAInplaceBlend(*pixelPtr, finalColor);
 			}
-		shadowAlpha = FourColorBlendLookup[index][KShadowColorIndex];
-		if (shadowAlpha == 255)
+		else if (255 == FourColorBlendLookup[index][KShadowColorIndex])
 			{
 			//Use shadow colour to draw
-			finalColor = NonPMA2PMAPixel((aShadowColor&0x00FFFFFF)|alphaShifted);
-			goto oneColorBlend;
+			finalColor = NonPMA2PMAPixel(aShadowColor);
+			PMAInplaceBlend(*pixelPtr, finalColor);
 			}
-		blendedRedColor = redOutlinePenColor * outlineAlpha + 
-					   		redShadowColor * shadowAlpha +
-					  		redFillColor * fillAlpha;
-
-		blendedGreenColor = greenOutlinePenColor * outlineAlpha + 
-							greenShadowColor * shadowAlpha +
-							greenFillColor * fillAlpha;
-
-		blendedBlueColor = blueOutlinePenColor * outlineAlpha + 
-							blueShadowColor * shadowAlpha +
-							blueFillColor * fillAlpha;
-		if (backgroundAlpha)
-			{
-			const TUint32 backgroundColor = PMA2NonPMAPixel(*pixelPtr, normTable);
-			blendedRedColor += ((backgroundColor & 0xff0000) >> 16) * backgroundAlpha;
-			blendedGreenColor += ((backgroundColor & 0xff00) >> 8) * backgroundAlpha;
-			blendedBlueColor += (backgroundColor & 0xff) * backgroundAlpha;
-			}
-		finalColor = ((blendedRedColor&0xFF00)<<8) | (blendedGreenColor&0xFF00) | (blendedBlueColor>>8);
-
-		if (alpha==0xFF)
-			*pixelPtr=finalColor|0xFF000000;
 		else
 			{
-			//pre-multiply, inplace.
-			finalColor = NonPMA2PMAPixel(finalColor|alphaShifted);
-			PMABlend_noChecksInplace(*pixelPtr, finalColor, alpha);
+			blendedRedColor = (redOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] * alphaOutlinePenColor + 
+								redShadowColor * FourColorBlendLookup[index][KShadowColorIndex] * alphaShadowColor +
+								redFillColor * FourColorBlendLookup[index][KFillColorIndex] * alphaFillColor) >> 16;
+	
+			blendedGreenColor = (greenOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] * alphaOutlinePenColor  + 
+								greenShadowColor * FourColorBlendLookup[index][KShadowColorIndex] * alphaShadowColor +
+								greenFillColor * FourColorBlendLookup[index][KFillColorIndex] * alphaFillColor) >> 16;
+	
+			blendedBlueColor = (blueOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] * alphaOutlinePenColor  + 
+								blueShadowColor * FourColorBlendLookup[index][KShadowColorIndex] * alphaShadowColor +
+								blueFillColor * FourColorBlendLookup[index][KFillColorIndex] * alphaFillColor) >> 16;
+	
+			blendedAlpha = (alphaOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] + 
+							alphaShadowColor * FourColorBlendLookup[index][KShadowColorIndex] +
+							alphaFillColor * FourColorBlendLookup[index][KFillColorIndex]) >> 8;
+
+			finalColor = (blendedAlpha << 24) | (blendedRedColor << 16) | (blendedGreenColor  << 8 )| (blendedBlueColor);
+			PMAInplaceBlend(*pixelPtr, finalColor);
 			}
 		pixelPtr += pixelPtrInc;
 		}

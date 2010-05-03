@@ -39,19 +39,19 @@ is greater than KMaxFileName. Calculates the padded lengths of sent parameters
 and stores them in member variables
 
 @param aResourceDir directory name of animation description file
-@param aFilenamePhase1 File name of first phase animation of  TFX
-@param aFilenamePhase2 File name of second phase animation of  TFX
+@param aFilenameOutgoing File name of Outgoing phase of TFX
+@param aFilenameIncoming File name of Incoming phase of TFX
 */
 void RTFXEffect::CheckFileNameAndSetSizes(const TFileName& aResourceDir, 
-		const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2)
+		const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming)
 	{
 	__ASSERT_ALWAYS(aResourceDir.Length() <= KMaxFileName, Panic(EW32PanicStringTooLong));
-	__ASSERT_ALWAYS(aFilenamePhase1.Length() <= KMaxFileName, Panic(EW32PanicStringTooLong));
-	__ASSERT_ALWAYS(aFilenamePhase2.Length() <= KMaxFileName, Panic(EW32PanicStringTooLong));
+	__ASSERT_ALWAYS(aFilenameOutgoing.Length() <= KMaxFileName, Panic(EW32PanicStringTooLong));
+	__ASSERT_ALWAYS(aFilenameIncoming.Length() <= KMaxFileName, Panic(EW32PanicStringTooLong));
 	
 	iDirPathSizePaded = PaddedValue(aResourceDir.Size());
-	iFileName1SizePaded = PaddedValue(aFilenamePhase1.Size());
-	iFileName2SizePaded = PaddedValue(aFilenamePhase2.Size());
+	iFileName1SizePaded = PaddedValue(aFilenameOutgoing.Size());
+	iFileName2SizePaded = PaddedValue(aFilenameIncoming.Size());
 	
 	iCombSizePaded = iDirPathSizePaded + iFileName1SizePaded + iFileName2SizePaded;
 	}
@@ -63,20 +63,20 @@ current command is added to buffer. Please see description of MWsClientClass::Ap
 for more details.
 
 @param aResourceDir directory name of animation description file
-@param aFilenamePhase1 File name of first phase animation of  TFX
-@param aFilenamePhase2 File name of second phase animation of  TFX
+@param aFilenameOutgoing File name of Outgoing phase of TFX
+@param aFilenameIncoming File name of Incoming phase of TFX
 */
-void RTFXEffect::AppendFileNameData(const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2)
+void RTFXEffect::AppendFileNameData(const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming)
 	{
 	AppendData(aResourceDir.Ptr(), aResourceDir.Size(), EFalse);
-    AppendData(aFilenamePhase1.Ptr(), aFilenamePhase1.Size(), EFalse);
-    AppendData(aFilenamePhase2.Ptr(), aFilenamePhase2.Size(), ETrue);
+    AppendData(aFilenameOutgoing.Ptr(), aFilenameOutgoing.Size(), EFalse);
+    AppendData(aFilenameIncoming.Ptr(), aFilenameIncoming.Size(), ETrue);
 	}
 
 /**
 Writes file names using IPC args along with data related to TWsClCmdRegisterEffect
-First phase animation file name is sent in seocnd slot of IPC to server
-Second phase animation file name is sent in third slot of IPC to server
+Out going phase animation file name is sent in second slot of IPC to server
+In coming phase animation file name is sent in third slot of IPC to server
 Data related to TWsClCmdRegisterEffect and folder name are sent in the normal wserv buffer
 
 @param aForRegister an object of TWsClCmdRegisterEffect filled with data related to RegisterTFXEffect
@@ -84,16 +84,16 @@ Data related to TWsClCmdRegisterEffect and folder name are sent in the normal ws
 @param aForOverride an object of TWsClCmdOverrideEffect filled with data related to OverrideTFXEffect
 					If non Empty then this function is called for Overide effect					 
 @param aResourceDir directory name of animation description file
-@param aFilenamePhase1 File name of first phase animation of  TFX
-@param aFilenamePhase2 File name of second phase animation of  TFX
+@param aFilenameOutgoing File name of Outgoing phase of TFX
+@param aFilenameIncoming File name of Incoming phase of TFX
 @param aCalledFrom value from TFXEffect enum reprseting whether called from RWsSession or RWindowbase 	
 */
 void RTFXEffect::WriteDataUsingIPC(TWsClCmdRegisterEffect* aForRegister, TWsClCmdOverrideEffect* aForOverride, 
-		const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2, TFXEffect aCalledFrom)
+		const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TFXEffect aCalledFrom)
 	{
 	TIpcArgs ipcArgsDesc;
-	ipcArgsDesc.Set(1, &aFilenamePhase1);
-	ipcArgsDesc.Set(2, &aFilenamePhase2);
+	ipcArgsDesc.Set(1, &aFilenameOutgoing);
+	ipcArgsDesc.Set(2, &aFilenameIncoming);
 	// If called for RegisterTFXEffect
 	if (aForRegister)
 		{
@@ -136,30 +136,32 @@ If it is greater then max wserv buffer
  And at server side get one string from buffer and other 2 from IPC
 
 @param aAction Particular transition to register the animation for.
+@param aPurpose The purpose of the window.
 @param aResourceDir The name of the directory that contains the animation description files.
-@param aFilenamePhase1 The file containing the description of the animation for the first phase(Phase1) of the transition. 
-					   Specify KNullDesC for no Phase1 effect.
-@param aFilenamePhase2 The file containing the description of the animation for the second phase(Phase2) of the transition. 
-					   Specify KNullDesC for no Phase2 effect.
+@param aFilenameOutgoing The file containing the description of the animation for the outgoing phase of the transition. 
+						 Specify KNullDesC for no outgoing phase effect.
+@param aFilenameIncoming The file containing the description of the animation for the incoming phase of the transition. 
+						 Specify KNullDesC for no incoming phase effect.
 @param aAppUid The Application UID this effect applies to. Set to zero to specify that all apps will use default effect.
+@param aFlags Flag for the effect. Please see TTfxFlags for values this flag parameter can use.
 */
-void RTFXEffect::RegisterTFXEffect(TInt aAction, const TFileName& aResourceDir, 
-		const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2, TUint aAppUid)
+void RTFXEffect::RegisterTFXEffect(TInt aAction, TInt aPurpose, const TFileName& aResourceDir, 
+		const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TUint aAppUid, TBitFlags aFlags)
 	{
-	CheckFileNameAndSetSizes(aResourceDir, aFilenamePhase1, aFilenamePhase2);
+	CheckFileNameAndSetSizes(aResourceDir, aFilenameOutgoing, aFilenameIncoming);
 	if (CheckCombinedSizeWithCurrentBuffer(sizeof(TWsClCmdRegisterEffect)))
 		{
-		TWsClCmdRegisterEffect params(aAction, aAppUid, aResourceDir.Size(), aFilenamePhase1.Size(), aFilenamePhase2.Size());
+		TWsClCmdRegisterEffect params(aAction, aPurpose, aResourceDir.Size(), aFilenameOutgoing.Size(), aFilenameIncoming.Size(), aAppUid, aFlags);
 		// Here we just pass the length of combined strings so that it checks and does flush if needed.
 		// Then AppendData actually adds the data to buffer at the end
 		Write(&params, sizeof(params), iCombSizePaded, EWsClOpRegisterTFXEffectBuf);
 		if (iCombSizePaded > 0)
-			AppendFileNameData(aResourceDir, aFilenamePhase1, aFilenamePhase2);
+			AppendFileNameData(aResourceDir, aFilenameOutgoing, aFilenameIncoming);
 		}
 	else
 		{
-		TWsClCmdRegisterEffect params(aAction, aAppUid, aResourceDir.Size(), 0, 0);
-		WriteDataUsingIPC(&params, NULL, aResourceDir, aFilenamePhase1, aFilenamePhase2, ETFXSession);
+		TWsClCmdRegisterEffect params(aAction, aPurpose, aResourceDir.Size(), 0, 0, aAppUid, aFlags);
+		WriteDataUsingIPC(&params, NULL, aResourceDir, aFilenameOutgoing, aFilenameIncoming, ETFXSession);
 		}
 	}
 
@@ -167,28 +169,29 @@ void RTFXEffect::RegisterTFXEffect(TInt aAction, const TFileName& aResourceDir,
 Checks the length of sent variables and does as explained in
 RTFXEffect::RegisterTFXEffect() API description
 
-@param aOneShot A flag to see if the specified override should be applied once or on an ongoing basis
 @param aAction The particular transition to set the animation for.
+@param aPurpose This override only effects the window/layers owned by the application that have the specified purpose.
 @param aResourceDir The name of the directory that contains the animation description files.
-@param aFilenamePhase1 The file containing the description of the animation for the first phase(Phase1) of the transition.
-					   Specify KNullDesC for no Phase1 effect.
-@param aFilenamePhase2 The file containing the description of the animation for the second phase(Phase2) of the transition.
-					   Specify KNullDesC for no Phase2 effect.
+@param aFilenameOutgoing The file containing the description of the animation for the outgoing phase of the transition. 
+						 Specify KNullDesC for no outgoing phase effect.
+@param aFilenameIncoming The file containing the description of the animation for the incoming phase of the transition. 
+						 Specify KNullDesC for no incoming phase effect.
+@param aFlags Flag for the effect. Please see TTfxFlags for values this flag parameter can use.
 */
-void RTFXEffect::OverrideTFXEffect(TBool aOneShot, TInt aAction, const TFileName& aResourceDir, 
-		const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2, TFXEffect aCalledFrom)
+void RTFXEffect::OverrideTFXEffect(TFXEffect aCalledFrom, TInt aAction, TInt aPurpose, const TFileName& aResourceDir, 
+		const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TBitFlags aFlags)
 	{
-	CheckFileNameAndSetSizes(aResourceDir, aFilenamePhase1, aFilenamePhase2);
+	CheckFileNameAndSetSizes(aResourceDir, aFilenameOutgoing, aFilenameIncoming);
 	if (CheckCombinedSizeWithCurrentBuffer(sizeof(TWsClCmdOverrideEffect)))
 		{
-		TWsClCmdOverrideEffect params(aOneShot, aAction, aResourceDir.Size(), aFilenamePhase1.Size(), aFilenamePhase2.Size());
+		TWsClCmdOverrideEffect params(aAction, aPurpose, aResourceDir.Size(), aFilenameOutgoing.Size(), aFilenameIncoming.Size(), aFlags);
 		Write(&params, sizeof(params), iCombSizePaded, (aCalledFrom == ETFXSession ? EWsClOpOverrideEffectBuf : EWsWinOpOverrideEffectBuf));
 		if (iCombSizePaded > 0)
-			AppendFileNameData(aResourceDir, aFilenamePhase1, aFilenamePhase2);
+			AppendFileNameData(aResourceDir, aFilenameOutgoing, aFilenameIncoming);
 		}
 	else
 		{
-		TWsClCmdOverrideEffect params(aOneShot, aAction, aResourceDir.Size(), 0, 0);
-		WriteDataUsingIPC(NULL, &params, aResourceDir, aFilenamePhase1, aFilenamePhase2, aCalledFrom);
+		TWsClCmdOverrideEffect params(aAction, aPurpose, aResourceDir.Size(), 0, 0, aFlags);
+		WriteDataUsingIPC(NULL, &params, aResourceDir, aFilenameOutgoing, aFilenameIncoming, aCalledFrom);
 		}
 	}

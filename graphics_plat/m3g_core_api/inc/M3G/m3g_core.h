@@ -918,7 +918,7 @@ M3G_API M3Gsizei m3gGetLightCount       (M3GRenderContext hCtx);
 M3G_API M3GCamera m3gGetCamera          (M3GRenderContext hCtx);
 M3G_API void	m3gSetAlphaWrite		(M3GRenderContext ctx, M3Gbool enable);
 M3G_API M3Gbool	m3gGetAlphaWrite		(M3GRenderContext ctx);
-
+M3G_API void    m3gFreeGLESResources    (M3GRenderContext ctx);
 
 /* -------- SkinnedMesh -------- */
 

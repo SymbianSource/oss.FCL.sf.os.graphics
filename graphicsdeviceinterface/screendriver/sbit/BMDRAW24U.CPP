@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,7 @@
 #include "BMDRAW.H"
 #include "BitDrawInterfaceId.h"
 #include <graphics/lookuptable.h>
+#include <graphics/blendingalgorithms.h>
 
 TInt CDrawUTwentyFourBppBitmap::Construct(TSize aSize)
 	{
@@ -1184,9 +1185,6 @@ TInt CDrawUTwentyFourBppBitmap::WriteRgbOutlineAndShadow(TInt aX, TInt aY, const
 														TUint32 aOutlinePenColor, TUint32 aShadowColor,
 														TUint32 aFillColor, const TUint8* aDataBuffer)
 	{
-	const TInt alpha = aOutlinePenColor >> 24;
-	if (alpha==0 || aLength<=0)
-		return KErrNone;
 	DeOrientate(aX,aY);
 	TUint32* pixelPtr = PixelAddress(aX,aY);
 	const TInt pixelPtrInc = PixelAddressIncrement();
@@ -1194,8 +1192,10 @@ TInt CDrawUTwentyFourBppBitmap::WriteRgbOutlineAndShadow(TInt aX, TInt aY, const
 	TInt blendedRedColor;
 	TInt blendedGreenColor;
 	TInt blendedBlueColor;
+	TInt blendedAlpha;
 	TUint8 index = 0;
 	TUint32 finalColor;
+	const TUint16* normTable = PtrTo16BitNormalisationTable();
 
 	//Get red color. Equivalent to TRgb::Red()
 	const TInt redOutlinePenColor = (aOutlinePenColor & 0xff0000) >> 16;
@@ -1212,72 +1212,58 @@ TInt CDrawUTwentyFourBppBitmap::WriteRgbOutlineAndShadow(TInt aX, TInt aY, const
 	const TInt blueShadowColor = aShadowColor & 0xff;
 	const TInt blueFillColor = aFillColor & 0xff;
 
-	const TUint32 mask2 = alpha | (alpha << 16);
+	//Get alpha color. Equivalent to TRgb::Alpha()
+	const TInt alphaOutlinePenColor = aOutlinePenColor >> 24;
+	const TInt alphaShadowColor = aShadowColor >> 24;
+	const TInt alphaFillColor = aFillColor >> 24;
+
 	while (aDataBuffer < dataBufferPtrLimit)
 		{
 		index = *aDataBuffer++;
-		
 		if (255 == FourColorBlendLookup[index][KBackgroundColorIndex])
 			{
 			//background colour
-			//No drawing required so move on to next pixel.
-			pixelPtr += pixelPtrInc;
-			continue;
+			//No drawing required
 			}
 		else if (255 == FourColorBlendLookup[index][KFillColorIndex])
 			{
 			//Use fill colour to draw
 			finalColor = aFillColor;
+			AlphaBlendPixelToDest((finalColor | 0xff000000), alphaFillColor, pixelPtr);
 			}
 		else if (255 == FourColorBlendLookup[index][KShadowColorIndex])
 			{
 			//Use shadow colour to draw
 			finalColor = aShadowColor;
+			AlphaBlendPixelToDest((finalColor | 0xff000000), alphaShadowColor, pixelPtr);
 			}
 		else if (255 == FourColorBlendLookup[index][KOutlineColorIndex])
 			{
 			//Use outline colour to draw
 			finalColor = aOutlinePenColor;
+			AlphaBlendPixelToDest((finalColor | 0xff000000), alphaOutlinePenColor, pixelPtr);
 			}
 		else
 			{
-			TUint32 backgroundColor = *pixelPtr;
-			blendedRedColor =   redOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] + 
-						   		redShadowColor * FourColorBlendLookup[index][KShadowColorIndex] +
-						  		redFillColor * FourColorBlendLookup[index][KFillColorIndex] + 
-						  		((backgroundColor & 0xff0000) >> 16) * FourColorBlendLookup[index][KBackgroundColorIndex];
+			blendedRedColor = (redOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] * alphaOutlinePenColor + 
+						   		redShadowColor * FourColorBlendLookup[index][KShadowColorIndex] * alphaShadowColor +
+						  		redFillColor * FourColorBlendLookup[index][KFillColorIndex] * alphaFillColor) >> 16;
 
-			blendedGreenColor = greenOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] + 
-								greenShadowColor * FourColorBlendLookup[index][KShadowColorIndex] +
-								greenFillColor * FourColorBlendLookup[index][KFillColorIndex] + 
-								((backgroundColor & 0xff00) >> 8) * FourColorBlendLookup[index][KBackgroundColorIndex];
+			blendedGreenColor = (greenOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] * alphaOutlinePenColor  + 
+								greenShadowColor * FourColorBlendLookup[index][KShadowColorIndex] * alphaShadowColor +
+								greenFillColor * FourColorBlendLookup[index][KFillColorIndex] * alphaFillColor) >> 16;
 
-			blendedBlueColor =  blueOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] + 
-								blueShadowColor * FourColorBlendLookup[index][KShadowColorIndex] +
-								blueFillColor * FourColorBlendLookup[index][KFillColorIndex] + 
-								(backgroundColor & 0xff) * FourColorBlendLookup[index][KBackgroundColorIndex];
+			blendedBlueColor = (blueOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] * alphaOutlinePenColor  + 
+								blueShadowColor * FourColorBlendLookup[index][KShadowColorIndex] * alphaShadowColor +
+								blueFillColor * FourColorBlendLookup[index][KFillColorIndex] * alphaFillColor) >> 16;
 
-			//Equivalent to TRgb::TRgb(TUint32)
-			finalColor = ((blendedRedColor&0xFF00) << 8) | (blendedGreenColor&0xFF00) | (blendedBlueColor>>8);
+			blendedAlpha = (alphaOutlinePenColor * FourColorBlendLookup[index][KOutlineColorIndex] + 
+							alphaShadowColor * FourColorBlendLookup[index][KShadowColorIndex] +
+							alphaFillColor * FourColorBlendLookup[index][KFillColorIndex]) >> 8;
+
+			finalColor = PMA2NonPMAPixel((blendedAlpha << 24) | (blendedRedColor << 16) | (blendedGreenColor << 8) | blendedBlueColor, normTable);		
+			AlphaBlendPixelToDest(finalColor | 0xff000000, blendedAlpha, pixelPtr);
 			}
-
-		if (alpha != 0xff)
-			{
-			TUint32 backgroundColor = *pixelPtr;
-			//Draw the final colour
-//
-			const TUint32 s_rb = finalColor & 0x00FF00FF;
-			const TUint32 s_g = (finalColor & 0xFF00) >> 8;
-			const TUint32 d_rb = backgroundColor & 0x00FF00FF;
-			const TUint32 rb = ((((alpha * ((0x01000100 + s_rb) - d_rb)) >> 8) + d_rb) - mask2) & 0x00FF00FF;
-
-			const TInt d_g = (backgroundColor & 0xFF00) >> 8;
-			const TInt g = ((alpha * (s_g - d_g)) >> 8) + d_g;
-	
-			finalColor = rb | (g<<8);
-			}
-
-		*pixelPtr = (finalColor | 0xff000000);
 		pixelPtr += pixelPtrInc;
 		}
 	return KErrNone;

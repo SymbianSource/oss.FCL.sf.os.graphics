@@ -5234,7 +5234,7 @@ __declspec(dllexport)
 __declspec(naked)
 void call_vector_580 ()
 	{
-	// ; void RWsSession::RegisterEffect(int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &, unsigned int)
+	// ; void RWsSession::RegisterEffect(int, int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &, unsigned int, class TBitFlagsT<unsigned long>)
 	_asm mov eax, 580
 	_asm jmp common_dispatch
 	}
@@ -5243,7 +5243,7 @@ __declspec(dllexport)
 __declspec(naked)
 void call_vector_581 ()
 	{
-	// ; void RWindowBase::OverrideEffects(int, int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &)
+	// ; void RWindowBase::OverrideEffects(int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &, class TBitFlagsT<unsigned long>)
 	_asm mov eax, 581
 	_asm jmp common_dispatch
 	}
@@ -5252,7 +5252,7 @@ __declspec(dllexport)
 __declspec(naked)
 void call_vector_582 ()
 	{
-	// ; void RWsSession::OverrideEffects(int, int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &)
+	// ; void RWsSession::OverrideEffects(int, int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &, class TBitFlagsT<unsigned long>)
 	_asm mov eax, 582
 	_asm jmp common_dispatch
 	}
@@ -5261,7 +5261,7 @@ __declspec(dllexport)
 __declspec(naked)
 void call_vector_583 ()
 	{
-	// ; void RWsSession::UnregisterEffect(int)
+	// ; void RWsSession::UnregisterEffect(int, int, unsigned int)
 	_asm mov eax, 583
 	_asm jmp common_dispatch
 	}

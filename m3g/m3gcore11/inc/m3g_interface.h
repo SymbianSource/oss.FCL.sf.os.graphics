@@ -132,8 +132,11 @@ extern void m3gCleanupProfile(void);
  * Other internal functions
  *------------------------------------------------------------------*/
 
-static void     m3gAddChildObject(Interface *m3g);
-static void     m3gDelChildObject(Interface *m3g);
+static void     m3gAddChildObject(Interface *m3g, Object *obj);
+static void     m3gDelChildObject(Interface *m3g, Object *obj);
+
+#include "m3g_array.h"
+static void     m3gGetObjectsWithClassID(Interface *m3g, M3GClass classID, PointerArray* objects);
 
 #if !defined(M3G_NGL_TEXTURE_API)
 static void     m3gDeleteGLTextures(Interface *m3g, M3Gsizei n, M3Guint *t);

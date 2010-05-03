@@ -1016,7 +1016,6 @@ static void m3gGenericMatrixProduct(Matrix *dst,
     M3G_ASSERT(dst != NULL && left != NULL && right != NULL);
 
     {
-        
 #       if defined(M3G_HW_FLOAT)
         if (!left->complete) {
             m3gFillClassifiedMatrix((Matrix*)left);
@@ -1025,7 +1024,6 @@ static void m3gGenericMatrixProduct(Matrix *dst,
             m3gFillClassifiedMatrix((Matrix*)right);
         }
 #       else
-        int row;
         const unsigned lmask = left->mask;
         const unsigned rmask = right->mask;
 #       endif
@@ -1033,25 +1031,29 @@ static void m3gGenericMatrixProduct(Matrix *dst,
 #if defined(M3G_HW_FLOAT_VFPV2)
 		_m3gGenericMatrixProduct(dst, left, right);
 #else	
-        for (row = 0; row < 4; ++row) {
-            int col;
-            for (col = 0; col < 4; ++col) {
-                int k;
-                M3Gfloat a = 0;
-                for (k = 0; k < 4; ++k) {
-                    M3Gint lidx = MELEM(row, k);
-                    M3Gint ridx = MELEM(k, col);
-#                   if defined(M3G_HW_FLOAT)
-                    a = m3gMadd(left->elem[lidx], right->elem[ridx], a);
-#                   else
-                    a = m3gClassifiedMadd((lmask >> (2 * lidx)) & 3,
-                                          &left->elem[lidx],
-                                          (rmask >> (2 * ridx)) & 3,
-                                          &right->elem[ridx],
-                                          a);
-#                   endif /*!M3G_HW_FLOAT*/
+        {
+            int row;
+
+            for (row = 0; row < 4; ++row) {
+                int col;
+                for (col = 0; col < 4; ++col) {
+                    int k;
+                    M3Gfloat a = 0;
+                    for (k = 0; k < 4; ++k) {
+                        M3Gint lidx = MELEM(row, k);
+                        M3Gint ridx = MELEM(k, col);
+#                       if defined(M3G_HW_FLOAT)
+                        a = m3gMadd(left->elem[lidx], right->elem[ridx], a);
+#                       else
+                        a = m3gClassifiedMadd((lmask >> (2 * lidx)) & 3,
+                                              &left->elem[lidx],
+                                              (rmask >> (2 * ridx)) & 3,
+                                              &right->elem[ridx],
+                                              a);
+#                       endif /*!M3G_HW_FLOAT*/
+                    }
+                    M44F(dst, row, col) = a;
                 }
-                M44F(dst, row, col) = a;
             }
         }
 #endif /*!M3G_HW_FLOAT_VFPV2*/
@@ -3011,8 +3013,6 @@ M3G_API void m3gTransformVec4(const Matrix *mtx, Vec4 *vec)
         return;
     }
     else {
-        Vec4 v = *vec;
-        int i;
         int n = m3gIsWUnity(mtx) ? 3 : 4;
 
         if (!mtx->complete) {
@@ -3021,12 +3021,17 @@ M3G_API void m3gTransformVec4(const Matrix *mtx, Vec4 *vec)
 #if	defined(M3G_HW_FLOAT_VFPV2)
 		_m3gTransformVec4(mtx, vec, n);
 #else
-        for (i = 0; i < n; ++i) {
-            M3Gfloat d = m3gMul(M44F(mtx, i, 0), v.x);
-            d = m3gMadd(M44F(mtx, i, 1), v.y, d);
-            d = m3gMadd(M44F(mtx, i, 2), v.z, d);
-            d = m3gMadd(M44F(mtx, i, 3), v.w, d);
-            (&vec->x)[i] = d;
+        {
+            Vec4 v = *vec;
+            int i;
+
+            for (i = 0; i < n; ++i) {
+                M3Gfloat d = m3gMul(M44F(mtx, i, 0), v.x);
+                d = m3gMadd(M44F(mtx, i, 1), v.y, d);
+                d = m3gMadd(M44F(mtx, i, 2), v.z, d);
+                d = m3gMadd(M44F(mtx, i, 3), v.w, d);
+                (&vec->x)[i] = d;
+            }
         }
 #endif
     }

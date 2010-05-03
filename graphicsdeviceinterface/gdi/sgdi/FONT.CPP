@@ -1676,7 +1676,7 @@ RGlyphOutlineIterator::RGlyphOutlineIterator():iOutlines(0), iLengths(0),
     }
 
 EXPORT_C TInt
-RGlyphOutlineIterator::Open(CFont& aFont, TUint* aCodes, TInt aCount, TBool aHinted) 
+RGlyphOutlineIterator::Open(CFont& aFont, const TUint* aCodes, TInt aCount, TBool aHinted) 
     {
     if (NULL == aCodes || 0 == aCount)
         {

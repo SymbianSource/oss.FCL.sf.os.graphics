@@ -32,6 +32,7 @@
 #include <pointerevent.h>
 #include <advancedpointerevent.h>
 #include <sizemode.h>
+#include <babitflags.h>
 
 #ifndef SYMBIAN_ENABLE_SPLIT_HEADERS
 #include <graphics/windowserverconstants.h>
@@ -1532,10 +1533,10 @@ public:
 	IMPORT_C void SendEffectCommand(TInt aTfxCmd, const TDesC8& aTfxCmdData=KNullDesC8);
 
 // Registering/Unregistering of TFX effect, to allow animations to be associated with each transition
-	IMPORT_C void RegisterEffect(TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2, TUint aAppUid = NULL);
-	IMPORT_C void UnregisterEffect(TInt aAction);
+	IMPORT_C void RegisterEffect(TInt aAction, TInt aPurpose, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TUint aAppUid=0, TBitFlags aFlags=0);
+	IMPORT_C void UnregisterEffect(TInt aAction, TInt aPurpose, TUint aAppUid=0);
 	IMPORT_C void UnregisterAllEffects();
-	IMPORT_C void OverrideEffects(TBool aOneShot, TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2);
+	IMPORT_C void OverrideEffects(TInt aAction, TInt aPurpose, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TBitFlags aFlags=0);
 	
 // functions not exported, used by CWsGraphic
 	void GraphicMessageReady(TRequestStatus *aStat);
@@ -1726,7 +1727,7 @@ public:
 	IMPORT_C void EnableAdvancedPointers();
 	IMPORT_C void SetPurpose(TInt aPurpose);
 	IMPORT_C void SendEffectCommand(TInt aTfxCmd, const TDesC8& aTfxCmdData=KNullDesC8);
-	IMPORT_C void OverrideEffects(TBool aOneShot, TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2);
+	IMPORT_C void OverrideEffects(TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TBitFlags aFlags=0);
 protected:
 	TInt construct(const RWindowTreeNode &parent,TUint32 aHandle, TInt aType, TDisplayMode aDisplayMode);
 	};

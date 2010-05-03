@@ -403,6 +403,70 @@ M3G_API M3Gbool m3gGetAlphaWrite(M3GRenderContext ctx)
 	return ctx->alphaWrite;
 }
 
+/*!
+ * \brief Frees all GLES resources allocated by the M3G API 
+ *        (EGL surfaces, contexts and texture objects). 
+ *
+ * \note M3G must not be bound to any target when calling this.
+ *
+ */
+M3G_API void m3gFreeGLESResources(M3GRenderContext ctx)
+{
+#ifdef M3G_ENABLE_GLES_RESOURCE_HANDLING
+
+    PointerArray image2DObjects;
+    M3Gint i;
+
+    /* M3G must not be bound to a rendering target at this point. */
+    if (ctx->target.type != SURFACE_NONE) {
+        m3gRaiseError(M3G_INTERFACE(ctx), M3G_INVALID_OPERATION);
+    }
+
+    /* EGL might not be initialized yet, so do it here just in case. */ 
+    eglInitialize(eglGetDisplay(EGL_DEFAULT_DISPLAY), NULL, NULL);
+    eglBindAPI(EGL_OPENGL_ES_API);
+    eglMakeCurrent(eglGetDisplay(EGL_DEFAULT_DISPLAY), NULL, NULL, NULL);
+
+    /* Delete EGL surfaces */
+    for (i = 0; i < M3G_MAX_GL_SURFACES; ++i) {
+        GLSurfaceRecord *surf = &ctx->glSurface[i];
+        if (surf->handle) {
+            m3gDeleteGLSurface(surf->handle);
+        }
+        m3gZero(surf, sizeof(GLSurfaceRecord));
+    }
+    if (ctx->backBuffer.glSurface != NULL) {
+        m3gDeleteGLSurface(ctx->backBuffer.glSurface);
+        m3gZero(&ctx->backBuffer, sizeof(BackBuffer));
+    }
+
+    /* Delete EGL contexts */
+    for (i = 0; i < M3G_MAX_GL_CONTEXTS; ++i) {
+        GLContextRecord *context = &ctx->glContext[i];
+        if (context->handle) {
+            m3gDeleteGLContext(context->handle);
+        }
+        m3gZero(context, sizeof(GLContextRecord));
+    }
+
+    /* Delete references to GLES texture objects from all live Image2D objects. 
+       Texture objects themselves have already been destroyed with the last GL context. */
+
+    m3gInitArray(&image2DObjects);
+    m3gGetObjectsWithClassID(M3G_INTERFACE(ctx), M3G_CLASS_IMAGE, &image2DObjects);
+
+    i = m3gArraySize(&image2DObjects);
+
+    while (i > 0) {
+        Image *image = (Image*)m3gGetArrayElement(&image2DObjects, --i);
+
+        m3gInvalidateImage(image);
+        image->texObject = 0;
+    }
+    m3gDestroyArray(&image2DObjects, M3G_INTERFACE(ctx));
+#endif
+}
+
 
 /*!
  * \internal
@@ -1324,8 +1388,8 @@ M3G_API void m3gReleaseTarget(M3GRenderContext context)
      * last time we rendered, then release the GL context so we don't
      * hog resources */
 #   if !defined(M3G_NGL_CONTEXT_API)
-    if (ctx->target.type != SURFACE_EGL) {
-//    m3gSwapBuffers(ctx->target.surface);
+    if (ctx->target.type == SURFACE_WINDOW) {
+        m3gSwapBuffers(ctx->target.surface);
     }
 #   endif
     m3gCollectGLObjects(M3G_INTERFACE(ctx));

@@ -51,7 +51,6 @@ enum TWservActiveObjectPriorities
 	EHeartBeatPriority=1000,
 	EKeyRepeatPriority=1980,
 	EPointerRepeatPriority=1980,// Same as for key repeats
-	EClientBufferPriority=1990,	// Priority of idle object that completes the client buffer
 	EEventPriority=2000,
 	EComposeCompletePriority=2500,		// Triggers further composition if necessary
 	EWsShellLogonPriority=3000,	// Log on to the shell dying

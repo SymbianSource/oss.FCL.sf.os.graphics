@@ -20,7 +20,7 @@ EXPORTS
 	?Surface@CTestEglSession@@QBEHXZ @ 19 NONAME ; int CTestEglSession::Surface(void) const
 	?ConstructWindowL@CEglTestStep@@IAEXAAVRWindow@@ABVTRect@@@Z @ 20 NONAME ; void CEglTestStep::ConstructWindowL(class RWindow &, class TRect const &)
 	?NativeFbsBitmap@CTestEglSession@@QAEPAVCFbsBitmap@@XZ @ 21 NONAME ; class CFbsBitmap * CTestEglSession::NativeFbsBitmap(void)
-	?GetMatchType@@YA?AW4TEglConfigMatchType@@HW4TEglConfigMatchRule@@@Z @ 22 NONAME ; enum TEglConfigMatchType GetMatchType(int, enum TEglConfigMatchRule)
+	Reserved22 @ 22 NONAME ABSENT
 	?GetConfigExactMatchL@CTestEglSession@@QAEHW4TEglTestConfig@@W4TEglConfigMatchRule@@@Z @ 23 NONAME ; int CTestEglSession::GetConfigExactMatchL(enum TEglTestConfig, enum TEglConfigMatchRule)
 	??0TSgImageInfoTest@@QAE@W4TUidPixelFormat@@VTSize@@@Z @ 24 NONAME ; TSgImageInfoTest::TSgImageInfoTest(enum TUidPixelFormat, class TSize)
 	?InitializeL@CTestEglSession@@QAEXH@Z @ 25 NONAME ; void CTestEglSession::InitializeL(int)

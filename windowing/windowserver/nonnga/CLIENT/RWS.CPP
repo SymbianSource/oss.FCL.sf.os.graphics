@@ -2395,14 +2395,14 @@ EXPORT_C void RWsSession::SendEffectCommand(TInt /*aTfxCmd*/,const TDesC8& /*aTf
 	ASSERT(0);
 	}
 
-EXPORT_C void RWsSession::RegisterEffect(TInt /*aAction*/, const TFileName& /*aResourceDir*/, const TFileName& /*aFilenamePhase1*/, const TFileName& /*aFilenamePhase2*/, TUint /*aAppUid*/)
+EXPORT_C void RWsSession::RegisterEffect(TInt /*aAction*/, TInt /*aPurpose*/, const TFileName& /*aResourceDir*/, const TFileName& /*aFilenameOutgoing*/, const TFileName& /*aFilenameIncoming*/, TUint /*aAppUid*/, TBitFlags /*aFlags*/)
 /** Dummy implementation in order to preserve compatibility with WSERV NGA.
 	@internalComponent */
 	{
 	ASSERT(0);
 	}
 
-EXPORT_C void RWsSession::UnregisterEffect(TInt /*aAction*/)
+EXPORT_C void RWsSession::UnregisterEffect(TInt /*aAction*/, TInt /*aPurpose*/, TUint /*aAppUid*/)
 /** Dummy implementation in order to preserve compatibility with WSERV NGA.
 	@internalComponent */
 	{
@@ -2416,7 +2416,7 @@ EXPORT_C void RWsSession::UnregisterAllEffects()
 	ASSERT(0);
 	}
 
-EXPORT_C void RWsSession::OverrideEffects(TBool /*aOneShot*/, TInt /*aAction*/, const TFileName& /*aResourceDir*/, const TFileName& /*aFilenamePhase1*/, const TFileName& /*aFilenamePhase2*/)
+EXPORT_C void RWsSession::OverrideEffects(TInt /*aAction*/, TInt /*aPurpose*/, const TFileName& /*aResourceDir*/, const TFileName& /*aFilenameOutgoing*/, const TFileName& /*aFilenameIncoming*/, TBitFlags /*aFlags*/)
 	/** Dummy implementation in order to preserve compatibility with WSERV NGA.
 	@internalComponent */
 	{

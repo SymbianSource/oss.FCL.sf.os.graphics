@@ -1,4 +1,4 @@
-// Copyright (c) 1994-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1994-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1888,24 +1888,24 @@ MWsTfxLayer will accept only window specific commands and data.
     Write(&params,sizeof(params),aTfxCmdData.Ptr(),aTfxCmdData.Size(),EWsWinOpSendEffectCommand);
     }
 
-EXPORT_C void RWindowBase::OverrideEffects(TBool aOneShot, TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenamePhase1, const TFileName& aFilenamePhase2)
+EXPORT_C void RWindowBase::OverrideEffects(TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TBitFlags aFlags)
 /**
 Overides the default animation for current window's transition effect by sent animation description.
 Please refer RWsSession::RegisterEffect() comments for more information on animation description.
 
-@param aOneShot A flag to see if the specified override should be applied once or on an ongoing basis
 @param aAction The particular transition to set the animation for.
 @param aResourceDir The name of the directory that contains the animation description files.
-@param aFilenamePhase1 The file containing the description of the animation for the first phase(Phase1) of the transition.
-					   Specify KNullDesC for no Phase1 effect.
-@param aFilenamePhase2 The file containing the description of the animation for the second phase(Phase2) of the transition.
-					   Specify KNullDesC for no Phase2 effect.
+@param aFilenameOutgoing The file containing the description of the animation for the outgoing phase of the transition. 
+						 Specify KNullDesC for no outgoing phase effect.
+@param aFilenameIncoming The file containing the description of the animation for the incoming phase of the transition. 
+						 Specify KNullDesC for no incoming phase effect.
+@param aFlags Flag for the effect. Please see TTfxFlags for values this flag parameter can use.
 
 @publishedPartner
 */
 	{
 	RTFXEffect tfxEffect(iWsHandle, iBuffer);
-	tfxEffect.OverrideTFXEffect(aOneShot, aAction, aResourceDir, aFilenamePhase1, aFilenamePhase2, RTFXEffect::ETFXWindow);
+	tfxEffect.OverrideTFXEffect(RTFXEffect::ETFXWindow, aAction, 0, aResourceDir, aFilenameOutgoing, aFilenameIncoming, aFlags);
 	}
 //////////////////////////// RDrawableWindow ////////////////////////////////
 

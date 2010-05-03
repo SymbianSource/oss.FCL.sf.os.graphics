@@ -342,4 +342,5 @@ EXPORTS
 	m3gSetAlphaWrite @ 341 NONAME
 	m3gGetAlphaWrite @ 342 NONAME
 	m3gInvalidateMemoryTarget @ 343 NONAME
+	m3gFreeGLESResources @ 344 NONAME
 

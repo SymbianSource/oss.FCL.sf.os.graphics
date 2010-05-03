@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1998-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -58,7 +58,7 @@ class RGlyphOutlineIterator
     {
 public:
     IMPORT_C RGlyphOutlineIterator();
-    IMPORT_C TInt Open(CFont& aFont, TUint* aCodes, TInt aCount, TBool aHinted = EFalse);
+    IMPORT_C TInt Open(CFont& aFont, const TUint* aCodes, TInt aCount, TBool aHinted = EFalse);
     IMPORT_C TInt Next();
     IMPORT_C const TUint8 *Outline() const;
     IMPORT_C TInt OutlineLength() const;

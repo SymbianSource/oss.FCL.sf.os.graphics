@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -828,25 +828,26 @@ TBool CWsDynamicResWinBase::TestRectL(TRect aRect,TRgb aInnerColor,TInt aOtherIn
 	if (aRect.iTl.iX<=0 || aRect.iTl.iY<=0)
 		return ETrue;	//can't perform the test against the outside of the screen
 	//quantise the expectation based on the current mode.
-	switch (iScreenDevice->DisplayMode())
-	{
+	TDisplayMode displayMode=iScreenDevice->DisplayMode();
+	switch (displayMode)
+		{
 	case EColor4K:
 		aInnerColor=aInnerColor.Color4K(aInnerColor.Color4K());
 		aOuterColor=aOuterColor.Color4K(aOuterColor.Color4K());
-	break;
+		break;
 	case EColor64K:
 		aInnerColor=aInnerColor.Color64K(aInnerColor.Color64K());
 		aOuterColor=aOuterColor.Color64K(aOuterColor.Color64K());
-	break;
+		break;
 	case EColor16M:
 	case EColor16MU:
 	case EColor16MA:
 	case EColor16MAP:
 		break;
 	default:
-		ASSERT_TRUE(!"Can't quantise color for this display mode!");
-	
-	}
+		ASSERT_EQUALS(EColor16MA,displayMode);		//Can't quantise color for this display mode!
+		}
+
 	RArray<CountColour> innerColors;
 	innerColors.AppendL(aInnerColor);
 	RArray<CountColour> outerColors;

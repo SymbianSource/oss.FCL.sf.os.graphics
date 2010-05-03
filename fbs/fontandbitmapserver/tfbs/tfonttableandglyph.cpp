@@ -683,54 +683,49 @@ static void LoadOpenFontLibraries(CFontStore* aFontStore)
     implementationArray.ResetAndDestroy();
     }
 
-static TInt SMPAndWDPSafeTestFun(TAny* /*aParam*/)
+/**
+Worker function that implements the threads executed by SMPAndWDPSafeTest.
+@leave If a leave occurs, either the test failed to be set-up successfully,
+    or the test itself failed.
+*/
+static void DoSMPAndWDPSafeTestFunL()
     {
-    CFbsBitmapDevice* device1 = NULL;
-    CFont* font;
-    TInt err = 0;
-    CTrapCleanup* trapCleanup=CTrapCleanup::New();
-    
-    err = RFbsSession::Connect();    
-    if(err != KErrNone)
-        User::Panic(_L("FbsSession connection error"), -1);    
-  
-    CFbsBitmap* bmp = NULL;
-    TRAPD(ret1, bmp = new (ELeave) CFbsBitmap);
-    if (bmp == NULL)
-        User::Panic(_L("new CFbsBitmap error"), -1);
-    err = bmp->Create(TSize(100,100),EGray2);
-    if(err != KErrNone)
-            User::Panic(_L("bitmap creation error"), -1);
-    TRAP(err,device1 = CFbsBitmapDevice::NewL(bmp));
-    if(err != KErrNone)
-        User::Panic(_L("fbs device new error"), -1);
-    TFontSpec fontSpec(KTestFontFaceName,KFontHeight); 
-    err = device1->GetNearestFontToMaxHeightInTwips(font,fontSpec,0);  
-    if(err != KErrNone)
-        User::Panic(_L("Get CFont error"), -1);
-    
-    err = KErrNone; 
+    User::LeaveIfError(RFbsSession::Connect());
+    CFbsBitmap* bmp = new (ELeave) CFbsBitmap;
+    CleanupStack::PushL(bmp);
+    User::LeaveIfError(bmp->Create(TSize(100,100), EGray2));
+    CFbsBitmapDevice* bmpDevice = CFbsBitmapDevice::NewL(bmp);
+    CleanupStack::PushL(bmpDevice);
+    CFont* font = NULL;
+    TFontSpec fontSpec(KTestFontFaceName, KFontHeight);
+    User::LeaveIfError(bmpDevice->GetNearestFontToMaxHeightInTwips(font, fontSpec, 0));
+
     for(TInt i = 0; i < 100; i++)
-    {
-    RFontTable fontTable;
-    err = fontTable.Open(*font, 0x68656164);
-    if (KErrNone != err)
         {
-        User::Panic(_L("Font table opening failed with error"), err);
+        RFontTable fontTable;
+        CleanupClosePushL(fontTable);
+        User::LeaveIfError(fontTable.Open(*font, 0x68656164));
+        TUint32* ptr = (TUint32*)fontTable.TableContent();
+        if (!ptr)
+            {
+            User::Leave(KErrGeneral);
+            }
+        CleanupStack::PopAndDestroy(1); // fontTable;
         }
-    TUint32* ptr = (TUint32*)fontTable.TableContent();
-    if (ptr == NULL)
-        {
-        User::Panic(_L("Font table content NULL"), -1);
-        }
-    fontTable.Close();
+    bmpDevice->ReleaseFont(font);
+    CleanupStack::PopAndDestroy(2); // bmpDevice, bmp
+    RFbsSession::Disconnect();
     }
 
-    delete device1;
-    delete bmp;
+static TInt SMPAndWDPSafeTestFun(TAny* /*aParam*/)
+    {
+    CTrapCleanup* trapCleanup = CTrapCleanup::New();
+    if (!trapCleanup)
+        {
+        return KErrNoMemory;
+        }
+    TRAPD(err, DoSMPAndWDPSafeTestFunL());
     delete trapCleanup;
-    device1 = NULL;
-    bmp = NULL;
     return err;
     }
 

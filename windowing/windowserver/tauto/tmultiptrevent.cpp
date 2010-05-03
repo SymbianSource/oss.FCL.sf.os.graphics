@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -133,22 +133,15 @@ void CTMultiPtrEventBuffer::doRunL()
 		goto End;
 		}
 	// This code is for running successive anim test code 
-	if (wsEvent.Type()==EEventPointer && wsEvent.Pointer()->iType == TPointerEvent::ESwitchOn)
-		{
+	if (wsEvent.Type()==EEventPointer && wsEvent.Pointer()->iType==TPointerEvent::ESwitchOn)
 		goto End;
-		}
-	
 	// if this is called accidentally
-	TInt count=iEventBuffer.Count();
-	if (count==0 && wsType==EEventFocusGained)
-		{
+	if (iEventBuffer.Count()==0 && wsType==EEventFocusGained)
 		goto End;
-		}
 
 	iEventBuffer.Remove(&expectedEvent);
-
 	iEventCount++;
-	
+
 	if (wsEvent.Type() == EEventPointerBufferReady)
 		{
 		GetMoveBufferAndCompareL();
@@ -158,14 +151,15 @@ void CTMultiPtrEventBuffer::doRunL()
 		logText.Format(KEventHandle, wsEvent.Handle(), expectedEvent.Handle());
 		iTest->LOG_MESSAGE(logText);
 #endif
-#if defined(TESTMULTIPOINTER)		
+#if defined(TESTMULTIPOINTER)
 		TESTXL(wsEvent.Handle(), ==, expectedEvent.Handle(), &wsEvent, &expectedEvent);
 #endif
 		goto End;
 		}
-	
+
 	// Test wsEvent and expected event have same handle, position and type.
-#if defined(FAILLOG)	
+#if defined(FAILLOG)
+	{
 	TLogMessageText logText;
 	_LIT(KEventCountCheck, "Checking event number = %d");
 	logText.Format(KEventCountCheck, iEventCount);
@@ -173,8 +167,9 @@ void CTMultiPtrEventBuffer::doRunL()
 	_LIT(KEventType, "Actual Event type from Wserv = %d Expected Event Type = %d ");
 	logText.Format(KEventType, wsEvent.Type(), expectedEvent.Type());
 	iTest->LOG_MESSAGE(logText);
+	}
 #endif
-		
+
 #if defined(TESTMULTIPOINTER)
 	TESTXL(wsEvent.Type(), ==, expectedEvent.Type(), &wsEvent, &expectedEvent);
 #endif
@@ -182,29 +177,30 @@ void CTMultiPtrEventBuffer::doRunL()
 	if (wsType == EEventPointerEnter || wsType == EEventPointerExit)
 		{
 #if defined(FAILLOG)
+		TLogMessageText logText;
 		_LIT(KPointerNumber, "Actual PointerNumber for Enter/Exit event from Wserv = %d Expected PointerNumber for Enter/Exit event = %d ");
 		logText.Format(KPointerNumber, *wsEvent.Int(), *expectedEvent.Int());
 		iTest->LOG_MESSAGE(logText);
 #endif
-#if defined(TESTMULTIPOINTER)		
+#if defined(TESTMULTIPOINTER)
 		TESTXL(*wsEvent.Int(), ==, *expectedEvent.Int(), &wsEvent, &expectedEvent);
 #endif
 		}
-		
-    TAdvancedPointerEvent *expectedPointerEvent = expectedEvent.Pointer();
-    TAdvancedPointerEvent *actualPointerEvent = wsEvent.Pointer();
 
-    // Test only if it is a Pointer event  
-	if (wsType == EEventPointer)
+	// Test only if it is a Pointer event
+	if (wsType==EEventPointer)
 		{
+		TAdvancedPointerEvent* expectedPointerEvent=expectedEvent.Pointer();
+		TAdvancedPointerEvent* actualPointerEvent=wsEvent.Pointer();
 #if defined(FAILLOG)
+		TLogMessageText logText;
 		_LIT(KEventHandle, "Actual Window Handle from Wserv = %d Expected Window Handle = %d ");
 		logText.Format(KEventHandle, wsEvent.Handle(), expectedEvent.Handle());
 		iTest->LOG_MESSAGE(logText);
 #endif
-#if defined(TESTMULTIPOINTER)		
+#if defined(TESTMULTIPOINTER)
 		TESTXL(wsEvent.Handle(), ==, expectedEvent.Handle(), &wsEvent, &expectedEvent);
-#endif		
+#endif
 #if defined(FAILLOG)
 		_LIT(KPointerType, "Actual PointerType from Wserv = %d Expected PointerType = %d ");
 		logText.Format(KPointerType, actualPointerEvent->iType, expectedPointerEvent->iType);

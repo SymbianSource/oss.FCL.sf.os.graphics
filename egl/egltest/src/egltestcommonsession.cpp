@@ -451,7 +451,7 @@ EXPORT_C void CTestEglSession::ViewConfigsL()
 		}
 	}
 
-EXPORT_C TEglConfigMatchType GetMatchType(EGLint aAttrib, TEglConfigMatchRule aMatchRule)
+LOCAL_C TEglConfigMatchType GetMatchType(EGLint aAttrib, TEglConfigMatchRule aMatchRule)
 	{
 	const TConfigMatchRuleItem* curMatchRuleItem = KConfigMatchRules[aMatchRule];
 

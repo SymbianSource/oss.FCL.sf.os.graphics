@@ -366,7 +366,7 @@ EXPORTS
 	_ZN10RFontTableC1Ev @ 365 NONAME
 	_ZN10RFontTableC2Ev @ 366 NONAME
 	_ZN21RGlyphOutlineIterator4NextEv @ 367 NONAME
-	_ZN21RGlyphOutlineIterator4OpenER5CFontPjii @ 368 NONAME
+	_ZN21RGlyphOutlineIterator4OpenER5CFontPKjii @ 368 NONAME
 	_ZN21RGlyphOutlineIterator5CloseEv @ 369 NONAME
 	_ZN21RGlyphOutlineIteratorC1Ev @ 370 NONAME
 	_ZN21RGlyphOutlineIteratorC2Ev @ 371 NONAME

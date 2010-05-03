@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1998-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -34,6 +34,7 @@ PRJ_EXPORTS
 ../../inc/sizemode.h SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(sizemode.h)
 ../../inc/pointerevent.h SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(pointerevent.h)
 ../../inc/advancedpointerevent.h SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(advancedpointerevent.h)
+../../inc/advancedpointerevent.inl SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(advancedpointerevent.inl)
 ../../inc/textcursor.h SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(textcursor.h)
 #ifndef SYMBIAN_ENABLE_SPLIT_HEADERS
 #ifdef SYMBIAN_OLD_EXPORT_LOCATION
@@ -77,6 +78,7 @@ PRJ_EXPORTS
 ../../inc/Graphics/wsdisplaypolicy.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdisplaypolicy.h)
 ../../inc/Graphics/openwfc/wselement.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wselement.h)
 ../../inc/Graphics/openwfc/wsscene.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsscene.h)
+../../inc/Graphics/wscontentreadyforcomposition.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wscontentreadyforcomposition.h)
 
 //RemoteGc exports for partners
 ../../inc/RemoteGc.h		SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/remotegc.h)

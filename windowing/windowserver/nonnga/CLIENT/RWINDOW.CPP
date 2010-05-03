@@ -1,4 +1,4 @@
-// Copyright (c) 1994-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1994-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1698,7 +1698,7 @@ EXPORT_C void RWindowBase::SendEffectCommand(TInt /*aTfxCmd*/,const TDesC8& /*aT
 
 /** Dummy implementation in order to preserve compatibility with WSERV NGA.
     @internalComponent */
-EXPORT_C void RWindowBase::OverrideEffects(TBool /*aOneShot*/, TInt /*aAction*/, const TFileName& /*aResourceDir*/, const TFileName& /*aFilenamePhase1*/, const TFileName& /*aFilenamePhase2*/)
+EXPORT_C void RWindowBase::OverrideEffects(TInt /*aAction*/, const TFileName& /*aResourceDir*/, const TFileName& /*aFilenameOutgoing*/, const TFileName& /*aFilenameIncoming*/, TBitFlags /*aFlags*/)
     {
 	ASSERT(0);
     }

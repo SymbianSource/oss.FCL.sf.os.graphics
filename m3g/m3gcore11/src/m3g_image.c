@@ -835,22 +835,33 @@ static void m3gConvertPixels(M3GPixelFormat srcFormat, const M3Gubyte *src,
                              M3Gsizei count)
 {
     M3Guint temp[SPAN_BUFFER_SIZE];
+    const char endianTest[4] = { 1, 0, 0, 0 };
 
     M3Guint srcBpp = m3gBytesPerPixel(srcFormat);
     M3Guint dstBpp = m3gBytesPerPixel(dstFormat);
     M3G_ASSERT(srcBpp > 0 && dstBpp > 0);
 
     while (count > 0) {
-        M3Gsizei n = (count < SPAN_BUFFER_SIZE) ? count : SPAN_BUFFER_SIZE;
-        if (srcFormat == M3G_ARGB8 && dstFormat != M3G_ARGB8) {
+        M3Gsizei n = count;
+
+        /* Check the source and destination formats to avoid 
+           the intermediate ARGB format conversion. */
+        if (((srcFormat == M3G_RGBA8 && (dstFormat == M3G_BGRA8 || dstFormat == M3G_BGR8_32))
+            || (dstFormat == M3G_RGBA8 && (srcFormat == M3G_BGRA8 || srcFormat == M3G_BGR8_32))) 
+            && (n > 2) && ((*(const int *)endianTest) == 1)) {
+            /* use fast path for RGBA<->BGRA conversion */
+            fastConvertBGRAToRGBA(src, n * srcBpp, n, 1, dst);
+        } else if (srcFormat == M3G_ARGB8 && dstFormat != M3G_ARGB8) {
             convertFromARGB((M3Guint*)src, n, dstFormat, dst);
         } else if (srcFormat != M3G_ARGB8 && dstFormat == M3G_ARGB8) {
             convertToARGB(srcFormat, src, n, (M3Guint*)dst);
         } else {
+            /* no luck, do the conversion via ARGB (source format -> ARGB -> destination format) */
+            n = (count < SPAN_BUFFER_SIZE) ? count : SPAN_BUFFER_SIZE;
             convertToARGB(srcFormat, src, n, temp);
             convertFromARGB(temp, n, dstFormat, dst);
         }
-        count -= SPAN_BUFFER_SIZE; /* \note may go negative */
+        count -= n;
         src += n * srcBpp;
         dst += n * dstBpp;
     }
@@ -1302,6 +1313,12 @@ M3G_API M3GImage m3gCreateImage(/*@dependent@*/ M3GInterface interface,
                 return NULL;
             }
 
+#ifdef M3G_ENABLE_GLES_RESOURCE_HANDLING
+            /* If GLES resource freeing (see function m3gFreeGLESResources) 
+               is enabled, the GL texture might get deleted at any point, so
+			   a copy of the texture data has to be always kept in memory. */
+            img->pinned = M3G_TRUE;
+#else           
             /* Lock the image data in memory if the image is dynamic,
              * or the format has alpha information; otherwise, we'll
              * be able to get rid of an extra copy when generating a
@@ -1312,7 +1329,7 @@ M3G_API M3GImage m3gCreateImage(/*@dependent@*/ M3GInterface interface,
                     img->format != M3G_LUMINANCE)) {
                 img->pinned = M3G_TRUE;
             }
-
+#endif
             /* If the image can be used as a rendering target, clear
              * to opaque white by default */
             
@@ -1368,13 +1385,14 @@ M3G_API void m3gCommitImage(M3GImage hImage)
     
     image->flags = flags;
 
+#ifndef M3G_ENABLE_GLES_RESOURCE_HANDLING
     /* If the image format has no alpha information, we can discard
      * the image data under suitable conditions */
     
     if (image->format == M3G_RGB || image->format == M3G_LUMINANCE) {
         image->pinned = M3G_FALSE;
     }
-    
+#endif    
     M3G_LOG1(M3G_LOG_IMAGES, "Image 0x%08X made immutable\n",
              (unsigned) image);
 }
