@@ -23,7 +23,6 @@ PRJ_EXPORTS
 
 PRJ_MMPFILES
 openwfc.mmp
-openwfchwref.mmp
 openwfchwsyborg.mmp
 
 PRJ_TESTMMPFILES

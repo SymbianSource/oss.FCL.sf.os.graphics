@@ -19,12 +19,11 @@
 #include <egl.iby>
 #include <openwfc_support.iby>
 
-#ifndef __SYBORG__
-file=ABI_DIR\BUILD_DIR\libwfchwref.dll		\sys\bin\libwfchwref.dll
-alias \sys\bin\libwfchwref.dll				\sys\bin\libWFC.dll
+#ifdef __SYBORG__
+file=ABI_DIR\BUILD_DIR\libwfchwsyborg.dll      \sys\bin\libwfchwsyborg.dll
+alias \sys\bin\libwfchwsyborg.dll                      \sys\bin\libWFC.dll
 #else
-file=ABI_DIR\BUILD_DIR\libwfchwsyborg.dll	\sys\bin\libwfchwsyborg.dll
-alias \sys\bin\libwfchwsyborg.dll			\sys\bin\libWFC.dll
+file=ABI_DIR\BUILD_DIR\libWFC.dll                      \sys\bin\libWFC.dll
 #endif
 
 #endif // __OPENWFC_REF_IBY__

@@ -11,13 +11,13 @@
 // Contributors:
 //
 // Description:
-// OpenWFC Sample Implementation Hardware Reference
-// 
+// OpenWFC Sample Implementation
+//
 //
 
 
 //macros to enable filtering debug log output.
-//DEBUG_LOG must also be defined to enable logging 
+//DEBUG_LOG must also be defined to enable logging
 //(automatic if _DEBUG is defined, and DEBUG_DONOT_LOG is not defined)
 MACRO DEBUG_DONOT_LOG
 //MACRO DEBUG_LOG_FUNCTION=WFC_Element_
@@ -25,4 +25,4 @@ MACRO DEBUG_DONOT_LOG
 
 #include "openwfc.mmh"
 
-TARGET                 libwfchwref.dll
+TARGET                 libWFC.dll

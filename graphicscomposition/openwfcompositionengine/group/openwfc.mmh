@@ -14,11 +14,11 @@
 // Common project include header for OpenWFC DLL implementations
 // The need for this common header is so that three different versions of the
 // implementation can be generated:
-//   1.  WINSCW version (libWFC.dll)
-//   2.  Nokia ARM Reference Boards version (libwfchwref.dll)
-//   3.  Symbian Foundation Syborg Virtual Platform version (libwfchwsyborg.dll)
+//   1.  WINSCW version
+//   2.  ARM version for Nokia Reference Boards
+//   3.  Syborg version for Symbian Foundation SVP Reference Platform
 //
-//  Note for hardware platforms, the dll is aliased to libWFC.dll
+//  Note for syborg platform, the dll is aliased to libWFC.dll via rombuild
 //
 //
 
