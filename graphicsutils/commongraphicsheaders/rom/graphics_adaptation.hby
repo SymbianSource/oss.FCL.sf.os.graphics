@@ -133,6 +133,13 @@ WARNING SGXBACKEND is deprecated.
 	#       define OPENWFCLIB_DRV <openwfc_ref.iby>
 	#   endif
 	#endif
+
+    #ifdef SYMBIAN_GRAPHICS_USE_OPENWF
+    #   ifndef OPENWFCLIB_DRV
+    #       define OPENWFCLIB_DRV <openwfc_ref.iby>
+    #   endif
+    #endif
+
 	
 #elif SYMBIAN_GRAPHICS_ADAPTATION == SGA_MBX
 	// Imagination's MBX drivers used as default
@@ -237,5 +244,6 @@ REM "SURFACEUPDATE DRV"    : SURFACEUPDATE_DRV
 REM "DIRECTGDI DRV"        : DIRECTGDI_DRV 
 REM "FBSRASTERIZER DRV"    : FBSRASTERIZER_DRV 
 REM "SRGREOURCE DRV"       : SGRESOURCE_DRV 
+REM "OPENWFCLIB_DRV"       : OPENWFCLIB_DRV
 
 #endif  // __GRAPHICS_ADAPTATION_HBY__

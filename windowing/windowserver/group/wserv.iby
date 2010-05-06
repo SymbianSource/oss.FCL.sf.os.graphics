@@ -24,9 +24,13 @@ file=ABI_DIR\BUILD_DIR\wserv_nga.exe 	System\Libs\EwSrv.exe
 file=ABI_DIR\BUILD_DIR\ws32_nga.dll 	System\Libs\Ws32.dll
 file=ABI_DIR\BUILD_DIR\remotegc_nga.dll	System\Libs\remotegc.dll 
 file=ABI_DIR\BUILD_DIR\wsgraphicdrawer_nga.dll	System\Libs\WsGraphicDrawer.dll
-#ifndef SYMBIAN_GRAPHICS_USE_OPENWF 
+
+#if defined(SYMBIAN_GRAPHICS_USE_OPENWF) && !defined(SYMBIAN_GRAPHICS_USE_OPENWF_MIGRATION)
+REM Pure OpenWF implementation, so skipping proprietary compositor
+#else
 #include <gce.iby>
 #endif
+
 #include <wserv_std_plugins.iby>
 //wserv calls eglReleaseThread() on exit
 #include <egl.iby>
