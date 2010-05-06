@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -303,6 +303,7 @@ static TInt PixelFormatConversion(TUidPixelFormat aBaseFormat, OWF_IMAGE_FORMAT&
                 aFormat.rowPadding = 1;
                 aFormat.pixelFormat = OWF_IMAGE_UYVY;          
                 break;
+
             default:
                 aFormat.linear = OWF_FALSE;
                 aFormat.premultiplied = OWF_FALSE;

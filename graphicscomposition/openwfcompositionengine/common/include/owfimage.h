@@ -1,4 +1,5 @@
 /* Copyright (c) 2009 The Khronos Group Inc.
+ * Portions Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -305,7 +306,6 @@ OWF_Image_SetFlags(OWF_IMAGE* image,
  *----------------------------------------------------------------------------*/
 OWF_API_CALL void
 OWF_Image_SetPixelBuffer(OWF_IMAGE* image,      void* buffer);
-
 
 /*!---------------------------------------------------------------------------
  *  \brief Blit (1:1 copy) pixels from image to another w/ clipping.
