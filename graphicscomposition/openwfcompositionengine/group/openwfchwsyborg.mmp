@@ -1,0 +1,33 @@
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// OpenWFC Sample Implementation for Syborg.  This is the same as the reference
+// version, but differs in the area of the default screen rotation setting.
+// The reference version rotates the screen 270CW by default; the syborg version
+// does not.
+//
+//
+
+
+//macros to enable filtering debug log output.
+//DEBUG_LOG must also be defined to enable logging
+//(automatic if _DEBUG is defined, and DEBUG_DONOT_LOG is not defined)
+MACRO DEBUG_DONOT_LOG
+//MACRO DEBUG_LOG_FUNCTION=WFC_Element_
+//MACRO DEBUG_LOG_FILE=owfnotifications.c
+
+MACRO __SYBORG__
+
+#include "openwfc.mmh"
+
+TARGET                 libwfchwsyborg.dll

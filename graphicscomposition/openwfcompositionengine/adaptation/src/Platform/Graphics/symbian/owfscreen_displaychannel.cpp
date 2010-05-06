@@ -112,11 +112,6 @@ COWFScreenDisplayInfo::~COWFScreenDisplayInfo()
     iDispChan.Close();
     }
 
-/*
- * Temporary hack; whats the best config strategy for Syborg?
- */
-#define __SYBORG__
-
 void COWFScreenDisplayInfo::ConstructL()
     {
     User::LeaveIfError(iDispChan.Open(iScreenNumber));
