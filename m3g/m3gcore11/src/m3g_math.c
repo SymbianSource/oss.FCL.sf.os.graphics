@@ -1842,7 +1842,7 @@ static void m3gValidateAABB(const AABB *aabb)
  */
 #if defined(M3G_HW_FLOAT_VFPV2)
 
-M3G_API __asm void m3gLerp(M3Gint size,
+__weak __asm void m3gLerp(M3Gint size,
 				   M3Gfloat *vec,
 				   M3Gfloat s,
 				   const M3Gfloat *start, const M3Gfloat *end)
@@ -1853,6 +1853,7 @@ M3G_API __asm void m3gLerp(M3Gint size,
 // r3 = *start
 // sp[0] = *end
 
+		EXPORT	m3gLerp[DYNAMIC]
 		CODE32
 /*
     M3Gfloat sCompl = 1.0 - s;

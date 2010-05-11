@@ -175,10 +175,15 @@ TBool  CPalettizedScreenDevice<T,displayMode,pixelsPerWord>::SetDeviceOrientatio
 		}
 
 	// Need to update size, scan line size, etc.
+	CGenericScreenDevice::SetSize(newSize);
+	
+	// Setting iScanLineWords MUST occur after the call to SetSize because SetSize itself
+	// sets iScanLineBytes to support offscreen bitmaps and may do so incorrectly for hardware devices
+	// as it just uses the width, whereas BytesPerScanline takes into account any extra bytes needed
+	// as defined by the hardware.
 	CGenericScreenDevice::iScanLineWords = CGenericScreenDevice::iHelper.BytesPerScanline() / 4;	 //presumption here that BPS is always mod4.
 	CGenericScreenDevice::iBits = (TUint32*)CGenericScreenDevice::iHelper.AddressFirstPixel();
 	__ASSERT_ALWAYS(CGenericScreenDevice::iScanLineWords && CGenericScreenDevice::iBits,Panic(EScreenDriverPanicInvalidHalValue));
-	CGenericScreenDevice::SetSize(newSize);
 
 	return ETrue;
 	}
@@ -216,10 +221,15 @@ TBool  CGuidScreenDevice<T,guidMode,pixelsPerWord>::SetDeviceOrientation(TDevice
 		}
 
 	// Need to update size, scan line size, etc.
+	CGenericScreenDevice::SetSize(newSize);
+	
+	// Setting iScanLineWords MUST occur after the call to SetSize because SetSize itself
+	// sets iScanLineBytes to support offscreen bitmaps and may do so incorrectly for hardware devices
+	// as it just uses the width, whereas BytesPerScanline takes into account any extra bytes needed
+	// as defined by the hardware.
 	CGenericScreenDevice::iScanLineWords = CGenericScreenDevice::iHelper.BytesPerScanline() / 4;	 //presumption here that BPS is always mod4.
 	CGenericScreenDevice::iBits = (TUint32*)CGenericScreenDevice::iHelper.AddressFirstPixel();
 	__ASSERT_ALWAYS(CGenericScreenDevice::iScanLineWords && CGenericScreenDevice::iBits,Panic(EScreenDriverPanicInvalidHalValue));
-	CGenericScreenDevice::SetSize(newSize);
 
 	return ETrue;
 	}

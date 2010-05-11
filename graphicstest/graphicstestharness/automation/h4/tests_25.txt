@@ -13,4 +13,4 @@
 # 
 # Description:
 
-# TESTEXECUTE, \logs\testexecute\changetracking_per_screen.htm,			, z:\talf\changetracking_per_screen.script, 600
+TESTEXECUTE, \logs\testexecute\changetracking_per_screen.htm,			, z:\talf\changetracking_per_screen.script, 600

@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -390,7 +390,7 @@ EXPORT_C void CFbsDrvControl::SetPageSizeL()
 EXPORT_C TBool CFbsDrvControl::TransformBuffer()
 	{	
 	TInt i;
-	for (i = iScanLine->Des().Length() - 1; (i >= 0) && (iScanLine->Des()[i] == 0xFF); i--)
+	for (i = iScanLine->Length() - 1; (i >= 0) && (iScanLine->Des()[i] == 0xFF); i--)
 		{
 		}
 	TInt length = i + 1;
