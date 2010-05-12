@@ -45,10 +45,10 @@ LIBRARY         avkon.lib fbscli.lib efsrv.lib
 library 		gdi.lib
 LIBRARY         ws32.lib
 LIBRARY			fntstr.lib
-//LIBRARY         sflibopenvgrefimpl.lib
-//LIBRARY			libegl_sw.lib
-library		     libEGL.lib
-LIBRARY     libopenvg_sw.lib
+//LIBRARY       sflibopenvgrefimpl.lib
+//LIBRARY		libegl_sw.lib
+library		    libEGL.lib
+LIBRARY     	libopenvg_sw.lib
 
 START RESOURCE ..\data\tiger_reg.rss
 #ifdef WINSCW

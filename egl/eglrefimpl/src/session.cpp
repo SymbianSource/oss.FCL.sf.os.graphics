@@ -72,7 +72,8 @@ const TInt KEglMinorVersion = 4;
                                                                 
 CEglThreadSession::CEglThreadSession(CEglDriver& aDriver):
 	iDriver(aDriver),
-	iError(EGL_SUCCESS)
+	iError(EGL_SUCCESS),
+	iEgl(NULL)
 	{
 	Dll::SetTls( NULL ); 
 	}
@@ -202,7 +203,8 @@ EGLBoolean CEglThreadSession::EglInitialize(EGLDisplay aDisplay, EGLint* aMajor,
 	}
 	catch(std::bad_alloc)
 	{
-		RI_DELETE(pEgl);
+		RI_DELETE(iEgl);
+		iEgl = NULL;
 		RI_DELETE(newDisplay);
     	SetError(EGL_BAD_DISPLAY);
     	return EGL_FALSE;

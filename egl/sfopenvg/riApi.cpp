@@ -2554,11 +2554,7 @@ static bool drawPath(VGContext* context, VGPath path, const Matrix3x3& userToSur
 {
 	//set up rendering surface and mask buffer
     Drawable* drawable = context->getCurrentDrawable();
-    RDebug::Printf(" ***************** In drawPath,Drawable addr is %x  $$$$$$$$$$$$$ ",drawable);
-    RDebug::Printf(" $$$$$$$$$$$$$ In drawPath,VGContext addr is %x  $$$$$$$$$$$$$ ",context);
-    RDebug::Printf(" $$$$$$$$$$$$$ In drawPath,Widthis %d  $$$$$$$$$$$$$ ",drawable->getWidth());
-    RDebug::Printf(" $$$$$$$$$$$$$ In drawPath,Height is %d  $$$$$$$$$$$$$ ",drawable->getHeight());
-       
+      
     if(!drawable)
         return false;   //no EGL surface is current at the moment
 
@@ -2603,9 +2599,7 @@ static bool drawPath(VGContext* context, VGPath path, const Matrix3x3& userToSur
 		{
 			surfaceToPaintMatrix[2].set(0,0,1);		//force affinity
 			pixelPipe.setSurfaceToPaintMatrix(surfaceToPaintMatrix);
-			RDebug::Printf(" $$$$$$$$$$$$$ In drawPath,Widthis %d  $$$$$$$$$$$$$ ",drawable->getWidth());
-			RDebug::Printf(" $$$$$$$$$$$$$ In drawPath,Height is %d  $$$$$$$$$$$$$ ",drawable->getHeight());
-            renderStroke(context, drawable->getWidth(), drawable->getHeight(), numSamples, (Path*)path, rasterizer, &pixelPipe, userToSurface);
+		    renderStroke(context, drawable->getWidth(), drawable->getHeight(), numSamples, (Path*)path, rasterizer, &pixelPipe, userToSurface);
 		}
 	}
 	return true;

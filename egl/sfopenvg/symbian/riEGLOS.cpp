@@ -86,9 +86,9 @@ void OSReleaseMutex(void)
 
 struct OSWindowContext
 {
-	//RDrawableWindow*    iDrawWindow; //added by Jose.
+	//RDrawableWindow*    iDrawWindow;
 	TNativeWindowType   iNativeWindowType;
-	//TNativeWindowType*  iNativeWindowType;   
+	   
 };
 
 void* OSCreateWindowContext(EGLNativeWindowType window)
@@ -102,11 +102,11 @@ void* OSCreateWindowContext(EGLNativeWindowType window)
 	{
 		return NULL;
 	}
-    //ctx->iNativeWindowType = (TNativeWindowType*)window;   //added by Jose
+    //ctx->iNativeWindowType = (TNativeWindowType*)window;
 	
-	RDrawableWindow* drawbleWindow = (RDrawableWindow*)window; //added by Jose
-	ctx->iNativeWindowType.iSize.iHeight = drawbleWindow->Size().iHeight;//added by Jose
-	ctx->iNativeWindowType.iSize.iWidth = drawbleWindow->Size().iWidth;	//added by Jose	
+	RDrawableWindow* drawbleWindow = (RDrawableWindow*)window;
+	ctx->iNativeWindowType.iSize.iHeight = drawbleWindow->Size().iHeight;
+	ctx->iNativeWindowType.iSize.iWidth = drawbleWindow->Size().iWidth;
 		
     return ctx;
 }
@@ -139,12 +139,7 @@ void OSGetWindowSize(const void* context, int& width, int& height)
     {
     	width=ctx->iNativeWindowType.iSize.iWidth;
 		height=ctx->iNativeWindowType.iSize.iHeight; 
-		
-		RDebug::Printf(" $$$$$$$$$$$$$ In OSGetWindowSize,Thread Id %Lu  $$$$$$$$$$$$$ ",(RThread().Id()));
-		RDebug::Printf(" $$$$$$$$$$$$$ In OSGetWindowSize,Width is  %d  $$$$$$$$$$$$$ ",width);
-		RDebug::Printf(" $$$$$$$$$$$$$ In OSGetWindowSize,Height is %d  $$$$$$$$$$$$$ ",height);
-		
-    }
+	}
     else
     {
         width = 0;
@@ -162,17 +157,14 @@ EGLDisplay OSGetDisplay(EGLNativeDisplayType display_id)
 
 void OSBlitToWindow(void* context, const Drawable* drawable)
 {
-	
-    OSWindowContext* ctx = (OSWindowContext*)context;
+	TUint w = drawable->getWidth();
+	TUint h = drawable->getHeight();
+    
+	OSWindowContext* ctx = (OSWindowContext*)context;
     //blit if either of iBitmap or iMaskBitmap exist
     if(ctx && ctx->iNativeWindowType.iBitmap)
     {
-        TUint w = drawable->getWidth();
-        TUint h = drawable->getHeight();
-        
-        RDebug::Printf("!!!!!!!!!!!!!!!!!!!!!!!!!! In OSBlitToWindow(),w is = %d\n", w);
-        RDebug::Printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!In OSBlitToWindow,h is = %d\n", h);
-        
+      
         //these should be same as bitmap
         if(ctx->iNativeWindowType.iBitmap)
         	{
@@ -238,10 +230,7 @@ EGLBoolean OSGetNativePixmapInfo(NativePixmapType pixmap, int* width, int* heigh
     *width  = size.iWidth;
     *height = size.iHeight;
     *stride = ((CFbsBitmap*)pixmap)->DataStride();   
-    
-    RDebug::Printf(" ---------------------------- In OSGetNativePixmapInfo  width is %d  ^^^^^^^^^^^^^^^^^ ",size.iWidth);
-    RDebug::Printf(" ---------------------------- In OSGetNativePixmapInfo,height addr is %d  ^^^^^^^^^^^^^^^^",size.iHeight);
-    
+   
     *data = (int*)(((CFbsBitmap*)pixmap)->DataAddress());
     TDisplayMode mode = ((CFbsBitmap*)pixmap)->DisplayMode(); 
 	switch(mode)
