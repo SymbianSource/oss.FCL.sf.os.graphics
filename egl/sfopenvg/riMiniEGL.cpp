@@ -298,24 +298,8 @@ EGL* getEGL()
 		delete es;
 		return NULL;
 		}
-	
 	return es->getEgl();
-	
-	//TODO do we need to associate EGL with session here Jose
-/*	if ((pEgl = static_cast<EGL*> (Dll::Tls())) == NULL)
-		{
-		//create TLS instance
-		pEgl = RI_NEW(EGL, ());
-		RDebug::Printf("---------- In getEGL()::Static(),Addr of pEgl Ptr = %x\n", &pEgl);
-		RDebug::Printf("---------- In getEGL()::Static(),Addr of pEgl= %x\n", pEgl);
-		//RDebug::Printf("In CEglThreadSession::Static(),Thread Id %Lu",(RThread().Id().Id()));
-		RDebug::Printf("---------- In getEGL()::Static(),Thread Id %Lu",(RThread().Id()));
-		Dll::SetTls(pEgl);
-		}*/
-	//return pEgl;
-
 	}
-
 
 static void releaseEGL()
 	{
@@ -482,19 +466,9 @@ static void eglSetError(EGL* egl, EGLint error)
 void* eglvgGetCurrentVGContext(void)
 	{
 	EGL* egl = getEGL();
-/*	RDebug::Printf(" \n");
-	RDebug::Printf(" \n");
-	RDebug::Printf(" \n");
-	
-	
-	RDebug::Printf(" $$$$$$$$$$$$$ I am in function eglvgGetCurrentVGContext $$$$$$$$$$$$$$$$$\n");
-	RDebug::Printf(" $$$$$$$$$$$$$ In eglvgGetCurrentVGContext,Thread Id %Lu  $$$$$$$$$$$$$ ",(RThread().Id()));*/
-	
-			
 	if (egl)
 		{
 		RIEGLThread* thread = egl->getCurrentThread();
-		//RDebug::Printf(" $$$$$$$$$$$$$ I am in function eglvgGetCurrentVGContext.EGL addr is %x = \n",egl);
 		if (thread)
 			{
 			RI_ASSERT(thread->getCurrentContext() && thread->getCurrentSurface());
@@ -1581,9 +1555,6 @@ EGLContext eglCreateContext(EGLDisplay dpy, EGLConfig config, EGLContext share_c
 		vgctx
 				= RI_NEW(OpenVGRI::VGContext, (share_context ? ((RIEGLContext*)share_context)->getVGContext() : NULL)); //throws bad_alloc
 		c = RI_NEW(RIEGLContext, (vgctx, config)); //throws bad_alloc
-		
-		RDebug::Printf(" ---------------------------- In eglCreateContext,VGContext addr is %x  $$$$$$$$$$$$$ ",vgctx);
-		RDebug::Printf(" ---------------------------- In eglCreateContext,RIEGLContext addr is %x  $$$$$$$$$$$$$ ",c);
 		c->addReference();
 		display->addContext(c); //throws bad_alloc
 		}
@@ -1705,7 +1676,6 @@ EGLBoolean eglMakeCurrent(EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLC
 			EGL_RETURN(EGL_BAD_ALLOC, EGL_FALSE);
 		newThread->makeCurrent(c, s);
 		Drawable* temp = s->getDrawable();
-		RDebug::Printf(" ------------------------------ In Drawable* temp,Drawable addr is %x  $$$$$$$$$$$$$ ",temp);
 		c->getVGContext()->setDefaultDrawable(s->getDrawable());
 
 		try

@@ -180,9 +180,10 @@ public:
 	
 	// Private APIs
 	EGLint EglSignalSyncInternal(EGLDisplay aDisplay, EGLSyncKHR aSync, EGLenum aMode);
-    //added by Jose
+   
 	void SetEgl(EGL* aEgl);
 	EGL* getEgl();
+	
 	CEglThreadSession(CEglDriver& aDriver);
 	// Debug APIs
 #ifdef _DEBUG

@@ -74,7 +74,7 @@ CEglThreadSession::CEglThreadSession(CEglDriver& aDriver):
 	iDriver(aDriver),
 	iError(EGL_SUCCESS)
 	{
-	Dll::SetTls( NULL ); //set TLS to NULL Jose
+	Dll::SetTls( NULL ); 
 	}
 
 CEglThreadSession::~CEglThreadSession()
@@ -87,10 +87,6 @@ CEglThreadSession* CEglThreadSession::Static()
 	{
 	CEglThreadSession* es = reinterpret_cast<CEglThreadSession*>(Dll::Tls());
 	
-	if(es)
-		{
-		RDebug::Printf(" &&&&&&&&&&&&&&&&& if CEglThreadSession not null,CEglThreadSession Addr of CEglThreadSession &&&&&&&&&&&= %x\n", es);
-		}
 	if (es)
 		{
 		return es;
@@ -109,10 +105,6 @@ CEglThreadSession* CEglThreadSession::Static()
 
 	// create session object on default thread's heap
 	es = new CEglThreadSession(*drv);
-	RDebug::Printf("In CEglThreadSession::Static(),CEglThreadSession Addr of CEglThreadSession Ptr = %x\n", &es);
-	RDebug::Printf("In CEglThreadSession::Static(),CEglThreadSession Addr of CEglThreadSession= %x\n", es);
-	//RDebug::Printf("In CEglThreadSession::Static(),Thread Id %Lu",(RThread().Id().Id()));
-	RDebug::Printf("In CEglThreadSession::Static(),Thread Id %Lu",(RThread().Id()));
 	if (!es || Dll::SetTls(es)!= KErrNone)
 		{
 		delete es;
@@ -183,29 +175,39 @@ EGLBoolean CEglThreadSession::EglInitialize(EGLDisplay aDisplay, EGLint* aMajor,
         SetError(EGL_NOT_INITIALIZED);
         return EGL_FALSE;
         }
-    EGL* pEgl = NULL;
-    pEgl = new EGL();
     
-    iEgl = pEgl;
+    EGL* pEgl = NULL;
+    
+    try
+    {
+		pEgl = new EGL();
+		iEgl = pEgl;
+    }
+    catch(std::bad_alloc)
+    {
+    	SetError(EGL_BAD_ALLOC);
+    	return EGL_FALSE;
+    }
     
     RIEGLDisplay* Egldisplay = iEgl->getDisplay(aDisplay);
     //create the current display
-    //if a context and a surface are bound by the time of eglTerminate, they remain bound until eglMakeCurrent is called
+    
 	RIEGLDisplay* newDisplay = NULL;
 	try
 	{
-		newDisplay = new RIEGLDisplay(aDisplay);	//throws bad_alloc
+		newDisplay = new RIEGLDisplay(aDisplay); //throws bad_alloc
 		iEgl->addDisplay(newDisplay);	//throws bad_alloc
 		Egldisplay = newDisplay;
 		RI_ASSERT(Egldisplay);
 	}
 	catch(std::bad_alloc)
 	{
+		RI_DELETE(pEgl);
 		RI_DELETE(newDisplay);
-	//	EGL_RETURN(EGL_BAD_ALLOC, EGL_FALSE); //TODO Need to enable this later. Jose
+    	SetError(EGL_BAD_DISPLAY);
+    	return EGL_FALSE;
 	}
     
-    //need to think of deleting egl if anything goes wrong.
     if (aMajor)	
         {
         *aMajor = KEglMajorVersion;
