@@ -27,6 +27,8 @@
 #define PANIC_NOT_SUPPORTED     RDebug::Printf("EGL Panic %s %s:%d\n",__func__,__FILE__,__LINE__);User::Panic(KEglPanicCategory, EEglPanicNotSupported); \
                                 return 0;
 
+
+
 // EGL API entrypoints
 //
 EXPORT_C EGLDisplay eglGetDisplay(NativeDisplayType display_id)
@@ -78,165 +80,195 @@ EXPORT_C const char* eglQueryString(EGLDisplay dpy, EGLint name)
 	return session->EglQueryString(dpy, name);
 	}
 
+typedef void (*eglfPtr)(...);
 EXPORT_C TFuncPtrEglProc eglGetProcAddress (const char *procname)
 	{
 	GET_THREAD_SESSION(session, NULL)
 	return session->EglGetProcAddress(procname);
+	
+	//eglfPtr pname = do_eglGetProcAddress(procname);
+	//return pname;
 	}
 
 // Unsupported EGL APIs
 //
-EXPORT_C EGLBoolean eglGetConfigs(EGLDisplay /*dpy*/, EGLConfig */*configs*/,
-			 EGLint /*config_size*/, EGLint */*num_config*/)
+EXPORT_C EGLBoolean eglGetConfigs(EGLDisplay dpy, EGLConfig *configs,
+			 EGLint config_size, EGLint *num_config)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglGetConfigs(dpy, configs,config_size, num_config);
 	}
 
-EXPORT_C EGLBoolean eglChooseConfig(EGLDisplay /*dpy*/, const EGLint */*attrib_list*/,
-			   EGLConfig */*configs*/, EGLint /*config_size*/,
-			   EGLint */*num_config*/)
+EXPORT_C EGLBoolean eglChooseConfig(EGLDisplay dpy, const EGLint *attrib_list,
+			        EGLConfig *configs, EGLint config_size,EGLint *num_config)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglChooseConfig(dpy, attrib_list,configs, config_size,num_config);
 	}
 	
-EXPORT_C EGLBoolean eglGetConfigAttrib(EGLDisplay /*dpy*/, EGLConfig /*config*/,
-			      EGLint /*attribute*/, EGLint */*value*/)
+EXPORT_C EGLBoolean eglGetConfigAttrib(EGLDisplay dpy, EGLConfig config,
+									   EGLint attribute, EGLint *value)
 	{
-	PANIC_NOT_SUPPORTED	
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglGetConfigAttrib(dpy, config,attribute,value);
 	}
 
-EXPORT_C EGLSurface eglCreateWindowSurface(EGLDisplay /*dpy*/, EGLConfig /*config*/,
-				  EGLNativeWindowType /*win*/,
-				  const EGLint */*attrib_list*/)
+EXPORT_C EGLSurface eglCreateWindowSurface(EGLDisplay dpy, EGLConfig config, EGLNativeWindowType win,
+		                                   const EGLint *attrib_list)
 	{
-	PANIC_NOT_SUPPORTED	
+	GET_THREAD_SESSION(session, EGL_NO_SURFACE)
+	return session->EglCreateWindowSurface(dpy, config,win,attrib_list);
 	}
 
-EXPORT_C EGLSurface eglCreatePbufferSurface(EGLDisplay /*dpy*/, EGLConfig /*config*/,
-				   const EGLint */*attrib_list*/)
+EXPORT_C EGLSurface eglCreatePbufferSurface(EGLDisplay dpy, EGLConfig config,
+				   const EGLint *attrib_list)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_NO_SURFACE)
+	return session->EglCreatePbufferSurface(dpy, config,attrib_list);
 	}
 
-EXPORT_C EGLSurface eglCreatePixmapSurface(EGLDisplay /*dpy*/, EGLConfig /*config*/,
-				  EGLNativePixmapType /*pixmap*/,
-				  const EGLint */*attrib_list*/)
+EXPORT_C EGLSurface eglCreatePixmapSurface(EGLDisplay dpy, EGLConfig config,
+				  EGLNativePixmapType pixmap,
+				  const EGLint *attrib_list)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_NO_SURFACE)
+	return session->EglCreatePixmapSurface(dpy, config,pixmap,attrib_list);
 	}
 
-EXPORT_C EGLBoolean eglDestroySurface(EGLDisplay /*dpy*/, EGLSurface /*surface*/)
+EXPORT_C EGLBoolean eglDestroySurface(EGLDisplay dpy, EGLSurface surface)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglDestroySurface(dpy, surface);
 	}
 
-EXPORT_C EGLBoolean eglQuerySurface(EGLDisplay /*dpy*/, EGLSurface /*surface*/,
-			   EGLint /*attribute*/, EGLint */*value*/)
+EXPORT_C EGLBoolean eglQuerySurface(EGLDisplay dpy, EGLSurface surface,
+			   EGLint attribute, EGLint *value)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglQuerySurface(dpy, surface,attribute, value);
 	}
 
-EXPORT_C EGLBoolean eglBindAPI(EGLenum /*api*/)
+EXPORT_C EGLBoolean eglBindAPI(EGLenum api)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglBindAPI(api);
 	}
 
 EXPORT_C EGLenum eglQueryAPI(void)
 	{
-	PANIC_NOT_SUPPORTED	
+	GET_THREAD_SESSION(session, EGL_NONE)
+	return session->EglQueryAPI();
 	}
 
 EXPORT_C EGLBoolean eglWaitClient(void)
 	{
-	PANIC_NOT_SUPPORTED	
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglWaitClient();
 	}
 
 EXPORT_C EGLSurface eglCreatePbufferFromClientBuffer(
-	      EGLDisplay /*dpy*/, EGLenum /*buftype*/, EGLClientBuffer /*buffer*/,
-	      EGLConfig /*config*/, const EGLint */*attrib_list*/)
+	      EGLDisplay dpy, EGLenum buftype, EGLClientBuffer buffer,
+	      EGLConfig config, const EGLint *attrib_list)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_NO_SURFACE)
+	return session->EglCreatePbufferFromClientBuffer(dpy, buftype, buffer,config, attrib_list);
 	}
 
-EXPORT_C EGLBoolean eglSurfaceAttrib(EGLDisplay /*dpy*/, EGLSurface /*surface*/,
-			    EGLint /*attribute*/, EGLint /*value*/)
+EXPORT_C EGLBoolean eglSurfaceAttrib(EGLDisplay dpy, EGLSurface surface,
+			    EGLint attribute, EGLint value)
 	{
-	PANIC_NOT_SUPPORTED	
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglSurfaceAttrib(dpy, surface,attribute, value);
 	}
 
-EXPORT_C EGLBoolean eglBindTexImage(EGLDisplay /*dpy*/, EGLSurface /*surface*/, EGLint /*buffer*/)
+EXPORT_C EGLBoolean eglBindTexImage(EGLDisplay dpy, EGLSurface surface, EGLint buffer)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglBindTexImage(dpy, surface, buffer);
 	}
 
-EXPORT_C EGLBoolean eglReleaseTexImage(EGLDisplay /*dpy*/, EGLSurface /*surface*/, EGLint /*buffer*/)
+EXPORT_C EGLBoolean eglReleaseTexImage(EGLDisplay dpy, EGLSurface surface, EGLint buffer)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglReleaseTexImage(dpy, surface, buffer);
 	}
 
-EXPORT_C EGLBoolean eglSwapInterval(EGLDisplay /*dpy*/, EGLint /*interval*/)
+EXPORT_C EGLBoolean eglSwapInterval(EGLDisplay dpy, EGLint interval)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglSwapInterval(dpy, interval);
 	}
 
-EXPORT_C EGLContext eglCreateContext(EGLDisplay /*dpy*/, EGLConfig /*config*/,
-			    EGLContext /*share_context*/,
-			    const EGLint */*attrib_list*/)
+EXPORT_C EGLContext eglCreateContext(EGLDisplay dpy, EGLConfig config,
+			    EGLContext share_context,
+			    const EGLint *attrib_list)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_NO_CONTEXT)
+	return session->EglCreateContext(dpy, config,share_context,attrib_list);
 	}
 
-EXPORT_C EGLBoolean eglDestroyContext(EGLDisplay /*dpy*/, EGLContext /*ctx*/)
+EXPORT_C EGLBoolean eglDestroyContext(EGLDisplay dpy, EGLContext ctx)
 	{
-	PANIC_NOT_SUPPORTED	
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglDestroyContext(dpy, ctx);
 	}
 
-EXPORT_C EGLBoolean eglMakeCurrent(EGLDisplay /*dpy*/, EGLSurface /*draw*/,
-			  EGLSurface /*read*/, EGLContext /*ctx*/)
+EXPORT_C EGLBoolean eglMakeCurrent(EGLDisplay dpy, EGLSurface draw,
+			  EGLSurface read, EGLContext ctx)
 	{
-	PANIC_NOT_SUPPORTED	
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglMakeCurrent(dpy, draw,read, ctx);
 	}
 
 EXPORT_C EGLContext eglGetCurrentContext(void)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_NO_CONTEXT)
+	return session->EglGetCurrentContext();
 	}
 
-EXPORT_C EGLSurface eglGetCurrentSurface(EGLint /*readdraw*/)
+EXPORT_C EGLSurface eglGetCurrentSurface(EGLint readdraw)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_NO_SURFACE)
+	return session->EglGetCurrentSurface(readdraw);
 	}
 
 EXPORT_C EGLDisplay eglGetCurrentDisplay(void)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_NO_DISPLAY)
+	return session->EglGetCurrentDisplay();
 	}
 
-EXPORT_C EGLBoolean eglQueryContext(EGLDisplay /*dpy*/, EGLContext /*ctx*/,
-			   EGLint /*attribute*/, EGLint */*value*/)
+EXPORT_C EGLBoolean eglQueryContext(EGLDisplay dpy, EGLContext ctx,
+			   EGLint attribute, EGLint *value)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglQueryContext(dpy, ctx,attribute, value);
 	}
 
 EXPORT_C EGLBoolean eglWaitGL(void)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglWaitGL();
 	}
 
-EXPORT_C EGLBoolean eglWaitNative(EGLint /*engine*/)
+EXPORT_C EGLBoolean eglWaitNative(EGLint engine)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglWaitNative(engine);
 	}
 
-EXPORT_C EGLBoolean eglSwapBuffers(EGLDisplay /*dpy*/, EGLSurface /*surface*/)
+EXPORT_C EGLBoolean eglSwapBuffers(EGLDisplay dpy, EGLSurface surface)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglSwapBuffers(dpy, surface);
 	}
 
-EXPORT_C EGLBoolean eglCopyBuffers(EGLDisplay /*dpy*/, EGLSurface /*surface*/,
-			  EGLNativePixmapType /*target*/)
+EXPORT_C EGLBoolean eglCopyBuffers(EGLDisplay dpy, EGLSurface surface,
+			  EGLNativePixmapType target)
 	{
-	PANIC_NOT_SUPPORTED
+	GET_THREAD_SESSION(session, EGL_FALSE)
+	return session->EglCopyBuffers(dpy, surface,target);
+	
 	}
 
 // EGL_KHR_reusable_sync APIs

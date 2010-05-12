@@ -68,7 +68,7 @@ source riVGU.cpp
 SOURCEPATH ..\sfopenvg\symbian
 SOURCE riEGLOS.cpp
 
-library			    libopenvg_sw.lib
+library			libopenvg_sw.lib
 library         euser.lib     		// Mandatory
 library         fbscli.lib    		// For CFbsBitmap, etc
 library         bitgdi.lib    		// For CFbsBitmapDevice, CFbsBitGc, etc

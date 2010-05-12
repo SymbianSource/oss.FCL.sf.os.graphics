@@ -19,8 +19,8 @@
 #include <vg\vgcontext_symbian.h>
 #include <egl.h>
 
-#define MAX_WIDTH 		320*4 // in bytes
-#define MAX_HEIGHT 		320*4 // in bytes
+#define MAX_WIDTH 		320*4/// in bytes640*4 //
+#define MAX_HEIGHT 		320*4 // in bytes 480 //
 class TEgl
 	{
 public:
@@ -138,7 +138,12 @@ VGI_API_CALL TInt VGISymbianInitialize( TSize aSize, VGIColorSpace /*aColorSpace
 		__ASSERT_ALWAYS(eglGetError() == EGL_SUCCESS,User::Invariant());
 		__ASSERT_ALWAYS(numconfigs == 1,User::Invariant());
 		
-		TSize maxSize(MAX_WIDTH,MAX_HEIGHT);
+		//TSize maxSize(MAX_WIDTH,MAX_HEIGHT);
+		TSize maxSize(aSize.iWidth, aSize.iHeight);
+		
+		 RDebug::Printf(" ££££££££££££££££££ In VGISymbianInitialize,aSize.iWidth is %d  $$$$$$$$$$$$$ ",aSize.iWidth);
+		 RDebug::Printf(" £££££££££££££££££££ In VGISymbianInitialize,aSize.iHeight is %d  $$$$$$$$$$$$$ ",aSize.iHeight);
+		    
 		egl.iPixmap = new(ELeave) CFbsBitmap();
 		egl.iPixmap->Create( maxSize, EColor16MA );
 		 

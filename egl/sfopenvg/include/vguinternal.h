@@ -19,7 +19,6 @@
 
 #include <vgu.h>
 
-
 /*
  * defines set of internal vgu functions that are 1:1 with the published vgu functions.
  * E.g. vguLine -> do_vguLine
@@ -36,6 +35,5 @@ IMPORT_C VGUErrorCode do_vguArc(VGPath path, VGfloat x, VGfloat y, VGfloat width
 IMPORT_C VGUErrorCode do_vguComputeWarpQuadToSquare(VGfloat sx0, VGfloat sy0, VGfloat sx1, VGfloat sy1, VGfloat sx2, VGfloat sy2, VGfloat sx3, VGfloat sy3, VGfloat * matrix);
 IMPORT_C VGUErrorCode do_vguComputeWarpSquareToQuad(VGfloat dx0, VGfloat dy0, VGfloat dx1, VGfloat dy1, VGfloat dx2, VGfloat dy2, VGfloat dx3, VGfloat dy3, VGfloat * matrix);
 IMPORT_C VGUErrorCode do_vguComputeWarpQuadToQuad(VGfloat dx0, VGfloat dy0, VGfloat dx1, VGfloat dy1, VGfloat dx2, VGfloat dy2, VGfloat dx3, VGfloat dy3, VGfloat sx0, VGfloat sy0, VGfloat sx1, VGfloat sy1, VGfloat sx2, VGfloat sy2, VGfloat sx3, VGfloat sy3, VGfloat * matrix);
-
 
 #endif

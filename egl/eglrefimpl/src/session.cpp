@@ -12,7 +12,7 @@
 //
 // Description:
 // Reference EGL implementation to support EGL sync objects and OpenWF extensions
-
+#include <e32debug.h>
 #include "eglprivate.h"
 
 const TInt KEglMajorVersion = 1;
@@ -74,16 +74,23 @@ CEglThreadSession::CEglThreadSession(CEglDriver& aDriver):
 	iDriver(aDriver),
 	iError(EGL_SUCCESS)
 	{
+	Dll::SetTls( NULL ); //set TLS to NULL Jose
 	}
 
 CEglThreadSession::~CEglThreadSession()
 	{
+	delete iEgl;
 	CEglDriver::Close();
 	}
 
 CEglThreadSession* CEglThreadSession::Static()
 	{
 	CEglThreadSession* es = reinterpret_cast<CEglThreadSession*>(Dll::Tls());
+	
+	if(es)
+		{
+		RDebug::Printf(" &&&&&&&&&&&&&&&&& if CEglThreadSession not null,CEglThreadSession Addr of CEglThreadSession &&&&&&&&&&&= %x\n", es);
+		}
 	if (es)
 		{
 		return es;
@@ -102,6 +109,10 @@ CEglThreadSession* CEglThreadSession::Static()
 
 	// create session object on default thread's heap
 	es = new CEglThreadSession(*drv);
+	RDebug::Printf("In CEglThreadSession::Static(),CEglThreadSession Addr of CEglThreadSession Ptr = %x\n", &es);
+	RDebug::Printf("In CEglThreadSession::Static(),CEglThreadSession Addr of CEglThreadSession= %x\n", es);
+	//RDebug::Printf("In CEglThreadSession::Static(),Thread Id %Lu",(RThread().Id().Id()));
+	RDebug::Printf("In CEglThreadSession::Static(),Thread Id %Lu",(RThread().Id()));
 	if (!es || Dll::SetTls(es)!= KErrNone)
 		{
 		delete es;
@@ -141,7 +152,14 @@ EGLDisplay CEglThreadSession::EglGetDisplay(NativeDisplayType aDisplayId)
 
     return KEglDefaultDisplayHandle;
     }
-
+void CEglThreadSession::SetEgl(EGL* aEgl)
+	{
+	iEgl = aEgl;
+	}
+EGL* CEglThreadSession::getEgl()
+	{
+	return iEgl;
+	}
 EGLBoolean CEglThreadSession::EglInitialize(EGLDisplay aDisplay, EGLint* aMajor, EGLint* aMinor)
     {
     SetError(EGL_SUCCESS);
@@ -165,8 +183,30 @@ EGLBoolean CEglThreadSession::EglInitialize(EGLDisplay aDisplay, EGLint* aMajor,
         SetError(EGL_NOT_INITIALIZED);
         return EGL_FALSE;
         }
-
-    if (aMajor)
+    EGL* pEgl = NULL;
+    pEgl = new EGL();
+    
+    iEgl = pEgl;
+    
+    RIEGLDisplay* Egldisplay = iEgl->getDisplay(aDisplay);
+    //create the current display
+    //if a context and a surface are bound by the time of eglTerminate, they remain bound until eglMakeCurrent is called
+	RIEGLDisplay* newDisplay = NULL;
+	try
+	{
+		newDisplay = new RIEGLDisplay(aDisplay);	//throws bad_alloc
+		iEgl->addDisplay(newDisplay);	//throws bad_alloc
+		Egldisplay = newDisplay;
+		RI_ASSERT(Egldisplay);
+	}
+	catch(std::bad_alloc)
+	{
+		RI_DELETE(newDisplay);
+	//	EGL_RETURN(EGL_BAD_ALLOC, EGL_FALSE); //TODO Need to enable this later. Jose
+	}
+    
+    //need to think of deleting egl if anything goes wrong.
+    if (aMajor)	
         {
         *aMajor = KEglMajorVersion;
         }
@@ -246,6 +286,125 @@ const char* CEglThreadSession::EglQueryString(EGLDisplay aDisplay, EGLint aName)
 
     return str;
     }
+EGLBoolean CEglThreadSession::EglGetConfigs(EGLDisplay dpy, EGLConfig *configs,
+		                                    EGLint config_size, EGLint *num_config)
+	{
+	return do_eglGetConfigs(dpy, configs,config_size, num_config);
+	}
+EGLBoolean CEglThreadSession::EglChooseConfig(EGLDisplay dpy,const EGLint *attrib_list, EGLConfig *configs,
+											  EGLint config_size,EGLint *num_config)
+	{
+	return do_eglChooseConfig(dpy, attrib_list,configs, config_size,num_config);
+	}
+EGLBoolean CEglThreadSession::EglGetConfigAttrib(EGLDisplay dpy, EGLConfig config,EGLint attribute, 
+		                                         EGLint *value)
+	{
+	return do_eglGetConfigAttrib(dpy, config,attribute, value);
+	} 
+EGLSurface CEglThreadSession::EglCreateWindowSurface(EGLDisplay dpy,EGLConfig config, 
+		                                             EGLNativeWindowType win, const EGLint *attrib_list)
+	{
+	return do_eglCreateWindowSurface(dpy, config,win,attrib_list);
+	}
+EGLSurface CEglThreadSession::EglCreatePbufferSurface(EGLDisplay dpy,EGLConfig config, 
+		                                              const EGLint *attrib_list)
+	{
+	return do_eglCreatePbufferSurface(dpy, config,attrib_list);
+	}
+EGLSurface CEglThreadSession::EglCreatePixmapSurface(EGLDisplay dpy,EGLConfig config, 
+		                                             EGLNativePixmapType pixmap, const EGLint *attrib_list)
+	{
+	return do_eglCreatePixmapSurface(dpy, config,pixmap,attrib_list);
+	}
+EGLBoolean CEglThreadSession::EglDestroySurface(EGLDisplay dpy, EGLSurface surface)
+	{
+	return do_eglDestroySurface(dpy, surface);
+	}
+EGLBoolean CEglThreadSession::EglQuerySurface(EGLDisplay dpy, EGLSurface surface,EGLint attribute,
+		                                      EGLint *value)
+	{
+	return do_eglQuerySurface(dpy, surface,attribute, value);
+	}
+EGLBoolean CEglThreadSession::EglBindAPI(EGLenum api)
+	{
+	return do_eglBindAPI(api);
+	}
+EGLenum CEglThreadSession::EglQueryAPI(void)
+	{
+	return do_eglQueryAPI();
+	}
+EGLBoolean CEglThreadSession::EglWaitClient()
+	{
+	return do_eglWaitClient();
+	}
+EGLSurface CEglThreadSession::EglCreatePbufferFromClientBuffer(EGLDisplay dpy,EGLenum buftype,EGLClientBuffer buffer, 
+		                                                       EGLConfig config,const EGLint *attrib_list)
+	{
+	return do_eglCreatePbufferFromClientBuffer(dpy, buftype, buffer,config, attrib_list);
+	}
+EGLBoolean CEglThreadSession::EglSurfaceAttrib(EGLDisplay dpy, EGLSurface surface,
+		                                       EGLint attribute, EGLint value)
+	{
+	return do_eglSurfaceAttrib(dpy, surface,attribute, value);
+	}
+EGLBoolean CEglThreadSession::EglBindTexImage(EGLDisplay dpy,EGLSurface surface, EGLint buffer)
+	{
+	return do_eglBindTexImage(dpy, surface, buffer);
+	}
+EGLBoolean CEglThreadSession::EglReleaseTexImage(EGLDisplay dpy,EGLSurface surface, EGLint buffer)
+	{
+	return do_eglReleaseTexImage(dpy, surface, buffer);
+	}
+EGLBoolean CEglThreadSession::EglSwapInterval(EGLDisplay dpy, EGLint interval)
+	{
+	return do_eglSwapInterval(dpy, interval);
+	}
+EGLContext CEglThreadSession::EglCreateContext(EGLDisplay dpy, EGLConfig config,EGLContext share_context,
+		                                       const EGLint *attrib_list)
+	{
+	return do_eglCreateContext(dpy, config,share_context,attrib_list);
+	}
+EGLBoolean CEglThreadSession::EglDestroyContext(EGLDisplay dpy, EGLContext ctx)
+	{
+	return do_eglDestroyContext(dpy, ctx);
+	}
+EGLBoolean CEglThreadSession::EglMakeCurrent(EGLDisplay dpy, EGLSurface draw,EGLSurface read, EGLContext ctx)
+	{
+	return do_eglMakeCurrent(dpy, draw,read, ctx);
+	}
+EGLContext CEglThreadSession::EglGetCurrentContext()
+	{
+	return do_eglGetCurrentContext();
+	}
+EGLSurface CEglThreadSession::EglGetCurrentSurface(EGLint readdraw)
+	{
+	return do_eglGetCurrentSurface(readdraw);
+	}
+EGLDisplay CEglThreadSession::EglGetCurrentDisplay()
+	{
+	return do_eglGetCurrentDisplay();
+	}
+EGLBoolean CEglThreadSession::EglQueryContext(EGLDisplay dpy, EGLContext ctx,
+											  EGLint attribute, EGLint* value)
+	{
+	return do_eglQueryContext(dpy, ctx,attribute, value);
+	}
+EGLBoolean CEglThreadSession::EglWaitGL()
+	{
+	return do_eglWaitGL();
+	}
+EGLBoolean CEglThreadSession::EglWaitNative(EGLint engine)
+	{
+	return do_eglWaitNative(engine);
+	}
+EGLBoolean CEglThreadSession::EglSwapBuffers(EGLDisplay dpy, EGLSurface surface)
+	{
+	return do_eglSwapBuffers(dpy, surface);
+	}
+EGLBoolean CEglThreadSession::EglCopyBuffers(EGLDisplay dpy, EGLSurface surface,EGLNativePixmapType target)
+	{
+	return do_eglCopyBuffers(dpy, surface,target);
+	}
 
 EGLSyncKHR CEglThreadSession::EglCreateSyncKhr(EGLDisplay aDisplay, EGLenum aType, const EGLint *aAttribList)
     {

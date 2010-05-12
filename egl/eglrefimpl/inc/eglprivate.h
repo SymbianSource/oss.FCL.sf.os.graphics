@@ -21,6 +21,10 @@
 #include <e32hashtab.h>
 #include <EGL/egl.h>
 
+#include "riMiniEGL.h"
+
+using namespace OpenVGRI;
+
 #ifndef EGL_VERSION_1_4
 #error Reference EGL requires at least EGL version 1.4 headers
 #endif
@@ -132,6 +136,39 @@ public:
 	EGLBoolean EglInitialize(EGLDisplay aDisplay, EGLint* aMajor, EGLint* aMinor);
 	EGLBoolean EglTerminate(EGLDisplay aDisplay);
 	const char* EglQueryString(EGLDisplay aDisplay, EGLint aName);
+	EGLBoolean EglGetConfigs(EGLDisplay dpy, EGLConfig *configs,EGLint config_size, EGLint *num_config);
+	EGLBoolean EglChooseConfig(EGLDisplay dpy,const EGLint *attrib_list, EGLConfig *configs,
+			                   EGLint config_size,EGLint *num_config);
+	EGLBoolean EglGetConfigAttrib(EGLDisplay dpy, EGLConfig config,EGLint attribute, EGLint *value);
+	EGLSurface EglCreateWindowSurface(EGLDisplay dpy,EGLConfig config, EGLNativeWindowType win, 
+			                          const EGLint *attrib_list);
+	EGLSurface EglCreatePbufferSurface(EGLDisplay dpy,EGLConfig config, const EGLint *attrib_list);
+	EGLSurface EglCreatePixmapSurface(EGLDisplay dpy,EGLConfig config, EGLNativePixmapType pixmap,
+			                          const EGLint *attrib_list);
+	EGLSurface EglDestroySurface(EGLDisplay dpy, EGLSurface surface);
+	EGLBoolean EglQuerySurface(EGLDisplay dpy, EGLSurface surface,EGLint attribute,EGLint *value);
+	EGLBoolean EglBindAPI(EGLenum api);
+	EGLenum EglQueryAPI(void);
+	EGLBoolean EglWaitClient();
+	EGLSurface EglCreatePbufferFromClientBuffer(EGLDisplay dpy,EGLenum buftype, EGLClientBuffer buffer, 
+			                                    EGLConfig config,const EGLint *attrib_list);
+	EGLBoolean EglSurfaceAttrib(EGLDisplay dpy, EGLSurface surface,EGLint attribute, EGLint value);
+	EGLBoolean EglBindTexImage(EGLDisplay dpy,EGLSurface surface, EGLint buffer);
+	EGLBoolean EglReleaseTexImage(EGLDisplay dpy,EGLSurface surface, EGLint buffer);
+	EGLBoolean EglSwapInterval(EGLDisplay dpy, EGLint interval);
+	EGLContext EglCreateContext(EGLDisplay dpy, EGLConfig config,EGLContext share_context,
+			                    const EGLint *attrib_list);
+	EGLBoolean EglDestroyContext(EGLDisplay dpy, EGLContext ctx);
+	EGLBoolean EglMakeCurrent(EGLDisplay dpy, EGLSurface draw,EGLSurface read, EGLContext ctx);
+	EGLContext EglGetCurrentContext();
+	EGLSurface EglGetCurrentSurface(EGLint readdraw);
+	EGLDisplay EglGetCurrentDisplay();
+	EGLBoolean EglQueryContext(EGLDisplay dpy, EGLContext ctx,EGLint attribute, EGLint* value);
+	EGLBoolean EglWaitGL();
+	EGLBoolean EglWaitNative(EGLint engine);
+	EGLBoolean EglSwapBuffers(EGLDisplay dpy, EGLSurface surface);
+	EGLBoolean EglCopyBuffers(EGLDisplay dpy, EGLSurface surface,EGLNativePixmapType target);
+	
 	TFuncPtrEglProc EglGetProcAddress(const char* aName);
 	
 	// EGLSync APIs
@@ -143,7 +180,10 @@ public:
 	
 	// Private APIs
 	EGLint EglSignalSyncInternal(EGLDisplay aDisplay, EGLSyncKHR aSync, EGLenum aMode);
-
+    //added by Jose
+	void SetEgl(EGL* aEgl);
+	EGL* getEgl();
+	CEglThreadSession(CEglDriver& aDriver);
 	// Debug APIs
 #ifdef _DEBUG
 	void EglHeapMarkStart();
@@ -152,12 +192,13 @@ public:
 #endif //_DEBUG
 	
 private:
-	CEglThreadSession(CEglDriver& aDriver);
+	
     void SetError(EGLint aErrror);
 
 private:
 	CEglDriver& iDriver;
 	EGLint iError;
+	EGL* iEgl;
 	};
 
 

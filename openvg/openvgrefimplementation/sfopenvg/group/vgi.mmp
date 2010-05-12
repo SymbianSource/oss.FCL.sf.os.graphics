@@ -23,18 +23,26 @@ CAPABILITY      all -tcb
 vendorid        0x70000001
 
 
+
 OS_LAYER_SYSTEMINCLUDE
 SYSTEMINCLUDE  OS_LAYER_PUBLIC_EXPORT_PATH(vg) // OpenGL ES include files
 SYSTEMINCLUDE  OS_LAYER_PUBLIC_EXPORT_PATH(egl) // EGL include files
 
 macro __OPENVGHEADERS_USE_VG_1_1
+MACRO  BUILD_WITH_PRIVATE_EGL
 
 sourcepath      ..\vgi		// Relative path to source files
 
 source          vgi.cpp
 
 library         euser.lib     		// Mandatory
-library			libegl_sw.lib
+
+#ifdef BUILD_WITH_PRIVATE_EGL
+library		libEGL.lib
+#else
+library		libegl_sw.lib
+#endif
+
 library			fbscli.lib
 
 deffile         libvgi.def

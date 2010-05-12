@@ -114,6 +114,4 @@ IMPORT_C void do_vgLookupSingle(VGImage dst, VGImage src ,const VGuint* lookupTa
 IMPORT_C VGHardwareQueryResult do_vgHardwareQuery(VGHardwareQueryType key ,VGint setting);
 IMPORT_C const VGubyte * do_vgGetString(VGStringID name);
 
-
-
 #endif

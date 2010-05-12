@@ -28,5 +28,5 @@ PRJ_EXPORTS
 
 
 // include test code
-#include "../test/group/bld.inf"
+//#include "../test/group/bld.inf"
 

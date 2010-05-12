@@ -11,28 +11,24 @@
 * Contributors:
 *
 * Description:
-* top level bld.inf for building reference openvg
+* Declaration of native window type structure
 */
 
-PRJ_PLATFORMS
-DEFAULT	
+#include <e32std.h>
+#include <w32std.h>
 
+#ifndef EGLOSNATVIEWINDOWTYPE_H
+#define EGLOSNATVIEWINDOWTYPE_H
 
-PRJ_EXPORTS
-../sfopenvg/symbian/eglosnativewindowtype.h
-../sfopenvg/include/eglinternal.h
-sfopenvg.iby /epoc32/rom/include/sfopenvg.iby
+struct TNativeWindowType
+	{
+public:
+	TNativeWindowType() :
+	iSize(0,0),
+	iBitmap(NULL)
+	{};
+	TSize				iSize; //to keep
+	CFbsBitmap* 		iBitmap; //to keep
+	};
 
-PRJ_MMPFILES
-egl.mmp
-vgi.mmp
-sfopenvg.mmp
-
-openvg.mmp
-openvgu.mmp
-
-// PRJ_TESTMMPFILES
-#include "..\test\group\bld.inf"
-
-
-
+#endif //EGLOSCALLBACK_H

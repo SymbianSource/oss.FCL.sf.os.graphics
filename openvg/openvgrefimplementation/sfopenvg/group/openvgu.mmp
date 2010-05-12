@@ -22,6 +22,7 @@ CAPABILITY      CAP_GENERAL_DLL
 vendorid        0x70000001
 //noexportlibrary
 
+								   
 userinclude     ..\sfopenvg\include //for internal egl functions e.g. do_eglXXX
 
 OS_LAYER_SYSTEMINCLUDE
@@ -34,7 +35,12 @@ sourcepath      ..\openvgu		// Relative path to source files
 source          vgu.cpp
 
 library         euser.lib     		// Mandatory
-library			sflibopenvgrefimpl.lib
+
+#ifdef BUILD_WITH_PRIVATE_VGU
+library		libEGL.lib
+#else
+library		sflibopenvgrefimpl.lib
+#endif
 
 #ifdef WINS
 DEFFILE         \epoc32\include\def\win32\libopenvgu11.def	// WINS/WINSCW def file
