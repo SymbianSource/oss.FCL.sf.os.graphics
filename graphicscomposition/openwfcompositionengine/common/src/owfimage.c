@@ -378,7 +378,7 @@ OWF_Image_SourceFormatConversion(OWF_IMAGE* dst, OWF_IMAGE* src)
                 }
                 break;
             }
-#ifdef OWF_IMAGE_INTERNAL_PIXEL_IS_FLOAT
+            
             case OWF_IMAGE_UYVY:
             {
                 OWFuint8* srcPtr = (OWFuint8*) srcLinePtr;
@@ -421,7 +421,7 @@ OWF_Image_SourceFormatConversion(OWF_IMAGE* dst, OWF_IMAGE* src)
                 }
                 break;
             }
-#endif     
+     
             default:
             {
                 return OWF_FALSE; /* source format not supported */
@@ -606,48 +606,9 @@ OWF_Image_DestinationFormatConversion(OWF_IMAGE* dst, OWF_IMAGE* src)
                 break;
             }
 #ifdef OWF_IMAGE_INTERNAL_PIXEL_IS_FLOAT
-			/* TODO: Fix this code! It should be converting from ARGB into YUV, not the other way around. */
             case OWF_IMAGE_UYVY:
             {
-                OWFuint8* srcPtr = (OWFuint8*) srcLinePtr;
-                OWFint y,u,v,r,g,b,x;
-                for (x = 0; x < count; x++)
-                {
-                    u = srcPtr[0] - 128;
-                    v = srcPtr[2] - 128;
-                    y = srcPtr[3] - 16;
-                    
-                    r = ((298 * y + 409 * u) / 256);
-                    g = ((298 * y - 100 * v - 208 * u) / 256);
-                    b = ((298 * y + 516 * v) / 256);
-                    
-                    CLIP(r);
-                    CLIP(g);
-                    CLIP(b);
-                    
-                    dstPtr->color.alpha = 255;
-                    dstPtr->color.red = r;
-                    dstPtr->color.green = g;
-                    dstPtr->color.blue = b;
-                    dstPtr++;
-                    
-                    y = srcPtr[1] - 16;
-                    r = ((298 * y + 409 * u) / 256);
-                    g = ((298 * y - 100 * v - 208 * u) / 256);
-                    b = ((298 * y + 516 * v) / 256);
-                    
-                    CLIP(r);
-                    CLIP(g);
-                    CLIP(b);
-                    
-                    dstPtr->color.alpha = 255;
-                    dstPtr->color.red = r;
-                    dstPtr->color.green = g;
-                    dstPtr->color.blue = b;
-                    dstPtr++;                  
-                    srcPtr += 4;                                      
-                }
-                break;
+                return OWF_FALSE; /* this is not supported */
             }
 #endif
                 
