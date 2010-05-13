@@ -108,7 +108,7 @@ file=\epoc32\release\ARMV5\urel\usbdi_utils.dll		sys\bin\usbdi_utils.dll
 file=\epoc32\release\ARMV5\urel\iscapi.dll			sys\bin\iscapi.dll
 file=\epoc32\release\ARMV5\urel\isimessage.dll		sys\bin\isimessage.dll
 
-// cenrep file for timezone server database
+// cenrep file for timezone server database support
 data=\epoc32\data\z\private\10202be9\1020383e.txt		private\10202be9\1020383e.txt
 
 #endif /* __MINIGUI_OBY__ */
