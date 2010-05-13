@@ -190,16 +190,18 @@ EGLBoolean CEglThreadSession::EglInitialize(EGLDisplay aDisplay, EGLint* aMajor,
     	return EGL_FALSE;
     }
     
-    RIEGLDisplay* Egldisplay = iEgl->getDisplay(aDisplay);
+    RIEGLDisplay* eglDispaly = iEgl->getDisplay(aDisplay);
+    if(eglDispaly)
+    	return EGL_TRUE;
+   
     //create the current display
-    
-	RIEGLDisplay* newDisplay = NULL;
+  	RIEGLDisplay* newDisplay = NULL;
 	try
 	{
 		newDisplay = new RIEGLDisplay(aDisplay); //throws bad_alloc
 		iEgl->addDisplay(newDisplay);	//throws bad_alloc
-		Egldisplay = newDisplay;
-		RI_ASSERT(Egldisplay);
+		eglDispaly = newDisplay;
+		RI_ASSERT(eglDispaly);
 	}
 	catch(std::bad_alloc)
 	{
