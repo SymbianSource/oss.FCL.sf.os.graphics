@@ -27,6 +27,20 @@
 
 class CTestStep;
 
+_LIT(KSqlInsert,        "SQL_UPLOAD_VERSION_0:insert into performance.testresultstable (sessionid, testname, testattribute, testunits, testresultvalue) values ");
+_LIT(KSqlData,          "SQL_UPLOAD_VERSION_0:('%u', '%S', '%S', '%S', '%d');");
+_LIT(KMicroSeconds,     "us");
+_LIT(KPixelsPerSecond,  "pixels/second");
+_LIT(KFrameRate,        "frames/second");
+_LIT(KCharacterRate,    "characters/second");
+_LIT(KVariation,        "Rot_%i_SrcMode_%i_DestMode_%i_Iters_%i");
+_LIT(KVariationPPI,     "Rot_%i_SrcMode_%i_DestMode_%i_Iters_%i_PPI_%i");
+_LIT(KVariationZOrder,  "ZOrd_%i_SrcMode_%i_DestMode_%i_Iters_%i_PPI_%i");
+_LIT(KVariationCPI,     "Rot_%i_SrcMode_%i_DestMode_%i_Iters_%i_CPI_%i");
+_LIT(KMaxTime,          "%S_Max");
+_LIT(KMinTime,          "%S_Min");
+_LIT(KMean,             "%S_Mean");
+_LIT(KTrimmedMean,      "%S_TrimmedMean");
 
 class CTProfiler : public CBase
     {
@@ -54,6 +68,8 @@ public:
 	IMPORT_C TUint32 TimeMin();
 	IMPORT_C void ShowResultArrayInTimingOrder();
 	IMPORT_C void SetStoreResultInTimingOrder(TBool aStoreResultInTimingOrder);
+	IMPORT_C void SqlInsert(const TDesC* aTestName, const TDesC* aTestAttribute, const TDesC* aTestUnit, TInt32 aTestResultValue);
+
 
 private:
     CTProfiler(CTestStep& aTestStep);
@@ -69,6 +85,12 @@ private:
     TBool               iResultsInitalised;
     CTestStep&          iTestStep;
     TBool               iStoreResultInTimingOrder;
+    /*
+     * The session identifier is a number which allows a number of
+     * related performance metrics for a given test to be grouped
+     * under the same "session".
+     */
+	 TUint32			iSessionId;
     };
 
 #endif

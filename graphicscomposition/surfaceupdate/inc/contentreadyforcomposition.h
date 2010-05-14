@@ -38,17 +38,18 @@ particular content update for a given surface has been delivered to
 the compositor and will be used in future compositions involving that 
 surface.
 
-The compositor maintains a content update count for each registered 
-surface that determines when content ready notifications will be 
-completed. The content update count is internally incremented by the 
-compositor every time it receives a valid content update for a 
-registered surface. Frames may be skipped if the client submits 
-content updates too fast, meaning that not every update is displayed 
-on screen. The first valid content update sets the content update 
-count to one. Updates sent before the surface is registered do not 
-affect the content update count. Content ready notifications for 
-aContentUpdate = 1 will only be successfully completed after at least
-one content update has been received.
+Each compositor in the system maintains its own content update count 
+for each registered surface that determines when content ready 
+notifications will be completed. Therefore the content update count is
+considered per-surface-per-screen. The content update count is 
+internally incremented by the compositor every time it receives a 
+valid content update for a registered surface. Frames may be skipped 
+if the client submits content updates too fast, meaning that not every
+update is displayed on screen. The first valid content update sets the
+content update count to one. Updates sent before the surface is 
+registered do not affect the content update count. Content ready 
+notifications for aContentUpdate = 1 will only be successfully 
+completed after at least one content update has been received.
 */
 class MContentReadyForComposition
     {

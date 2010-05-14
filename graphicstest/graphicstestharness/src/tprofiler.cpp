@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,6 +20,7 @@
 */
 
 #include <test/TestExecuteStepBase.h>
+#include <e32math.h>
 #include <hal.h>
 #include "tprofiler.h"
 
@@ -106,8 +107,24 @@ EXPORT_C void CTProfiler::InitResults()
     iResultsInitalised = ETrue;
     iDiff = 0;
     iResults.Reset();
-    iResultsTimingOrder.Reset();
+    iSessionId = Math::Random();
+    if (iSessionId < 1000000)
+        {
+        /*
+         * The reason for bumping up low session id values is that it allows
+         * us to in the future to re-compact the session ids into a unique
+         * number range from zero to one million.  Duplicate session id values
+         * generated on the same day can cause confusion but will be very rare.
+         */
+        iSessionId += 1000000;
+        }
     
+    /*
+     * The build system needs to know the session id because it maps it to
+     * the job ID it is running, so it can map test results to a particular
+     * build in question.
+     */
+    PROFILER_INFO_PRINTF2(_L("SQL_SESSION_ID=%u"), iSessionId);
     StartTimer();
     }
 
@@ -234,9 +251,19 @@ i.e. for bitmap display conversion the source and destinations bitmaps maybe dif
 EXPORT_C void CTProfiler::ResultsAnalysis(const TDesC& aTestName, TInt aRotation, TInt aSrcScreenMode, TInt aDstScreenMode, TInt aIters)
     {
     PROFILER_TEST(iResultsInitalised);
-
-    PROFILER_INFO_PRINTF7(_L("TID:   %S  Rot:    %i  SrcMode:    %i  DestMode:   %i  Iters: %i   TrimmedMean:    %i  us"), &aTestName, aRotation, aSrcScreenMode, aDstScreenMode, aIters,  GetTrimedMean());
-    PROFILER_INFO_PRINTF3(_L("Max:   %i  Min:    %i  "), TimeMax(), TimeMin());
+    TBuf<128> variation;
+    variation.Format(KVariation, aRotation, aSrcScreenMode, aDstScreenMode,aIters);
+    TBuf<128> variationMax;
+    variationMax.Format(KMaxTime, &variation);
+    TBuf<128> variationMin;
+    variationMin.Format(KMinTime, &variation);
+    TBuf<128> variationTrimmedMean;
+    variationTrimmedMean.Format(KTrimmedMean, &variation);
+    
+    SqlInsert(&aTestName, &variationTrimmedMean,    &KMicroSeconds,     GetTrimedMean());
+    SqlInsert(&aTestName, &variationMax,            &KPixelsPerSecond,  TimeMax());
+    SqlInsert(&aTestName, &variationMin,            &KPixelsPerSecond,  TimeMin());
+    
     iResultsInitalised = EFalse;
     }
 
@@ -254,10 +281,21 @@ i.e. for bitmap display conversion the source and destinations bitmaps maybe dif
 EXPORT_C void CTProfiler::ResultsAnalysisPixelRate(const TDesC & aTestName, TInt aRotation, TInt aSrcScreenMode, TInt aDstScreenMode, TInt aIters, TInt aNumPixelsPerIteration)
     {
     PROFILER_TEST(iResultsInitalised);
+
     TReal time = (TReal)iResults[0] / 1000000;
-    TInt32 pixelRate = aNumPixelsPerIteration*aIters/time;
-    PROFILER_INFO_PRINTF7(_L("TID:   %S  Rot:    %i  SrcMode:    %i  DestMode:   %i  Iters: %i   TrimmedMean:    %i  pixels/second"), &aTestName, aRotation, aSrcScreenMode, aDstScreenMode, aIters, pixelRate);
-    PROFILER_INFO_PRINTF3(_L("Max:   %i  Min:    %i  "), TimeMax(), TimeMin());
+    TInt32 pixelRate = aNumPixelsPerIteration * aIters / time;
+    
+    TBuf<128> variation;
+    variation.Format(KVariationPPI, aRotation, aSrcScreenMode, aDstScreenMode, aIters, aNumPixelsPerIteration);
+    TBuf<128> variationMax;
+    variationMax.Format(KMaxTime, &variation);
+    TBuf<128> variationMin;   
+    variationMin.Format(KMinTime, &variation);
+    
+    SqlInsert(&aTestName, &variation,       &KPixelsPerSecond,  pixelRate);
+    SqlInsert(&aTestName, &variationMax,    &KPixelsPerSecond,  TimeMax());
+    SqlInsert(&aTestName, &variationMin,    &KPixelsPerSecond,  TimeMin());
+    
     iResultsInitalised = EFalse;
     }
 
@@ -277,8 +315,18 @@ EXPORT_C void CTProfiler::ResultsAnalysisCharacterRate(const TDesC & aTestName, 
     PROFILER_TEST(iResultsInitalised);
     TReal time = (TReal)iResults[0] / 1000000;
     TInt32 characterRate = aNumCharsPerIteration*aIters/time;
-    PROFILER_INFO_PRINTF7(_L("TID:   %S  Rot:    %i  SrcMode:    %i  DestMode:   %i  Iters: %i   TrimmedMean:    %i  characters/second"), &aTestName, aRotation, aSrcScreenMode, aDstScreenMode, aIters, characterRate);
-    PROFILER_INFO_PRINTF3(_L("Max:   %i  Min:    %i  "), TimeMax(), TimeMin());
+    
+    TBuf<128> variation;
+    variation.Format(KVariationCPI, aRotation, aSrcScreenMode, aDstScreenMode, aIters, aNumCharsPerIteration);
+    TBuf<128> variationMax;
+    variationMax.Format(KMaxTime, &variation);
+    TBuf<128> variationMin;   
+    variationMin.Format(KMinTime, &variation);
+    
+    SqlInsert(&aTestName, &variation,       &KCharacterRate,  characterRate);
+    SqlInsert(&aTestName, &variationMax,    &KCharacterRate,  TimeMax());
+    SqlInsert(&aTestName, &variationMin,    &KCharacterRate,  TimeMin());
+    
     iResultsInitalised = EFalse;
     }
 
@@ -298,11 +346,54 @@ EXPORT_C void CTProfiler::ResultsAnalysisAverageByIterations(const TDesC& aTestN
     {
     PROFILER_TEST(iResultsInitalised);
     
-    PROFILER_INFO_PRINTF7(_L("TID:   %S  Rot:    %i  SrcMode:    %i  DestMode:   %i  Iters: %i   TrimmedMean:    %i  us"), &aTestName, aRotation, aSrcScreenMode, aDstScreenMode, aIters,  iResults[0]/aIters);
-    PROFILER_INFO_PRINTF3(_L("Max:   %i  Min:    %i  "), TimeMax(), TimeMin());
+    TUint32 result = iResults[0]/aIters;
+    
+    TBuf<128> variation;
+    variation.Format(KVariation, aRotation, aSrcScreenMode, aDstScreenMode,aIters);
+    TBuf<128> variationMax;
+    variationMax.Format(KMaxTime, &variation);
+    TBuf<128> variationMin;
+    variationMin.Format(KMinTime, &variation);  
+
+    SqlInsert(&aTestName, &variation,       &KMicroSeconds,  result);
+    SqlInsert(&aTestName, &variationMax,    &KMicroSeconds,  TimeMax());
+    SqlInsert(&aTestName, &variationMin,    &KMicroSeconds,  TimeMin());
+    
     iResultsInitalised = EFalse;
     }
-    
+
+/**
+ * Generate an SQL insert statement into the logs, intended for subsequent
+ * extraction by a script to load into the database.
+ * Inserts data fields for 
+ * (sessionid, testname, testattribute, testunits, testresultvalue).
+ * An example insertion:
+ * <code>
+ * SQL_UPLOAD_VERSION_0:insert into performance.testresultstable (sessionid, testname, testattribute, testunits, testresultvalue) values
+ * SQL_UPLOAD_VERSION_0:('1136416860', 'GRAPHICS-UI-BENCH-S60-0009', 'Rot_0_SrcMode_0_DestMode_0_Iters_25', 'pixels/second', '394159');
+ * </code>
+ * 
+ * @param aTestName Column testname
+ * @param aTestAttribute Column testattribute
+ * @param aTestUnit Column testunits
+ * @param aTestResultValue Column testresultvalue
+ */
+EXPORT_C void CTProfiler::SqlInsert(const TDesC* aTestName, const TDesC* aTestAttribute, const TDesC* aTestUnit, TInt32 aTestResultValue)
+    {
+    TBuf<200>scratchPad;
+    /*
+     * There is a 256 character limit on logging output, and a 7 vararg limit
+     * on the macro we can use to issue printfs to the test framework.  Each
+     * output line which has SQL in it needs to have a marker at the front so
+     * that a script can reliably extract the SQL statements.  Hence we use
+     * the following incremental strategy of getting our SQL statements output
+     * into the logs.
+     */
+    scratchPad.Format(KSqlInsert);
+    PROFILER_INFO_PRINTF2(_L("%S"), &scratchPad);
+    scratchPad.Format(KSqlData, iSessionId, aTestName, aTestAttribute, aTestUnit, aTestResultValue); 
+    PROFILER_INFO_PRINTF2(_L("%S"), &scratchPad);
+    }
 
 /**
 Reports analysis results for frame rates
@@ -321,8 +412,19 @@ EXPORT_C void CTProfiler::ResultsAnalysisFrameRate(const TDesC & aTestName, TInt
     TReal time = (TReal)iResults[0] / 1000000;
     TInt32 pixelRate = aNumPixelsPerIteration * aIters / time;
     TInt32 frameRate = aIters / time;
-    PROFILER_INFO_PRINTF7(_L("TID:   %S  Rot:    %i  SrcMode:    %i  DestMode:   %i  Iters: %i   TrimmedMean:    %i  pixels/second"), &aTestName, aRotation, aSrcScreenMode, aDstScreenMode, aIters, pixelRate);
-    PROFILER_INFO_PRINTF4(_L("Max:   %i  Min:    %i  Framerate:  %i  frames/second"), TimeMax(), TimeMin(), frameRate);
+    
+    TBuf<128> variation;
+    variation.Format(KVariation, aRotation, aSrcScreenMode, aDstScreenMode, aIters);
+    TBuf<128> variationMax;
+    variationMax.Format(KMaxTime, &variation);
+    TBuf<128> variationMin;   
+    variationMin.Format(KMinTime, &variation);
+    
+    SqlInsert(&aTestName, &variation,       &KPixelsPerSecond,  pixelRate);
+    SqlInsert(&aTestName, &variation,       &KFrameRate,        frameRate);
+    SqlInsert(&aTestName, &variationMax,    &KPixelsPerSecond,  TimeMax());
+    SqlInsert(&aTestName, &variationMin,    &KPixelsPerSecond,  TimeMin());
+
     iResultsInitalised = EFalse;
     }
 
@@ -343,8 +445,19 @@ EXPORT_C void CTProfiler::ResultsAnalysisScreenRotationRate(const TDesC & aTestN
     TReal time = (TReal)iResults[0] / 1000000;
     TInt32 pixelRate = aNumPixelsPerIteration * aIters / time;
     TInt32 frameRate = aIters / time;
-    PROFILER_INFO_PRINTF7(_L("TID:   %S  Rot:    %i  SrcMode:    %i  DestMode:   %i  Iters: %i   TrimmedMean:    %i  pixels/second"), &aTestName, aRotation, aSrcScreenMode, aDstScreenMode, aIters, pixelRate);
-    PROFILER_INFO_PRINTF4(_L("Max:   %i  Min:    %i  Framerate:  %i  frames/second"), TimeMax(), TimeMin(), frameRate);
+    
+    TBuf<128> variation;
+    variation.Format(KVariationPPI, aRotation, aSrcScreenMode, aDstScreenMode, aIters, aNumPixelsPerIteration);
+    TBuf<128> variationMax;
+    variationMax.Format(KMaxTime, &variation);
+    TBuf<128> variationMin;   
+    variationMin.Format(KMinTime, &variation);
+    
+    SqlInsert(&aTestName, &variation,       &KPixelsPerSecond,  pixelRate);
+    SqlInsert(&aTestName, &variation,       &KFrameRate,        frameRate);
+    SqlInsert(&aTestName, &variationMax,    &KPixelsPerSecond,  TimeMax());
+    SqlInsert(&aTestName, &variationMin,    &KPixelsPerSecond,  TimeMin());
+    
     iResultsInitalised = EFalse;
     }
 
@@ -364,8 +477,19 @@ EXPORT_C void CTProfiler::ResultsAnalysisZorderSwitchingRate(const TDesC & aTest
     TReal time = (TReal)iResults[0] / 1000000;
     TInt32 pixelRate = aNumPixelsPerIteration * aIters / time;
     TInt32 frameRate = aIters / time;
-    PROFILER_INFO_PRINTF7(_L("TID:   %S  Rot:    %i  SrcMode:    %i  DestMode:   %i  Iters: %i   TrimmedMean:    %i  pixels/second"), &aTestName, aZorderSwitching, aSrcScreenMode, aDstScreenMode, aIters, pixelRate);
-    PROFILER_INFO_PRINTF4(_L("Max:   %i  Min:    %i  Framerate:  %i  frames/second"), TimeMax(), TimeMin(), frameRate);
+    
+    TBuf<128> variation;
+    variation.Format(KVariationZOrder, aZorderSwitching, aSrcScreenMode, aDstScreenMode, aIters, aNumPixelsPerIteration);
+    TBuf<128> variationMax;
+    variationMax.Format(KMaxTime, &variation);
+    TBuf<128> variationMin;   
+    variationMin.Format(KMinTime, &variation);
+    
+    SqlInsert(&aTestName, &variation,       &KPixelsPerSecond,  pixelRate);
+    SqlInsert(&aTestName, &variation,       &KFrameRate,        frameRate);
+    SqlInsert(&aTestName, &variationMax,    &KPixelsPerSecond,  TimeMax());
+    SqlInsert(&aTestName, &variationMin,    &KPixelsPerSecond,  TimeMin());
+    
     iResultsInitalised = EFalse;
     }
 
@@ -397,9 +521,19 @@ i.e. for bitmap display conversion the source and destinations bitmaps maybe dif
 EXPORT_C void CTProfiler::ResultsAnalysisAverageByNumberOfIterations(const TDesC& aTestName, TInt aRotation, TInt aSrcScreenMode, TInt aDstScreenMode,TInt aIters)
     {
     PROFILER_TEST(iResultsInitalised);
+    TBuf<128> variation;
+    variation.Format(KVariation, aRotation, aSrcScreenMode, aDstScreenMode, aIters);
+    TBuf<128> variationMean;
+    variationMean.Format(KMean, &variation);   
+    TBuf<128> variationMax;
+    variationMax.Format(KMaxTime, &variation);
+    TBuf<128> variationMin;   
+    variationMin.Format(KMinTime, &variation);
+ 
+    SqlInsert(&aTestName, &variationMean, &KMicroSeconds,     Mean());
+    SqlInsert(&aTestName, &variationMax,  &KPixelsPerSecond,  TimeMax());
+    SqlInsert(&aTestName, &variationMin,  &KPixelsPerSecond,  TimeMin());
     
-    PROFILER_INFO_PRINTF7(_L("TID:   %S  Rot:    %i  SrcMode:    %i  DestMode:   %i  Iters: %i   TrimmedMean:    %i  us"), &aTestName, aRotation, aSrcScreenMode, aDstScreenMode, aIters,  Mean());
-    PROFILER_INFO_PRINTF3(_L("Max:   %i  Min:    %i  "), TimeMax(), TimeMin());  
     iResultsInitalised = EFalse;
     }
 

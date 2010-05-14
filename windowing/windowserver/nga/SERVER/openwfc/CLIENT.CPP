@@ -548,7 +548,7 @@ void CWsClient::DispatchCommandsInBufL()	// (step #4)
 		// Dispatch the command to the WServ object that will process it
 		iDestObj->CommandL(opcode, cmdParams);	// (call #5)
 		} 
-	while(iNextCmd<endCmd && !TWindowServerEvent::EventReceiver()->IsReadyToRun());
+	while(iNextCmd<endCmd);
 	
 	}
 

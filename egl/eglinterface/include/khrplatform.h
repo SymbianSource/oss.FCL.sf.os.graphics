@@ -130,7 +130,7 @@ extern "C" {
 #	define KHRAPI KHRONOS_APICALL
 #endif
 
-#if defined (__ARMCC_2__)
+#if defined(__ARMCC__)
 #define KHRONOS_APIATTRIBUTES __softfp
 #else
 #define KHRONOS_APIATTRIBUTES

@@ -26,4 +26,5 @@ EXPORTS
 	_ZN10CTProfiler24MarkResultSetAndSuspendLEv @ 25 NONAME
 	_ZN10CTProfiler27SetStoreResultInTimingOrderEi @ 26 NONAME
 	_ZN10CTProfiler28ShowResultArrayInTimingOrderEv @ 27 NONAME
+	_ZN10CTProfiler9SqlInsertEPK7TDesC16S2_S2_l @ 28 NONAME
 
