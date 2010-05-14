@@ -89,6 +89,7 @@ data=DATAZ_\wsini_minigui.ini  \system\data\wsini.ini
 #include <asnpkcs.iby>
 #include <emime.iby>
 #include <scs.iby>
+#include <cflog.iby>
 
 file=\epoc32\release\ARMV5\urel\abclient.dll                           sys\bin\abclient.dll
 file=\epoc32\release\ARMV5\urel\Http.dll                                       sys\bin\http.dll
@@ -106,5 +107,8 @@ file=\epoc32\release\ARMV5\urel\usbhostmsclient.dll	sys\bin\usbhostmsclient.dll
 file=\epoc32\release\ARMV5\urel\usbdi_utils.dll		sys\bin\usbdi_utils.dll
 file=\epoc32\release\ARMV5\urel\iscapi.dll			sys\bin\iscapi.dll
 file=\epoc32\release\ARMV5\urel\isimessage.dll		sys\bin\isimessage.dll
+
+// cenrep file for timezone server database support
+data=\epoc32\data\z\private\10202be9\1020383e.txt		private\10202be9\1020383e.txt
 
 #endif /* __MINIGUI_OBY__ */
