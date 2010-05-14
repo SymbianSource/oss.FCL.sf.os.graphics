@@ -2009,7 +2009,7 @@ bool Path::addQuadTo(const Matrix3x3& pathToSurface, const Vector2& p0, const Ve
 	if(!subpathHasGeometry)
 		startFlags |= START_SUBPATH;
 
-	const int segments = RI_NUM_TESSELLATED_SEGMENTS;
+	const int segments = RI_NUM_TESSELLATED_SEGMENTS_QUAD;
 	Vector2 pp = p0;
 	Vector2 tp = incomingTangent;
 	unsigned int prevFlags = startFlags;
@@ -2073,7 +2073,7 @@ bool Path::addCubicTo(const Matrix3x3& pathToSurface, const Vector2& p0, const V
 	if(!subpathHasGeometry)
 		startFlags |= START_SUBPATH;
 
-	const int segments = RI_NUM_TESSELLATED_SEGMENTS;
+	const int segments = RI_NUM_TESSELLATED_SEGMENTS_CUBIC;
 	Vector2 pp = p0;
 	Vector2 tp = incomingTangent;
 	unsigned int prevFlags = startFlags;
@@ -2241,7 +2241,7 @@ bool Path::addArcTo(const Matrix3x3& pathToSurface, const Vector2& p0, RIfloat r
 	outgoingTangent = normalize(outgoingTangent);
 	RI_ASSERT(!isZero(incomingTangent) && !isZero(outgoingTangent));
 
-	const int segments = RI_NUM_TESSELLATED_SEGMENTS;
+	const int segments = RI_NUM_TESSELLATED_SEGMENTS_ARC;
 	Vector2 pp = p0;
 	Vector2 tp = incomingTangent;
 	unsigned int prevFlags = startFlags;

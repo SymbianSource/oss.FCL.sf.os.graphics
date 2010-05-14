@@ -45,8 +45,6 @@
 #include <e32std.h>
 #endif
 
-namespace OpenVGRI
-{
 
 //make for-clause scope c++ standard compliant on msvc
 #if defined (_MSC_VER)
@@ -59,8 +57,12 @@ namespace OpenVGRI
 #pragma warning(disable:4714)	//disable function not __forceinlined warning
 #endif  // _MSC_VER
 
+namespace OpenVGRI
+{
 //=======================================================================
 
+typedef long long       RIint64;
+typedef unsigned long long RIuint64;
 typedef int				RIint32;
 typedef unsigned int	RIuint32;
 typedef short			RIint16;
@@ -121,17 +123,31 @@ RI_INLINE float	getFloatMax()
 #define RI_MAX_GAUSSIAN_STD_DEVIATION	16.0f
 #define RI_MAX_SCISSOR_RECTANGLES		256
 #define RI_MAX_EDGES					262144
-#define RI_MAX_SAMPLES					32
-#define RI_NUM_TESSELLATED_SEGMENTS		256
+#define RI_MAX_SAMPLES						1
+#define RI_NUM_TESSELLATED_SEGMENTS_QUAD	8
+#define RI_NUM_TESSELLATED_SEGMENTS_CUBIC	8
+#define RI_NUM_TESSELLATED_SEGMENTS_ARC		8
 
+#if defined(__GNUC__) && !defined(SF_PROFILE)
+#	ifndef NDEBUG
+#	define _DEBUG 1
+#	endif
+#endif
+#if _DEBUG
 #define RI_DEBUG
-
-#ifdef RI_DEBUG
-#	define RI_ASSERT assert
-#else
-#	define RI_ASSERT
 #endif
 
+#ifdef RI_DEBUG
+#	define RI_ASSERT(X) assert(X)
+#else
+#	define RI_ASSERT(X) (void(0))
+#endif
+
+#if defined(RI_DEBUG)
+#   define RI_PRINTF(...) printf(__VA_ARGS__)
+#else
+#   define RI_PRINTF(...)
+#endif
 #define RI_UNREF(X) ((void)(X))
 #define RI_APIENTRY EXPORT_C
 
@@ -147,7 +163,16 @@ RI_INLINE float	getFloatMax()
 
 bool			isValidImageFormat(int format);
 bool      isValidImageFormat(EGLNativePixmapType f);
-
+RI_INLINE void RI_MEM_ZERO(void *dst, size_t n)
+{
+    RI_ASSERT(n > 0);
+    RI_ASSERT((n & 0x3) == 0);
+    RIuint32 *ptr = (RIuint32*)dst;
+    for(size_t i = 0; i < (n>>2); i++)
+    {
+        *ptr++ = 0;
+    }
+}
 //=======================================================================
 
 }	//namespace OpenVGRI
