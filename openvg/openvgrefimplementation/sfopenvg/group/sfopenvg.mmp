@@ -63,6 +63,9 @@ source riPath.cpp
 source riPixelPipe.cpp
 source riRasterizer.cpp
 source riVGU.cpp
+source riUtils.cpp
+// source sfEGLInterface.cpp is skipped because this contains adaptation to
+// use Nokia Platsim interfaces to provide EGL services
 
 //for EGL
 SOURCEPATH ..\sfopenvg\symbian
