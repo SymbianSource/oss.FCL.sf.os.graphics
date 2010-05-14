@@ -7,6 +7,7 @@
  * -----------------------------------
  *
  * Copyright (c) 2007 The Khronos Group Inc.
+ * Portions Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and /or associated documentation files
@@ -14,10 +15,10 @@
  * including without limitation the rights to use, copy, modify, merge,
  * publish, distribute, sublicense, and/or sell copies of the Materials,
  * and to permit persons to whom the Materials are furnished to do so,
- * subject to the following conditions: 
+ * subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included 
- * in all copies or substantial portions of the Materials. 
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Materials.
  *
  * THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
@@ -30,7 +31,7 @@
  *//**
  * \file
  * \brief	Math functions, Vector and Matrix classes.
- * \note	
+ * \note
  *//*-------------------------------------------------------------------*/
 
 #ifndef __RIDEFS_H
@@ -43,21 +44,21 @@ namespace OpenVGRI
 {
 
 /*-------------------------------------------------------------------*//*!
-* \brief	
-* \param	
-* \return	
-* \note		
+* \brief
+* \param
+* \return
+* \note
 *//*-------------------------------------------------------------------*/
 
 RI_INLINE int		RI_ISNAN(float a)
 {
-	RIfloatInt p;
-	p.f = a;
-	unsigned int exponent = (p.i>>23) & 0xff;
-	unsigned int mantissa = p.i & 0x7fffff;
-	if(exponent == 255 && mantissa)
-		return 1;
-	return 0;
+    RIfloatInt p;
+    p.f = a;
+    unsigned int exponent = (p.i>>23) & 0xff;
+    unsigned int mantissa = p.i & 0x7fffff;
+    if(exponent == 255 && mantissa)
+        return 1;
+    return 0;
 }
 
 #if (RI_MANTISSA_BITS > 23)
@@ -69,77 +70,77 @@ RI_INLINE int		RI_ISNAN(float a)
 class RIfloat
 {
 public:
-	RIfloat() : v(0.0f)						{ removeBits(); }
-	RIfloat(float a) : v(a)					{ removeBits(); }
-	RIfloat(double a) : v((float)a)			{ removeBits(); }
-	RIfloat(int a) : v((float)a)			{ removeBits(); }
-	RIfloat(unsigned int a) : v((float)a)	{ removeBits(); }
-	RIfloat&	operator=(const RIfloat &a)	{ v = a.v; removeBits(); return *this; }
-	RIfloat&	operator+=(const RIfloat &a){ v += a.v; removeBits(); return *this; }
-	RIfloat&	operator-=(const RIfloat &a){ v -= a.v; removeBits(); return *this; }
-	RIfloat&	operator*=(const RIfloat &a){ v *= a.v; removeBits(); return *this; }
-	RIfloat&	operator/=(const RIfloat &a){ v /= a.v; removeBits(); return *this; }
-	RIfloat		operator-() const			{ return -v; }
-	operator float() const					{ return v; }
-	operator double() const					{ return (double)v; }
-	operator int() const					{ return (int)v; }
+    RIfloat() : v(0.0f)						{ removeBits(); }
+    RIfloat(float a) : v(a)					{ removeBits(); }
+    RIfloat(double a) : v((float)a)			{ removeBits(); }
+    RIfloat(int a) : v((float)a)			{ removeBits(); }
+    RIfloat(unsigned int a) : v((float)a)	{ removeBits(); }
+    RIfloat&	operator=(const RIfloat &a)	{ v = a.v; removeBits(); return *this; }
+    RIfloat&	operator+=(const RIfloat &a){ v += a.v; removeBits(); return *this; }
+    RIfloat&	operator-=(const RIfloat &a){ v -= a.v; removeBits(); return *this; }
+    RIfloat&	operator*=(const RIfloat &a){ v *= a.v; removeBits(); return *this; }
+    RIfloat&	operator/=(const RIfloat &a){ v /= a.v; removeBits(); return *this; }
+    RIfloat		operator-() const			{ return -v; }
+    operator float() const					{ return v; }
+    operator double() const					{ return (double)v; }
+    operator int() const					{ return (int)v; }
 
-	friend RIfloat	operator+(const RIfloat &a, const RIfloat &b);
-	friend RIfloat	operator+(float a, const RIfloat &b);
-	friend RIfloat	operator+(const RIfloat &a, float b);
-	friend RIfloat	operator-(const RIfloat &a, const RIfloat &b);
-	friend RIfloat	operator-(float a, const RIfloat &b);
-	friend RIfloat	operator-(const RIfloat &a, float b);
-	friend RIfloat	operator*(const RIfloat &a, const RIfloat &b);
-	friend RIfloat	operator*(float a, const RIfloat &b);
-	friend RIfloat	operator*(const RIfloat &a, float b);
-	friend RIfloat	operator/(const RIfloat &a, const RIfloat &b);
-	friend RIfloat	operator/(float a, const RIfloat &b);
-	friend RIfloat	operator/(const RIfloat &a, float b);
+    friend RIfloat	operator+(const RIfloat &a, const RIfloat &b);
+    friend RIfloat	operator+(float a, const RIfloat &b);
+    friend RIfloat	operator+(const RIfloat &a, float b);
+    friend RIfloat	operator-(const RIfloat &a, const RIfloat &b);
+    friend RIfloat	operator-(float a, const RIfloat &b);
+    friend RIfloat	operator-(const RIfloat &a, float b);
+    friend RIfloat	operator*(const RIfloat &a, const RIfloat &b);
+    friend RIfloat	operator*(float a, const RIfloat &b);
+    friend RIfloat	operator*(const RIfloat &a, float b);
+    friend RIfloat	operator/(const RIfloat &a, const RIfloat &b);
+    friend RIfloat	operator/(float a, const RIfloat &b);
+    friend RIfloat	operator/(const RIfloat &a, float b);
 
-	friend bool		operator<(const RIfloat &a, const RIfloat &b);
-	friend bool		operator<(float a, const RIfloat &b);
-	friend bool		operator<(const RIfloat &a, float b);
-	friend bool		operator>(const RIfloat &a, const RIfloat &b);
-	friend bool		operator>(float a, const RIfloat &b);
-	friend bool		operator>(const RIfloat &a, float b);
-	friend bool		operator<=(const RIfloat &a, const RIfloat &b);
-	friend bool		operator<=(float a, const RIfloat &b);
-	friend bool		operator<=(const RIfloat &a, float b);
-	friend bool		operator>=(const RIfloat &a, const RIfloat &b);
-	friend bool		operator>=(float a, const RIfloat &b);
-	friend bool		operator>=(const RIfloat &a, float b);
-	friend bool		operator==(const RIfloat &a, const RIfloat &b);
-	friend bool		operator==(float a, const RIfloat &b);
-	friend bool		operator==(const RIfloat &a, float b);
-	friend bool		operator!=(const RIfloat &a, const RIfloat &b);
-	friend bool		operator!=(float a, const RIfloat &b);
-	friend bool		operator!=(const RIfloat &a, float b);
+    friend bool		operator<(const RIfloat &a, const RIfloat &b);
+    friend bool		operator<(float a, const RIfloat &b);
+    friend bool		operator<(const RIfloat &a, float b);
+    friend bool		operator>(const RIfloat &a, const RIfloat &b);
+    friend bool		operator>(float a, const RIfloat &b);
+    friend bool		operator>(const RIfloat &a, float b);
+    friend bool		operator<=(const RIfloat &a, const RIfloat &b);
+    friend bool		operator<=(float a, const RIfloat &b);
+    friend bool		operator<=(const RIfloat &a, float b);
+    friend bool		operator>=(const RIfloat &a, const RIfloat &b);
+    friend bool		operator>=(float a, const RIfloat &b);
+    friend bool		operator>=(const RIfloat &a, float b);
+    friend bool		operator==(const RIfloat &a, const RIfloat &b);
+    friend bool		operator==(float a, const RIfloat &b);
+    friend bool		operator==(const RIfloat &a, float b);
+    friend bool		operator!=(const RIfloat &a, const RIfloat &b);
+    friend bool		operator!=(float a, const RIfloat &b);
+    friend bool		operator!=(const RIfloat &a, float b);
 private:
-	void	removeBits()
-	{
-		RIfloatInt p;
-		p.f = v;
-		unsigned int exponent = (p.i>>23) & 0xff;
-		if(exponent == 0 || exponent == 255)
-			return;	//zero, denormal, infinite, or NaN
+    void	removeBits()
+    {
+        RIfloatInt p;
+        p.f = v;
+        unsigned int exponent = (p.i>>23) & 0xff;
+        if(exponent == 0 || exponent == 255)
+            return;	//zero, denormal, infinite, or NaN
 
-		p.i &= ~((1<<(23-RI_MANTISSA_BITS))-1);
+        p.i &= ~((1<<(23-RI_MANTISSA_BITS))-1);
 
 #if (RI_EXPONENT_BITS != 8)
-		if (exponent > 127 + (1 << (RI_EXPONENT_BITS-1)))
-			exponent = 127 + (1 << (RI_EXPONENT_BITS-1));
+        if (exponent > 127 + (1 << (RI_EXPONENT_BITS-1)))
+            exponent = 127 + (1 << (RI_EXPONENT_BITS-1));
 
-		if (exponent < 127 + 1 - (1 << (RI_EXPONENT_BITS-1)))
-			exponent = 127 + 1 - (1 << (RI_EXPONENT_BITS-1));
+        if (exponent < 127 + 1 - (1 << (RI_EXPONENT_BITS-1)))
+            exponent = 127 + 1 - (1 << (RI_EXPONENT_BITS-1));
 
-		p.i &= ~(0xff<<23);
-		p.i |= exponent<<23;
+        p.i &= ~(0xff<<23);
+        p.i |= exponent<<23;
 #endif
-		v = p.f;
-	}
+        v = p.f;
+    }
 
-	float		v;
+    float		v;
 };
 
 RI_INLINE RIfloat operator+(const RIfloat &a, const RIfloat &b)	{ return RIfloat(a.v+b.v); }
@@ -180,8 +181,11 @@ typedef float RIfloat;
 
 #define	PI						3.141592654f
 
+RI_INLINE int       RI_ROUND_TO_INT(RIfloat v)                  { return (v >= 0.0f) ? (int)(v+0.5f) : (int)(v-0.5f); }
 RI_INLINE RIfloat	RI_MAX(RIfloat a, RIfloat b)				{ return (a > b) ? a : b; }
+RI_INLINE int		RI_MAX(int a, int b)						{ return (a > b) ? a : b; }
 RI_INLINE RIfloat	RI_MIN(RIfloat a, RIfloat b)				{ return (a < b) ? a : b; }
+RI_INLINE int		RI_MIN(int a, int b)						{ return (a < b) ? a : b; }
 RI_INLINE RIfloat	RI_CLAMP(RIfloat a, RIfloat l, RIfloat h)	{ if(RI_ISNAN(a)) return l; RI_ASSERT(l <= h); return (a < l) ? l : (a > h) ? h : a; }
 RI_INLINE void		RI_SWAP(RIfloat &a, RIfloat &b)				{ RIfloat tmp = a; a = b; b = tmp; }
 RI_INLINE RIfloat	RI_ABS(RIfloat a)							{ return (a < 0.0f) ? -a : a; }
@@ -190,11 +194,31 @@ RI_INLINE RIfloat	RI_DEG_TO_RAD(RIfloat a)					{ return a * PI / 180.0f; }
 RI_INLINE RIfloat	RI_RAD_TO_DEG(RIfloat a)					{ return a * 180.0f/ PI; }
 RI_INLINE RIfloat	RI_MOD(RIfloat a, RIfloat b)				{ if(RI_ISNAN(a) || RI_ISNAN(b)) return 0.0f; RI_ASSERT(b >= 0.0f); if(b == 0.0f) return 0.0f; RIfloat f = (RIfloat)fmod(a, b); if(f < 0.0f) f += b; RI_ASSERT(f >= 0.0f && f <= b); return f; }
 
+#define RI_ANY_SWAP(type, a, b) {type tmp = a; a = b; b = tmp;}
+
+RI_INLINE void      RI_INT16_SWAP(RIint16 &a, RIint16 &b) {RIint16 tmp = a; a = b; b = tmp;}
+RI_INLINE int       RI_INT_ABS(int a)                   { return (a >= 0) ? a : -a; }
 RI_INLINE int		RI_INT_MAX(int a, int b)			{ return (a > b) ? a : b; }
 RI_INLINE int		RI_INT_MIN(int a, int b)			{ return (a < b) ? a : b; }
+RI_INLINE int       RI_INT_CLAMP(int a, int l, int h)   { return (a < l) ? l : (a > h) ? h : a; }
 RI_INLINE void		RI_INT_SWAP(int &a, int &b)			{ int tmp = a; a = b; b = tmp; }
 RI_INLINE int		RI_INT_MOD(int a, int b)			{ RI_ASSERT(b >= 0); if(!b) return 0; int i = a % b; if(i < 0) i += b; RI_ASSERT(i >= 0 && i < b); return i; }
 RI_INLINE int		RI_INT_ADDSATURATE(int a, int b)	{ RI_ASSERT(b >= 0); int r = a + b; return (r >= a) ? r : RI_INT32_MAX; }
+
+RI_INLINE int       RI_SHL(int a, int sh)
+{
+    RI_ASSERT(sh >= 0 && sh <= 31);
+    int r = a << sh;
+    RI_ASSERT(a >= 0 ? (r >= 0) : (r < 0));
+    return r;
+}
+
+RI_INLINE int RI_SHR(int a, int sh)
+{
+    RI_ASSERT(sh >= 0 && sh <= 31);
+    int r = a >> sh;
+    return r;
+}
 
 class Matrix3x3;
 class Vector2;
@@ -209,31 +233,31 @@ class Vector3;
 class Matrix3x3
 {
 public:
-	RI_INLINE					Matrix3x3		();						//initialized to identity
-	RI_INLINE					Matrix3x3		( const Matrix3x3& m );
-	RI_INLINE					Matrix3x3		( RIfloat m00, RIfloat m01, RIfloat m02, RIfloat m10, RIfloat m11, RIfloat m12, RIfloat m20, RIfloat m21, RIfloat m22 );
-	RI_INLINE					~Matrix3x3		();
-	RI_INLINE Matrix3x3&		operator=		( const Matrix3x3& m );
-	RI_INLINE Vector3&			operator[]		( int i );				//returns a row vector
-	RI_INLINE const Vector3&	operator[]		( int i ) const;
-	RI_INLINE void				set				( RIfloat m00, RIfloat m01, RIfloat m02, RIfloat m10, RIfloat m11, RIfloat m12, RIfloat m20, RIfloat m21, RIfloat m22 );
-	RI_INLINE const Vector3		getRow			( int i ) const;
-	RI_INLINE const Vector3		getColumn		( int i ) const;
-	RI_INLINE void				setRow			( int i, const Vector3& v );
-	RI_INLINE void				setColumn		( int i, const Vector3& v );
-	RI_INLINE void				operator*=		( const Matrix3x3& m );
-	RI_INLINE void				operator*=		( RIfloat f );
-	RI_INLINE void				operator+=		( const Matrix3x3& m );
-	RI_INLINE void				operator-=		( const Matrix3x3& m );
-	RI_INLINE const Matrix3x3	operator-		() const;
-	RI_INLINE void				identity		();
-	RI_INLINE void				transpose		();
-	bool						invert			();	//if the matrix is singular, returns false and leaves it unmodified
-	RI_INLINE RIfloat				det				() const;
-	RI_INLINE bool				isAffine		() const;
+    RI_INLINE					Matrix3x3		();						//initialized to identity
+    RI_INLINE					Matrix3x3		( const Matrix3x3& m );
+    RI_INLINE					Matrix3x3		( RIfloat m00, RIfloat m01, RIfloat m02, RIfloat m10, RIfloat m11, RIfloat m12, RIfloat m20, RIfloat m21, RIfloat m22 );
+    RI_INLINE					~Matrix3x3		();
+    RI_INLINE Matrix3x3&		operator=		( const Matrix3x3& m );
+    RI_INLINE Vector3&			operator[]		( int i );				//returns a row vector
+    RI_INLINE const Vector3&	operator[]		( int i ) const;
+    RI_INLINE void				set				( RIfloat m00, RIfloat m01, RIfloat m02, RIfloat m10, RIfloat m11, RIfloat m12, RIfloat m20, RIfloat m21, RIfloat m22 );
+    RI_INLINE const Vector3		getRow			( int i ) const;
+    RI_INLINE const Vector3		getColumn		( int i ) const;
+    RI_INLINE void				setRow			( int i, const Vector3& v );
+    RI_INLINE void				setColumn		( int i, const Vector3& v );
+    RI_INLINE void				operator*=		( const Matrix3x3& m );
+    RI_INLINE void				operator*=		( RIfloat f );
+    RI_INLINE void				operator+=		( const Matrix3x3& m );
+    RI_INLINE void				operator-=		( const Matrix3x3& m );
+    RI_INLINE const Matrix3x3	operator-		() const;
+    RI_INLINE void				identity		();
+    RI_INLINE void				transpose		();
+    bool						invert			();	//if the matrix is singular, returns false and leaves it unmodified
+    RI_INLINE RIfloat				det				() const;
+    RI_INLINE bool				isAffine		() const;
 
 private:
-	RIfloat						matrix[3][3];
+    RIfloat						matrix[3][3];
 };
 
 //==============================================================================================
@@ -241,25 +265,25 @@ private:
 class Vector2
 {
 public:
-	RI_INLINE					Vector2			() : x(0.0f), y(0.0f)					{}
-	RI_INLINE					Vector2			( const Vector2& v ) : x(v.x), y(v.y)	{}
-	RI_INLINE					Vector2			( RIfloat fx, RIfloat fy ) : x(fx), y(fy)	{}
-	RI_INLINE					~Vector2		()								{}
-	RI_INLINE Vector2&			operator=		( const Vector2& v )			{ x = v.x; y = v.y; return *this; }
-	RI_INLINE RIfloat&			operator[]		( int i )						{ RI_ASSERT(i>=0&&i<2); return (&x)[i]; }
-	RI_INLINE const RIfloat&	operator[]		( int i ) const					{ RI_ASSERT(i>=0&&i<2); return (&x)[i]; }
-	RI_INLINE void				set				( RIfloat fx, RIfloat fy )			{ x = fx; y = fy; }
-	RI_INLINE void				operator*=		( RIfloat f )						{ x *= f; y *= f; }
-	RI_INLINE void				operator+=		( const Vector2& v )			{ x += v.x; y += v.y; }
-	RI_INLINE void				operator-=		( const Vector2& v )			{ x -= v.x; y -= v.y; }
-	RI_INLINE const Vector2		operator-		() const						{ return Vector2(-x,-y); }
-	//if the vector is zero, returns false and leaves it unmodified
-	RI_INLINE bool				normalize		()								{ double l = (double)x*(double)x+(double)y*(double)y; if( l == 0.0 ) return false; l = 1.0 / sqrt(l); x = (RIfloat)((double)x * l); y = (RIfloat)((double)y * l); return true; }
-	RI_INLINE RIfloat			length			() const						{ return (RIfloat)sqrt((double)x*(double)x+(double)y*(double)y); }
-	RI_INLINE void				scale			( const Vector2& v )			{ x *= v.x; y *= v.y; }	//component-wise scale
-	RI_INLINE void				negate			()								{ x = -x; y = -y; }
+    RI_INLINE					Vector2			() : x(0.0f), y(0.0f)					{}
+    RI_INLINE					Vector2			( const Vector2& v ) : x(v.x), y(v.y)	{}
+    RI_INLINE					Vector2			( RIfloat fx, RIfloat fy ) : x(fx), y(fy)	{}
+    RI_INLINE					~Vector2		()								{}
+    RI_INLINE Vector2&			operator=		( const Vector2& v )			{ x = v.x; y = v.y; return *this; }
+    RI_INLINE RIfloat&			operator[]		( int i )						{ RI_ASSERT(i>=0&&i<2); return (&x)[i]; }
+    RI_INLINE const RIfloat&	operator[]		( int i ) const					{ RI_ASSERT(i>=0&&i<2); return (&x)[i]; }
+    RI_INLINE void				set				( RIfloat fx, RIfloat fy )			{ x = fx; y = fy; }
+    RI_INLINE void				operator*=		( RIfloat f )						{ x *= f; y *= f; }
+    RI_INLINE void				operator+=		( const Vector2& v )			{ x += v.x; y += v.y; }
+    RI_INLINE void				operator-=		( const Vector2& v )			{ x -= v.x; y -= v.y; }
+    RI_INLINE const Vector2		operator-		() const						{ return Vector2(-x,-y); }
+    //if the vector is zero, returns false and leaves it unmodified
+    RI_INLINE bool				normalize		()								{ double l = (double)x*(double)x+(double)y*(double)y; if( l == 0.0 ) return false; l = 1.0 / sqrt(l); x = (RIfloat)((double)x * l); y = (RIfloat)((double)y * l); return true; }
+    RI_INLINE RIfloat			length			() const						{ return (RIfloat)sqrt((double)x*(double)x+(double)y*(double)y); }
+    RI_INLINE void				scale			( const Vector2& v )			{ x *= v.x; y *= v.y; }	//component-wise scale
+    RI_INLINE void				negate			()								{ x = -x; y = -y; }
 
-	RIfloat						x,y;
+    RIfloat						x,y;
 };
 
 //==============================================================================================
@@ -267,25 +291,25 @@ public:
 class Vector3
 {
 public:
-	RI_INLINE					Vector3			() : x(0.0f), y(0.0f), z(0.0f)							{}
-	RI_INLINE					Vector3			( const Vector3& v ) : x(v.x), y(v.y), z(v.z)			{}
-	RI_INLINE					Vector3			( RIfloat fx, RIfloat fy, RIfloat fz ) : x(fx), y(fy), z(fz)	{}
-	RI_INLINE					~Vector3		()								{}
-	RI_INLINE Vector3&			operator=		( const Vector3& v )			{ x = v.x; y = v.y; z = v.z; return *this; }
-	RI_INLINE RIfloat&			operator[]		( int i )						{ RI_ASSERT(i>=0&&i<3); return (&x)[i]; }
-	RI_INLINE const RIfloat&	operator[]		( int i ) const					{ RI_ASSERT(i>=0&&i<3); return (&x)[i]; }
-	RI_INLINE void				set				( RIfloat fx, RIfloat fy, RIfloat fz ){ x = fx; y = fy; z = fz; }
-	RI_INLINE void				operator*=		( RIfloat f )						{ x *= f; y *= f; z *= f; }
-	RI_INLINE void				operator+=		( const Vector3& v )			{ x += v.x; y += v.y; z += v.z; }
-	RI_INLINE void				operator-=		( const Vector3& v )			{ x -= v.x; y -= v.y; z -= v.z; }
-	RI_INLINE const Vector3		operator-		() const						{ return Vector3(-x,-y,-z); }
-	//if the vector is zero, returns false and leaves it unmodified
-	RI_INLINE bool				normalize		()								{ double l = (double)x*(double)x+(double)y*(double)y+(double)z*(double)z; if( l == 0.0 ) return false; l = 1.0 / sqrt(l); x = (RIfloat)((double)x * l); y = (RIfloat)((double)y * l); z = (RIfloat)((double)z * l); return true; }
-	RI_INLINE RIfloat			length			() const						{ return (RIfloat)sqrt((double)x*(double)x+(double)y*(double)y+(double)z*(double)z); }
-	RI_INLINE void				scale			( const Vector3& v )			{ x *= v.x; y *= v.y; z *= v.z; }	//component-wise scale
-	RI_INLINE void				negate			()								{ x = -x; y = -y; z = -z; }
+    RI_INLINE					Vector3			() : x(0.0f), y(0.0f), z(0.0f)							{}
+    RI_INLINE					Vector3			( const Vector3& v ) : x(v.x), y(v.y), z(v.z)			{}
+    RI_INLINE					Vector3			( RIfloat fx, RIfloat fy, RIfloat fz ) : x(fx), y(fy), z(fz)	{}
+    RI_INLINE					~Vector3		()								{}
+    RI_INLINE Vector3&			operator=		( const Vector3& v )			{ x = v.x; y = v.y; z = v.z; return *this; }
+    RI_INLINE RIfloat&			operator[]		( int i )						{ RI_ASSERT(i>=0&&i<3); return (&x)[i]; }
+    RI_INLINE const RIfloat&	operator[]		( int i ) const					{ RI_ASSERT(i>=0&&i<3); return (&x)[i]; }
+    RI_INLINE void				set				( RIfloat fx, RIfloat fy, RIfloat fz ){ x = fx; y = fy; z = fz; }
+    RI_INLINE void				operator*=		( RIfloat f )						{ x *= f; y *= f; z *= f; }
+    RI_INLINE void				operator+=		( const Vector3& v )			{ x += v.x; y += v.y; z += v.z; }
+    RI_INLINE void				operator-=		( const Vector3& v )			{ x -= v.x; y -= v.y; z -= v.z; }
+    RI_INLINE const Vector3		operator-		() const						{ return Vector3(-x,-y,-z); }
+    //if the vector is zero, returns false and leaves it unmodified
+    RI_INLINE bool				normalize		()								{ double l = (double)x*(double)x+(double)y*(double)y+(double)z*(double)z; if( l == 0.0 ) return false; l = 1.0 / sqrt(l); x = (RIfloat)((double)x * l); y = (RIfloat)((double)y * l); z = (RIfloat)((double)z * l); return true; }
+    RI_INLINE RIfloat			length			() const						{ return (RIfloat)sqrt((double)x*(double)x+(double)y*(double)y+(double)z*(double)z); }
+    RI_INLINE void				scale			( const Vector3& v )			{ x *= v.x; y *= v.y; z *= v.z; }	//component-wise scale
+    RI_INLINE void				negate			()								{ x = -x; y = -y; z = -z; }
 
-	RIfloat						x,y,z;
+    RIfloat						x,y,z;
 };
 
 //==============================================================================================
