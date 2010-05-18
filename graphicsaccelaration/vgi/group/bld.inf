@@ -21,9 +21,9 @@
 #include <platform_paths.hrh>
 
 PRJ_EXPORTS
-//../inc/vg/vgcontext.h     OS_LAYER_PLATFORM_EXPORT_PATH(vg/vgcontext.h)
-//../inc/vg/vgcontext_symbian.h     OS_LAYER_PLATFORM_EXPORT_PATH(vg/vgcontext_symbian.h)
+../inc/vg/vgcontext.h     OS_LAYER_PLATFORM_EXPORT_PATH(vg/vgcontext.h)
+../inc/vg/vgcontext_symbian.h     OS_LAYER_PLATFORM_EXPORT_PATH(vg/vgcontext_symbian.h)
 ../rom/libvgi.iby CORE_OS_LAYER_IBY_EXPORT_PATH(libvgi.iby)
 
 PRJ_MMPFILES
-libvgi.mmp
+// libvgi.mmp
