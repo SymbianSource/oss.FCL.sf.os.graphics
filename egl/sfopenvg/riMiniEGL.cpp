@@ -430,8 +430,6 @@ EGL* getEGL()
 		return NULL;
 		}
 	return es->getEgl();
-
-	
 }
 static void releaseEGL()
 {
@@ -445,11 +443,14 @@ static void releaseEGL()
 		}
 	}
 	*/
-	EGL* pEgl = static_cast<EGL*>(Dll::Tls());
-	if (pEgl)
-		delete pEgl; 
+	CEglThreadSession* es = reinterpret_cast<CEglThreadSession*>(Dll::Tls());
+	if (es)
+		{
+		EGL* pEgl = es->getEgl();
+		if (pEgl)
+			delete pEgl;
+		}
 	Dll::SetTls(NULL);
-
 }
 
 /*-------------------------------------------------------------------*//*!
