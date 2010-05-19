@@ -443,12 +443,11 @@ static void releaseEGL()
 		}
 	}
 	*/
+	RDebug::Printf("I am in releaseEGL ");
 	CEglThreadSession* es = reinterpret_cast<CEglThreadSession*>(Dll::Tls());
 	if (es)
 		{
-		EGL* pEgl = es->getEgl();
-		if (pEgl)
-			delete pEgl;
+		delete es;
 		}
 	Dll::SetTls(NULL);
 }

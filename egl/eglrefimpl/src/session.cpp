@@ -80,6 +80,7 @@ CEglThreadSession::CEglThreadSession(CEglDriver& aDriver):
 
 CEglThreadSession::~CEglThreadSession()
 	{
+	delete iEgl;
 	CEglDriver::Close();
 	}
 
