@@ -38,13 +38,8 @@
  * \todo	what happens in egl functions when eglTerminate has been called but the context and surface are still in use?
  * \todo	OSDeinitMutex should be called in case getEGL fails.
  *//*-------------------------------------------------------------------*/
-#include <e32std.h>
 #include "egl.h"
-#include "openvg.h"
-#include "riArray.h"
-#include "riMath.h"
 #include "riContext.h"
-#include "riImage.h"
 
 #ifdef BUILD_WITH_PRIVATE_EGL 
 #include "eglinternal.h"
@@ -58,19 +53,9 @@
 
 namespace OpenVGRI
 {
-void* OSGetCurrentThreadID(void);
-void OSAcquireMutex(void);
-void OSReleaseMutex(void);
-void OSDeinitMutex(void);
-
-EGLDisplay OSGetDisplay(EGLNativeDisplayType display_id);
-void* OSCreateWindowContext(EGLNativeWindowType window);
-void OSDestroyWindowContext(void* context);
-bool OSIsWindow(const void* context);
-void OSGetWindowSize(const void* context, int& width, int& height);
-void OSBlitToWindow(void* context, const Drawable* drawable);
-EGLBoolean OSGetNativePixmapInfo(NativePixmapType pixmap, int* width, int* height, int* stride, VGImageFormat* format, int** data);
-
+class RIEGLSurface;
+class RIEGLContext;
+class RIEGLThread;
 
 /*-------------------------------------------------------------------*//*!
 * \brief	
@@ -153,68 +138,6 @@ public:
 	//EGL TRANSPARENT BLUE VALUE integer transparent blue value (undefined)
 };
 
-/*-------------------------------------------------------------------*//*!
-* \brief	
-* \param	
-* \return	
-* \note		
-*//*-------------------------------------------------------------------*/
-
-class RIEGLContext
-{
-public:
-	RIEGLContext(OpenVGRI::VGContext* vgctx, const EGLConfig config);
-	~RIEGLContext();
-	void	addReference()				{ m_referenceCount++; }
-	int		removeReference()			{ m_referenceCount--; RI_ASSERT(m_referenceCount >= 0); return m_referenceCount; }
-
-    VGContext*      getVGContext() const      { return m_vgContext; }
-    EGLConfig getConfig() const         { return m_config; }
-private:
-	RIEGLContext(const RIEGLContext&);
-	RIEGLContext& operator=(const RIEGLContext&);
-	VGContext*		m_vgContext;
-	const EGLConfig	m_config;
-	int				m_referenceCount;
-};
-
-RIEGLContext* CastToRIEGLContext(EGLContext aCtxId);
-EGLContext CastFromRIEGLContext(RIEGLContext* aCtx);
-
-/*-------------------------------------------------------------------*//*!
-* \brief	
-* \param	
-* \return	
-* \note		
-*//*-------------------------------------------------------------------*/
-
-class RIEGLSurface
-{
-public:
-    RIEGLSurface(void* OSWindowContext, const EGLConfig config, Drawable* drawable, bool largestPbuffer, int renderBuffer);
-	~RIEGLSurface();
-	void	addReference()				{ m_referenceCount++; }
-	int		removeReference()			{ m_referenceCount--; RI_ASSERT(m_referenceCount >= 0); return m_referenceCount; }
-
-    void*           getOSWindowContext() const { return m_OSWindowContext; }
-    EGLConfig       getConfig() const          { return m_config; }
-    Drawable*       getDrawable() const        { return m_drawable; }
-    bool            isLargestPbuffer() const   { return m_largestPbuffer; }
-    int             getRenderBuffer() const    { return m_renderBuffer; }
-
-private:
-	RIEGLSurface(const RIEGLSurface&);
-	RIEGLSurface& operator=(const RIEGLSurface&);
-    void*            m_OSWindowContext;
-	const EGLConfig	 m_config;
-	Drawable*        m_drawable;
-	bool			 m_largestPbuffer;
-	int				 m_renderBuffer;		//EGL_BACK_BUFFER or EGL_SINGLE_BUFFER
-	int				 m_referenceCount;
-};
-
-RIEGLSurface* CastToRIEGLSurface(EGLSurface aSurfaceId);
-EGLSurface CastFromRIEGLSurface(RIEGLSurface* aSurface);
 
 /*-------------------------------------------------------------------*//*!
 * \brief	
@@ -259,47 +182,6 @@ private:
 	RIEGLConfig             m_configs[EGL_NUMCONFIGS];
 };
 
-
-/*-------------------------------------------------------------------*//*!
-* \brief	
-* \param	
-* \return	
-* \note		
-*//*-------------------------------------------------------------------*/
-
-class RIEGLThread
-{
-public:
-	RIEGLThread(void* currentThreadID);
-	~RIEGLThread();
-
-    void*           getThreadID() const       { return m_threadID; }
-
-    void            makeCurrent(RIEGLContext* c, RIEGLSurface* s)       { m_context = c; m_surface = s; }
-	RIEGLContext*	getCurrentContext() const   { return m_context; }
-	RIEGLSurface*	getCurrentSurface() const   { return m_surface; }
-
-    void            setError(EGLint error)      { m_error = error; }
-    EGLint          getError() const            { return m_error; }
-
-    void            bindAPI(EGLint api)         { m_boundAPI = api; }
-    EGLint          getBoundAPI() const         { return m_boundAPI; }
-
-private:
-	RIEGLThread(const RIEGLThread&);
-	RIEGLThread operator=(const RIEGLThread&);
-
-	RIEGLContext*		m_context;
-	RIEGLSurface*		m_surface;
-	EGLint              m_error;
-	void*               m_threadID;
-	EGLint              m_boundAPI;
-};
-
-
-Image* CastToImage(EGLClientBuffer aBufferId);
-EGLClientBuffer CastFromImage(Image* aBUffer);
-
 /*-------------------------------------------------------------------*//*!
 * \brief	
 * \param	
@@ -341,50 +223,10 @@ private:
 	int                     m_referenceCount;
 };
 
-
 void* eglvgGetCurrentVGContext(void);
 bool  eglvgIsInUse(void* image);
 
 } //end of namespace
-
-
-/*-------------------------------------------------------------------*//*!
-* \brief	
-* \param	
-* \return	
-* \note		
-*//*-------------------------------------------------------------------*/
-
-#define EGL_GET_DISPLAY(DISPLAY, RETVAL) \
-	OSAcquireMutex(); \
-	EGL* egl = getEGL(); \
-    if(!egl) \
-    { \
-		OSReleaseMutex(); \
-		return RETVAL; \
-    } \
-	RIEGLDisplay* display = egl->getDisplay(DISPLAY); \
-
-#define EGL_GET_EGL(RETVAL) \
-	OSAcquireMutex(); \
-	EGL* egl = getEGL(); \
-    if(!egl) \
-    { \
-		OSReleaseMutex(); \
-		return RETVAL; \
-    } \
-
-#define EGL_IF_ERROR(COND, ERRORCODE, RETVAL) \
-	if(COND) { eglSetError(egl, ERRORCODE); OSReleaseMutex(); return RETVAL; } \
-
-#define EGL_RETURN(ERRORCODE, RETVAL) \
-	{ \
-		eglSetError(egl, ERRORCODE); \
-		OSReleaseMutex(); \
-		return RETVAL; \
-	}
-
-//#undef EGL_NUMCONFIGS
 
 #endif /* __RIMINIEGL_H */
 

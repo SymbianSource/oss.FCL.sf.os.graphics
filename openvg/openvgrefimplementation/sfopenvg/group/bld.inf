@@ -20,7 +20,6 @@ DEFAULT
 
 PRJ_EXPORTS
 ../sfopenvg/symbian/eglosnativewindowtype.h
-../sfopenvg/include/eglinternal.h
 sfopenvg.iby /epoc32/rom/include/sfopenvg.iby
 
 PRJ_MMPFILES

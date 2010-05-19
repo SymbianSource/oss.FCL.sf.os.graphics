@@ -129,4 +129,3 @@ EXPORTS
 	?do_vgRenderToMask@@YAXKKW4VGMaskOperation@@@Z @ 128 NONAME ; void do_vgRenderToMask(unsigned long, unsigned long, enum VGMaskOperation)
 	?do_vgCreateMaskLayer@@YAKJJ@Z @ 129 NONAME ; unsigned long do_vgCreateMaskLayer(long, long)
 	?do_vgGetParent@@YAKK@Z @ 130 NONAME ; unsigned long do_vgGetParent(unsigned long)
-

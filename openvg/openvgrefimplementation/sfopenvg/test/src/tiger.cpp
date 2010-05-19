@@ -91,7 +91,7 @@ void CTiger::ConstructL(void)
 // -----------------------------------------------------------------------------
 //
 
-void CTiger::AppInit(RWindow& /*aWindow*/, CFbsBitmap* aBitmapToDraw)
+void CTiger::AppInit(RWindow& aWindow, CFbsBitmap* aBitmapToDraw)
 	{
 	// Initialize viewport and projection.
 	SetScreenSize(iScreenWidth, iScreenHeight);
