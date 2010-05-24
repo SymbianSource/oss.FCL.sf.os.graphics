@@ -9,6 +9,7 @@
 // Nokia Corporation - initial contribution.
 //
 // Contributors:
+// Sharp Corporation - contribution of modification for Enhancement of Pointer Event.
 //
 // Description:
 // Pointer functions
@@ -404,11 +405,12 @@ TBool WsPointer::PreProcessEvent(TRawEvent &aRawEvent)
 #endif
 	TRawEvent::TType type=aRawEvent.Type();
 	if (type<TRawEvent::EPointerMove || (type>TRawEvent::EPointerSwitchOn && type<TRawEvent::EButton1Down)
-																						|| type>TRawEvent::EButton3Up)
+			|| (type>TRawEvent::EButton3Up && type<TRawEvent::EGestureTap) || type>TRawEvent::EGestureCustom9)
 		return ETrue;
 	if (!XyInput())
 		return EFalse;
-	TPoint xy=aRawEvent.Pos();
+	TRawEvent_Local* pEventLocal = (TRawEvent_Local*)&aRawEvent ;
+	TPoint xy=pEventLocal->GetPos();
 	if (DeltaMouse())
 		{
 	#if defined(__WINS__)
@@ -451,8 +453,9 @@ TBool WsPointer::PreProcessEvent(TRawEvent &aRawEvent)
 	}
 
 void WsPointer::ProcessEvent(TPointerEvent::TType aType, const TPoint &aPos, TUint aModifiers
-																				,const CWsWindowGroup *aForceInGroup,TBool aNatural)
+																				,const CWsWindowGroup *aForceInGroup,TBool aNatural, const TRawEvent* aEvent)
 	{
+	TRawEvent_Local* pEventLocal = (TRawEvent_Local*)aEvent ;
 	iCurrentPos=aPos;
 	if (aType==TPointerEvent::EMove && !MovesAvailable() && !iPointerDown)
 		return;
@@ -464,6 +467,14 @@ void WsPointer::ProcessEvent(TPointerEvent::TType aType, const TPoint &aPos, TUi
 	pointerEvent.iModifiers=aModifiers;
 	pointerEvent.iPosition=pos;
 	pointerEvent.iParentPosition=parPos;
+	if(aEvent!=NULL){
+		if (aEvent->DeviceNumber() == 1)
+			pointerEvent.iModifiers|=0x80000000;
+		TUint addr = reinterpret_cast<TUint>(&pointerEvent) + sizeof(TPointerEvent);
+		TPoint* extPtr = reinterpret_cast<TPoint *>(addr);
+		extPtr->iX=pEventLocal->GetZ();
+		extPtr->iY=pEventLocal->GetPhi();
+		}
 	switch(aType)
 		{
 		case TPointerEvent::EButton1Down:

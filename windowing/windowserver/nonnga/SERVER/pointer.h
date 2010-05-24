@@ -9,6 +9,7 @@
 // Nokia Corporation - initial contribution.
 //
 // Contributors:
+// Sharp Corporation - contribution of modification for Enhancement of Pointer Event.
 //
 // Description:
 // WsPointer and associated classes definitions
@@ -50,7 +51,7 @@ public:
 	static TBool PreProcessEvent(TRawEvent &aRawEvent);
 #endif
 	static void ProcessEvent(TPointerEvent::TType type, const TPoint &aPos, TUint aModifiers
-																				,const CWsWindowGroup *aForceInGroup,TBool aNatural);
+																				,const CWsWindowGroup *aForceInGroup,TBool aNatural, const TRawEvent* aEvent=NULL);
 	static void GetDoubleClickSettings(TTimeIntervalMicroSeconds32 &aTime, TInt &aDistance);
 	static void SetDoubleClick(const TTimeIntervalMicroSeconds32 &aTime, TInt aDistance);
 	static void UpdatePointerCursor();
@@ -161,5 +162,25 @@ inline TBool WsPointer::DeltaMouse()
 	{
 	return (iXyInputType==EXYInputDeltaMouse);
 	}
+
+// internal use only for Enhancement of Pointer Event
+class TRawEvent_Local : public TRawEvent
+	{
+public:
+	inline TPoint GetPos() const
+		{return (TPoint(iU.pos.x,iU.pos.y));}
+	inline TInt GetX() const
+		{return iU.pos3D.x;}
+	inline TInt GetY() const
+		{return iU.pos3D.y;}
+	inline TInt GetZ() const
+		{return iU.pos3D.z;}
+	inline TInt GetPhi() const
+		{return iU.pos3D.phi;}
+	inline TInt GetTheta() const
+		{return iU.pos3D.theta;}
+	inline TInt GetAlpha() const
+		{return iU.pos3D.alpha;}
+	};
 
 #endif

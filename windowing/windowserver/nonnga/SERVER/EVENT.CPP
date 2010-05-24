@@ -9,6 +9,7 @@
 // Nokia Corporation - initial contribution.
 //
 // Contributors:
+// Sharp Corporation - contribution of modification for Enhancement of Pointer Event.
 //
 // Description:
 // Top level window server code
@@ -817,6 +818,24 @@ LOCAL_D void GetPointerEvent(TPointerEvent::TType& aType, const TRawEvent &aRawE
 	case TRawEvent::EPointerSwitchOn:
 		aType=TPointerEvent::ESwitchOn;
 		break;
+	case TRawEvent::EGestureTap:
+	case TRawEvent::EGesturePress:
+	case TRawEvent::EGestureFlickup:
+	case TRawEvent::EGestureFlickDown:
+	case TRawEvent::EGestureFlickLeft:
+	case TRawEvent::EGestureFlickRight:
+	case TRawEvent::EGestureFlick:
+	case TRawEvent::EGestureCustom1:
+	case TRawEvent::EGestureCustom2:
+	case TRawEvent::EGestureCustom3:
+	case TRawEvent::EGestureCustom4:
+	case TRawEvent::EGestureCustom5:
+	case TRawEvent::EGestureCustom6:
+	case TRawEvent::EGestureCustom7:
+	case TRawEvent::EGestureCustom8:
+	case TRawEvent::EGestureCustom9:
+		aType = static_cast<TPointerEvent::TType>(aRawEvent.Type());
+		break;
 	default:
 		aHandled=EFalse;
 		}
@@ -832,8 +851,9 @@ TBool TWindowServerEvent::MousePress(const TRawEvent &aRawEvent, const CWsWindow
 	GetPointerEvent(type, aRawEvent, handled);
 	if (handled)
 		{
-		TPoint xy(aRawEvent.Pos());
-		WsPointer::ProcessEvent(type, xy, iKeyTranslator->GetModifierState(), aGroupWin, ETrue);
+		TRawEvent_Local* pEventLocal = (TRawEvent_Local*)&aRawEvent ;
+		TPoint xy(pEventLocal->GetPos());
+		WsPointer::ProcessEvent(type, xy, iKeyTranslator->GetModifierState(), aGroupWin, ETrue, &aRawEvent);
 		}
 	return handled;
 	}
@@ -1010,6 +1030,22 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
 		case TRawEvent::EButton2Up:
 		case TRawEvent::EButton3Up:
 		case TRawEvent::EPointerMove:
+		case TRawEvent::EGestureTap:
+		case TRawEvent::EGesturePress:
+		case TRawEvent::EGestureFlickup:
+		case TRawEvent::EGestureFlickDown:
+		case TRawEvent::EGestureFlickLeft:
+		case TRawEvent::EGestureFlickRight:
+		case TRawEvent::EGestureFlick:
+		case TRawEvent::EGestureCustom1:
+		case TRawEvent::EGestureCustom2:
+		case TRawEvent::EGestureCustom3:
+		case TRawEvent::EGestureCustom4:
+		case TRawEvent::EGestureCustom5:
+		case TRawEvent::EGestureCustom6:
+		case TRawEvent::EGestureCustom7:
+		case TRawEvent::EGestureCustom8:
+		case TRawEvent::EGestureCustom9:
 			#if defined(_DEBUG)
 				WS_ASSERT_DEBUG(MousePress(aRawEvent,NULL), EWsPanicEventType);
 			#else
