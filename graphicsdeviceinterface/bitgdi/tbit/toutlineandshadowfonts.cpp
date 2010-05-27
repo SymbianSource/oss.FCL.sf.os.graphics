@@ -995,6 +995,19 @@ void CTOutlineAndShadowFonts::PrepareTestEnvironment(TFontSpec &aFontSpec, const
 		iGc->SetBrushColor(aSettings.brushColor);
 		iGc->SetPenColor(aSettings.penColor);
 		iGc->SetShadowColor(aSettings.shadowColor);
+
+		if (aSettings.backgroundColor != KRgbWhite)
+			{
+			iGc->SetDrawMode(CGraphicsContext::EDrawModeWriteAlpha);
+			CFbsBitmap* bgBitmap = new CFbsBitmap;
+			bgBitmap->Create(TSize(1, 1), EColor16MA);
+			bgBitmap->BeginDataAccess();
+			Mem::Copy(bgBitmap->DataAddress(), &(aSettings.backgroundColor), 4);
+			bgBitmap->EndDataAccess(EFalse);
+			iGc->DrawBitmap(TRect(TPoint(0, 0), iBitmap->SizeInPixels()), bgBitmap);
+			delete bgBitmap;
+			iGc->SetDrawMode(CGraphicsContext::EDrawModePEN);
+			}
 		}
 	}
 

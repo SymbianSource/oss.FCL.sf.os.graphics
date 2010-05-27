@@ -2347,6 +2347,42 @@ void CTWindowTest::SaturateSendEvent()
 	User::After(1000000);		//1sec, give other sessions a chance to respond to the events
 	}
 
+void CTWindowTest::TestNotSupportedFunctionality()
+    {
+    TInt err = KErrNone;
+    TSize windowSize = TSize(10,10);
+    TSize testSize = TSize();
+    
+    RWindowGroup group(TheClient->iWs);
+    RWindow window(TheClient->iWs);
+
+    err = group.Construct((TUint32)&group, EFalse);
+    TEST(err==KErrNone);
+    err = window.Construct(group,(TUint32)&window);
+    TEST(err==KErrNone);
+    
+    window.SetExtent(TPoint(0,0),windowSize);
+    window.Activate();
+    
+    testSize = window.Size();
+    TEST((testSize.iWidth==windowSize.iWidth) && (testSize.iHeight==windowSize.iHeight));
+    
+    testSize = window.SizeForEgl();
+    TEST((testSize.iWidth==windowSize.iWidth) && (testSize.iHeight==windowSize.iHeight));
+    
+    err = window.FixNativeOrientation();
+    TEST(err==KErrNotSupported);
+
+    testSize = window.Size();
+    TEST((testSize.iWidth==windowSize.iWidth) && (testSize.iHeight==windowSize.iHeight));
+    
+    testSize = window.SizeForEgl();
+    TEST((testSize.iWidth==windowSize.iWidth) && (testSize.iHeight==windowSize.iHeight));
+
+    window.Close();
+    group.Close();  
+    }
+
 void CTWindowTest::RunTestCaseL(TInt /*aCurTestCase*/)
 	{
 	_LIT(KTest1,"Window");
@@ -2379,6 +2415,7 @@ void CTWindowTest::RunTestCaseL(TInt /*aCurTestCase*/)
 	((CTWindowTestStep*)iStep)->SetTestStepID(KNotATestSYMTestCaseIDName);
 
 	_LIT(KTest26,"Saturate SendEvent");
+	_LIT(KTest27,"Not Supported Functionality");
 
 	switch(++iTest->iState)
 		{
@@ -2874,6 +2911,26 @@ void CTWindowTest::RunTestCaseL(TInt /*aCurTestCase*/)
 			iTest->LogSubTest(KTest26);
 			SaturateSendEvent();
 			break;
+/**
+@SYMTestCaseID      GRAPHICS-WSERV-0655
+
+@SYMDEF             ou1cimx1#329309
+
+@SYMTestCaseDesc    Fix native orientation functionality not supported
+
+@SYMTestPriority    Medium
+
+@SYMTestStatus      Implemented
+
+@SYMTestActions     Call fucntions related to fix native orientation on a window
+
+@SYMTestExpectedResults     Fix native orientation functionality not supported
+			*/			
+        case 24:
+            ((CTWindowTestStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0655"));
+            iTest->LogSubTest(KTest27);
+            TestNotSupportedFunctionality();
+            break;			
 		default:
             		((CTWindowTestStep*)iStep)->SetTestStepID(KNotATestSYMTestCaseIDName);
 			((CTWindowTestStep*)iStep)->CloseTMSGraphicsStep();

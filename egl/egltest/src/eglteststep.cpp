@@ -31,6 +31,8 @@
 #include "egltest_image_multithread.h"
 #include "egltest_image_multiprocess.h"
 #include "egltest_benchmark_sgimage.h"
+#include "egltest_oom_sgimage.h"
+#include "egltest_stress_sgimage.h"
 #include "egltest_benchmark_swapbuffers.h"
 
 /*
@@ -150,11 +152,22 @@ EXPORT_C CEglTestStep* EglTestStepFactory::GetEglTestStep(const TDesC& aStepName
 	else if (aStepName == KEGL_Image_Multi_Process_VgImage_ProcessTerminateNegative)				testStep = new CEglTest_EGL_Image_Multi_Process_VgImage_ProcessTerminateNegative;
 	else if (aStepName == KEGL_Image_Multi_Process_VgImage_ReadWrite)								testStep = new CEglTest_EGL_Image_Multi_Process_VgImage_ReadWrite;
 
-	// Benchmark
+	// Benchmark - SgImage
     else if (aStepName == KBenchmark_CreateCloseImage)                                              testStep = new CEglTest_Benchmark_CreateCloseImage;
     else if (aStepName == KBenchmark_Multi_Process_CreateCloseImage)                                testStep = new CEglTest_Benchmark_Multi_Process_CreateCloseImage;
     else if (aStepName == KBenchmark_DrawImage)                                                     testStep = new CEglTest_Benchmark_DrawImage;
+
+	// Benchmark - SwapBuffers
     else if (aStepName == KBenchmark_SwapBuffers)                                                   testStep = new CEglTest_Benchmark_SwapBuffers;
+
+	//OOM
+    else if (aStepName == KOOM_CloseVGImageWithTermination)                                         testStep = new CEglTest_OOM_CloseVGImageWithTermination;
+    else if (aStepName == KOOM_CloseVGImage)                                                        testStep = new CEglTest_OOM_CloseVGImage;
+    else if (aStepName == KOOM_ClosePixmapSurfaceWithTermination)                                   testStep = new CEglTest_OOM_ClosePixmapSurfaceWithTermination;
+    else if (aStepName == KOOM_ClosePixmapSurface)                                                  testStep = new CEglTest_OOM_ClosePixmapSurface;	
+
+    //Stress
+    else if (aStepName == KStress)                                                                  testStep = new CEglTest_Stress;
 
 	return testStep;
 	}

@@ -17,7 +17,7 @@
 
 # EGL
 TESTEXECUTE, \logs\testexecute\egltest_t_basicegl.htm,                          , z:\egltest\egltest_t_basicegl.script, 600
-TESTEXECUTE, \logs\testexecute\egltest_t_hybrid.htm,                           	, z:\egltest\egltest_t_hybrid.script, 600
+TESTEXECUTE, \logs\testexecute\egltest_t_hybrid.htm,                            , z:\egltest\egltest_t_hybrid.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_nativepixmaptype_hg.htm,               , z:\egltest\egltest_t_nativepixmaptype_hg.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_createpixmapsurface_hg.htm,            , z:\egltest\egltest_t_createpixmapsurface_hg.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_image_hg.htm,                          , z:\egltest\egltest_t_image_hg.script, 600
@@ -44,3 +44,5 @@ TESTEXECUTE, \logs\testexecute\egltest_t_image_negative.htm,                    
 TESTEXECUTE, \logs\testexecute\egltest_t_sibling.htm,                           , z:\egltest\egltest_t_sibling.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_vgimagetosurfaces.htm,                 , z:\egltest\egltest_t_vgimagetosurfaces.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_benchmark_sgimage.htm,                 , z:\egltest\egltest_t_benchmark_sgimage.script, 600
+TESTEXECUTE, \logs\testexecute\egltest_t_oom_sgimage.htm,                       , z:\egltest\egltest_t_oom_sgimage.script, 600
+TESTEXECUTE, \logs\testexecute\egltest_t_stress_sgimage.htm,                    , z:\egltest\egltest_t_stress_sgimage.script, 1200

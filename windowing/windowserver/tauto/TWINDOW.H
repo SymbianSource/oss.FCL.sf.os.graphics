@@ -118,6 +118,7 @@ public:
 	void ShadowTestL();
 	void TestWindowDelete();
 	void SaturateSendEvent();
+	void TestNotSupportedFunctionality();
 protected:
 //from 	CTGraphicsStep
 	virtual void RunTestCaseL(TInt aCurTestCase);
