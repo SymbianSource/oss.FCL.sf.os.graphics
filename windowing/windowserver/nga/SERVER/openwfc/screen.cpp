@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -101,7 +101,7 @@ CScreen::CFallbackMap::CFallbackMap(CScreen* aScreen) :
 	
 CScreen::CFallbackMap::~CFallbackMap()
 	{
-	delete iMap;
+	delete []iMap;
 	}
 	
 void CScreen::CFallbackMap::ConstructL()
@@ -228,7 +228,7 @@ TInt CScreen::CFallbackMap::Resize(const TSize& aSize)
 		newMap = new  TInt [maxSize];
 		if (newMap)
 			{
-			delete iMap;
+			delete []iMap;
 			iMap = newMap;
 			iMapSize = maxSize;
 			}

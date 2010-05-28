@@ -73,7 +73,7 @@ TESTEXECUTE, logs\testexecute\egultest_t_color.htm,          , z:\egultest\egult
 TESTEXECUTE, logs\testexecute\egultest_t_digitwidth.htm,     , z:\egultest\egultest_t_digitwidth.script,       800
 # ETUL TESTS
 TESTEXECUTE, logs\testexecute\etultest_t_addressstringtokenizer.htm,      ,z:\etultest\etultest_t_addressstringtokenizer.script,        800
-# TESTEXECUTE, logs\testexecute\etultest_t_phonenumberutils.htm,         , z:\etultest\etultest_t_phonenumberutils.script,           800
+TESTEXECUTE, logs\testexecute\etultest_t_phonenumberutils.htm,         , z:\etultest\etultest_t_phonenumberutils.script,           800
 TESTEXECUTE, logs\testexecute\etultest_t_textresourceutils.htm,          , z:\etultest\etultest_t_textresourceutils.script,            800
 
 # FEPBASE TESTS

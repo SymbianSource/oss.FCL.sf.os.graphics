@@ -250,6 +250,12 @@ typedef void* EGLEndpointSourceNOK;
 #define EGL_ENDPOINT_READY_NOK           0x30D6
 #define EGL_DELAY_NOK                    0x30D7
 
+#ifndef EGL_SYMBIAN_COMPOSITION
+#define EGL_SYMBIAN_COMPOSITION 1
+/* Extension defines a behavioural change which does not introduce functions or tokens. */
+/* The presence of this extension means that semi-transparent UI content can be displayed above EGL window surfaces. */
+#endif
+
 #ifdef EGL_EGLEXT_PROTOTYPES
 EGLAPI EGLEndpointNOK EGLAPIENTRY eglCreateEndpointNOK(EGLDisplay dpy, EGLenum type, EGLenum source_type, EGLEndpointSourceNOK source, const EGLint *attrib_list);
 EGLAPI EGLBoolean EGLAPIENTRY eglDestroyEndpointNOK(EGLDisplay dpy, EGLEndpointNOK endpoint);
