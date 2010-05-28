@@ -1203,9 +1203,7 @@ This function always causes a flush of the window server buffer.
 	__ASSERT_DEBUG(!aRegion.CheckError(),Panic(EW32PanicInvalidRegion));
 	const TInt regionCount=aRegion.Count();
 	TPtrC8 ptrRect(reinterpret_cast<const TUint8*>(aRegion.RectangleList()),regionCount*sizeof(TRect));
-//	return(WriteReplyByProvidingRemoteReadAccess(&regionCount,sizeof(regionCount),&ptrRect,EWsWinOpSetShape));
-	RDebug::Printf("Bug 1863 - RWindowBase::SetShape() deprecated and non-functional. Disabling the panic.");
-	return KErrNone;
+	return(WriteReplyByProvidingRemoteReadAccess(&regionCount,sizeof(regionCount),&ptrRect,EWsWinOpSetShape));
 	}
 
 /** 
