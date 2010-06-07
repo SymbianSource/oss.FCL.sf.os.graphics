@@ -36,7 +36,7 @@
  * \todo	OSDeinitMutex should be called in case getEGL fails.
  *//*-------------------------------------------------------------------*/
 
-#include "riMiniEGL.h"
+//#include "riMiniEGL.h"
 #include "eglprivate.h"
 #include "riMath.h"
 #include <e32debug.h>
@@ -443,7 +443,6 @@ static void releaseEGL()
 		}
 	}
 	*/
-	RDebug::Printf("I am in releaseEGL ");
 	CEglThreadSession* es = reinterpret_cast<CEglThreadSession*>(Dll::Tls());
 	if (es)
 		{
