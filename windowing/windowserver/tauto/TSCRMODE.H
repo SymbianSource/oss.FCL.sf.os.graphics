@@ -1,5 +1,4 @@
-
-// Copyright (c) 1996-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1996-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -34,11 +33,11 @@ class CSecondConnection;
 class CSecondConnectionGroup : public CTWindowGroup
 	{
 public:
-	CSecondConnectionGroup(CTClient *aClient, CSecondConnection *aSecondConnection, CTestBase *aTest, CTestStep* aTestStep);
+	CSecondConnectionGroup(CTClient* aClient, CSecondConnection* aSecondConnection, CTestBase* aTest, CTestStep* aTestStep);
 	void ScreenDeviceChanged();
 private:
-	CTestBase *iTest;
-	CSecondConnection *iSecondConnection;
+	CTestBase* iTest;
+	CSecondConnection* iSecondConnection;
 	CTestStep* iTestStep;
 	};
 
@@ -46,18 +45,18 @@ class CSecondConnection : public CBase
 	{
 public:
 	~CSecondConnection();
-	void ConstructL(TInt aScreenNumber,const TRect &aWinRect, CTestBase *aTest, CTestStep* aTestStep);
+	void ConstructL(TInt aScreenNumber,const TRect &aWinRect, CTestBase* aTest, CTestStep* aTestStep);
 	void EnableMessages();
 	void DisableMessages();
 	TInt DeviceMessageCount() const;
 	void ScreenDeviceChanged();
 	void SetWindow2Visibility(TBool aVisible);
 public:
-	CSecondConnectionGroup *iGroup;
+	CSecondConnectionGroup* iGroup;
 private:
-	CTClient *iClient;
-	CTBlankWindow *iWindow;
-	CTBlankWindow *iWindow2;
+	CTClient* iClient;
+	CTBlankWindow* iWindow;
+	CTBlankWindow* iWindow2;
 	TInt iMessageCount;
 	};
 	
@@ -85,7 +84,7 @@ private:
 	void ScaledDrawingL();
 	void SetScreenModeEnforcement(TScreenModeEnforcement aMode);
 	void CheckWindows(TBool aWinIsVis);
-	void ValidateWin(TestWindow *aWin, TRgb aColor);
+	void ValidateWin(TestWindow* aWin, TRgb aColor);
 	void RedrawWin(RWindow &aWin, TRgb aColor);
 	void ScreenRotationsL();
 	void MoreScreenRotationsL();
@@ -101,9 +100,10 @@ private:
 private:
 	void DrawTestBmpL(CFbsBitmap* aTestBitmap);
 	void TestDrawingToWindows(CWindowGc* aWinGc1, CWindowGc* aWinGc2, RWindow& aWindow1,RWindow& aWindow2,CFbsBitmap* aBitmap64K,CFbsBitmap* aBitmap16M,CFbsFont* aFont,TBool aAllInRedraw, TBool aUseSystemGc, TBool aUseBmp16M);
+	void CheckHalSetting(TInt aGcOrientation);
 private:
 	TInt iSubState;
-	CSecondConnection *iSecondConnection;
+	CSecondConnection* iSecondConnection;
 	TSize iWinSize;
 	TPoint iWinPos;
 	TInt iWinState;
@@ -111,8 +111,6 @@ private:
 	TScreenModeEnforcement iCurEnforcement;
 	};
 
-
-	
 class CTScrModeStep : public CTGraphicsStep
 	{
 public:

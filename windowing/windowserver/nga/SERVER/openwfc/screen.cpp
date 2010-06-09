@@ -68,7 +68,26 @@ LOCAL_C inline TDeviceOrientation GcToDevice(CFbsBitGc::TGraphicsOrientation aGc
 	return (TDeviceOrientation)(1 << aGcOrientation);
 	}
 
-LOCAL_D TBool FindNextValue(TLex& aLex, TInt& aValue) // assumes the list cannot contain *negative* integers
+/** Convert a TGraphicsOrientation value into a TDigitiserOrientation.
+Note: The algorithm used makes use of the ordering of the values of the respective enums, 
+thus this is checked for (at compile time) at the start of the function.
+@param aGcOrientation A value from the TGraphicsOrientation enums.
+@return The equivalent value from the TDigitiserOrientation enums.
+*/
+inline HALData::TDigitiserOrientation GcToDigitiser(CFbsBitGc::TGraphicsOrientation aGcOrientation)
+	{
+	__ASSERT_COMPILE(CFbsBitGc::EGraphicsOrientationNormal+1==CFbsBitGc::EGraphicsOrientationRotated90);
+    __ASSERT_COMPILE(CFbsBitGc::EGraphicsOrientationNormal+2==CFbsBitGc::EGraphicsOrientationRotated180);
+    __ASSERT_COMPILE(CFbsBitGc::EGraphicsOrientationNormal+3==CFbsBitGc::EGraphicsOrientationRotated270);
+    __ASSERT_COMPILE(HALData::EDigitiserOrientation_000+1==HALData::EDigitiserOrientation_090);
+    __ASSERT_COMPILE(HALData::EDigitiserOrientation_000+2==HALData::EDigitiserOrientation_180);
+    __ASSERT_COMPILE(HALData::EDigitiserOrientation_000+3==HALData::EDigitiserOrientation_270);
+    HALData::TDigitiserOrientation ret = static_cast<HALData::TDigitiserOrientation> 
+            (HALData::EDigitiserOrientation_000 + (aGcOrientation - CFbsBitGc::EGraphicsOrientationNormal));
+    return ret;
+	}
+
+LOCAL_C TBool FindNextValue(TLex& aLex, TInt& aValue) // assumes the list cannot contain *negative* integers
 	{
 	while (!aLex.Eos())
 		{
@@ -1122,6 +1141,15 @@ TBool CScreen::UpdateOrientation(MWsScene::TSceneRotation* aOldRotation)
 			}
 		
 		//updaterotation should not fail after this point (no cleanup)
+		
+        //update the last set config with the new rotation change so we don't incorrectly
+        //change the layer extents
+        if (iDisplayControl)
+            {
+            TDisplayConfiguration config;
+            config.SetRotation(static_cast<TDisplayConfiguration::TRotation>(newRotation));           
+            iConfigChangeNotifier->UpdateLastSetConfiguration(config);
+            }   		
 			
 		TWservCrEvent crEvent(TWservCrEvent::EDeviceOrientationChanged,iScreenNumber,&gcOrientation);
 		TWindowServerEvent::NotifyDrawer(crEvent);
@@ -1134,17 +1162,29 @@ TBool CScreen::UpdateOrientation(MWsScene::TSceneRotation* aOldRotation)
 		}
 	
 	iRootWindow->AdjustCoordsDueToRotation();
-	if (rotating)
-		{
-		if(BlankScreenOnRotation())
-			{
-			iRootWindow->ClearDisplay();
-			}
-		
-		CWsTop::ClearAllRedrawStores();	
-		DiscardAllSchedules();
-		iRootWindow->InvalidateWholeScreen();
-		}
+    if (rotating || (iFlags & ERepeatSettingHalOrientation))
+        {
+        if (HAL::Set(iScreenNumber, HALData::EDigitiserOrientation, GcToDigitiser(gcOrientation)) != KErrNone)
+            {
+            iFlags |= ERepeatSettingHalOrientation;
+            }
+        else
+            {
+            iFlags &= ~ERepeatSettingHalOrientation;
+            }
+        }
+    
+    if (rotating)
+        {
+        if (BlankScreenOnRotation())
+            {
+            iRootWindow->ClearDisplay();
+            }
+        CWsTop::ClearAllRedrawStores();
+        DiscardAllSchedules();
+        iRootWindow->InvalidateWholeScreen();
+        }
+    
 	return ETrue;
 	}
 
@@ -1984,13 +2024,19 @@ TInt CScreen::SetConfiguration(const TDisplayConfiguration& aConfigInput)
 			{
 			TSize oldConfigRes;
 			oldConfig.GetResolution(oldConfigRes);
+            TDisplayConfiguration newConfig;
 			if (oldConfigRes.iWidth == 0 || oldConfigRes.iHeight == 0)
 				{
-				TDisplayConfiguration newConfig;
 				iDisplayControl->GetConfiguration(newConfig);
 				RecalculateModeTwips(&newConfig);	//needs res and twips information
 				}
 			UpdateDynamicScreenModes();
+			
+			//update the last set config in the config change notifier to 
+			//prevent SetConfiguration() from being called again!
+			newConfig.ClearAll();
+			iDisplayControl->GetConfiguration(newConfig);
+			iConfigChangeNotifier->UpdateLastSetConfiguration(newConfig); 			
 			
 			TWindowServerEvent::NotifyDrawer(TWservCrEvent(TWservCrEvent::EScreenSizeModeAboutToChange, iScreenSizeMode));
 			// This will remove all the DSA elements from the scene
@@ -2035,6 +2081,88 @@ TInt CScreen::SetConfiguration(const TDisplayConfiguration& aConfigInput)
 		}
 	return reply;
 	}
+
+TInt CScreen::UpdateConfiguration(const TDisplayConfiguration& aConfigInput)
+    {
+    TInt reply = KErrNone;
+    if(iDisplayControl)
+        {
+        TDisplayConfiguration config(aConfigInput);
+        TRect sizeModePosition;
+        if (iDisplayPolicy)
+            {   //validate config and update to a valid hardware config
+            reply = iDisplayPolicy->GetSizeModeConfiguration(iScreenSizeMode,config,sizeModePosition);
+            if (reply >= KErrNone)
+                {//set appmode in policy
+                if (iDisplayMapping)
+                    {
+                    iDisplayMapping->SetSizeModeExtent(sizeModePosition,MWsDisplayMapping::KOffsetAll);
+                    }
+                }
+            }
+        else
+            {   //exessive strategy: limit rotation agains curr app mode.
+                //really we want the system to accept the rotation change regardless of the app mode.
+            TDisplayConfiguration::TRotation newRot;
+            if (aConfigInput.GetRotation(newRot))
+                {   //This should cast between rotation enumertaions "properly"
+                if (!(iModes[0][iScreenSizeMode]->iAlternativeRotations&(1<<newRot)))
+                    {
+                    reply=KErrArgument;
+                    }
+                }
+            }
+
+        MWsScene::TSceneRotation oldRotation;
+        oldRotation = iScene->SceneRotation();
+        TSize newUiSize;
+        config.GetResolution(newUiSize);
+        if(iFlags&EHasDynamicSizeModes)
+            {
+            reply = iFallbackMap->Resize(newUiSize);
+            }
+
+        RecalculateModeTwips(&config);   //needs res and twips information
+        UpdateDynamicScreenModes();               
+        
+        TWindowServerEvent::NotifyDrawer(TWservCrEvent(TWservCrEvent::EScreenSizeModeAboutToChange, iScreenSizeMode));
+        // This will remove all the DSA elements from the scene
+        AbortAllDirectDrawing(RDirectScreenAccess::ETerminateRotation);
+        
+        //SetDigitiserAreas needs revisiting if/when we support dynamic resolutions
+        //on a screen with touch input.
+        //SetDigitiserAreas(newUiSize);
+        
+        //failure here should only be because of DSA orientation change failure, which shouldn't happen, either.
+        //Or there may be no change to do.
+        (void)UpdateOrientation(&oldRotation);
+        
+        iWindowElementSet->ResubmitAllElementExtents();
+        if(iDsaDevice && iDsaDevice->GraphicsAccelerator())
+            {
+            iDsaDevice->ChangeScreenDevice(iDsaDevice); // orientation has changed, therefore we need to re-initialise the screen device's graphics accelerator
+            }
+        
+        iRootWindow->AdjustCoordsDueToRotation();
+
+        //TODO jonas: we'd like to not have to clear at all... make the actual change to compositor etc lazily!
+        if(BlankScreenOnRotation())
+            {
+            iRootWindow->ClearDisplay();
+            }
+
+        CWsTop::ClearAllRedrawStores();
+        DiscardAllSchedules();
+        iRootWindow->InvalidateWholeScreen();
+        CWsWindowGroup::SetScreenDeviceValidStates(this);
+        TWindowServerEvent::SendScreenDeviceChangedEvents(this);
+        }
+    else
+        {
+        reply = KErrNotSupported;
+        }
+    return reply;   
+    }
 
 void CScreen::UpdateDynamicScreenModes()
 	{

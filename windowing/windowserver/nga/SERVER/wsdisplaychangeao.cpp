@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -243,6 +243,27 @@ void CWsConfigChangeNotifier::CancelNotificationRequest()
 	Cancel();
 	}
 
+void CWsConfigChangeNotifier::UpdateLastSetConfiguration(TDisplayConfiguration& aNewConfig)
+    {
+    TSize resolution(0,0);
+    if (aNewConfig.GetResolution(resolution))
+        {
+        iLastSetConfig.SetResolution(resolution);
+        }
+    
+    TSize resolutionTwips(0,0);
+    if (aNewConfig.GetResolutionTwips(resolutionTwips))
+        {
+        iLastSetConfig.SetResolutionTwips(resolutionTwips);   
+        }
+    
+    TDisplayConfiguration1::TRotation rotation;
+    if (aNewConfig.GetRotation(rotation))
+        {
+        iLastSetConfig.SetRotation(rotation);
+        }
+    }
+
 void CWsConfigChangeNotifier::RunL()
 	{
 	if(iStatus == KErrNone)
@@ -259,6 +280,29 @@ void CWsConfigChangeNotifier::RunL()
 			iRetry->CancelRetry();
 			
 			iOwner->IncreaseConfigSpinner();
+			
+            //if the config change comes from a render stage then ensure screen device size 
+            //is also updated
+            TSize currentRes;
+            currentConfig.GetResolution(currentRes);
+            TBool disconnected = (currentRes.iHeight == 0 || currentRes.iWidth == 0) ? ETrue : EFalse;
+            
+            //if the config change is due to CScreen::SetConfiguration() being called then we
+            //don't want to update it again. Only update if the configs are different and the
+            //display is connected...
+            TDisplayConfiguration lastSetConfig(iLastSetConfig);
+            if (!((currentConfig == lastSetConfig) || (disconnected)))
+                {
+                TDisplayConfiguration1::TRotation rotation;
+                if (lastSetConfig.GetRotation(rotation))
+                    {
+                    //use the latest rotation value to ensure we don't get any
+                    //inconsistencies with the layer extents
+                    currentConfig.SetRotation(rotation);
+                    }
+                iOwner->UpdateConfiguration(currentConfig);
+                }
+
 			//put config change event on queue
 			RPointerArray<CWsClient> clientArray;
 			CleanupClosePushL(clientArray);
@@ -282,12 +326,12 @@ void CWsConfigChangeNotifier::RunL()
 				iRetry->Retry(KRetryInitialDelay);
 				}
 			}
+		iNextLevelInterface->GetConfiguration(iLastSetConfig);
 		}
 	else if(iStatus != KErrCancel && iStatus != KErrNotSupported)
 		{
 		IssueNotificationRequest();
 		}
-	
 	}
 
 

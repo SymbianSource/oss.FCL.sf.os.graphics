@@ -1,4 +1,4 @@
-// Copyright (c) 1996-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1996-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -22,6 +22,8 @@
 */
 
 #include "TSCRMODE.H"
+#include <hal.h>
+#include <hal_data.h>
 
 const TInt KBlankWinPosX=10;
 const TInt KBlankWinPosY=20;
@@ -30,21 +32,19 @@ const TInt KBlankWinSizeY=25;
 
 const TInt KScreenMode0=0;
 const TInt KScreenMode1=1;
-_LIT(KScreenModeDisplayMode,"GetScreenModeDisplayMode");
 
 
 CTScrMode::CTScrMode(CTestStep* aStep) : CTWsGraphicsBase(aStep)
-	{
-	}
+	{}
 
 //
 // Static func to check windows
 //
 
-LOCAL_C TInt DoPanicTest(TInt aInt, TAny *aScreenNumber)
+LOCAL_C TInt DoPanicTest(TInt aInt, TAny* aScreenNumber)
 	{
 	RWsSession ws;
-	CWsScreenDevice *screen=NULL;
+	CWsScreenDevice* screen=NULL;
 	if (ws.Connect()==KErrNone)
 		{
 		screen = new (ELeave) CWsScreenDevice(ws);
@@ -93,7 +93,7 @@ LOCAL_C TInt DoPanicTest(TInt aInt, TAny *aScreenNumber)
 				case 14:
 				case 15:
 					{
-					CArrayFixFlat<TInt> *rotations=new(ELeave) CArrayFixFlat<TInt>(1);
+					CArrayFixFlat<TInt>* rotations=new(ELeave) CArrayFixFlat<TInt>(1);
 					screen->GetRotationsList(aInt==12?1003:-2,rotations);
 					}
 					break;
@@ -129,6 +129,7 @@ void SetupTestRWindowLC(RWindow& aWindow, const TPoint& aPos, const TSize& aSize
 	User::LeaveIfError(aWindow.Construct(*TheClient->iGroup->GroupWin(), (TUint)&aWindow));
 	aWindow.SetExtent(aPos, aSize);
 	User::LeaveIfError(aWindow.SetRequiredDisplayMode(aDisplayMode));
+	aWindow.SetBackgroundColor(TRgb(255,127,0));		//Orange
 	aWindow.Activate();
 	}
 
@@ -197,7 +198,7 @@ void CTScrMode::ScaledDrawingL()
 	const TInt KYScaleFactor=3;
 //
 	// Draw rectangle onto TestWin
- 	CWindowGc *gc=TheClient->iGc;
+ 	CWindowGc* gc=TheClient->iGc;
 	gc->Activate(*(TestWin->Win()));
 	gc->SetBrushColor(KRgbBlack);
 	gc->SetBrushStyle(CGraphicsContext::ESolidBrush);
@@ -208,9 +209,9 @@ void CTScrMode::ScaledDrawingL()
 	TSize bitSize(KLineLength,1);
 	TSize bitTwipSize(TheClient->iScreen->HorizontalPixelsToTwips(bitSize.iWidth*KXScaleFactor),
 					  TheClient->iScreen->VerticalPixelsToTwips(bitSize.iHeight*KYScaleFactor));
-	CFbsBitGc *bitGc=NULL;
-	CFbsBitmapDevice *device=NULL;
-	CFbsBitmap *bitmap=NULL;
+	CFbsBitGc* bitGc=NULL;
+	CFbsBitmapDevice* device=NULL;
+	CFbsBitmap* bitmap=NULL;
 	bitmap=new(ELeave) CFbsBitmap();
 	CleanupStack::PushL(bitmap);
 	User::LeaveIfError(bitmap->Create(bitSize,EGray16));
@@ -233,7 +234,7 @@ void CTScrMode::ScaledDrawingL()
 	CompareWindows(_L("CTScrMode::ScaledDrawingL() CompareWindows() failed"));
 	}
 
-void CTScrMode::ValidateWin(TestWindow *aWin, TRgb aColor)
+void CTScrMode::ValidateWin(TestWindow* aWin, TRgb aColor)
 	{
 	aWin->Win()->Invalidate();
 	RedrawWin(*aWin->Win(),aColor);
@@ -261,8 +262,8 @@ void CTScrMode::CheckWindows(TBool aWinIsVis)
 
 void CTScrMode::ScreenRotationsL()
 	{
-	CWsScreenDevice *screen=TheClient->iScreen;
-	CArrayFixFlat<TInt> *rotations=new(ELeave) CArrayFixFlat<TInt>(1);
+	CWsScreenDevice* screen=TheClient->iScreen;
+	CArrayFixFlat<TInt>* rotations=new(ELeave) CArrayFixFlat<TInt>(1);
 	CFbsBitGc::TGraphicsOrientation currentRotation;
 	TPixelsAndRotation sizeAndRotation;
 	TPixelsTwipsAndRotation sizeAndRotation2;
@@ -278,32 +279,39 @@ void CTScrMode::ScreenRotationsL()
 		screen->GetScreenModeSizeAndRotation(mode,sizeAndRotation);
 		screen->GetScreenModeSizeAndRotation(mode,sizeAndRotation2);
 		TEST(sizeAndRotation.iPixelSize.iWidth==sizeAndRotation2.iPixelSize.iWidth);
-		if (sizeAndRotation.iPixelSize.iWidth!=sizeAndRotation2.iPixelSize.iWidth)
-			INFO_PRINTF3(_L("sizeAndRotation.iPixelSize.iWidth==sizeAndRotation2.iPixelSize.iWidth  - Expected: %d, Actual: %d"), sizeAndRotation.iPixelSize.iWidth, sizeAndRotation2.iPixelSize.iWidth);
-
 		TEST(sizeAndRotation.iPixelSize.iHeight==sizeAndRotation2.iPixelSize.iHeight);
-		if (sizeAndRotation.iPixelSize.iHeight!=sizeAndRotation2.iPixelSize.iHeight)
-			INFO_PRINTF3(_L("sizeAndRotation.iPixelSize.iHeight==sizeAndRotation2.iPixelSize.iHeight  - Expected: %d, Actual: %d"), sizeAndRotation.iPixelSize.iHeight, sizeAndRotation2.iPixelSize.iHeight);
-
+		if (sizeAndRotation.iPixelSize.iWidth!=sizeAndRotation2.iPixelSize.iWidth
+					|| sizeAndRotation.iPixelSize.iHeight!=sizeAndRotation2.iPixelSize.iHeight)
+			{
+			_LIT(KLog,"Height and/or Width don't match (%d,%d)!=(%d,%d) for mode %d");
+			LOG_MESSAGE6(KLog,sizeAndRotation.iPixelSize.iWidth,sizeAndRotation.iPixelSize.iHeight
+							,sizeAndRotation2.iPixelSize.iWidth,sizeAndRotation2.iPixelSize.iHeight,ii);
+			}
 		count=rotations->Count();
 		TEST(count>=1);
 		if (count<1)
-			INFO_PRINTF3(_L("rotations->Count() return value  - Expected: %d or more, Actual: %d"), 1, count);
-
-		TBool retVal;
-
+			{
+			_LIT(KLog,"No rotations supported for mode %d");
+			LOG_MESSAGE2(KLog,ii);
+			}
+		TBool match;
 		if (sizeAndRotation.iPixelSize.iWidth!=sizeAndRotation.iPixelSize.iHeight)
 			{
 			TEST(count<=2);
 			if (count>2)
-				INFO_PRINTF3(_L("rotations->Count() return value  - Expected: %d or less, Actual: %d"), 2, count);
-
+				{
+				_LIT(KLog,"Non-square mode %d supports more than 2 rotations (actual rotations=%d)");
+				LOG_MESSAGE3(KLog,ii,count);
+				}
 			if (count==2)
 				{
-				retVal = (*rotations)[0]+2==(*rotations)[1];
-				TEST(retVal);		//Must only have rotations 180 degrees apart
-				if (!retVal)
-					INFO_PRINTF3(_L("(*rotations)[0]+2==(*rotations)[1]  - Expected: %d, Actual: %d"), ETrue, retVal);
+				match=((*rotations)[0]+2==(*rotations)[1]);
+				TEST(match);		//Must only have rotations 180 degrees apart
+				if (!match)
+					{
+					_LIT(KLog,"In non-square mode %d the two rotations do not differ by 180degrees, rot1=%d, rot2=%d");
+					LOG_MESSAGE4(KLog,ii,(*rotations)[0],(*rotations)[1]);
+					}
 				}
 			}
 		found=EFalse;
@@ -311,78 +319,107 @@ void CTScrMode::ScreenRotationsL()
 			{
 			if ((*rotations)[jj]==sizeAndRotation.iRotation)
 				{
-				retVal = (*rotations)[jj]==sizeAndRotation2.iRotation;
-				TEST(retVal);
-				if (!retVal)
-					INFO_PRINTF3(_L("(*rotations)[jj]==sizeAndRotation2.iRotation  - Expected: %d, Actual: %d"), ETrue, retVal);
-
+				match=((*rotations)[jj]==sizeAndRotation2.iRotation);
+				TEST(match);
+				if (!match)
+					{
+					_LIT(KLog,"Rotations don't match %d!=%d for mode %d");
+					LOG_MESSAGE4(KLog,sizeAndRotation.iRotation,sizeAndRotation2.iRotation,ii);
+					}
 				found=ETrue;
 				break;
 				}
 			}
 		TEST(found);
 		if (!found)
-				INFO_PRINTF3(_L("found  - Expected: %d, Actual: %d"), ETrue, found);
+			{
+			_LIT(KLog,"In mode %d the current rotation (%d) is not one of the allowable rotations");
+			LOG_MESSAGE3(KLog,ii,sizeAndRotation.iRotation);
+			}
 
 		if (count>1)
 			{
 			currentRotation=sizeAndRotation.iRotation;
 			for (jj=0;jj<count;++jj)
 				{
-				screen->SetCurrentRotations(mode,REINTERPRET_CAST(CFbsBitGc::TGraphicsOrientation&,(*rotations)[jj]));
+				screen->SetCurrentRotations(mode,reinterpret_cast<CFbsBitGc::TGraphicsOrientation&>((*rotations)[jj]));
 				screen->GetScreenModeSizeAndRotation(mode,sizeAndRotation);
 				screen->GetScreenModeSizeAndRotation(mode,sizeAndRotation2);
-				retVal = (*rotations)[jj]==sizeAndRotation.iRotation;
-				TEST(retVal);
-				if (!retVal)
-					INFO_PRINTF3(_L("(*rotations)[jj]==sizeAndRotation.iRotation  - Expected: %d, Actual: %d"), ETrue, retVal);
-
-				retVal = (*rotations)[jj]==sizeAndRotation2.iRotation;
-				TEST(retVal);
-				if (!retVal)
-					INFO_PRINTF3(_L("(*rotations)[jj]==sizeAndRotation2.iRotation  - Expected: %d, Actual: %d"), ETrue, retVal);
-
+				match=(((*rotations)[jj]==sizeAndRotation.iRotation) && ((*rotations)[jj]==sizeAndRotation2.iRotation));
+				TEST(match);
+				if (!match)
+					{
+					_LIT(KLog,"Rotations don't match %d!=%d (both should be %d) after switching to rotation number %d of mode %d");
+					LOG_MESSAGE6(KLog,sizeAndRotation.iRotation,sizeAndRotation2.iRotation,(*rotations)[jj],jj,ii);
+					}
 				}
-			screen->SetCurrentRotations(mode,REINTERPRET_CAST(CFbsBitGc::TGraphicsOrientation&,currentRotation));
+			screen->SetCurrentRotations(mode,reinterpret_cast<CFbsBitGc::TGraphicsOrientation&>(currentRotation));
 			screen->GetScreenModeSizeAndRotation(mode,sizeAndRotation);
 			screen->GetScreenModeSizeAndRotation(mode,sizeAndRotation2);
-
-			retVal = currentRotation==sizeAndRotation.iRotation;
-			TEST(retVal);
-			if (!retVal)
-				INFO_PRINTF3(_L("currentRotation==sizeAndRotation.iRotation  - Expected: %d, Actual: %d"), ETrue, retVal);
-
-			retVal = currentRotation==sizeAndRotation2.iRotation;
-			TEST(retVal);
-			if (!retVal)
-				INFO_PRINTF3(_L("currentRotation==sizeAndRotation2.iRotation  - Expected: %d, Actual: %d"), ETrue, retVal);
+			match=((currentRotation==sizeAndRotation.iRotation) && (currentRotation==sizeAndRotation2.iRotation));
+			TEST(match);
+			if (!match)
+					{
+					_LIT(KLog,"Rotations don't match %d!=%d (both should be %d) after switching to the original rotation of mode %d");
+					LOG_MESSAGE5(KLog,sizeAndRotation.iRotation,sizeAndRotation2.iRotation,currentRotation,ii);
+					}
 			}
 		}
-	CleanupStack::PopAndDestroy();
+	CleanupStack::PopAndDestroy(rotations);
 	}
+/**
+  Validate that the screen orienation matchs wiht the screeen orientation stored/set by Wserv in the HAL storage attribute. 
+  @param aGcOrientation Input orientation to valudate.
+ */
+void CTScrMode::CheckHalSetting(TInt aGcOrientation)
+    {
+    HALData::TDigitiserOrientation halOrientationExp = static_cast<HALData::TDigitiserOrientation>
+            (HALData::EDigitiserOrientation_000 + (aGcOrientation - CFbsBitGc::EGraphicsOrientationNormal));
+    TInt halOrientation;
+    TInt err = HAL::Get(iTest->iScreenNumber, HALData::EDigitiserOrientation, halOrientation);
+    // Validate if it's supported by HAL
+    if (err != KErrNotSupported)
+        {
+        if (err != KErrNone)
+            {
+            _LIT(KLog,"Getting HAL orientation attribute returned error %d when no error expected");
+            LOG_MESSAGE2(KLog,err);
+            }
+        TEST(err==KErrNone);
+        if (halOrientationExp != halOrientation)
+            {
+            _LIT(KLog,"HAL orientation is %d when expected to be %d");
+            LOG_MESSAGE3(KLog,halOrientation,halOrientationExp);
+            }
+        TEST(halOrientationExp==halOrientation);
+        }
+    else
+        {
+        _LIT(KLog,"HAL-Orientation HALData::EDigitiserOrientation isn't supported by Driver");
+        LOG_MESSAGE(KLog);
+        }
+    }
 
 void CTScrMode::MoreScreenRotationsL()
 	{
-	RWindow shield4Gray(TheClient->iWs);
-	// The default display mode needs to be updated to EColor64K for Oghma integ
-	SetupTestRWindowLC(shield4Gray,TPoint(),TSize(100000,100000),EColor64K);
-//
-	CWsScreenDevice *screen=TheClient->iScreen;
-	//CFbsBitGc::TGraphicsOrientation currentRotation;
+	RWindow shield64Color(TheClient->iWs);
+	SetupTestRWindowLC(shield64Color,TPoint(),TSize(100000,100000),EColor64K);
+	CWsScreenDevice* screen=TheClient->iScreen;
 	TPixelsAndRotation sizeAndRotation;
 	TInt currentRotation;
 	TInt currentMode=FindCurrentMode();
 	TInt numModes=TheClient->iScreenModes.Count();
 	TInt currentScreenMode;
 	TInt count;
-	TInt ii,jj;
-	CArrayFixFlat<TInt> *currentRotations=new(ELeave) CArrayFixFlat<TInt>(1);
+	TInt ii;
+	TInt jj;
+	CArrayFixFlat<TInt>* currentRotations=new(ELeave) CArrayFixFlat<TInt>(1);
 	CleanupStack::PushL(currentRotations);
 	currentRotations->ResizeL(numModes);
-	CArrayFixFlat<TInt> *originalRotation=new(ELeave) CArrayFixFlat<TInt>(1);
+	CArrayFixFlat<TInt>* originalRotation=new(ELeave) CArrayFixFlat<TInt>(1);
 	CleanupStack::PushL(originalRotation);
 	originalRotation->ResizeL(numModes);
-	CArrayFixFlat<TInt> *rotations=new(ELeave) CArrayFixFlat<TInt>(1);
+	CArrayFixFlat<TInt>* rotations=new(ELeave) CArrayFixFlat<TInt>(1);
 	CleanupStack::PushL(rotations);
 	for (ii=0;ii<numModes;++ii)
 		{
@@ -391,21 +428,27 @@ void CTScrMode::MoreScreenRotationsL()
 		(*currentRotations)[ii]=sizeAndRotation.iRotation;
 		(*originalRotation)[ii]=sizeAndRotation.iRotation;
 		}
+	_LIT(KModeSwitchFail,"Change to screen mode %d, resulted in screen being in mode %d");
+	_LIT(KRotDiff,"Rotations dont match %d!=%d for mode %d");
 	for (ii=0;ii<numModes;++ii)
 		{
 		TInt mode=TheClient->iScreenModes[ii];
 		screen->SetScreenMode(mode);
-		currentScreenMode = screen->CurrentScreenMode();
-		TEST(currentScreenMode == mode);
-		if (currentScreenMode != mode)
-			INFO_PRINTF3(_L("screen->CurrentScreenMode() return value - Expected: %d, Actual: %d"), mode, currentScreenMode);
+		currentScreenMode=screen->CurrentScreenMode();
+		TEST(currentScreenMode==mode);
+		if (currentScreenMode!=mode)
+			LOG_MESSAGE3(KModeSwitchFail,mode,currentScreenMode);
 
 		screen->GetDefaultScreenSizeAndRotation(sizeAndRotation);
-		currentRotation=(*currentRotations)[ii];
-		TEST(sizeAndRotation.iRotation==currentRotation);
-
+		currentRotation=sizeAndRotation.iRotation;
+		TEST((*currentRotations)[ii]==currentRotation);
+		if ((*currentRotations)[ii]!=currentRotation)
+			LOG_MESSAGE4(KRotDiff,(*currentRotations)[ii],currentRotation,ii);
 		screen->GetScreenModeSizeAndRotation(mode,sizeAndRotation);
 		TEST(sizeAndRotation.iRotation==currentRotation);
+		if (sizeAndRotation.iRotation!=currentRotation)
+			LOG_MESSAGE4(KRotDiff,sizeAndRotation.iRotation,currentRotation,ii);
+		CheckHalSetting(currentRotation);
 
 		User::LeaveIfError(screen->GetRotationsList(mode,rotations));
 		count=rotations->Count();
@@ -419,7 +462,7 @@ void CTScrMode::MoreScreenRotationsL()
 			if (jj==count)
 				jj=0;
 			currentRotation=(*rotations)[jj];
-			screen->SetCurrentRotations(mode,REINTERPRET_CAST(CFbsBitGc::TGraphicsOrientation&,currentRotation));
+			screen->SetCurrentRotations(mode,reinterpret_cast<CFbsBitGc::TGraphicsOrientation&>(currentRotation));
 			(*currentRotations)[ii]=currentRotation;
 			}
 		}
@@ -427,37 +470,44 @@ void CTScrMode::MoreScreenRotationsL()
 		{
 		TInt mode=TheClient->iScreenModes[ii];
 		screen->SetScreenMode(mode);
-		currentScreenMode = screen->CurrentScreenMode();
-		TEST(currentScreenMode == mode);
-		if (currentScreenMode != mode)
-			INFO_PRINTF3(_L("(screen->CurrentScreenMode() return value - Expected: %d, Actual: %d"), mode, currentScreenMode);
+		currentScreenMode=screen->CurrentScreenMode();
+		TEST(currentScreenMode==mode);
+		if (currentScreenMode!=mode)
+			LOG_MESSAGE3(KModeSwitchFail,mode,currentScreenMode);
 
+		_LIT(KRotDiff,"Switching to mode %d with rotations %d caused the rotation to become %d");
 		screen->GetDefaultScreenSizeAndRotation(sizeAndRotation);
 		currentRotation=(*currentRotations)[ii];
 		TEST(sizeAndRotation.iRotation==currentRotation);
-		if (sizeAndRotation.iRotation != currentRotation)
-			INFO_PRINTF3(_L("(screen->GetDefaultScreenSizeAndRotation() return value - Expected: %d, Actual: %d"), currentRotation, sizeAndRotation.iRotation);
-
+		if (sizeAndRotation.iRotation!=currentRotation)
+			{
+			_LIT(KRotDiff,"Switching to mode %d with rotations %d caused the rotation to become %d");
+			LOG_MESSAGE4(KRotDiff,mode,currentRotation,sizeAndRotation.iRotation);
+			}
 		screen->GetScreenModeSizeAndRotation(mode,sizeAndRotation);
 		TEST(sizeAndRotation.iRotation==currentRotation);
-		if (sizeAndRotation.iRotation != currentRotation)
-			INFO_PRINTF3(_L("(screen->GetDefaultScreenSizeAndRotation() return value - Expected: %d, Actual: %d"), currentRotation, sizeAndRotation.iRotation);
+		if (sizeAndRotation.iRotation!=currentRotation)
+			LOG_MESSAGE4(KRotDiff,sizeAndRotation.iRotation,currentRotation,ii);
+		CheckHalSetting(currentRotation);
 
 		if (currentRotation!=(*originalRotation)[ii])
-			screen->SetCurrentRotations(mode,REINTERPRET_CAST(CFbsBitGc::TGraphicsOrientation&,(*originalRotation)[ii]));
+			{
+			screen->SetCurrentRotations(mode,reinterpret_cast<CFbsBitGc::TGraphicsOrientation&>((*originalRotation)[ii]));
+			CheckHalSetting(currentRotation);
+			}
 		}
 	screen->SetScreenMode(currentMode);
-	currentScreenMode = screen->CurrentScreenMode();
-	TEST(currentScreenMode == currentMode);
-	if (currentScreenMode != currentMode)
-		INFO_PRINTF3(_L("(screen->CurrentScreenMode() return value - Expected: %d, Actual: %d"), currentMode, currentScreenMode);
+	currentScreenMode=screen->CurrentScreenMode();
+	TEST(currentScreenMode==currentMode);
+	if (currentScreenMode!=currentMode)
+		LOG_MESSAGE3(KModeSwitchFail,currentMode,currentScreenMode);
 
-	CleanupStack::PopAndDestroy(4,&shield4Gray);
+	CleanupStack::PopAndDestroy(4,&shield64Color);
 	}
 
 TInt CTScrMode::FindCurrentMode()
 	{
-	CWsScreenDevice *screen=TheClient->iScreen;
+	CWsScreenDevice* screen=TheClient->iScreen;
 	TPixelsTwipsAndRotation sizeAndRotation;
 	TPixelsTwipsAndRotation sizeAndRotation2;
 	TInt numModes=TheClient->iScreenModes.Count();
@@ -487,7 +537,7 @@ TBool CTScrMode::Equal(const TPixelsTwipsAndRotation& aLeft,const TPixelsTwipsAn
 
 TBool CTScrMode::RectClearBugL()
 	{
-	CWsScreenDevice *screen=TheClient->iScreen;
+	CWsScreenDevice* screen=TheClient->iScreen;
 	TPixelsTwipsAndRotation sizeAndRotation1;
 	TPixelsTwipsAndRotation sizeAndRotation2;
 	TInt screenMode=FindCurrentMode();
@@ -510,7 +560,7 @@ TBool CTScrMode::RectClearBugL()
 		INFO_PRINTF2(_L("Large Mode %d\r\n"),largeMode);
 		screen->SetScreenMode(largeMode);
 	}
-	CBlankWindow *blankWin=new(ELeave) CBlankWindow(TRgb::Gray256(204));
+	CBlankWindow* blankWin=new(ELeave) CBlankWindow(TRgb::Gray256(204));
 	CleanupStack::PushL(blankWin);
 	blankWin->SetUpL(TPoint(),winSize,TheClient->iGroup,*TheClient->iGc);
 	TheClient->iGc->Activate(*blankWin->Win());		//blankWin->Win()->Invalidate();
@@ -691,7 +741,7 @@ void CTScrMode::InvisibleWndAndInfiniteRedrawBugL()
 void CTScrMode::GetScreenDisplayMode()
 	{
 	TInt color,gray;
-	CWsScreenDevice *screen=TheClient->iScreen;
+	CWsScreenDevice* screen=TheClient->iScreen;
 	TInt currentScreenMode=screen->CurrentScreenMode(); //finding the current screen mode
 	screen->SetScreenMode(KScreenMode1); //changing the current screen mode to 1
 
@@ -1106,6 +1156,11 @@ void CTScrMode::TestRotateAndScreenModeL()
 
 void CTScrMode::RunTestCaseL(TInt /*aCurTestCase*/)
 	{
+	_LIT(KTest1,"Orientation1");
+	_LIT(KTest2,"Orientation2");
+	_LIT(KTest3,"Rect Clear Defect");
+	_LIT(KTest4,"ScreenModeChange");
+	_LIT(KScreenModeDisplayMode,"GetScreenModeDisplayMode");
 	TBuf<32> buf;
 	TBool checkWindowParam=EFalse;
 	TInt count=0;
@@ -1113,61 +1168,53 @@ void CTScrMode::RunTestCaseL(TInt /*aCurTestCase*/)
 	TBool enable=EFalse;
 	TBool disable=EFalse;
 	TInt retVal;
-	
-	((CTScrModeStep*)iStep)->SetTestStepID(KUnknownSYMTestCaseIDName);
+
 	switch(++iTest->iState)
 		{
 /**
-
   @SYMTestCaseID GRAPHICS-WSERV-0296
 
-  @SYMDEF  			DEF081259
-
-  @SYMTestCaseDesc Test screen modes can be set while the screen is rotated
-  					through 180 degrees.
+  @SYMTestCaseDesc Test that sizes and rotations returned by the various 
+					GetScreenModeSizeAndRotation function are consistent.
+					Also test that the rotations can be set within each mode.
 
   @SYMTestPriority High
 
   @SYMTestStatus Implemented
 
-  @SYMTestActions Rotate the screen through 180 degrees while setting each
-  					of the screen modes available
+  @SYMTestActions Read the size and rotation of each mode 
+  					and set all allowable rotations.
 
-  @SYMTestExpectedResults The screen is rotated and screen modes set correctly
-
+  @SYMTestExpectedResults The rotations and sizes are consistent 
+  							and the rotations get set correctly.
 */
-		case 1:
-			((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0296"));
-			iTest->LogSubTest(_L("Orientation1"));
-			ScreenRotationsL();
-			break;
-/**
+	case 1:
+		((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0296"));
+		iTest->LogSubTest(KTest1);
+		ScreenRotationsL();
+		break;
 
+/**
   @SYMTestCaseID GRAPHICS-WSERV-0297
 
-  @SYMDEF  			DEF081259
-
-  @SYMTestCaseDesc Change the screen orientation then test screen modes can
-  					be set while the screen is rotated through 180 degrees.
+  @SYMTestCaseDesc That right rotation is achieved when screen mode is changed.
 
   @SYMTestPriority High
 
   @SYMTestStatus Implemented
 
-  @SYMTestActions Rotate the screen through 180 degrees while setting each
-  					of the screen modes available
+  @SYMTestActions Change the screen modes and rotations in each screen mode (where possible).
 
-  @SYMTestExpectedResults The screen is rotated and screen modes set correctly
-
+  @SYMTestExpectedResults The screen ends up in the right rotation
 */
-		case 2:
-			((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0297"));
-			iTest->LogSubTest(_L("Orientation2"));
-			MoreScreenRotationsL();
-			iSubState=0;
-			break;
-/**
+	case 2:
+		((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0297"));
+		iTest->LogSubTest(KTest2);
+		MoreScreenRotationsL();
+		iSubState=0;
+		break;
 
+/**
   @SYMTestCaseID GRAPHICS-WSERV-0298
 
   @SYMDEF  			DEF081259
@@ -1182,16 +1229,14 @@ void CTScrMode::RunTestCaseL(TInt /*aCurTestCase*/)
   					not present
 
   @SYMTestExpectedResults The defect is not present
-
 */
-		case 3:
-			((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0298"));
-			iTest->LogSubTest(_L("Rect Clear Defect"));
-			RectClearBugL();
-			break;
-		case 4:
-/**
+	case 3:
+		((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0298"));
+		iTest->LogSubTest(KTest3);
+		RectClearBugL();
+		break;
 
+/**
   @SYMTestCaseID GRAPHICS-WSERV-0299
 
   @SYMDEF  			DEF081259
@@ -1209,14 +1254,14 @@ void CTScrMode::RunTestCaseL(TInt /*aCurTestCase*/)
   @SYMTestExpectedResults The windows function correctly
 
 */
-			((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0299"));
+	case 4:
+		((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0299"));
+		iTest->LogSubTest(KTest4);
+		ScreenModeChange1L();
+		ScreenModeChange2L();
+		break;
 
-			iTest->LogSubTest(_L("ScreenModeChange"));
-			ScreenModeChange1L();
-			ScreenModeChange2L();
-			break;
 /**
-
   @SYMTestCaseID GRAPHICS-WSERV-0300
 
   @SYMDEF  			DEF081259
@@ -1231,18 +1276,15 @@ void CTScrMode::RunTestCaseL(TInt /*aCurTestCase*/)
 
   @SYMTestExpectedResults The display mode retrieved is the same as the
   							one set.
-
 */
-		case 5:
-			((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0300"));
-			iTest->LogSubTest(KScreenModeDisplayMode);
-			GetScreenDisplayMode();
-			break;
+	case 5:
+		((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0300"));
+		iTest->LogSubTest(KScreenModeDisplayMode);
+		GetScreenDisplayMode();
+		break;
 
-	
 #if defined(SCREEN_MODE_TESTING)
 /**
-
   @SYMTestCaseID GRAPHICS-WSERV-0301
 
   @SYMDEF  			DEF081259
@@ -1259,203 +1301,206 @@ void CTScrMode::RunTestCaseL(TInt /*aCurTestCase*/)
   					redraw the screen
 
   @SYMTestExpectedResults The screen is drawn correctly for each setting
-
 */
-		case 101:
-			((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0301"));
-			iSubState = 0;
-			buf.Format(TRefByValue<const TDesC>(_L("Screen mode %d:%d")),101,iSubState);
-			INFO_PRINTF1(buf);
-			checkWindowParam=ETrue;
-			mode=1;
-			if (iCurEnforcement==ESizeEnforcementPixelsAndRotation)
-				count+=3;
-			else if (iCurEnforcement==ESizeEnforcementPixelsTwipsAndRotation)
-				count+=6;
-			if (iSecondConnection->DeviceMessageCount()!=count)
-				{
-				TLogMessageText buf;
-				_LIT(KFailCount,"Event Mismatch, Exp=%d, Act=%d");
-				buf.Format(KFailCount,count,iSecondConnection->DeviceMessageCount());
-				TheClient->iWs.LogMessage(buf);
-				TheClient->iWs.Flush();
-				}
-			retVal = iSecondConnection->DeviceMessageCount();
-			TEST(retVal==count);
-			if (retVal!=count)
-				INFO_PRINTF3(_L("(iSecondConnection->DeviceMessageCount() return value - Expected: %d, Actual: %d"),count ,retVal);
-			
-			CheckWindows(iCurEnforcement==ESizeEnforcementNone?ETrue:checkWindowParam);
-			if (enable)
-				iSecondConnection->EnableMessages();
-			if (disable)
-				iSecondConnection->DisableMessages();
-			TheClient->iScreen->SetScreenMode(mode);
+	case 101:
+		((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0301"));
+		iSubState = 0;
+		buf.Format(TRefByValue<const TDesC>(_L("Screen mode %d:%d")),101,iSubState);
+		INFO_PRINTF1(buf);
+		checkWindowParam=ETrue;
+		mode=1;
+		if (iCurEnforcement==ESizeEnforcementPixelsAndRotation)
+			count+=3;
+		else if (iCurEnforcement==ESizeEnforcementPixelsTwipsAndRotation)
+			count+=6;
+		if (iSecondConnection->DeviceMessageCount()!=count)
+			{
+			TLogMessageText buf;
+			_LIT(KFailCount,"Event Mismatch, Exp=%d, Act=%d");
+			buf.Format(KFailCount,count,iSecondConnection->DeviceMessageCount());
+			TheClient->iWs.LogMessage(buf);
 			TheClient->iWs.Flush();
-			iSubState++;
-			break;
-		case 102:
+			}
+		retVal = iSecondConnection->DeviceMessageCount();
+		TEST(retVal==count);
+		if (retVal!=count)
+			INFO_PRINTF3(_L("(iSecondConnection->DeviceMessageCount() return value - Expected: %d, Actual: %d"),count ,retVal);
+		
+		CheckWindows(iCurEnforcement==ESizeEnforcementNone?ETrue:checkWindowParam);
+		if (enable)
+			iSecondConnection->EnableMessages();
+		if (disable)
+			iSecondConnection->DisableMessages();
+		TheClient->iScreen->SetScreenMode(mode);
+		TheClient->iWs.Flush();
+		iSubState++;
+		break;
+
 /**
   @SYMTestCaseID GRAPHICS-WSERV-0521
 */
-			((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0521"));
-			buf.Format(TRefByValue<const TDesC>(_L("Screen mode %d:%d")),101,iSubState);
-			INFO_PRINTF1(buf);
-			checkWindowParam=EFalse;
-			enable=ETrue;
-			if (iCurEnforcement==ESizeEnforcementPixelsAndRotation)
-				count+=3;
-			else if (iCurEnforcement==ESizeEnforcementPixelsTwipsAndRotation)
-				count+=6;
-			if (iSecondConnection->DeviceMessageCount()!=count)
-				{
-				TLogMessageText buf;
-				_LIT(KFailCount,"Event Mismatch, Exp=%d, Act=%d");
-				buf.Format(KFailCount,count,iSecondConnection->DeviceMessageCount());
-				TheClient->iWs.LogMessage(buf);
-				TheClient->iWs.Flush();
-				}
-			retVal = iSecondConnection->DeviceMessageCount();
-			TEST(retVal==count);
-			if (retVal!=count)
-				INFO_PRINTF3(_L("(iSecondConnection->DeviceMessageCount() return value - Expected: %d, Actual: %d"),count ,retVal);
-
-			if (enable)
-				iSecondConnection->EnableMessages();
-			if (disable)
-				iSecondConnection->DisableMessages();
-			TheClient->iScreen->SetScreenMode(mode);
+	case 102:
+		((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0521"));
+		buf.Format(TRefByValue<const TDesC>(_L("Screen mode %d:%d")),101,iSubState);
+		INFO_PRINTF1(buf);
+		checkWindowParam=EFalse;
+		enable=ETrue;
+		if (iCurEnforcement==ESizeEnforcementPixelsAndRotation)
+			count+=3;
+		else if (iCurEnforcement==ESizeEnforcementPixelsTwipsAndRotation)
+			count+=6;
+		if (iSecondConnection->DeviceMessageCount()!=count)
+			{
+			TLogMessageText buf;
+			_LIT(KFailCount,"Event Mismatch, Exp=%d, Act=%d");
+			buf.Format(KFailCount,count,iSecondConnection->DeviceMessageCount());
+			TheClient->iWs.LogMessage(buf);
 			TheClient->iWs.Flush();
-			iSubState++;
-			break;
-		case 103:
+			}
+		retVal = iSecondConnection->DeviceMessageCount();
+		TEST(retVal==count);
+		if (retVal!=count)
+			INFO_PRINTF3(_L("(iSecondConnection->DeviceMessageCount() return value - Expected: %d, Actual: %d"),count ,retVal);
+
+		if (enable)
+			iSecondConnection->EnableMessages();
+		if (disable)
+			iSecondConnection->DisableMessages();
+		TheClient->iScreen->SetScreenMode(mode);
+		TheClient->iWs.Flush();
+		iSubState++;
+		break;
+
 /**
   @SYMTestCaseID GRAPHICS-WSERV-0522
 */
-			((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0522"));
-			buf.Format(TRefByValue<const TDesC>(_L("Screen mode %d:%d")),101,iSubState);
-			INFO_PRINTF1(buf);
-			count=1;
-			mode=1;
-			checkWindowParam=ETrue;
-			if (iCurEnforcement==ESizeEnforcementPixelsAndRotation)
-				count+=3;
-			else if (iCurEnforcement==ESizeEnforcementPixelsTwipsAndRotation)
-				count+=6;
-			if (iSecondConnection->DeviceMessageCount()!=count)
-				{
-				TLogMessageText buf;
-				_LIT(KFailCount,"Event Mismatch, Exp=%d, Act=%d");
-				buf.Format(KFailCount,count,iSecondConnection->DeviceMessageCount());
-				TheClient->iWs.LogMessage(buf);
-				TheClient->iWs.Flush();
-				}
-			retVal = iSecondConnection->DeviceMessageCount();
-			TEST(retVal==count);
-			if (retVal!=count)
-				INFO_PRINTF3(_L("(iSecondConnection->DeviceMessageCount() return value - Expected: %d, Actual: %d"),count ,retVal);
-
-			CheckWindows(iCurEnforcement==ESizeEnforcementNone?ETrue:checkWindowParam);
-			if (enable)
-				iSecondConnection->EnableMessages();
-			if (disable)
-				iSecondConnection->DisableMessages();
-			TheClient->iScreen->SetScreenMode(mode);
+	case 103:
+		((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0522"));
+		buf.Format(TRefByValue<const TDesC>(_L("Screen mode %d:%d")),101,iSubState);
+		INFO_PRINTF1(buf);
+		count=1;
+		mode=1;
+		checkWindowParam=ETrue;
+		if (iCurEnforcement==ESizeEnforcementPixelsAndRotation)
+			count+=3;
+		else if (iCurEnforcement==ESizeEnforcementPixelsTwipsAndRotation)
+			count+=6;
+		if (iSecondConnection->DeviceMessageCount()!=count)
+			{
+			TLogMessageText buf;
+			_LIT(KFailCount,"Event Mismatch, Exp=%d, Act=%d");
+			buf.Format(KFailCount,count,iSecondConnection->DeviceMessageCount());
+			TheClient->iWs.LogMessage(buf);
 			TheClient->iWs.Flush();
-			iSubState++;
-			break;
-		case 104:
+			}
+		retVal = iSecondConnection->DeviceMessageCount();
+		TEST(retVal==count);
+		if (retVal!=count)
+			INFO_PRINTF3(_L("(iSecondConnection->DeviceMessageCount() return value - Expected: %d, Actual: %d"),count ,retVal);
+
+		CheckWindows(iCurEnforcement==ESizeEnforcementNone?ETrue:checkWindowParam);
+		if (enable)
+			iSecondConnection->EnableMessages();
+		if (disable)
+			iSecondConnection->DisableMessages();
+		TheClient->iScreen->SetScreenMode(mode);
+		TheClient->iWs.Flush();
+		iSubState++;
+		break;
+
 /**
   @SYMTestCaseID GRAPHICS-WSERV-0523
 */
-			((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0523"));
-			buf.Format(TRefByValue<const TDesC>(_L("Screen mode %d:%d")),101,iSubState);
-			INFO_PRINTF1(buf);
-			checkWindowParam=ETrue;
-			count=2;
-			disable=ETrue;
-			if (iCurEnforcement==ESizeEnforcementPixelsAndRotation)
-				count+=3;
-			else if (iCurEnforcement==ESizeEnforcementPixelsTwipsAndRotation)
-				count+=6;
-			if (iSecondConnection->DeviceMessageCount()!=count)
-				{
-				TLogMessageText buf;
-				_LIT(KFailCount,"Event Mismatch, Exp=%d, Act=%d");
-				buf.Format(KFailCount,count,iSecondConnection->DeviceMessageCount());
-				TheClient->iWs.LogMessage(buf);
-				TheClient->iWs.Flush();
-				}
-			retVal = iSecondConnection->DeviceMessageCount();
-			TEST(retVal==count);
-			if (retVal!=count)
-				INFO_PRINTF3(_L("(iSecondConnection->DeviceMessageCount() return value - Expected: %d, Actual: %d"),count ,retVal);
-
-			if (enable)
-				iSecondConnection->EnableMessages();
-			if (disable)
-				iSecondConnection->DisableMessages();
-			TheClient->iScreen->SetScreenMode(mode);
+	case 104:
+		((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0523"));
+		buf.Format(TRefByValue<const TDesC>(_L("Screen mode %d:%d")),101,iSubState);
+		INFO_PRINTF1(buf);
+		checkWindowParam=ETrue;
+		count=2;
+		disable=ETrue;
+		if (iCurEnforcement==ESizeEnforcementPixelsAndRotation)
+			count+=3;
+		else if (iCurEnforcement==ESizeEnforcementPixelsTwipsAndRotation)
+			count+=6;
+		if (iSecondConnection->DeviceMessageCount()!=count)
+			{
+			TLogMessageText buf;
+			_LIT(KFailCount,"Event Mismatch, Exp=%d, Act=%d");
+			buf.Format(KFailCount,count,iSecondConnection->DeviceMessageCount());
+			TheClient->iWs.LogMessage(buf);
 			TheClient->iWs.Flush();
-			iSubState++;
-			break;
-		case 105:
+			}
+		retVal = iSecondConnection->DeviceMessageCount();
+		TEST(retVal==count);
+		if (retVal!=count)
+			INFO_PRINTF3(_L("(iSecondConnection->DeviceMessageCount() return value - Expected: %d, Actual: %d"),count ,retVal);
+
+		if (enable)
+			iSecondConnection->EnableMessages();
+		if (disable)
+			iSecondConnection->DisableMessages();
+		TheClient->iScreen->SetScreenMode(mode);
+		TheClient->iWs.Flush();
+		iSubState++;
+		break;
+
 /**
   @SYMTestCaseID GRAPHICS-WSERV-0524
 */
-			((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0524"));
-			buf.Format(TRefByValue<const TDesC>(_L("Screen mode %d:%d")),101,iSubState);
-			INFO_PRINTF1(buf);
-			checkWindowParam=EFalse;
-			count=2;
-			enable=ETrue;
-			if (iCurEnforcement==ESizeEnforcementPixelsAndRotation)
-				count+=3;
-			else if (iCurEnforcement==ESizeEnforcementPixelsTwipsAndRotation)
-				count+=6;
-			if (iSecondConnection->DeviceMessageCount()!=count)
-				{
-				TLogMessageText buf;
-				_LIT(KFailCount,"Event Mismatch, Exp=%d, Act=%d");
-				buf.Format(KFailCount,count,iSecondConnection->DeviceMessageCount());
-				TheClient->iWs.LogMessage(buf);
-				TheClient->iWs.Flush();
-				}
-			retVal = iSecondConnection->DeviceMessageCount();
-			TEST(retVal==count);
-			if (retVal!=count)
-				INFO_PRINTF3(_L("(iSecondConnection->DeviceMessageCount() return value - Expected: %d, Actual: %d"),count ,retVal);
-
-			CheckWindows(iCurEnforcement==ESizeEnforcementNone?ETrue:checkWindowParam);
-			if (enable)
-				iSecondConnection->EnableMessages();
-			if (disable)
-				iSecondConnection->DisableMessages();
-			TheClient->iScreen->SetScreenMode(mode);
+	case 105:
+		((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0524"));
+		buf.Format(TRefByValue<const TDesC>(_L("Screen mode %d:%d")),101,iSubState);
+		INFO_PRINTF1(buf);
+		checkWindowParam=EFalse;
+		count=2;
+		enable=ETrue;
+		if (iCurEnforcement==ESizeEnforcementPixelsAndRotation)
+			count+=3;
+		else if (iCurEnforcement==ESizeEnforcementPixelsTwipsAndRotation)
+			count+=6;
+		if (iSecondConnection->DeviceMessageCount()!=count)
+			{
+			TLogMessageText buf;
+			_LIT(KFailCount,"Event Mismatch, Exp=%d, Act=%d");
+			buf.Format(KFailCount,count,iSecondConnection->DeviceMessageCount());
+			TheClient->iWs.LogMessage(buf);
 			TheClient->iWs.Flush();
+			}
+		retVal = iSecondConnection->DeviceMessageCount();
+		TEST(retVal==count);
+		if (retVal!=count)
+			INFO_PRINTF3(_L("(iSecondConnection->DeviceMessageCount() return value - Expected: %d, Actual: %d"),count ,retVal);
 
-
+		CheckWindows(iCurEnforcement==ESizeEnforcementNone?ETrue:checkWindowParam);
+		if (enable)
+			iSecondConnection->EnableMessages();
+		if (disable)
 			iSecondConnection->DisableMessages();
-			if (iCurEnforcement==ESizeEnforcementNone)
-				{	// Do it again with different enforcement mode
-				SetScreenModeEnforcement(ESizeEnforcementPixelsAndRotation);
-				ResetCounter(100);
-				}
-			else if (iCurEnforcement==ESizeEnforcementPixelsAndRotation)
-				{	// Do it again with different enforcement mode
-				SetScreenModeEnforcement(ESizeEnforcementPixelsTwipsAndRotation);
-				ResetCounter(100);
-				}
-			else
-				{
-				SetScreenModeEnforcement(ESizeEnforcementNone);
-				delete iSecondConnection;
-				iSecondConnection=NULL;
-				}
-			TheClient->iWs.Flush();
-			break;
-/**
+		TheClient->iScreen->SetScreenMode(mode);
+		TheClient->iWs.Flush();
 
+
+		iSecondConnection->DisableMessages();
+		if (iCurEnforcement==ESizeEnforcementNone)
+			{	// Do it again with different enforcement mode
+			SetScreenModeEnforcement(ESizeEnforcementPixelsAndRotation);
+			ResetCounter(100);
+			}
+		else if (iCurEnforcement==ESizeEnforcementPixelsAndRotation)
+			{	// Do it again with different enforcement mode
+			SetScreenModeEnforcement(ESizeEnforcementPixelsTwipsAndRotation);
+			ResetCounter(100);
+			}
+		else
+			{
+			SetScreenModeEnforcement(ESizeEnforcementNone);
+			delete iSecondConnection;
+			iSecondConnection=NULL;
+			}
+		TheClient->iWs.Flush();
+		break;
+
+/**
   @SYMTestCaseID GRAPHICS-WSERV-0302
 
   @SYMDEF  			DEF099638
@@ -1470,27 +1515,23 @@ void CTScrMode::RunTestCaseL(TInt /*aCurTestCase*/)
   @SYMTestActions Set different screen modes and scale a drawing
 
   @SYMTestExpectedResults The drawing is redrawn to scale
-
 */
-		case 110:
-			{
-			((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0302"));
-			// Ensure that the TestWin and BaseWin will be drawn properly in all screen modes
-			SetScreenModeEnforcement(ESizeEnforcementPixelsAndRotation);
-			TheClient->SetTestClientScreenMode(0);
-			INFO_PRINTF1(_L("Scaled drawing - screen mode 0"));
-			ScaledDrawingL();
-			TheClient->SetTestClientScreenMode(1);
-			INFO_PRINTF1(_L("Scaled drawing - screen mode 1"));
-			ScaledDrawingL();
-			// Restore screen mode and enforcement mode				
-			TheClient->SetTestClientScreenMode(0);
-			SetScreenModeEnforcement(iOldEnfMode);
-			break;
-			}
+	case 110:
+		((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0302"));
+		// Ensure that the TestWin and BaseWin will be drawn properly in all screen modes
+		SetScreenModeEnforcement(ESizeEnforcementPixelsAndRotation);
+		TheClient->SetTestClientScreenMode(0);
+		INFO_PRINTF1(_L("Scaled drawing - screen mode 0"));
+		ScaledDrawingL();
+		TheClient->SetTestClientScreenMode(1);
+		INFO_PRINTF1(_L("Scaled drawing - screen mode 1"));
+		ScaledDrawingL();
+		// Restore screen mode and enforcement mode				
+		TheClient->SetTestClientScreenMode(0);
+		SetScreenModeEnforcement(iOldEnfMode);
+		break;
 
 /**
-
   @SYMTestCaseID GRAPHICS-WSERV-0303
 
   @SYMDEF  			DEF081259
@@ -1505,16 +1546,15 @@ void CTScrMode::RunTestCaseL(TInt /*aCurTestCase*/)
   					expected
 
   @SYMTestExpectedResults Panics respond as expected
-
 */
-		case 111:
-			((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0303"));
-			INFO_PRINTF1(_L("Panic"));
-			TestPanicsL();
-			break;
+	case 111:
+		((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0303"));
+		INFO_PRINTF1(_L("Panic"));
+		TestPanicsL();
+		break;
 #endif
-/**
 
+/**
   @SYMTestCaseID GRAPHICS-WSERV-0304
 
   @SYMDEF  			DEF081259
@@ -1530,15 +1570,14 @@ void CTScrMode::RunTestCaseL(TInt /*aCurTestCase*/)
   					mode and redraw the windows
 
   @SYMTestExpectedResults The windows are redrawn without error
-
 */
-		case 112:
-			((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0304"));
-			INFO_PRINTF1(_L("Invisible Wnds And Infinite Redraw Bugs")); // two defects one problem
-			InvisibleWndAndInfiniteRedrawBugL();
-			break;
-/**
+	case 112:
+		((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0304"));
+		INFO_PRINTF1(_L("Invisible Wnds And Infinite Redraw Bugs")); // two defects one problem
+		InvisibleWndAndInfiniteRedrawBugL();
+		break;
 
+/**
   @SYMTestCaseID GRAPHICS-WSERV-0358
 
   @SYMDEF  			PDEF096151
@@ -1561,26 +1600,26 @@ void CTScrMode::RunTestCaseL(TInt /*aCurTestCase*/)
                   Cleans up the above
 
   @SYMTestExpectedResults The call to SetScreenMode should not cause wserv to panic
-
 */
- 		case 113:
- 			((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0358"));
-			INFO_PRINTF1(_L("Set screen mode after a client has deleted the screen device"));
-			SetScreenModeAfterScreenDeviceDeletedL();
-			break;
-		case 114:
-			INFO_PRINTF1(_L("Rotate/screen mode test"));
+	case 113:
+		((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0358"));
+		INFO_PRINTF1(_L("Set screen mode after a client has deleted the screen device"));
+		SetScreenModeAfterScreenDeviceDeletedL();
+		break;
+
 /**
   @SYMTestCaseID GRAPHICS-WSERV-0525
 */
-			((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0525"));
-			TestRotateAndScreenModeL();
-			break;
-		default:
-            ((CTScrModeStep*)iStep)->SetTestStepID(KNotATestSYMTestCaseIDName);
-			if (iTest->iState==115 || iTest->iState>1000)
-				TestComplete();
-			break;
+	case 114:
+		INFO_PRINTF1(_L("Rotate/screen mode test"));
+		((CTScrModeStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0525"));
+		TestRotateAndScreenModeL();
+		break;
+	default:
+		((CTScrModeStep*)iStep)->SetTestStepID(KNotATestSYMTestCaseIDName);
+		if (iTest->iState==115 || iTest->iState>1000)
+			TestComplete();
+		break;
 		}
 	((CTScrModeStep*)iStep)->RecordTestResultL();
 	}
@@ -1598,7 +1637,7 @@ CSecondConnection::~CSecondConnection()
 	delete iClient;
 	}
 
-void CSecondConnection::ConstructL(TInt aScreenNumber,const TRect &aWinRect, CTestBase *aTest, CTestStep* aTestStep)
+void CSecondConnection::ConstructL(TInt aScreenNumber,const TRect &aWinRect, CTestBase* aTest, CTestStep* aTestStep)
 	{
 	iClient=new(ELeave) CTClient;
 	iClient->SetScreenNumber(aScreenNumber);
@@ -1657,7 +1696,7 @@ void CSecondConnection::ScreenDeviceChanged()
 // CSecondConnectionGroup
 //
 
-CSecondConnectionGroup::CSecondConnectionGroup(CTClient *aClient, CSecondConnection *aSecondConnection, CTestBase *aTest, CTestStep* aTestStep) : CTWindowGroup(aClient), iTest(aTest), iSecondConnection(aSecondConnection), iTestStep(aTestStep)
+CSecondConnectionGroup::CSecondConnectionGroup(CTClient* aClient, CSecondConnection* aSecondConnection, CTestBase* aTest, CTestStep* aTestStep) : CTWindowGroup(aClient), iTest(aTest), iSecondConnection(aSecondConnection), iTestStep(aTestStep)
 	{}
 
 void CSecondConnectionGroup::ScreenDeviceChanged()

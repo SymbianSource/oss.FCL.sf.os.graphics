@@ -1,4 +1,4 @@
-// Copyright (c) 1994-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1994-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -623,6 +623,21 @@ TBool TWindowServerEvent::SendDisplayChangedEvents(CWsClient* aWsClient, TInt aD
 	TWsEvent event;
 	event.SetType(EEventDisplayChanged);
 	event.SetTimeNow();
+	
+	// fill in the handle otherwise CONE will discard the notification
+    CWsObjectIx* clientObjList = aWsClient->ObjectIndex();
+    const TWsObject* ptr=clientObjList->FirstObject();
+    const TWsObject* end=ptr+clientObjList->Length();
+    while(++ptr<end)    // first one should always have a NULL object
+        {
+        const CWsObject* obj=ptr->iObject;
+        if (obj && obj->Type()==WS_HANDLE_GROUP_WINDOW)
+            {
+            event.SetHandle(ptr->iHandle);
+            break;
+            }
+        }	
+	
 	TWsDisplayChangedEvent* dispEvent = event.DisplayChanged();
 	dispEvent->iDisplayNumber = aDisplayNumber;
 	dispEvent->iConfigurationChangeId = aConfigurationChangeId;
