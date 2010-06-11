@@ -7,7 +7,7 @@ extern "C" {
 #endif
 
 /*
-** Copyright (c) 2007-2009 The Khronos Group Inc.
+** Copyright (c) 2007-2010 The Khronos Group Inc.
 **
 ** Permission is hereby granted, free of charge, to any person obtaining a
 ** copy of this software and/or associated documentation files (the
@@ -232,7 +232,6 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffersRegionNOK(EGLDisplay dpy, EGLSurface
 typedef EGLBoolean (EGLAPIENTRYP PFNEGLSWAPBUFFERSREGIONNOKPROC) (EGLDisplay dpy, EGLSurface surface, EGLint numRects, const EGLint *rects);
 #endif
 
-
 #ifndef EGL_NOK_ENDPOINT
 #define EGL_NOK_ENDPOINT 1
 /* Endpoint datatype */
@@ -249,12 +248,6 @@ typedef void* EGLEndpointSourceNOK;
 /* Endpoint attribute keys */
 #define EGL_ENDPOINT_READY_NOK           0x30D6
 #define EGL_DELAY_NOK                    0x30D7
-
-#ifndef EGL_SYMBIAN_COMPOSITION
-#define EGL_SYMBIAN_COMPOSITION 1
-/* Extension defines a behavioural change which does not introduce functions or tokens. */
-/* The presence of this extension means that semi-transparent UI content can be displayed above EGL window surfaces. */
-#endif
 
 #ifdef EGL_EGLEXT_PROTOTYPES
 EGLAPI EGLEndpointNOK EGLAPIENTRY eglCreateEndpointNOK(EGLDisplay dpy, EGLenum type, EGLenum source_type, EGLEndpointSourceNOK source, const EGLint *attrib_list);
@@ -282,6 +275,38 @@ typedef EGLint ( *PFNEGLGETENDPOINTDIRTYAREANOKPROC) (EGLDisplay dpy,  EGLEndpoi
 typedef EGLBoolean ( *PFNEGLENDPOINTREQUESTNOTIFICATIONNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint, EGLTRequestStatusNOK sync);
 typedef EGLBoolean ( *PFNEGLENDPOINTCANCELNOTIFICATIONNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint);
 #endif
+
+#ifndef EGL_SYMBIAN_COMPOSITION
+#define EGL_SYMBIAN_COMPOSITION 1
+/* Extension defines a behavioural change which does not introduce functions or tokens. */
+/* The presence of this extension means that semi-transparent UI content can be displayed above EGL window surfaces. */
+#endif  /* EGL_SYMBIAN_COMPOSITION */
+
+#ifndef EGL_NOK_SURFACE_SCALING
+#define EGL_NOK_SURFACE_SCALING 1
+#define EGL_SURFACE_SCALING_NOK           0x30DD  /* Surface Scaling attribute for EGLConfig */
+#define EGL_TARGET_EXTENT_OFFSET_X_NOK    0x3079  /* attribute for eglCreateWindowSurface and eglQuerySurface */
+#define EGL_TARGET_EXTENT_OFFSET_Y_NOK    0x307A  /* attribute for eglCreateWindowSurface and eglQuerySurface */
+#define EGL_TARGET_EXTENT_WIDTH_NOK       0x307B  /* attribute for eglCreateWindowSurface and eglQuerySurface */
+#define EGL_TARGET_EXTENT_HEIGHT_NOK      0x307C  /* attribute for eglCreateWindowSurface and eglQuerySurface */
+#define EGL_BORDER_COLOR_RED_NOK          0x307D  /* attribute for eglCreateWindowSurface and eglQuerySurface */
+#define EGL_BORDER_COLOR_GREEN_NOK        0x307E  /* attribute for eglCreateWindowSurface and eglQuerySurface */
+#define EGL_BORDER_COLOR_BLUE_NOK         0x30D8  /* attribute for eglCreateWindowSurface and eglQuerySurface */
+#define EGL_FIXED_WIDTH_NOK               0x30DB  /* attribute for eglCreateWindowSurface */
+#define EGL_FIXED_HEIGHT_NOK              0x30DC  /* attribute for eglCreateWindowSurface */
+
+/* Tokens returned by eglQuerySurfaceScalingCapabilityNOK */
+#define EGL_NOT_SUPPORTED_NOK   0
+#define EGL_SUPPORTED_NOK       1
+#define EGL_SLOW_NOK            3
+
+#ifdef EGL_EGLEXT_PROTOTYPES
+EGLAPI EGLint EGLAPIENTRY eglQuerySurfaceScalingCapabilityNOK(EGLDisplay dpy, EGLConfig config, EGLint surface_width, EGLint surface_height, EGLint target_width, EGLint target_height);
+EGLAPI EGLBoolean EGLAPIENTRY eglSetSurfaceScalingNOK(EGLDisplay dpy, EGLSurface surface, EGLint target_offset_x, EGLint target_offset_y, EGLint target_width, EGLint target_height);
+#endif
+typedef EGLint (EGLAPIENTRYP PFNEGLQUERYSURFACESCALINGCAPABILITYNOKPROC)(EGLDisplay dpy, EGLConfig config, EGLint surface_width, EGLint surface_height, EGLint target_width, EGLint target_height);
+typedef EGLBoolean (EGLAPIENTRYP PFNEGLSETSURFACESCALINGNOKPROC)(EGLDisplay dpy, EGLSurface surface, EGLint target_offset_x, EGLint target_offset_y, EGLint target_width, EGLint target_height);
+#endif /* EGL_NOK_SURFACE_SCALING */
 
 #ifdef __cplusplus
 }

@@ -13,7 +13,7 @@
 // Description:
 //
 
-CAPABILITY PowerMgmt ReadDeviceData WriteDeviceData ProtServ
+CAPABILITY All -tcb
 targettype        DLL
 VENDORID 0x70000001
 

@@ -35,6 +35,9 @@
 #include <graphics_tprofiler.iby>
 #include <graphics_simload.iby>
 
+//Include the endpoint test suite
+#include <eglendpointtestsuite.iby>
+
 // test server
 file=ABI_DIR\DEBUG_DIR\egltest.dll                              sys\bin\egltest.dll
 file=ABI_DIR\DEBUG_DIR\egltestserver.exe                        sys\bin\egltestserver.exe

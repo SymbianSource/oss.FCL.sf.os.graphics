@@ -1,0 +1,39 @@
+// Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+
+PRINT Run EGL endpoint tests.
+LOAD_SUITE eglendpointtestserver
+
+//The remote side of the framework is hard coded to timeout after 10 seconds,
+//So any remote portion of a test that lasts longer than 10 seconds will
+//cause the whole test to timeout. This can be changed in remotetestbase.cpp.
+//The timeouts passed to TEF below MUST always be bigger than that used for
+//the remote side (currently 10 seconds).
+
+// Note: Tests should be sorted by "increasing dependency", so that the 
+// most basic functionality tests are done first. 
+RUN_TEST_STEP 300 eglendpointtestserver EGL_EndpointApiExposure
+RUN_TEST_STEP 300 eglendpointtestserver EGL_EndpointCreate
+RUN_TEST_STEP 300 eglendpointtestserver EGL_EndpointStreaming
+RUN_TEST_STEP 300 eglendpointtestserver EGL_EndpointAcquire
+RUN_TEST_STEP 300 eglendpointtestserver EGL_EndpointAttrib
+RUN_TEST_STEP 300 eglendpointtestserver EGL_EndpointLocking
+RUN_TEST_STEP 300 eglendpointtestserver EGL_EndpointImage
+RUN_TEST_STEP 300 eglendpointtestserver EGL_EndpointImageLifetime
+RUN_TEST_STEP 300 eglendpointtestserver EGL_EndpointNotification
+RUN_TEST_STEP 300 eglendpointtestserver EGL_EndpointTearing
+RUN_TEST_STEP 300 eglendpointtestserver EGL_EndpointStreamingTests
+RUN_TEST_STEP 300 eglendpointtestserver EGL_EndpointStreamingDispXTimesInStream
+RUN_TEST_STEP 300 eglendpointtestserver EGL_EndpointDirtyArea

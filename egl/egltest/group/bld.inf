@@ -62,3 +62,5 @@ PRJ_TESTEXPORTS
 ../scripts/egltest_t_stress_sgimage.script					z:/egltest/egltest_t_stress_sgimage.script
 ../scripts/egltest_t_benchmark_swapbuffers.script			z:/egltest/egltest_t_benchmark_swapbuffers.script
 
+//Include the endpoint test suite
+#include "../endpointtestsuite/group/bld.inf"

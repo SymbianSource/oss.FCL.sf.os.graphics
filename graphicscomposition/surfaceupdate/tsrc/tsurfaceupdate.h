@@ -52,7 +52,6 @@ private:
 	void TestCase9L();
 	void TestCase10();
 	void TestCase11();
-	void TestCase12L();
 	void TestCase13L();
 	void TestCase14();
 	void TestCase15();

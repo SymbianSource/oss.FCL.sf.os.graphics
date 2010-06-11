@@ -5,6 +5,7 @@
 ## Font Store tests - linked font
 # [Begin sequential linked font tests]
 TESTEXECUTE, C:\logs\testexecute\fntstoretest_T_LinkedFonts.htm,				, z:\fntstoretest\fntstoretest_T_LinkedFonts.script,  600, ,z\ityperast_config.cmd install, z\ityperast_config.cmd uninstall
+#TESTEXECUTE, C:\logs\testexecute\fntstoretest_T_LinkedFontUpdateStage1.htm,		, z:\fntstoretest\fntstoretest_T_LinkedFontUpdateStage1.script ,  600, ,z\ityperast_config.cmd install, z\ityperast_config.cmd uninstall
 TESTEXECUTE, C:\logs\testexecute\fntstoretest_T_LinkedFontUpdateStage2.htm,		, z:\fntstoretest\fntstoretest_T_LinkedFontUpdateStage2.script ,  600, ,z\ityperast_config.cmd install, z\ityperast_config.cmd uninstall
 # [End sequential linked font tests]
 

@@ -186,6 +186,7 @@ public:
 	TBool IsActive() const;
 	CUpdateReceiverNotification* UpdateReceiverNotification(TInt aReceiverPriority = 0);
 	void CheckForReuse();
+	void SetNumUpdateReceivers(TInt aNumUpdateReceivers);
 #ifdef TEST_SURFACE_UPDATE
 	CSurfaceUpdateServer* Server();
 	void IncNumberPendingNotifications();

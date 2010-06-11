@@ -21,14 +21,12 @@
 #include <e32base.h>
 #include <e32std.h>			//for RFastLock
 #include <e32hashtab.h>		//for RHashMap
-#include <graphics/surfacemanager.h>
-
-#include <graphics/updateserverprovider.h>
 
 class CSurfaceStream;
 class TSurfaceId;
 class MSurfaceUpdateServerProvider;
 class CExtensionContainer;
+class RSurfaceManager;
 
 NONSHARABLE_CLASS(COpenWfcStreamMap): public CBase
 	{
@@ -198,7 +196,7 @@ NONSHARABLE_CLASS(COpenWfcStreamMap): public CBase
 		/**
 		 * Surface manager
 		 */
-		RSurfaceManager iSurfaceManager;
+		RSurfaceManager* iSurfaceManager;
 
 		RHeap *iMainHeap; //< --This points to main thread's heap--
 		

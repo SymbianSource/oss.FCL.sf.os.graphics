@@ -23,4 +23,6 @@
 target	surfaceupdateserver.dll
 uid		0x1000008D 0x10283036
 
+EPOCALLOWDLLDATA
+
 SMPSAFE

@@ -172,6 +172,9 @@
 					<component name="EGL Test">
 						<unit bldFile="sf\os\graphics\egl\egltest\group" mrp="sf\os\graphics\egl\egltest\group\graphics_egltest.mrp"/>
 					</component>
+					<component name="EGL Test Ext">
+						<unit bldFile="sf\os\graphics\egl\egltestext\group" mrp="sf\os\graphics\egl\egltestext\group\graphics_egltestext.mrp"/>
+					</component>
 					<component name="EGL Interface">
 						<unit bldFile="sf\os\graphics\egl\eglinterface\group" mrp="sf\os\graphics\egl\eglinterface\group\graphics_eglheaders.mrp"/>
 					</component>
