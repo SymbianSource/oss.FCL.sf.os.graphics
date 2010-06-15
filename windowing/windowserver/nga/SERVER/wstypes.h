@@ -84,7 +84,7 @@ class RWsRegionBuf : public RRegionBuf<S>
 	{
 public:
 	inline RWsRegionBuf()  {}
-	inline ~RWsRegionBuf() { WS_ASSERT_DEBUG(TRegion::iCount == 0, EWsPanicInvalidRegion); }
+	inline ~RWsRegionBuf() { WS_ASSERT_DEBUG(RRegionBuf<S>::iCount == 0, EWsPanicInvalidRegion); }
 	inline void Close()    { ASSERT(0); } //Do not use, use Reset instead.
 	inline void Clear()    { ASSERT(0); } //Do not use, use Reset instead.
 	inline void Reset()
@@ -95,11 +95,11 @@ public:
 		//Clear will set iCount to 0 and, if iAllocedRects>0, free heap memory and set iAllocedRects to 0.
 		RRegionBuf<S>::Clear();
 		
-		if(TRegion::iAllocedRects >= 0)
+		if(RRegionBuf<S>::iAllocedRects >= 0)
 			{
 			//The magic in the next statement reverts this instance back into an RRegionBuf.
 			//(The code is the same as can be found in the initialiser list of RRegionBuf's default constructor.)
-			TRegion::iAllocedRects = -S&(~TRegion::ERRegionBuf);
+			RRegionBuf<S>::iAllocedRects = -S&(~TRegion::ERRegionBuf);
 			}
 		}
 	};
