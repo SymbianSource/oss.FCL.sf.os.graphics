@@ -31,6 +31,10 @@ typedef TInt16  khronos_int16_t;  // short int
 typedef TUint16 khronos_uint16_t; // unsigned short int
 typedef TInt32  khronos_int32_t;  // long int
 typedef TUint32 khronos_uint32_t; // unsigned long int
+typedef TUint64 khronos_utime_nanoseconds_t;  // unsigned long long (may need to remobe this and 
+                                              // include a version #ifdef if there is a strong reason 
+                                              // not to have the typedef here. For simplicity I added it 
+                                              // here.
 
 #endif // __KHRONOS_TYPES_H__
 

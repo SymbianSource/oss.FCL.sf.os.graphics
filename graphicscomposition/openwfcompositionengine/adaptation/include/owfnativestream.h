@@ -59,7 +59,8 @@ typedef enum
     OWF_STREAM_ERROR_OUT_OF_MEMORY      = -3
 } OWF_STREAM_ERROR;
 
-typedef WFCHandle           WFCNativeStreamType;
+// WFCNativeStreamType is defined in <WF/wfcplatform.h>
+
 /*!---------------------------------------------------------------------------
  * Converts from external WFC native stream handle type to internal OWF native stream handle type.
  * The internal handle MUST be persistant. The external handle may already be persistant.

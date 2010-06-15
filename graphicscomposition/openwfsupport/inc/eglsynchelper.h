@@ -29,13 +29,8 @@ extern "C" {
 
 #ifndef EGL_EGLEXT_PROTOTYPES
 
-/*
- * EGLSyncKHR is an opaque handle to an EGL sync object
- */
-typedef void* EGLSyncKHR;
-
-
-typedef khronos_utime_nanoseconds_t EGLTimeKHR;
+// The types EGLSyncKHR (an opaque handle to an EGL sync object) & 
+// EGLTimeKHR are defined in <EGL/eglext.h>
 
 /* API functions */
 

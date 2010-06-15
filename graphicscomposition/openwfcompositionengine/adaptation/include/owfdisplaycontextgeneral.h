@@ -25,12 +25,13 @@
 #include <e32def.h>
 #include <WF/wfc.h>
 #include <KHR/khrplatform.h>
+#include <owfimage.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef void*   OWF_DISPCTX;
+// Type OWF_DISPCTX is defined in <owfimage.h>
 
 OWF_DISPCTX OWF_DisplayContext_Create(TInt screenNum);
 void OWF_DisplayContext_Destroy(TInt screenNum, OWF_DISPCTX dc);
