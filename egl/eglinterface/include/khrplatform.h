@@ -95,30 +95,10 @@ extern "C" {
 #define __KHR_EXPORTS
 #endif
 
-#if defined(_WIN32) || defined(__VC32__) || defined(__MWERKS__) || defined(__CW32__)         /* Win32 */
-#   ifdef __KHR_EXPORTS
-#       define KHRONOS_APICALL __declspec(dllexport)
-#   else
-#       define KHRONOS_APICALL __declspec(dllexport)
-#   endif
+#ifdef __KHR_EXPORTS
+#define KHRONOS_APICALL  EXPORT_C
 #else
-#   if defined (__ARMCC_VERSION)
-#       if (__ARMCC_VERSION <= 310000) || (__ARMCC_VERSION >= 400000)
-#          ifdef __KHR_EXPORTS
-#            define KHRONOS_APICALL __declspec(dllexport)
-#          else
-#            define KHRONOS_APICALL __declspec(dllimport)
-#          endif
-#       else
-#         define KHRONOS_APICALL __declspec(dllimport)
-#       endif
-#   else
-#       ifdef __KHR_EXPORTS
-#           define KHRONOS_APICALL
-#       else
-#           define KHRONOS_APICALL extern
-#       endif
-#   endif
+#define KHRONOS_APICALL  IMPORT_C
 #endif
 
 #define KHRONOS_APIENTRY

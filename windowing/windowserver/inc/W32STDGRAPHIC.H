@@ -80,8 +80,8 @@ public: // protected virtuals from CWsGraphic promoted to public
 	IMPORT_C TInt UnShare(TSecureId aClientId);
 private:
 	CWsGraphicBitmap();
-	void HandleMessage(const TDesC8& aData);
-	void OnReplace();
+	IMPORT_C void HandleMessage(const TDesC8& aData);
+	IMPORT_C void OnReplace();
 };
 
 NONSHARABLE_CLASS(CWsGraphicBitmapAnimation): public CWsGraphic

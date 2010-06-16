@@ -155,7 +155,7 @@ public:
 	IMPORT_C TInt GetInterface(TUid aInterfaceId, TAny*& aInterface);
 	
 private:
-	CDirectGdiContext(CDirectGdiDriver& aDirectGdiDriver);
+	IMPORT_C CDirectGdiContext(CDirectGdiDriver& aDirectGdiDriver);
 	void ConstructL();
 	void CleanUpBrushPattern();
 	void DrawText(const TDesC& aText, const DirectGdi::TTextParameters* aParam, const TPoint& aPosition, DirectGdi::TTextAlign aAlignment, 
