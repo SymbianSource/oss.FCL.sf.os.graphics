@@ -19,7 +19,6 @@
 #include "panics.h"
 #include "wstop.h"
 #include "EVENT.H"
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
 #include <bitdraw.h>
 #include <hal.h>
 #include "inifile.h"
@@ -107,6 +106,8 @@ public:
 	void OnActive();
 	void ScheduleRedraw(MWsScreen& aScreen,const TTime& aWhen);
 	void DoRedrawNow(MWsScreen& aScreen);
+	void DoRedrawNow(MWsScreen& aScreen, MWsAnimationScheduler::MScreenUpdateObserver& aObserver);
+	void ClearScreenUpdateObserver(const MWsAnimationScheduler::MScreenUpdateObserver& aObserver);
 private:
 	static TBool OnIdleCallBack(TAny* aAny);
 	void ScheduleUpdate (TInt aScreenNumber, TBool aForce);
@@ -142,6 +143,8 @@ public:
 	~CScreenState();
 	void SetActive ();
 	
+	void WaitForRedraws(MWsAnimationScheduler::MScreenUpdateObserver& aObserver, TInt aNumRedraws);
+	void ClearScreenUpdateObserver(const MWsAnimationScheduler::MScreenUpdateObserver& aObserver);
 	CPeriodic* iUpdateOn;
 	TTime      iExpectedTickTime;
 	TScreenUpdateDetails iScreenUpdateDetails;
@@ -151,6 +154,8 @@ public:
 private:
 	CScreenState (CDefaultAnimationScheduler* aScheduler, TInt aScreenOrdinal);
 	void ConstructL ();
+	void ReleaseRemainingClients();
+	void ReleaseClientsWaitingFor(TUint aCurrentFrame);
 	
 	void RunL();
 	void DoCancel() 
@@ -158,6 +163,18 @@ private:
 		TRequestStatus* tmpTRS = &iStatus;
 		User::RequestComplete(tmpTRS, KErrNone);
 		};
+	class TWaitingClient
+		{
+	public:
+		TWaitingClient(MWsAnimationScheduler::MScreenUpdateObserver& aObserver, TInt aTargetFrame)
+			: iObserver(aObserver), iTargetFrame(aTargetFrame)
+			{
+			}
+		MWsAnimationScheduler::MScreenUpdateObserver& iObserver;
+		TUint iTargetFrame;
+		};
+	TUint iFrameCount;
+	RArray<TWaitingClient> iWaitingClients;
 	};
 
 // If using the default animation scheduler on a device, these two numbers may be worth tweaking in the inifile
@@ -275,6 +292,7 @@ CWindowServer::CDefaultAnimationScheduler::CScreenState::NewL (CDefaultAnimation
 void CWindowServer::CDefaultAnimationScheduler::CScreenState::ConstructL ()
 	{
 	iUpdateOn = CPeriodic::NewL(EComposeCompletePriority);
+	iWaitingClients.ReserveL(8);
 	CActiveScheduler::Add(this);
 	}
 
@@ -283,19 +301,91 @@ CWindowServer::CDefaultAnimationScheduler::CScreenState::~CScreenState()
 	CActive::Cancel();
 	iInvalidated.Close();
 	delete iUpdateOn;
+	TInt i = iWaitingClients.Count();
+	while(i--)
+		{
+		iWaitingClients[i].iObserver.ScreenUpdateComplete(KErrAbort);
+		}
+	iWaitingClients.Close();
 	}
 
 void CWindowServer::CDefaultAnimationScheduler::CScreenState::SetActive()
 	{
 	CActive::SetActive ();
 	}
-	
+
+/**
+This function is called from CWsClient d'tor to make sure we will not hang on to any deleted objects. 
+*/
+void CWindowServer::CDefaultAnimationScheduler::CScreenState::ClearScreenUpdateObserver(const MWsAnimationScheduler::MScreenUpdateObserver& aObserver)
+	{
+	const TInt count = iWaitingClients.Count();
+	for(TInt i = count-1 ; i >= 0; i--)
+		{
+		if( &aObserver == &(iWaitingClients[i].iObserver) )
+			{
+			TWaitingClient& client = iWaitingClients[i];
+			client.iObserver.ScreenUpdateComplete(KErrCancel);
+			iWaitingClients.Remove(i);
+			}
+		}
+	}
+
+void CWindowServer::CDefaultAnimationScheduler::CScreenState::WaitForRedraws(MWsAnimationScheduler::MScreenUpdateObserver& aObserver, TInt aNumRedraws)
+	{
+	const TUint targetFrame = iFrameCount + aNumRedraws;
+	TWaitingClient request(aObserver, targetFrame);
+	TInt err = iWaitingClients.Append(request);
+	if(err != KErrNone)
+		{
+		//If OOM and already have 8 waiting clients we will not accept a 9th client
+		aObserver.ScreenUpdateComplete(KErrNoMemory);
+		}
+	}
+
+void CWindowServer::CDefaultAnimationScheduler::CScreenState::ReleaseRemainingClients()
+	{
+	const TInt count = iWaitingClients.Count();
+	for(TInt i = count-1; i >= 0; i--)
+		{
+		TWaitingClient& client = iWaitingClients[i];
+		client.iObserver.ScreenUpdateComplete(KErrNone);
+		iWaitingClients.Remove(i);
+		}
+	}
+
+void CWindowServer::CDefaultAnimationScheduler::CScreenState::ReleaseClientsWaitingFor(TUint aCurrentFrame)
+	{
+	const TInt count = iWaitingClients.Count();
+	for(TInt i = count-1; i >= 0; i--)
+		{
+		TWaitingClient& client = iWaitingClients[i];
+		if(aCurrentFrame == client.iTargetFrame)
+			{
+			client.iObserver.ScreenUpdateComplete(KErrNone);
+			iWaitingClients.Remove(i);
+			}
+		}
+	}
+
 /** 
-Invoked when the rendering pipline signals that it is ready to recieve updated.
+Invoked when the rendering pipline signals that it is ready to receive updates.
 */
 void CWindowServer::CDefaultAnimationScheduler::CScreenState::RunL() 
 	{
+	iFrameCount++;
+	
+	//Complete any clients waiting for this frame
+	ReleaseClientsWaitingFor(iFrameCount);
+	
 	iScreenUpdateDetails.iScheduler->ProcessUpdateCompletion (iScreenUpdateDetails.iScreenNumber);
+	
+	if(!IsActive())
+		{
+		//No further pending frames, release all remaining clients
+		ReleaseRemainingClients();
+		}
+	
 	}
 
 void CWindowServer::CDefaultAnimationScheduler::ProcessUpdateCompletion (TInt aScreenNumber)
@@ -308,6 +398,49 @@ void CWindowServer::CDefaultAnimationScheduler::ProcessUpdateCompletion (TInt aS
 	
 	// Perform any outstanding redraws on the specified screen.
 	ScheduleUpdate (aScreenNumber, ETrue);
+	}
+
+void CWindowServer::CDefaultAnimationScheduler::DoRedrawNow(MWsScreen& aScreen, MWsAnimationScheduler::MScreenUpdateObserver& aObserver)
+	{
+	TInt screenNumber = ScreenNumber (aScreen);
+	TInt redrawCount = 0;
+	
+	// redrawCount is the number of times we should wait for redraws to complete.
+	// If a redraw is not currently active then we need to wait (at most) once: for
+	// any outstanding scheduled update to complete.
+	// If a redraw is currently active then we need to wait (at most) twice: once for
+	// the current update to complete, and once for any outstanding scheduled update to complete.   
+	if (!iScreenState[screenNumber]->IsActive())
+		{
+		// No animation in progress, so force a redraw of due updates.
+		ScheduleUpdate(screenNumber, ETrue);
+
+		// If there is still nothing drawing, set redrawCount to zero to make sure we do not wait.
+		if (!iScreenState[screenNumber]->IsActive())
+			{
+			redrawCount = 0;
+			aObserver.ScreenUpdateComplete(KErrNone);
+			}
+		else
+			{
+			redrawCount = 1;
+			iScreenState[screenNumber]->WaitForRedraws(aObserver, redrawCount);
+			}
+		}
+	else
+		{
+		redrawCount = 2;
+		iScreenState[screenNumber]->WaitForRedraws(aObserver, redrawCount);
+		}
+	}
+
+void CWindowServer::CDefaultAnimationScheduler::ClearScreenUpdateObserver(const MWsAnimationScheduler::MScreenUpdateObserver& aObserver)
+	{
+	const TInt count = iScreenState.Count();
+	for(TInt screenNumber=0; screenNumber<count; screenNumber++) 
+		{
+		iScreenState[screenNumber]->ClearScreenUpdateObserver(aObserver);
+		}
 	}
 
 /**
@@ -359,14 +492,14 @@ TInt CWindowServer::CDefaultAnimationScheduler::ScreenNumber(MWsScreen& aScreen)
 /**
 Perform redraw and return only when completed.
 NOTE: This method uses CActiveSchedulerWait to run a "modal wait loop" while the
-		redraw complete signal is pending. When the signal is recieved, AsyncStop() is
+		redraw complete signal is pending. When the signal is received, AsyncStop() is
 		invoked on all active wait loops for the signalling screen. 
 */
 void CWindowServer::CDefaultAnimationScheduler::DoRedrawNow(MWsScreen& aScreen)
 	{	
 	TInt screenNumber = ScreenNumber (aScreen);
 	TInt redrawCount = 0;
-		
+	
 	// redrawCount is the number of times we should wait for redraws to complete.
 	// If a redraw is not currently active then we need to wait (at most) once: for
 	// any outstanding scheduled update to complete.
@@ -735,8 +868,7 @@ CWindowServer::~CWindowServer()
 	iDrawerMasterIndex.Close();
 	
 	delete iDefaultAnimationScheduler;
-	iDefaultAnimationScheduler = NULL; //might be called from clients during server destruction
-	iCustomAnimationScheduler = NULL; // not owned	
+	iDefaultAnimationScheduler = NULL; //might be called from clients during server destruction	
 	}
 	
 void CWindowServer::ConstructL()
@@ -799,38 +931,31 @@ const MWsScreen* CWindowServer::Screen(TInt aIndex) const
 /**
 Custom Animation Scheduler
 */
-TBool CWindowServer::SetCustomAnimationScheduler(MWsAnimationScheduler* aScheduler)
+TBool CWindowServer::SetCustomAnimationScheduler(MWsAnimationScheduler* /*aScheduler*/)
 	{
-	if(!iCustomAnimationScheduler && aScheduler)
-		{
-		iCustomAnimationScheduler = aScheduler;
-		return ETrue;
-		}
 	return EFalse;
 	}
 
 TBool CWindowServer::HasCustomAnimationScheduler() const
 	{
-	return !!iCustomAnimationScheduler;
+	return EFalse;
 	}
 
-TBool CWindowServer::ClearCustomAnimationScheduler(MWsAnimationScheduler* aCurrentScheduler)
+TBool CWindowServer::ClearCustomAnimationScheduler(MWsAnimationScheduler* /*aCurrentScheduler*/)
 	{
-	if(iCustomAnimationScheduler && (iCustomAnimationScheduler == aCurrentScheduler))
-		{
-		iCustomAnimationScheduler = NULL;
-		return ETrue;
-		}
 	return EFalse;
 	}
 	
 MWsAnimationScheduler* CWindowServer::AnimationScheduler()
 	{
-	if(iCustomAnimationScheduler)
-		{
-		return iCustomAnimationScheduler;
-		}
 	return iDefaultAnimationScheduler;
+	}
+
+void CWindowServer::PrepareShutdown()
+	{
+	//Stop the renderloop, i.e. prevent any further calls to MWsAnimationScheduler::Animate() 
+	delete iDefaultAnimationScheduler;
+	iDefaultAnimationScheduler = NULL;
 	}
 
 TInt CWindowServer::RegisterEventHandler(CWsGraphicDrawer* aDrawer, MWsEventHandler* aHandler, TUint32 aEventMask)

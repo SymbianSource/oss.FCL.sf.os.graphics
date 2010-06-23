@@ -18,9 +18,9 @@
 target			eventdd.ldd
 targettype		ldd
 
-userinclude		../tauto
+userinclude		../test/tauto
 
-sourcepath		../tauto
+sourcepath		../test/tauto
 source			eventdd.cpp
 
 uid			0x100000af

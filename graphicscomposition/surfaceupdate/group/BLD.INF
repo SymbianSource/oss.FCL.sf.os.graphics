@@ -48,8 +48,8 @@ PRJ_TESTEXPORTS
 
 
 PRJ_TESTMMPFILES
-../group/tcompositionbackend.mmp //to emulate composition behaviour
+../group/tcompositionbackend.mmp support //to emulate composition behaviour
 ../group/tsurfaceupdatetestserver.mmp
-../group/tsurfaceupdateserver.mmp
-../group/tsurfaceupdateclient.mmp
+../group/tsurfaceupdateserver.mmp support
+../group/tsurfaceupdateclient.mmp support
 ../group/tsurfaceupdateserverinteg.mmp

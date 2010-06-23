@@ -23,7 +23,7 @@ MACRO SYMBIAN_GRAPHICS_GCE
 
 CAPABILITY PowerMgmt ReadDeviceData WriteDeviceData ProtServ
 
-SOURCEPATH		../tauto
+SOURCEPATH		../test/tauto
 SOURCE			AUTODLL.CPP TAnimdraw.cpp
 
 USERINCLUDE	../inc

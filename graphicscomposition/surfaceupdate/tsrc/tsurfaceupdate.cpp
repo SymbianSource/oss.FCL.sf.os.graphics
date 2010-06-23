@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1758,13 +1758,70 @@ void CTSurfaceUpdate::TestCase11()
 	session.Close();
 	}
 
+
+/**
+  @SYMTestCaseID GRAPHICS-SURFACEUPDATE-0019
+
+
+  @SYMPREQ 1007
+  
+  @SYMREQ 8223
+
+  @SYMTestCaseDesc Starting the surface update server in two different threads.
+
+  @SYMTestPriority High
+
+  @SYMTestStatus Implemented
+
+  @SYMTestActions Start the surface update server in two different threads.
+    
+  @SYMTestExpectedResults Thread 1: KErrNone
+     Thread 2: KErrNone
+     The "provider" returned to both threads should also be the same value!
+*/
+void CTSurfaceUpdate::TestCase12L()
+    {
+    MSurfaceUpdateServerProvider *surfaceUpdateProvider = NULL;
+    TInt res = StartSurfaceUpdateServer(surfaceUpdateProvider);
+    TEST(res == KErrNone);
+    User::LeaveIfError(res);
+
+    _LIT(KThreadName, "TestServerStartupTwoThreads");
+    TTime tm;
+    TBuf<32> buf;
+    tm.UniversalTime();
+    TRAP(res, tm.FormatL(buf, _L("_%H%T%S%C")));
+    TEST(res == KErrNone);
+    User::LeaveIfError(res);
+    TBuf<128> threadName(KThreadName);
+    threadName.Append(buf); //guarantee uniqueness  of the thread name
+    RThread thread;
+    MSurfaceUpdateServerProvider *surfaceUpdateProvider2 = NULL;
+    res = thread.Create(threadName,
+            TestServerStartupTwoThreads,
+            KDefaultStackSize,
+            &User::Heap(),
+            &surfaceUpdateProvider2);
+    TEST(res == KErrNone);
+    User::LeaveIfError(res);
+    TRequestStatus rendezvousStatus;
+    thread.Rendezvous(rendezvousStatus);
+    thread.Resume();
+    User::WaitForRequest(rendezvousStatus);
+    TEST(KErrNone == rendezvousStatus.Int());
+    // Check that we get the same provider for both threads!
+    TEST(surfaceUpdateProvider2 == surfaceUpdateProvider);
+    }
+
+
 /**
 Starting the update server in another thread - called from TestCase12
 */
-TInt CTSurfaceUpdate::TestServerStartupTwoThreads(TAny*)
+TInt CTSurfaceUpdate::TestServerStartupTwoThreads(TAny *aArgPtr)
 	{
-	MSurfaceUpdateServerProvider *surfaceUpdateProvider = NULL;
-	TInt res = StartSurfaceUpdateServer(surfaceUpdateProvider);
+	MSurfaceUpdateServerProvider **surfaceUpdateProviderPtr = 
+	        reinterpret_cast<MSurfaceUpdateServerProvider **>(aArgPtr);
+	TInt res = StartSurfaceUpdateServer(*surfaceUpdateProviderPtr);
 	return res;
 	}
 
@@ -2200,7 +2257,15 @@ void CTSurfaceUpdate::RunTestCaseL(TInt aCurTestCase)
  		TEST(ret == KErrNone);
  		break;
 		}
-	case 12:
+    case 12:
+        {
+        ((CTSurfaceUpdateStep*)iStep)->SetTestStepID(_L("GRAPHICS-SURFACEUPDATE-0019"));
+        INFO_PRINTF1(_L("TestCase12L"));
+        TRAPD(ret, TestCase12L());
+        TEST(ret == KErrNone);
+        break;
+        }
+	case 13:
  		{
  		((CTSurfaceUpdateStep*)iStep)->SetTestStepID(_L("GRAPHICS-SURFACEUPDATE-0020"));
  		INFO_PRINTF1(_L("TestCase13L"));
@@ -2208,14 +2273,14 @@ void CTSurfaceUpdate::RunTestCaseL(TInt aCurTestCase)
  		TEST(ret == KErrNone);
  		break;
 		}
-	case 13:
+	case 14:
  		{
  		((CTSurfaceUpdateStep*)iStep)->SetTestStepID(_L("GRAPHICS-SURFACEUPDATE-0022"));
  		INFO_PRINTF1(_L("TestCase14"));
  		TestCase14();
  		break;
 		}
-	case 14:
+	case 15:
  		{
 		((CTSurfaceUpdateStep*)iStep)->SetTestStepID(_L("GRAPHICS-SURFACEUPDATE-0023"));
  		INFO_PRINTF1(_L("TestCase15"));
@@ -2223,7 +2288,7 @@ void CTSurfaceUpdate::RunTestCaseL(TInt aCurTestCase)
  		TEST(ret == KErrNone);
  		break;
 		}
-	case 15:
+	case 16:
  		{
 		((CTSurfaceUpdateStep*)iStep)->SetTestStepID(_L("GRAPHICS-SURFACEUPDATE-0024"));
  		INFO_PRINTF1(_L("TestCase16"));
@@ -2231,7 +2296,7 @@ void CTSurfaceUpdate::RunTestCaseL(TInt aCurTestCase)
  		TEST(ret == KErrNone);
  		break;
 		}
-	case 16:
+	case 17:
  		{
 		((CTSurfaceUpdateStep*)iStep)->SetTestStepID(_L("GRAPHICS-SURFACEUPDATE-0028"));
  		INFO_PRINTF1(_L("TestCase17"));
@@ -2239,7 +2304,7 @@ void CTSurfaceUpdate::RunTestCaseL(TInt aCurTestCase)
  		TEST(ret == KErrNone);
  		break;
 		}
-	case 17:
+	case 18:
  		{
 		((CTSurfaceUpdateStep*)iStep)->SetTestStepID(_L("GRAPHICS-SURFACEUPDATE-0025"));
  		INFO_PRINTF1(_L("TestCase18"));
@@ -2247,7 +2312,7 @@ void CTSurfaceUpdate::RunTestCaseL(TInt aCurTestCase)
  		TEST(ret == KErrNone);
  		break;
 		}
-	case 18:
+	case 19:
 		{
 		((CTSurfaceUpdateStep*)iStep)->SetTestStepID(_L("GRAPHICS-SURFACEUPDATE-0027"));
 	 	INFO_PRINTF1(_L("TestCaseNotifyWhenAvailableGlobal"));
@@ -2255,7 +2320,7 @@ void CTSurfaceUpdate::RunTestCaseL(TInt aCurTestCase)
  		TEST(ret == KErrNone);
  		break;
 		}
-	case 19:
+	case 20:
 		{
 		((CTSurfaceUpdateStep*)iStep)->SetTestStepID(_L("GRAPHICS-SURFACEUPDATE-0029"));
 	 	INFO_PRINTF1(_L("TestCaseRegisterIdenticalPrioritiesL"));
@@ -2263,7 +2328,7 @@ void CTSurfaceUpdate::RunTestCaseL(TInt aCurTestCase)
  		TEST(ret == KErrNone);
  		break;
 		}
-	case 20:
+	case 21:
  		{//should be the last test case
 		((CTSurfaceUpdateStep*)iStep)->SetTestStepID(_L("GRAPHICS-SURFACEUPDATE-0021"));
  		INFO_PRINTF1(_L("TestCaseTerminateServer"));

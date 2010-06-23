@@ -35,7 +35,7 @@ LOCAL_C TInt PointerToOffset(const TAny* aAny, TInt aHeapBase)
 	{
 	if (aAny && aHeapBase)
 		{
-		return (TInt)aAny - (TInt)aHeapBase;
+		return reinterpret_cast<TInt>(aAny) - aHeapBase;
 		}
 	return 0;
 	}
@@ -47,11 +47,11 @@ PointerToOffset()) back to a pointer relative to the passed heap base.
 @return A pointer relative to the passed heap base.
 @see PointerToOffset()
  */
-LOCAL_C TAny* OffsetToPointer(const TInt aOffset, TInt aHeapBase)
+LOCAL_C TAny* OffsetToPointer(TInt aOffset, TInt aHeapBase)
 	{
 	if (aOffset && aHeapBase)
 		{
-		return (TAny*)(aOffset + (TInt)aHeapBase);
+		return reinterpret_cast<TAny*>(aOffset + aHeapBase);
 		}
 	return NULL;
 	}

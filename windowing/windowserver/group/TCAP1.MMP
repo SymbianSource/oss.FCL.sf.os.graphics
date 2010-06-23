@@ -17,7 +17,7 @@ TARGET			tcap_one.exe
 CAPABILITY 		WriteDeviceData SwEvent
 TARGETTYPE		EXE
 
-SOURCEPATH		../tcapability
+SOURCEPATH		../test/tcapability
 SOURCE			TCapTest.CPP
 
 OS_LAYER_SYSTEMINCLUDE

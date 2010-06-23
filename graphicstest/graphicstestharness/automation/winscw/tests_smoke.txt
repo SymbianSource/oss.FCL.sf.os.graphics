@@ -71,7 +71,7 @@ TESTEXECUTE, C:\logs\testexecute\fepbasetest_t_fepgen.htm,      , z:\fepbasetest
 
 # FEP TESTS
 TESTEXECUTE, C:\logs\testexecute\fepbasetest_t_defocusingedwin.htm, , z:\fepbasetest\fepbasetest_t_defocusingedwin.script,    600
-TESTEXECUTE, C:\logs\testexecute\fepbasetest_t_fep1testtarget.htm,  , z:\fepbasetest\fepbasetest_t_fep1testtarget.script,     600
+TESTEXECUTE, C:\logs\testexecute\fepbasetest_t_fep1testtarget.htm,  , z:\fepbasetest\fepbasetest_t_fep1testtarget.script,     600, , z\graphicstest\minigui.cmd, z\graphicstest\unminigui.cmd
 TESTEXECUTE, C:\logs\testexecute\fepbasetest_t_keyboardlogger.htm,  , z:\fepbasetest\fepbasetest_t_keyboardlogger.script,     600
 
 # GFXTRANSEFFECT TESTS

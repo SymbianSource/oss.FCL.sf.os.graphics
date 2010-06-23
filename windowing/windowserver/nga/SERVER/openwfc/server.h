@@ -28,6 +28,7 @@
 #include "CLIENT.H"
 #include "ScrDev.H"
 #include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "Graphics/wsgraphicdrawerinternal.h"
 #include "WSGRAPHICDRAWERARRAY.H"
 #include "panics.h"
 
@@ -340,6 +341,7 @@ public:
 	void StartL();
 	TInt SessionCount();
 	MWsAnimationScheduler* AnimationScheduler();
+	void PrepareShutdown();
 	TBool ReleaseMemory();
 	void DestroySessionsForShutdown();
 	void SetPinClientDescriptors(TBool aPin);

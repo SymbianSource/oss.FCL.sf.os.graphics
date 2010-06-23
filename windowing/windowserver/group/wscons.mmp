@@ -17,7 +17,7 @@
 TARGET			wsecons.dll
 TARGETTYPE		dll
 
-SOURCEPATH		../tauto
+SOURCEPATH		../test/tauto
 SOURCE			wscons.cpp
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN

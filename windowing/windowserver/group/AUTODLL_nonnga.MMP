@@ -21,7 +21,7 @@ TARGETTYPE		ani
 
 CAPABILITY PowerMgmt ReadDeviceData WriteDeviceData ProtServ
 
-SOURCEPATH		../tauto
+SOURCEPATH		../test/tauto
 SOURCE			AUTODLL.CPP TAnimdraw.cpp
 
 USERINCLUDE	../inc

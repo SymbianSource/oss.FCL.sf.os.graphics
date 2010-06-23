@@ -71,7 +71,7 @@ TESTEXECUTE, C:\logs\testexecute\fepbasetest_t_fepgen.htm,      , z:\fepbasetest
 
 # FEP TESTS
 TESTEXECUTE, C:\logs\testexecute\fepbasetest_t_defocusingedwin.htm, , z:\fepbasetest\fepbasetest_t_defocusingedwin.script,    600
-TESTEXECUTE, C:\logs\testexecute\fepbasetest_t_fep1testtarget.htm,  , z:\fepbasetest\fepbasetest_t_fep1testtarget.script,     600
+TESTEXECUTE, C:\logs\testexecute\fepbasetest_t_fep1testtarget.htm,  , z:\fepbasetest\fepbasetest_t_fep1testtarget.script,     600, , z\graphicstest\minigui.cmd, z\graphicstest\unminigui.cmd
 TESTEXECUTE, C:\logs\testexecute\fepbasetest_t_keyboardlogger.htm,  , z:\fepbasetest\fepbasetest_t_keyboardlogger.script,     600
 
 # GFXTRANSEFFECT TESTS
@@ -265,8 +265,8 @@ TESTEXECUTE, C:\logs\testexecute\egltest_t_image_multiprocess.htm,			, z:\egltes
 TESTEXECUTE, C:\logs\testexecute\egltest_t_sibling.htm,						, z:\egltest\egltest_t_sibling.script, 						600, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\egltest_t_vgimagetosurfaces.htm,			, z:\egltest\egltest_t_vgimagetosurfaces.script, 			600, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\egltest_t_benchmark_sgimage.htm,        	, z:\egltest\egltest_t_benchmark_sgimage.script, 			300, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
+TESTEXECUTE, C:\logs\testexecute\egltest_t_oom_sgimage.htm,                 	, z:\egltest\egltest_t_oom_sgimage.script, 				600, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\egltest_t_stress_sgimage.htm,			, z:\egltest\egltest_t_stress_sgimage.script, 				600, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
-
 
 # GCE
 TESTEXECUTE, C:\logs\testexecute\functionaltest_mandatory.htm,	, z:\gcetest\functionaltest_mandatory.script,  600, , z\gcetest\gcetest_setup_emu.bat install dabs, z\gcetest\gcetest_setup_emu.bat uninstall dabs

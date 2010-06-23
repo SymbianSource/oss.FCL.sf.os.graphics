@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -121,5 +121,25 @@ protected:
     // from CEglTestStep
     void doProcessFunctionL(TInt aIdx);
    };
+
+_LIT(KOOM_CloseSgImageDifferentProcess, "OOM_CloseSgImageDifferentProcess");
+NONSHARABLE_CLASS(CEglTest_OOM_CloseSgImageDifferentProcess) : public CEglTest_OOM_Base
+    {
+public:
+    // from CTestStep
+    TVerdict doTestStepL();
+    
+protected:
+    // from CEglTestStep
+    void doProcessFunctionL(TInt aIdx);
+   };
+
+_LIT(KOOM_CloseSgImageSameThread, "OOM_CloseSgImageSameThread");
+NONSHARABLE_CLASS(CEglTest_OOM_CloseSgImageSameThread) : public CEglTest_OOM_Base
+    {
+public:
+    // from CTestStep
+    TVerdict doTestStepL();
+    };
 
 #endif // __EGLTEST_OOM_SGIMAGE_H__

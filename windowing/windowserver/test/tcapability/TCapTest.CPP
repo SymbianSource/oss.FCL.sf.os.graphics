@@ -17,7 +17,7 @@
 
 #include <e32std.h>
 #include "W32STD.H"
-#include "../SERVER/w32cmd.h"
+#include "../../SERVER/w32cmd.h"
 #include <e32svr.h>
 #include <bacline.h>
 #include <hal.h>

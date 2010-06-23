@@ -1,4 +1,4 @@
-/* Copyright (c) 2009 The Khronos Group Inc.
+/* Copyright (c) 2009-2010 The Khronos Group Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -1001,7 +1001,7 @@ wfcIsExtensionSupported(WFCDevice dev,
 /*=========================================================================*/
 
 WFC_API_CALL WFCNativeStreamType WFC_APIENTRY
-wfcGetOnScreenStream(WFCDevice dev, WFCContext ctx) WFC_APIEXIT
+extwfcGetOnScreenStream(WFCDevice dev, WFCContext ctx) WFC_APIEXIT
 {
 	WFC_DEVICE*             device;
 	WFC_CONTEXT*            context;

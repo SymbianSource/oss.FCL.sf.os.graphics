@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -160,13 +160,15 @@ EXPORT_C CEglTestStep* EglTestStepFactory::GetEglTestStep(const TDesC& aStepName
 	// Benchmark - SwapBuffers
     else if (aStepName == KBenchmark_SwapBuffers)                                                   testStep = new CEglTest_Benchmark_SwapBuffers;
 
-	//OOM
+	//OOM - SgImage
     else if (aStepName == KOOM_CloseVGImageWithTermination)                                         testStep = new CEglTest_OOM_CloseVGImageWithTermination;
     else if (aStepName == KOOM_CloseVGImage)                                                        testStep = new CEglTest_OOM_CloseVGImage;
     else if (aStepName == KOOM_ClosePixmapSurfaceWithTermination)                                   testStep = new CEglTest_OOM_ClosePixmapSurfaceWithTermination;
-    else if (aStepName == KOOM_ClosePixmapSurface)                                                  testStep = new CEglTest_OOM_ClosePixmapSurface;	
+    else if (aStepName == KOOM_ClosePixmapSurface)                                                  testStep = new CEglTest_OOM_ClosePixmapSurface; 
+    else if (aStepName == KOOM_CloseSgImageDifferentProcess)                                        testStep = new CEglTest_OOM_CloseSgImageDifferentProcess; 
+    else if (aStepName == KOOM_CloseSgImageSameThread)                                              testStep = new CEglTest_OOM_CloseSgImageSameThread; 
 
-    //Stress
+    //Stress - SgImage
     else if (aStepName == KStress)                                                                  testStep = new CEglTest_Stress;
 
 	return testStep;

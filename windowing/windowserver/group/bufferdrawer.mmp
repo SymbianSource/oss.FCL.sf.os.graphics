@@ -29,7 +29,7 @@ MACRO SYMBIAN_GRAPHICS_GCE
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
-sourcepath		../tbufferdrawer
+sourcepath		../test/tbufferdrawer
 source			proxy.cpp bufferdrawer.cpp
 resource		bufferdrawer.rss
 

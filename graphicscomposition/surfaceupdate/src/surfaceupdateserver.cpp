@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -23,7 +23,6 @@
 #ifdef TEST_SURFACE_UPDATE
 #include "surfaceupdatetest.h"
 #endif
-#include <e32atomics.h>
 
 
 const TUint KDefaultHeapSize=0x10000;
@@ -886,9 +885,18 @@ void CUpdateReceiverNotificationBatch::IncNumberPendingNotifications()
 	}
 #endif
 
+
+/**
+Set number of UpdateReceivers - called when update receivers are added/removed.
+
+@param aNumUpdateReceivers - new number of update receivers for the batch.
+ */
 void CUpdateReceiverNotificationBatch::SetNumUpdateReceivers(TInt aNumUpdateReceivers)
     {
-    __ASSERT_DEBUG(iType == EUpdateSrvReusable, CSurfaceUpdateServer::PanicServer(EUpdateServPanicDataIntegrity));
+    __ASSERT_DEBUG(aNumUpdateReceivers >= 0 && aNumUpdateReceivers < 1000 /* arbitrary "large" limit */,
+            CSurfaceUpdateServer::PanicServer(EUpdateServPanicDataIntegrity));
+    __ASSERT_DEBUG(iType == EUpdateSrvReusable, 
+            CSurfaceUpdateServer::PanicServer(EUpdateServPanicDataIntegrity));
     iNumUpdateReceivers = aNumUpdateReceivers;
     }
 /**
@@ -964,7 +972,8 @@ EXPORT_C void CSurfaceUpdateServerProvider::Terminate()
 	if(thread.Open(iThreadId) == KErrNone)
 		{
 	    TInt err = gProviderFastLock.CreateLocal();
-		//ignore error on double create.
+	    __ASSERT_ALWAYS(err == KErrNone || err == KErrAlreadyExists, CSurfaceUpdateServer::PanicServer(EUpdateServPanicGlobalFastLock));
+	    
 	    gProviderFastLock.Wait();
 	    gProvider = NULL;
 		if (iServer)
@@ -1026,22 +1035,11 @@ Spawn a thread within WSERV process. This will lead to starting the surface upda
 		thus mustn't delete it. The pointer will be valid until server is operating, 
 		i.e. system is up.
 
-@panic KErrAccessDenied	If is called from process other than WSERV.	
 @return KErrNone if an operation is successful, any other system error codes otherwise
 */
 EXPORT_C TInt StartSurfaceUpdateServer(MSurfaceUpdateServerProvider*& aSurfaceUpdateServerProvider)
 	{
 #ifndef TEST_SURFACE_UPDATE
-	RProcess process;
-	TUidType uidType = process.Type();
-	const TInt32 KWservUid = 268450592;
-	const TUid& uid1 = uidType[2];
-
-	if(uid1.iUid != KWservUid) //only wserv process can start the server
-		{// some malicious client tries to launch the server
-		process.Panic(_L("Access denied"), KErrAccessDenied);
-		return KErrAccessDenied;
-		}	  
 	TPtrC serverName(KSurfaceUpdateServerName);
 #else
 	TPtrC serverName(KTestSurfaceUpdateServerName);

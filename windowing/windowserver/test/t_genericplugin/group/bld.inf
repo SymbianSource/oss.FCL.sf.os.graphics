@@ -33,6 +33,8 @@ PRJ_TESTEXPORTS
 
 ../data/ini/wsini_nga.ini					z:/wstest/genericplugin/wsini_nga.ini
 
+../data/ini/wsini_vasco_genericplugin.ini					z:/wstest/genericplugin/wsini_vasco_genericplugin.ini
+
 ../data/ini/wsini_nga_onescreen.ini			z:/wstest/genericplugin/wsini_nga_onescreen.ini
 
 ../data/ini/wsini_nonnga.ini					z:/wstest/genericplugin/wsini_nonnga.ini

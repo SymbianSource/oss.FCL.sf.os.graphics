@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -33,6 +33,9 @@ _LIT(KOOMSection, "OOM");
 //Since we want to exhaust the memory it probably makes sense to use any 32bpp mode  
 //There is no need to put it into INI file
 const TUidPixelFormat KOOMPixelFormat = EUidPixelFormatARGB_8888; 
+
+// Deviation in per cent for test 0442 and 0443
+const TInt KOOMSgImageDeviation = 5; 
 
 
 CEglTest_OOM_Base::~CEglTest_OOM_Base()
@@ -192,14 +195,14 @@ void CEglTest_OOM_Base::CheckDeviation()
     if(iGPUUsedMemory.Count() > 0)
         {
         res = Deviation(iGPUUsedMemory);
-        TEST(iThresholdGPUUsedMemory >= res);
+        ASSERT_TRUE(iThresholdGPUUsedMemory >= res);
         INFO_PRINTF3(_L("GPU used memory deviation %d %%, threshold %d %%"), res, iThresholdGPUUsedMemory);
         }
     
     if(iLastIterations.Count() > 0)
         {
         res = Deviation(iLastIterations);
-        TEST(iThresholdLastIteration >= res);
+        ASSERT_TRUE(iThresholdLastIteration >= res);
         INFO_PRINTF3(_L("Last iteration deviation %d %%, threshold %d %%"), res, iThresholdLastIteration);
         }
     }
@@ -445,7 +448,7 @@ void CEglTest_OOM_CloseVGImageWithTermination::doProcessFunctionL(TInt aIdx)
             if(res != KErrNone || sgImage.IsNull())
                 {
                 INFO_PRINTF5(_L("***Fail to create RSgImage after %d attempts, error: %d, expected %d or %d"), index, res, KErrNoMemory, KErrNoGraphicsMemory);
-                TEST((res == KErrNoMemory) || (res == KErrNoGraphicsMemory));
+                ASSERT_TRUE((res == KErrNoMemory) || (res == KErrNoGraphicsMemory));
                 break;
                 }
             EGLImageKHR eglImages = iEglSess->eglCreateImageKhrL(iDisplay,EGL_NO_CONTEXT,EGL_NATIVE_PIXMAP_KHR,&sgImage,const_cast<EGLint *> (KEglImageAttribsPreservedTrue));
@@ -453,7 +456,7 @@ void CEglTest_OOM_CloseVGImageWithTermination::doProcessFunctionL(TInt aIdx)
             if((eglImages == EGL_NO_IMAGE_KHR) || (eglError != EGL_SUCCESS))
                 {
                 INFO_PRINTF4(_L("***Fail to create EGLImage after %d attempts, error: %d, expected: %d"), index, eglError, EGL_BAD_ALLOC);
-                TEST(eglError == EGL_BAD_ALLOC);
+                ASSERT_TRUE(eglError == EGL_BAD_ALLOC);
                 break;
                 }
 
@@ -462,7 +465,7 @@ void CEglTest_OOM_CloseVGImageWithTermination::doProcessFunctionL(TInt aIdx)
             if(vgImage == VG_INVALID_HANDLE || (vgError != VG_NO_ERROR))
                 {
                 INFO_PRINTF4(_L("***Fail to create VGImage after %d attempts, error: %d, expected: %d"), index, vgError, VG_OUT_OF_MEMORY_ERROR);
-                TEST(vgError == VG_OUT_OF_MEMORY_ERROR);
+                ASSERT_TRUE(vgError == VG_OUT_OF_MEMORY_ERROR);
                 break;
                 }
             } //for
@@ -491,7 +494,7 @@ void CEglTest_OOM_CloseVGImageWithTermination::doProcessFunctionL(TInt aIdx)
         CleanupStack::PopAndDestroy(&messageQueueProcId);
 
         RProcess process;
-        TESTL(process.Open(procId) == KErrNone);
+        ASSERT_TRUE(process.Open(procId) == KErrNone);
         process.Kill(KErrNone);
         process.Close();
         
@@ -598,7 +601,7 @@ TVerdict CEglTest_OOM_CloseVGImage::doTestStepL()
 
 void CEglTest_OOM_CloseVGImage::doProcessFunctionL(TInt aIdx)
     {
-    INFO_PRINTF2(_L("CEglTest_OOM_CloseVGImageWithTermination::doProcessFunctionL, Process %d"),aIdx);
+    INFO_PRINTF2(_L("CEglTest_OOM_CloseVGImage::doProcessFunctionL, Process %d"),aIdx);
 #ifdef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
     GetDisplayL();
     CreateEglSessionL(aIdx);
@@ -625,7 +628,7 @@ void CEglTest_OOM_CloseVGImage::doProcessFunctionL(TInt aIdx)
         if(res != KErrNone || sgImage.IsNull())
             {
             INFO_PRINTF5(_L("***Fail to create RSgImage after %d attempts, error: %d, expected: %d or %d"), index, res, KErrNoMemory, KErrNoGraphicsMemory);
-            TEST((res == KErrNoMemory) || (res == KErrNoGraphicsMemory));
+            ASSERT_TRUE((res == KErrNoMemory) || (res == KErrNoGraphicsMemory));
             break;
             }
         iSgImages.AppendL(sgImage);
@@ -635,7 +638,7 @@ void CEglTest_OOM_CloseVGImage::doProcessFunctionL(TInt aIdx)
         if((eglImage == EGL_NO_IMAGE_KHR) || (eglError != EGL_SUCCESS))
             {
             INFO_PRINTF4(_L("***Fail to create EGLImage after %d attempts, error: %d, expected: %d"), index, eglError, EGL_BAD_ALLOC);
-            TEST(eglError == EGL_BAD_ALLOC);
+            ASSERT_TRUE(eglError == EGL_BAD_ALLOC);
             break;
             }
         iEglImages.AppendL(eglImage);
@@ -645,7 +648,7 @@ void CEglTest_OOM_CloseVGImage::doProcessFunctionL(TInt aIdx)
         if(vgImage == VG_INVALID_HANDLE || (vgError != VG_NO_ERROR))
             {
             INFO_PRINTF4(_L("***Fail to create VGImage after %d attempts, error: %d, expected: %d"), index, vgError, VG_OUT_OF_MEMORY_ERROR);
-            TEST(vgError == VG_OUT_OF_MEMORY_ERROR);
+            ASSERT_TRUE(vgError == VG_OUT_OF_MEMORY_ERROR);
             break;
             }
         iVgImages.AppendL(vgImage);
@@ -777,7 +780,7 @@ void CEglTest_OOM_ClosePixmapSurfaceWithTermination::doProcessFunctionL(TInt aId
             if(res != KErrNone || sgImage.IsNull())
                 {
                 INFO_PRINTF5(_L("***Fail to create RSgImage after %d attempts, error: %d, expected: %d or %d"), index, res, KErrNoMemory, KErrNoGraphicsMemory);
-                TEST((res == KErrNoMemory) || (res == KErrNoGraphicsMemory));
+                ASSERT_TRUE((res == KErrNoMemory) || (res == KErrNoGraphicsMemory));
                 break;
                 }
             
@@ -797,7 +800,7 @@ void CEglTest_OOM_ClosePixmapSurfaceWithTermination::doProcessFunctionL(TInt aId
             if((surface == EGL_NO_SURFACE) || (eglError != EGL_SUCCESS))
                 {
                 INFO_PRINTF4(_L("***Fail to create Pixmap surface after %d attempts, error: %d, expected: %d"), index, eglError, EGL_BAD_ALLOC);
-                TEST(eglError == EGL_BAD_ALLOC);
+                ASSERT_TRUE(eglError == EGL_BAD_ALLOC);
                 break;
                 }            
             } //for
@@ -826,7 +829,7 @@ void CEglTest_OOM_ClosePixmapSurfaceWithTermination::doProcessFunctionL(TInt aId
         CleanupStack::PopAndDestroy(&messageQueueProcId);
 
         RProcess process;
-        TESTL(process.Open(procId) == KErrNone);
+        ASSERT_TRUE(process.Open(procId) == KErrNone);
         process.Kill(KErrNone);
 		process.Close();
 
@@ -946,7 +949,7 @@ void CEglTest_OOM_ClosePixmapSurface::doProcessFunctionL(TInt aIdx)
         if(res != KErrNone || sgImage.IsNull())
             {
             INFO_PRINTF5(_L("***Fail to create RSgImage after %d attempts, error: %d, expected: %d or %d"), index, res, KErrNoMemory, KErrNoGraphicsMemory);
-            TEST((res == KErrNoMemory) || (res == KErrNoGraphicsMemory));
+            ASSERT_TRUE((res == KErrNoMemory) || (res == KErrNoGraphicsMemory));
             break;
             }
         iSgImages.AppendL(sgImage);
@@ -967,7 +970,7 @@ void CEglTest_OOM_ClosePixmapSurface::doProcessFunctionL(TInt aIdx)
         if((surface == EGL_NO_SURFACE) || (eglError != EGL_SUCCESS))
             {
             INFO_PRINTF4(_L("***Fail to create Pixmap surface after %d attempts, error: %d, expected: %d "), index, eglError, EGL_BAD_ALLOC);
-            TEST(eglError == EGL_BAD_ALLOC);
+            ASSERT_TRUE(eglError == EGL_BAD_ALLOC);
             break;
             }       
         iSurfaces.AppendL(surface);
@@ -979,4 +982,354 @@ void CEglTest_OOM_ClosePixmapSurface::doProcessFunctionL(TInt aIdx)
     CleanAll();
 #endif    
     }    
+
+/**
+@SYMTestCaseID GRAPHICS-EGL-0442
+
+@SYMTestPriority 1
+
+@SYMPREQ 2637
+
+@SYMTestCaseDesc
+    OOM test – Check SgImages are removed when SgImage handles in multiple processes are closed
+
+@SYMTestActions
+Environmental settings:
+•   Image Size: as per ini file
+•   List of simulated load: 0%
+•   List of pixel formats
+ESgPixelFormatARGB_8888
+•   Client process priorities - all the same
+•   Client process random parameters:
+-   None
+
+The creation of RSgImages and launching of processes is along the lines of the method outlined in GRAPHICS-EGL-RSGIMAGE_LITE-0406
+
+    From the main process:
+        Spawn 2 client processes A and B.
+        Wait until client processes exit
+    If the test fails not due to the memory allocation record an error code to the log file then set a test result as a failure and skip further actions.
+    End loop
+    Exit
+
+    From client process A:
+    Get EGL display
+    Initialize EGL
+    Open RSgDriver
+    Loop until exit condition met
+    Start loop:
+        Create SgImage
+        Exit condition – SgImage surface creation has failed.
+    End loop:
+    Make the process busy by putting it into the indefinite loop.
+    
+    From client process B:
+    Start loop:
+        Open SgImage
+        Close SgImage
+    End loop:
+
+    From client process A:
+    Start loop:
+        Close SgImage
+    End loop:
+    Check all memory has been deallocated by starting a second loop
+        Start loop 2:
+            Create SgImage
+            Exit condition – SgImage surface creation has failed.
+        End loop:
+    Check that the amount of images created within this loop 2 is similar to loop 1,
+    meaning that all images were correctly freed.
+    Cleanup everything
+    
+    Terminate process A
+    Terminate process B
+    
+@SYMTestExpectedResults
+For each step from 0 to N in the main process, 
+-   Image or surface allocation failure must happen at approximately the same iteration 
+    in process A.  
+*/
+TVerdict CEglTest_OOM_CloseSgImageDifferentProcess::doTestStepL()
+    {
+    SetTestStepID(_L("GRAPHICS-EGL-0442"));
+    SetTestStepName(KOOM_CloseSgImageDifferentProcess);
+    INFO_PRINTF1(_L("CEglTest_OOM_CloseSgImageDifferentProcess::doTestStepL"));
+
+#ifndef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
+    INFO_PRINTF1(_L("CEglTest_OOM_CloseSgImageDifferentProcess can only be run with SgImage-Lite"));
+#else
+    TBool ret = CheckForExtensionL(KEGL_RSgimage | KEGL_KHR_image_base | KVG_KHR_EGL_image | KEGL_KHR_image_pixmap);
+    if(ret)
+        {
+        // launch 2 processes
+        Test_MultiProcessL(KEglTestStepDllName, 2, TestStepName());
+        }
+    INFO_PRINTF1(_L("Exit: CEglTest_OOM_CloseSgImageDifferentProcess::doTestStepL"));
+#endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
+    RecordTestResultL();
+    CloseTMSGraphicsStep();
+    return TestStepResult();
+    }
+
+void CEglTest_OOM_CloseSgImageDifferentProcess::doProcessFunctionL(TInt aIdx)
+    {
+    INFO_PRINTF2(_L("CEglTest_OOM_CloseSgImageDifferentProcess::doProcessFunctionL, Process %d"),aIdx);
+#ifdef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
+
+    GetDisplayL();
+    CreateEglSessionL(aIdx);
+    iEglSess->InitializeL();
+    iEglSess->OpenSgDriverL();
+
+    //create the queue to send/receive SgImage ID between processes
+    RMsgQueue<TSgDrawableId> messageQueueSgId;
+    User::LeaveIfError(messageQueueSgId.Open(EProcSlotMsgQueueSgId, EOwnerProcess));
+    CleanupClosePushL(messageQueueSgId);
+
+    // create as many sgimages until it reaches out of memory
+    TInt numImages = 0;
+    if(aIdx == 0)
+        {
+        for(;;++numImages)
+            {
+            RSgImage sgImage;
+            TInt res = sgImage.Create(TSgImageInfo(iImageSize, KOOMPixelFormat, ESgUsageBitOpenVgImage));
+            if(res != KErrNone || sgImage.IsNull())
+                {
+                INFO_PRINTF5(_L("***Fail to create RSgImage after %d attempts, error: %d, expected: %d or %d"), numImages, res, KErrNoMemory, KErrNoGraphicsMemory);
+                ASSERT_TRUE((res == KErrNoMemory) || (res == KErrNoGraphicsMemory));
+                break;
+                }
+            iSgImages.AppendL(sgImage);
+            }
+        }
+    
+    // Send to process B how many images it needs to wait for
+    if(aIdx == 0)
+        {
+       // send a TInt as a  fake SgImage Id
+        messageQueueSgId.SendBlocking(reinterpret_cast<TSgDrawableId&>(numImages));
+        }
+    else if (aIdx == 1)
+        {
+        // receive the fake SgImage Id and convert it to a TInt
+        TSgDrawableId fakeId;
+        messageQueueSgId.ReceiveBlocking(fakeId);
+        numImages = reinterpret_cast<TInt&>(fakeId);
+        }
+    
+    // Wait for both processes to reach this point
+    Rendezvous(aIdx);
+    
+    // Now process B knows how many images needs to wait for
+    if(aIdx == 0)
+        {
+        for(TInt index = 0; index<numImages; ++index)
+            {
+            // send Id to other process
+            messageQueueSgId.SendBlocking(iSgImages[index].Id());
+            }
+        }
+    else if(aIdx == 1)
+        {
+        for(TInt index = 0; index<numImages; ++index)
+            {
+            // receive Id from other process
+            TSgDrawableId sgImageId;
+            messageQueueSgId.ReceiveBlocking(sgImageId);
+            
+            // open sgImage with received Id
+            RSgImage sgImage;
+            ASSERT_EQUALS(sgImage.Open(sgImageId), KErrNone);
+
+            // close SgImage just created
+            sgImage.Close();
+            }
+        }
+
+    // Wait for both processes to reach this point
+    Rendezvous(aIdx);
+
+    // delete all sgImages created in first process
+    if(aIdx == 0)
+        {
+        CleanGraphicsResources();
+        }
+
+    // create (again) as many sgimages until it reaches out of memory
+    // note that process B needs to be alive (hence the Rendezvous further down)
+    if(aIdx == 0)
+        {
+        TInt numImages2 = 0;
+        for(;;++numImages2)
+            {
+            RSgImage sgImage;
+            TInt res = sgImage.Create(TSgImageInfo(iImageSize, KOOMPixelFormat, ESgUsageBitOpenVgImage));
+            if(res != KErrNone || sgImage.IsNull())
+                {
+                INFO_PRINTF5(_L("***Fail to create RSgImage after %d attempts, error: %d, expected: %d or %d"), numImages2, res, KErrNoMemory, KErrNoGraphicsMemory);
+                ASSERT_TRUE((res == KErrNoMemory) || (res == KErrNoGraphicsMemory));
+                break;
+                }
+            iSgImages.AppendL(sgImage);
+            }
+        // clean up these images, we don't really need them
+        CleanGraphicsResources();
+        
+        // check numbers...
+        INFO_PRINTF2(_L("***Num sgImages created first time: %d."), numImages);
+        INFO_PRINTF2(_L("***Num sgImages created second time: %d."), numImages2);
+        TInt deviation = Abs(((numImages2*100) / numImages) - 100);
+        ASSERT_TRUE(deviation < KOOMSgImageDeviation);
+        INFO_PRINTF3(_L("***Deviation: %d%% (must be less than %d%%)"), deviation, KOOMSgImageDeviation);
+
+        // This test does not need to send anything, but since OOM test framework expects something
+        // we can send a fake index so that the test is not waiting for it forever.
+        const TInt KTestNotUsedData = 0;
+        SendIndexToMainProcessL(KTestNotUsedData); 
+        }
+
+    // Wait for both processes to reach this point
+    Rendezvous(aIdx);
+
+    //now clean everything
+    CleanupStack::PopAndDestroy(&messageQueueSgId);
+    CleanGraphicsResources();
+    iEglSess->CloseSgDriver();
+    CleanAll();
+#endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
+    }
+
+/**
+@SYMTestCaseID GRAPHICS-EGL-0443
+
+@SYMTestPriority 1
+
+@SYMPREQ 2637
+
+@SYMTestCaseDesc
+    OOM test – Check SgImages are removed when SgImage handles in multiple processes are closed
+
+@SYMTestActions
+Environmental settings:
+•   Image Size: as per ini file
+•   List of simulated load: 0%
+•   List of pixel formats
+ESgPixelFormatARGB_8888
+•   Client process priorities - all the same
+•   Client process random parameters:
+-   None
+
+The creation of RSgImages and launching of processes is along the lines of the method outlined in GRAPHICS-EGL-RSGIMAGE_LITE-0406
+
+    From the main process:
+    From client process A:
+    Get EGL display
+    Initialize EGL
+    Open RSgDriver
+    Loop until exit condition met
+    Start loop:
+        Create SgImage
+        Exit condition – SgImage surface creation has failed.
+    End loop:
+    Start loop:
+        Open SgImage
+        Close SgImage
+    End loop:
+    Start loop:
+        Close SgImage
+    End loop:
+    Check all memory has been deallocated by starting a second loop
+        Start loop 2:
+            Create SgImage
+            Exit condition – SgImage surface creation has failed.
+        End loop:
+    Check that the amount of images created within this loop 2 is similar to loop 1,
+    meaning that all images were correctly freed.
+    Cleanup everything
+    
+@SYMTestExpectedResults
+For each step from 0 to N in the main process, 
+-   Image or surface allocation failure must happen at approximately the same iteration 
+    in process A.  
+*/
+TVerdict CEglTest_OOM_CloseSgImageSameThread::doTestStepL()
+    {
+    SetTestStepID(_L("GRAPHICS-EGL-0443"));
+    SetTestStepName(KOOM_CloseSgImageSameThread);
+    INFO_PRINTF1(_L("CEglTest_OOM_CloseSgImageSameThread::doTestStepL"));
+
+#ifndef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
+    INFO_PRINTF1(_L("CEglTest_OOM_CloseSgImageSameThread can only be run with SgImage-Lite"));
+#else
+    TBool ret = CheckForExtensionL(KEGL_RSgimage | KEGL_KHR_image_base | KVG_KHR_EGL_image | KEGL_KHR_image_pixmap);
+    if(ret)
+        {
+        GetDisplayL();
+        CreateEglSessionL(0);
+        iEglSess->InitializeL();
+        iEglSess->OpenSgDriverL();
+    
+        // create as many sgimages until it reaches out of memory
+        TInt numImages = 0;
+        for(;;++numImages)
+            {
+            RSgImage sgImage;
+            TInt res = sgImage.Create(TSgImageInfo(iImageSize, KOOMPixelFormat, ESgUsageBitOpenVgImage));
+            if(res != KErrNone || sgImage.IsNull())
+                {
+                INFO_PRINTF5(_L("***Fail to create RSgImage after %d attempts, error: %d, expected: %d or %d"), numImages, res, KErrNoMemory, KErrNoGraphicsMemory);
+                ASSERT_TRUE((res == KErrNoMemory) || (res == KErrNoGraphicsMemory));
+                break;
+                }
+            iSgImages.AppendL(sgImage);
+            }
+
+        //open a duplicate handle for the created images (can close straightaway)
+        for(TInt index = 0; index<numImages; ++index)
+            {
+            RSgImage sgImage;
+            ASSERT_EQUALS(sgImage.Open(iSgImages[index].Id()), KErrNone);
+            // close SgImage just created
+            sgImage.Close();
+            }
+
+        // clean up all (original) images
+        CleanGraphicsResources();
+
+        // create (again) as many sgimages until it reaches out of memory
+        TInt numImages2 = 0;
+        for(;;++numImages2)
+            {
+            RSgImage sgImage;
+            TInt res = sgImage.Create(TSgImageInfo(iImageSize, KOOMPixelFormat, ESgUsageBitOpenVgImage));
+            if(res != KErrNone || sgImage.IsNull())
+                {
+                INFO_PRINTF5(_L("***Fail to create RSgImage after %d attempts, error: %d, expected: %d or %d"), numImages2, res, KErrNoMemory, KErrNoGraphicsMemory);
+                ASSERT_TRUE((res == KErrNoMemory) || (res == KErrNoGraphicsMemory));
+                break;
+                }
+            iSgImages.AppendL(sgImage);
+            }
+            
+        // clean up everything now
+        CleanGraphicsResources();
+        iEglSess->CloseSgDriver();
+        CleanAll();
+
+        // check numbers...
+        INFO_PRINTF2(_L("***Num sgImages created first time: %d."), numImages);
+        INFO_PRINTF2(_L("***Num sgImages created second time: %d."), numImages2);
+        TInt deviation = Abs(((numImages2*100) / numImages) - 100);
+        ASSERT_TRUE(deviation < KOOMSgImageDeviation);
+        INFO_PRINTF3(_L("***Deviation: %d%% (must be less than %d%%)"), deviation, KOOMSgImageDeviation);
+        }
+    INFO_PRINTF1(_L("Exit: CEglTest_OOM_CloseSgImageSameThread::doTestStepL"));
+#endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
+
+    RecordTestResultL();
+    CloseTMSGraphicsStep();
+    return TestStepResult();
+    }
 
