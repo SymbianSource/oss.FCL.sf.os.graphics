@@ -1650,6 +1650,8 @@ EGLSurface eglCreatePixmapSurface(EGLDisplay dpy, EGLConfig config, EGLNativePix
 	VGImageFormat format;
 	int* data = NULL;
 	EGLBoolean err = OSGetNativePixmapInfo(pixmap, &width, &height, &stride,&format, &data);
+	width = 640;
+	height = 480; // enforce the largest current target hardware display size
 	
     Drawable* d = NULL;
 	RIEGLSurface* s = NULL;

@@ -25,9 +25,9 @@ TARGETTYPE        exe
 EPOCSTACKSIZE	  0x4000
 // 6Mb max heap for Winscw builds (default 1Mb used for target builds)
 
-#ifdef WINS
+//#ifdef WINS
 EPOCHEAPSIZE	    0x00010000 0x00600000
-#endif
+//#endif
 EPOCFIXEDPROCESS
 CAPABILITY        PowerMgmt ReadDeviceData WriteDeviceData ProtServ
 

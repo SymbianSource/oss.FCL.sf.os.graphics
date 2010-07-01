@@ -115,11 +115,11 @@ COWFScreenDisplayInfo::~COWFScreenDisplayInfo()
 void COWFScreenDisplayInfo::ConstructL()
     {
     User::LeaveIfError(iDispChan.Open(iScreenNumber));
-#if defined (__WINS__) || defined (__SYBORG__)
+//#if defined (__WINS__) || defined (__SYBORG__)
     iDefaultRotation = RDisplayChannel::ERotationNormal;
-#else
-    iDefaultRotation = RDisplayChannel::ERotation270CW;
-#endif
+//#else
+//    iDefaultRotation = RDisplayChannel::ERotation270CW;
+//#endif
     
     switch (iDispChan.CurrentRotation())
         {
