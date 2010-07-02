@@ -23,12 +23,12 @@ PRJ_EXPORTS
 sfopenvg.iby /epoc32/rom/include/sfopenvg.iby
 
 PRJ_MMPFILES
+openvg.mmp
+openvgu.mmp
 egl.mmp
 vgi.mmp
 sfopenvg.mmp
 
-openvg.mmp
-openvgu.mmp
 
 // PRJ_TESTMMPFILES
 #include "..\test\group\bld.inf"

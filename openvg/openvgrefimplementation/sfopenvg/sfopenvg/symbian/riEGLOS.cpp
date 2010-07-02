@@ -101,6 +101,10 @@ void* OSCreateWindowContext(EGLNativeWindowType window)
 		return NULL;
 	}
     ctx->iNativeWindowType = (TNativeWindowType*)window;
+    RWindow* win = (RWindow*) window;
+    TSize size = TSize(win->Size());
+    ctx->iNativeWindowType->iSize.iWidth = size.iWidth;
+    ctx->iNativeWindowType->iSize.iHeight = size.iHeight;
     return ctx;
 }
 
@@ -128,8 +132,14 @@ void OSGetWindowSize(const void* context, int& width, int& height)
     OSWindowContext* ctx = (OSWindowContext*)context;
     if(ctx)
     {
-    	width=ctx->iNativeWindowType->iSize.iWidth;
-		height=ctx->iNativeWindowType->iSize.iHeight; 
+        if ( ctx->iNativeWindowType->iSize.iWidth < 360 )
+    	    ctx->iNativeWindowType->iSize.iWidth;
+        else
+          width= 360;//ctx->iNativeWindowType->iSize.iWidth;
+        if ( ctx->iNativeWindowType->iSize.iHeight < 640 )
+          ctx->iNativeWindowType->iSize.iHeight;
+		    else
+          height= 640; //ctx->iNativeWindowType->iSize.iHeight; 
     }
     else
     {

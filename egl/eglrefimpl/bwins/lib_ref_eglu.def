@@ -248,136 +248,136 @@ EXPORTS
 	Reserved247 @ 247 NONAME ABSENT
 	Reserved248 @ 248 NONAME ABSENT
 	Reserved249 @ 249 NONAME ABSENT
-	vgAppendPath @ 250 NONAME
-	vgAppendPathData @ 251 NONAME
-	vgChildImage @ 252 NONAME
-	vgClear @ 253 NONAME
-	vgClearGlyph @ 254 NONAME
-	vgClearImage @ 255 NONAME
-	vgClearPath @ 256 NONAME
-	vgColorMatrix @ 257 NONAME
-	vgConvolve @ 258 NONAME
-	vgCopyImage @ 259 NONAME
-	vgCopyMask @ 260 NONAME
-	vgCopyPixels @ 261 NONAME
-	vgCreateFont @ 262 NONAME
-	vgCreateImage @ 263 NONAME
-	vgCreateMaskLayer @ 264 NONAME
-	vgCreatePaint @ 265 NONAME
-	vgCreatePath @ 266 NONAME
-	vgDestroyFont @ 267 NONAME
-	vgDestroyImage @ 268 NONAME
-	vgDestroyMaskLayer @ 269 NONAME
-	vgDestroyPaint @ 270 NONAME
-	vgDestroyPath @ 271 NONAME
-	vgDrawGlyph @ 272 NONAME
-	vgDrawGlyphs @ 273 NONAME
-	vgDrawImage @ 274 NONAME
-	vgDrawPath @ 275 NONAME
-	vgFillMaskLayer @ 276 NONAME
-	vgFinish @ 277 NONAME
-	vgFlush @ 278 NONAME
-	vgGaussianBlur @ 279 NONAME
-	vgGetColor @ 280 NONAME
-	vgGetError @ 281 NONAME
-	vgGetImageSubData @ 282 NONAME
-	vgGetMatrix @ 283 NONAME
-	vgGetPaint @ 284 NONAME
-	vgGetParameterVectorSize @ 285 NONAME
-	vgGetParameterf @ 286 NONAME
-	vgGetParameterfv @ 287 NONAME
-	vgGetParameteri @ 288 NONAME
-	vgGetParameteriv @ 289 NONAME
-	vgGetParent @ 290 NONAME
-	vgGetPathCapabilities @ 291 NONAME
-	vgGetPixels @ 292 NONAME
-	vgGetString @ 293 NONAME
-	vgGetVectorSize @ 294 NONAME
-	vgGetf @ 295 NONAME
-	vgGetfv @ 296 NONAME
-	vgGeti @ 297 NONAME
-	vgGetiv @ 298 NONAME
-	vgHardwareQuery @ 299 NONAME
-	vgImageSubData @ 300 NONAME
-	vgInterpolatePath @ 301 NONAME
-	vgLoadIdentity @ 302 NONAME
-	vgLoadMatrix @ 303 NONAME
-	vgLookup @ 304 NONAME
-	vgLookupSingle @ 305 NONAME
-	vgMask @ 306 NONAME
-	vgModifyPathCoords @ 307 NONAME
-	vgMultMatrix @ 308 NONAME
-	vgPaintPattern @ 309 NONAME
-	vgPathBounds @ 310 NONAME
-	vgPathLength @ 311 NONAME
-	vgPathTransformedBounds @ 312 NONAME
-	vgPointAlongPath @ 313 NONAME
-	vgReadPixels @ 314 NONAME
-	vgRemovePathCapabilities @ 315 NONAME
-	vgRenderToMask @ 316 NONAME
-	vgRotate @ 317 NONAME
-	vgScale @ 318 NONAME
-	vgSeparableConvolve @ 319 NONAME
-	vgSetColor @ 320 NONAME
-	vgSetGlyphToImage @ 321 NONAME
-	vgSetGlyphToPath @ 322 NONAME
-	vgSetPaint @ 323 NONAME
-	vgSetParameterf @ 324 NONAME
-	vgSetParameterfv @ 325 NONAME
-	vgSetParameteri @ 326 NONAME
-	vgSetParameteriv @ 327 NONAME
-	vgSetPixels @ 328 NONAME
-	vgSetf @ 329 NONAME
-	vgSetfv @ 330 NONAME
-	vgSeti @ 331 NONAME
-	vgSetiv @ 332 NONAME
-	vgShear @ 333 NONAME
-	vgTransformPath @ 334 NONAME
-	vgTranslate @ 335 NONAME
-	vgWritePixels @ 336 NONAME
-	vguArc @ 337 NONAME
-	vguComputeWarpQuadToQuad @ 338 NONAME
-	vguComputeWarpQuadToSquare @ 339 NONAME
-	vguComputeWarpSquareToQuad @ 340 NONAME
-	vguEllipse @ 341 NONAME
-	vguLine @ 342 NONAME
-	vguPolygon @ 343 NONAME
-	vguRect @ 344 NONAME
-	vguRoundRect @ 345 NONAME
-	?do_eglInitialize@@YAHHPAH0@Z @ 346 NONAME ; int do_eglInitialize(int, int *, int *)
-	?do_eglWaitNative@@YAHH@Z @ 347 NONAME ; int do_eglWaitNative(int)
-	?do_eglWaitGL@@YAHXZ @ 348 NONAME ; int do_eglWaitGL(void)
-	?do_eglSwapBuffers@@YAHHH@Z @ 349 NONAME ; int do_eglSwapBuffers(int, int)
-	?do_eglCreatePixmapSurface@@YAHHHPAXPBH@Z @ 350 NONAME ; int do_eglCreatePixmapSurface(int, int, void *, int const *)
-	?do_eglCreatePbufferFromClientBuffer@@YAHHHHHPBH@Z @ 351 NONAME ; int do_eglCreatePbufferFromClientBuffer(int, int, int, int, int const *)
-	?do_eglCreateWindowSurface@@YAHHHPAXPBH@Z @ 352 NONAME ; int do_eglCreateWindowSurface(int, int, void *, int const *)
-	?do_eglQueryContext@@YAHHHHPAH@Z @ 353 NONAME ; int do_eglQueryContext(int, int, int, int *)
-	?do_eglCreateContext@@YAHHHHPBH@Z @ 354 NONAME ; int do_eglCreateContext(int, int, int, int const *)
-	?do_eglGetCurrentContext@@YAHXZ @ 355 NONAME ; int do_eglGetCurrentContext(void)
-	?do_eglGetDisplay@@YAHH@Z @ 356 NONAME ; int do_eglGetDisplay(int)
-	?do_eglDestroyContext@@YAHHH@Z @ 357 NONAME ; int do_eglDestroyContext(int, int)
-	?do_eglReleaseTexImage@@YAHHHH@Z @ 358 NONAME ; int do_eglReleaseTexImage(int, int, int)
-	?do_eglQueryAPI@@YAHXZ @ 359 NONAME ; int do_eglQueryAPI(void)
-	?do_eglChooseConfig@@YAHHPBHPAHH1@Z @ 360 NONAME ; int do_eglChooseConfig(int, int const *, int *, int, int *)
-	?do_eglMakeCurrent@@YAHHHHH@Z @ 361 NONAME ; int do_eglMakeCurrent(int, int, int, int)
-	?do_eglQuerySurface@@YAHHHHPAH@Z @ 362 NONAME ; int do_eglQuerySurface(int, int, int, int *)
-	?do_eglCreatePbufferSurface@@YAHHHPBH@Z @ 363 NONAME ; int do_eglCreatePbufferSurface(int, int, int const *)
-	?do_eglGetConfigAttrib@@YAHHHHPAH@Z @ 364 NONAME ; int do_eglGetConfigAttrib(int, int, int, int *)
-	?do_eglSurfaceAttrib@@YAHHHHH@Z @ 365 NONAME ; int do_eglSurfaceAttrib(int, int, int, int)
-	?do_eglGetProcAddress@@YAP6AXZZPBD@Z @ 366 NONAME ; void (*)(...) do_eglGetProcAddress(char const *)
-	?do_eglDestroySurface@@YAHHH@Z @ 367 NONAME ; int do_eglDestroySurface(int, int)
-	?do_eglGetCurrentSurface@@YAHH@Z @ 368 NONAME ; int do_eglGetCurrentSurface(int)
-	?do_eglBindTexImage@@YAHHHH@Z @ 369 NONAME ; int do_eglBindTexImage(int, int, int)
-	?do_eglCopyBuffers@@YAHHHPAX@Z @ 370 NONAME ; int do_eglCopyBuffers(int, int, void *)
-	?do_eglSwapInterval@@YAHHH@Z @ 371 NONAME ; int do_eglSwapInterval(int, int)
-	?do_eglBindAPI@@YAHH@Z @ 372 NONAME ; int do_eglBindAPI(int)
-	?do_eglGetCurrentDisplay@@YAHXZ @ 373 NONAME ; int do_eglGetCurrentDisplay(void)
-	?do_eglWaitClient@@YAHXZ @ 374 NONAME ; int do_eglWaitClient(void)
-	?do_eglQueryString@@YAPBDHH@Z @ 375 NONAME ; char const * do_eglQueryString(int, int)
-	?do_eglGetError@@YAHXZ @ 376 NONAME ; int do_eglGetError(void)
-	?do_eglTerminate@@YAHH@Z @ 377 NONAME ; int do_eglTerminate(int)
-	?do_eglReleaseThread@@YAHXZ @ 378 NONAME ; int do_eglReleaseThread(void)
-	?do_eglGetConfigs@@YAHHPAHH0@Z @ 379 NONAME ; int do_eglGetConfigs(int, int *, int, int *)
+	Reserved250 @ 250 NONAME ABSENT
+	Reserved251 @ 251 NONAME ABSENT
+	Reserved252 @ 252 NONAME ABSENT
+	Reserved253 @ 253 NONAME ABSENT
+	Reserved254 @ 254 NONAME ABSENT
+	Reserved255 @ 255 NONAME ABSENT
+	Reserved256 @ 256 NONAME ABSENT
+	Reserved257 @ 257 NONAME ABSENT
+	Reserved258 @ 258 NONAME ABSENT
+	Reserved259 @ 259 NONAME ABSENT
+	Reserved260 @ 260 NONAME ABSENT
+	Reserved261 @ 261 NONAME ABSENT
+	Reserved262 @ 262 NONAME ABSENT
+	Reserved263 @ 263 NONAME ABSENT
+	Reserved264 @ 264 NONAME ABSENT
+	Reserved265 @ 265 NONAME ABSENT
+	Reserved266 @ 266 NONAME ABSENT
+	Reserved267 @ 267 NONAME ABSENT
+	Reserved268 @ 268 NONAME ABSENT
+	Reserved269 @ 269 NONAME ABSENT
+	Reserved270 @ 270 NONAME ABSENT
+	Reserved271 @ 271 NONAME ABSENT
+	Reserved272 @ 272 NONAME ABSENT
+	Reserved273 @ 273 NONAME ABSENT
+	Reserved274 @ 274 NONAME ABSENT
+	Reserved275 @ 275 NONAME ABSENT
+	Reserved276 @ 276 NONAME ABSENT
+	Reserved277 @ 277 NONAME ABSENT
+	Reserved278 @ 278 NONAME ABSENT
+	Reserved279 @ 279 NONAME ABSENT
+	Reserved280 @ 280 NONAME ABSENT
+	Reserved281 @ 281 NONAME ABSENT
+	Reserved282 @ 282 NONAME ABSENT
+	Reserved283 @ 283 NONAME ABSENT
+	Reserved284 @ 284 NONAME ABSENT
+	Reserved285 @ 285 NONAME ABSENT
+	Reserved286 @ 286 NONAME ABSENT
+	Reserved287 @ 287 NONAME ABSENT
+	Reserved288 @ 288 NONAME ABSENT
+	Reserved289 @ 289 NONAME ABSENT
+	Reserved290 @ 290 NONAME ABSENT
+	Reserved291 @ 291 NONAME ABSENT
+	Reserved292 @ 292 NONAME ABSENT
+	Reserved293 @ 293 NONAME ABSENT
+	Reserved294 @ 294 NONAME ABSENT
+	Reserved295 @ 295 NONAME ABSENT
+	Reserved296 @ 296 NONAME ABSENT
+	Reserved297 @ 297 NONAME ABSENT
+	Reserved298 @ 298 NONAME ABSENT
+	Reserved299 @ 299 NONAME ABSENT
+	Reserved300 @ 300 NONAME ABSENT
+	Reserved301 @ 301 NONAME ABSENT
+	Reserved302 @ 302 NONAME ABSENT
+	Reserved303 @ 303 NONAME ABSENT
+	Reserved304 @ 304 NONAME ABSENT
+	Reserved305 @ 305 NONAME ABSENT
+	Reserved306 @ 306 NONAME ABSENT
+	Reserved307 @ 307 NONAME ABSENT
+	Reserved308 @ 308 NONAME ABSENT
+	Reserved309 @ 309 NONAME ABSENT
+	Reserved310 @ 310 NONAME ABSENT
+	Reserved311 @ 311 NONAME ABSENT
+	Reserved312 @ 312 NONAME ABSENT
+	Reserved313 @ 313 NONAME ABSENT
+	Reserved314 @ 314 NONAME ABSENT
+	Reserved315 @ 315 NONAME ABSENT
+	Reserved316 @ 316 NONAME ABSENT
+	Reserved317 @ 317 NONAME ABSENT
+	Reserved318 @ 318 NONAME ABSENT
+	Reserved319 @ 319 NONAME ABSENT
+	Reserved320 @ 320 NONAME ABSENT
+	Reserved321 @ 321 NONAME ABSENT
+	Reserved322 @ 322 NONAME ABSENT
+	Reserved323 @ 323 NONAME ABSENT
+	Reserved324 @ 324 NONAME ABSENT
+	Reserved325 @ 325 NONAME ABSENT
+	Reserved326 @ 326 NONAME ABSENT
+	Reserved327 @ 327 NONAME ABSENT
+	Reserved328 @ 328 NONAME ABSENT
+	Reserved329 @ 329 NONAME ABSENT
+	Reserved330 @ 330 NONAME ABSENT
+	Reserved331 @ 331 NONAME ABSENT
+	Reserved332 @ 332 NONAME ABSENT
+	Reserved333 @ 333 NONAME ABSENT
+	Reserved334 @ 334 NONAME ABSENT
+	Reserved335 @ 335 NONAME ABSENT
+	Reserved336 @ 336 NONAME ABSENT
+	Reserved337 @ 337 NONAME ABSENT
+	Reserved338 @ 338 NONAME ABSENT
+	Reserved339 @ 339 NONAME ABSENT
+	Reserved340 @ 340 NONAME ABSENT
+	Reserved341 @ 341 NONAME ABSENT
+	Reserved342 @ 342 NONAME ABSENT
+	Reserved343 @ 343 NONAME ABSENT
+	Reserved344 @ 344 NONAME ABSENT
+	Reserved345 @ 345 NONAME ABSENT
+	Reserved346 @ 346 NONAME ABSENT
+	Reserved347 @ 347 NONAME ABSENT
+	Reserved348 @ 348 NONAME ABSENT
+	Reserved349 @ 349 NONAME ABSENT
+	Reserved350 @ 350 NONAME ABSENT
+	Reserved351 @ 351 NONAME ABSENT
+	Reserved352 @ 352 NONAME ABSENT
+	Reserved353 @ 353 NONAME ABSENT
+	Reserved354 @ 354 NONAME ABSENT
+	Reserved355 @ 355 NONAME ABSENT
+	Reserved356 @ 356 NONAME ABSENT
+	Reserved357 @ 357 NONAME ABSENT
+	Reserved358 @ 358 NONAME ABSENT
+	Reserved359 @ 359 NONAME ABSENT
+	Reserved360 @ 360 NONAME ABSENT
+	Reserved361 @ 361 NONAME ABSENT
+	Reserved362 @ 362 NONAME ABSENT
+	Reserved363 @ 363 NONAME ABSENT
+	Reserved364 @ 364 NONAME ABSENT
+	Reserved365 @ 365 NONAME ABSENT
+	Reserved366 @ 366 NONAME ABSENT
+	Reserved367 @ 367 NONAME ABSENT
+	Reserved368 @ 368 NONAME ABSENT
+	Reserved369 @ 369 NONAME ABSENT
+	Reserved370 @ 370 NONAME ABSENT
+	Reserved371 @ 371 NONAME ABSENT
+	Reserved372 @ 372 NONAME ABSENT
+	Reserved373 @ 373 NONAME ABSENT
+	Reserved374 @ 374 NONAME ABSENT
+	Reserved375 @ 375 NONAME ABSENT
+	Reserved376 @ 376 NONAME ABSENT
+	Reserved377 @ 377 NONAME ABSENT
+	Reserved378 @ 378 NONAME ABSENT
+	Reserved379 @ 379 NONAME ABSENT
 	Reserved380 @ 380 NONAME ABSENT
 	Reserved381 @ 381 NONAME ABSENT
 	Reserved382 @ 382 NONAME ABSENT

@@ -138,8 +138,7 @@ VGI_API_CALL TInt VGISymbianInitialize( TSize aSize, VGIColorSpace /*aColorSpace
 		__ASSERT_ALWAYS(eglGetError() == EGL_SUCCESS,User::Invariant());
 		__ASSERT_ALWAYS(numconfigs == 1,User::Invariant());
 		
-		//TSize maxSize(MAX_WIDTH,MAX_HEIGHT);
-		TSize maxSize(aSize.iWidth, aSize.iHeight);
+		TSize maxSize(MAX_WIDTH,MAX_HEIGHT);
 	    
 		egl.iPixmap = new(ELeave) CFbsBitmap();
 		egl.iPixmap->Create( maxSize, EColor16MA );
