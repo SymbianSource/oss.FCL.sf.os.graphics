@@ -19,8 +19,14 @@
 #include <vg\vgcontext_symbian.h>
 #include <egl.h>
 
-#define MAX_WIDTH 		640*4 // in bytes
-#define MAX_HEIGHT 		480*4 // in bytes
+#ifdef __WINS__
+  #define MAX_WIDTH 		320*4 // in bytes
+  #define MAX_HEIGHT 		320*4 // in bytes
+#else
+  #define MAX_WIDTH 		640*4 // in bytes
+  #define MAX_HEIGHT 		480*4 // in bytes
+#endif
+
 class TEgl
 	{
 public:
