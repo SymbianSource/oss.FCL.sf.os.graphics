@@ -8,7 +8,6 @@ notes_source	\component_defs\release.src
 
 ipr D 
 ipr T \sf\os\graphics\windowing\windowserver\test
-ipr F \sf\os\graphics\windowing\windowserver\nga\samplegraphicsurfacedrawer
 
 
 

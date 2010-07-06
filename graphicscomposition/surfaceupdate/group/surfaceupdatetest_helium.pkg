@@ -33,5 +33,5 @@
 
 ;*Files To Copy...<src> <destination>
 
-"..\tsrc\surfaceupdate.script"-"c:\surfaceupdate\surfaceupdate.script"
+"\epoc32\data\z\surfaceupdate\surfaceupdate.script"-"c:\surfaceupdate\surfaceupdate.script"
 

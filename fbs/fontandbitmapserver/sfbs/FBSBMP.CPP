@@ -23,7 +23,7 @@
 #include "fbshelper.h"
 #include "fbsrasterizer.h"
 #include "BitwiseBitmap.inl"
-#include "fbsmessage.h"
+#include "FbsMessage.H"
 #include "bitmapconst.h"
 
 const TInt KMaxPixelSize = KMaxTInt / 4; // Maximum pixel size to avoid some overflow problems

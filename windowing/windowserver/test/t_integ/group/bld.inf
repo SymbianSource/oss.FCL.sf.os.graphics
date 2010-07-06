@@ -100,15 +100,20 @@ PRJ_TESTEXPORTS
 ../data/ini/wsini_wsgcesurfwin_emulator_color16ma_changetracking.ini   /epoc32/release/winscw/urel/z/graphics/wsini_wsgcesurfwin_emulator_color16ma_changetracking.ini
 
 PRJ_TESTMMPFILES
-//Requires Techview - t_app1.mmp
-//Requires Techview - t_dsaapp.mmp
+// The following applications inherently require middleware.  These cannot be
+// compiled in a NCP baseline release because such a release omits mw and app.
+// The plan is to re-write to be QT-dependent and then move to the app level
+// package "graphicsuis"
+//	t_app1.mmp
+//	t_dsaapp.mmp
+//	t_fpsapp.mmp
+//	t_pseudoapp.mmp
+//	t_pseudoapp1.mmp
+
 t_inidata.mmp
 t_perfdata.mmp
-//Requires Techview - t_pseudoapp.mmp
-//Requires Techview - t_pseudoapp1.mmp
-//Requires Techview - t_fpsapp.mmp
-//Requires Techview - t_pseudoappengine.mmp
-//Requires Techview - t_pseudoapppopupwindow.mmp
+t_pseudoappengine.mmp
+t_pseudoapppopupwindow.mmp
 t_testsurfacerasterizer.mmp
 t_winutils.mmp
 t_wservintegserver.mmp

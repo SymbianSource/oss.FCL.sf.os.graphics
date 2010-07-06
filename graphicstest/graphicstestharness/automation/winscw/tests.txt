@@ -495,3 +495,8 @@ TESTEXECUTE, C:\logs\testexecute\tfxframework_tests.htm,		, z:\tlayercomposition
 
 # UIBENCH S60
 TESTEXECUTE, C:\logs\testexecute\te_uibench_s60_techview_emulator.htm,	, c:\uibench_s60\te_uibench_s60_techview_emulator.script, 900
+
+# OpenWF Conformance Tests run under testexecute
+TESTEXECUTE, C:\logs\testexecute\ct_api.htm,	, z:\wfctest\ct_api.script,  600, , z\gcetest\gcetest_setup_emu.bat install dabs, z\gcetest\gcetest_setup_emu.bat uninstall dabs
+TESTEXECUTE, C:\logs\testexecute\ct_offscreen.htm,	, z:\wfctest\ct_offscreen.script,  600, , z\gcetest\gcetest_setup_emu.bat install dabs, z\graphicstest\retain_files.cmd results ct\results z\gcetest\gcetest_setup_emu.bat uninstall dabs
+TESTEXECUTE, C:\logs\testexecute\ct_onscreen.htm,	, z:\wfctest\ct_onscreen.script,  600, , z\gcetest\gcetest_setup_emu.bat install dabs, z\graphicstest\retain_files.cmd results ct\results z\gcetest\gcetest_setup_emu.bat uninstall dabs

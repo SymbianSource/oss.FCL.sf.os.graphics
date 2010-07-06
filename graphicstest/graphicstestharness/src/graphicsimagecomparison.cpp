@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -93,7 +93,7 @@ EXPORT_C TInt CTGraphicsImageComparison::CompareBitmaps(const TSize& aCompareSiz
             delete[] buffer1;
             return KErrNoMemory;
             }
-        TPtr8 scanLine2(buffer1, scanLineLength2, scanLineLength2);
+        TPtr8 scanLine2(buffer2, scanLineLength2, scanLineLength2);
 
         //Perform scanline to scanline comparison without comparison mask
 	    for(TInt y=0; y<localSize.iHeight; y++)
@@ -109,7 +109,7 @@ EXPORT_C TInt CTGraphicsImageComparison::CompareBitmaps(const TSize& aCompareSiz
                 for(TInt x=0; x<localSize.iWidth; x++)
                     {
                     pixel1 = *(((TRgb*)buffer1) + x);
-                    pixel2 = *(((TRgb*)buffer1) + x);
+                    pixel2 = *(((TRgb*)buffer2) + x);
 
                     if( (pixel1.Internal()& aComparisonMask) != (pixel2.Internal()& aComparisonMask))
                         {

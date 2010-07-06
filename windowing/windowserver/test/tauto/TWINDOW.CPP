@@ -2367,18 +2367,9 @@ void CTWindowTest::TestNotSupportedFunctionality()
     testSize = window.Size();
     TEST((testSize.iWidth==windowSize.iWidth) && (testSize.iHeight==windowSize.iHeight));
     
-    testSize = window.SizeForEgl();
-    TEST((testSize.iWidth==windowSize.iWidth) && (testSize.iHeight==windowSize.iHeight));
-    
-    err = window.FixNativeOrientation();
-    TEST(err==KErrNotSupported);
-
     testSize = window.Size();
     TEST((testSize.iWidth==windowSize.iWidth) && (testSize.iHeight==windowSize.iHeight));
     
-    testSize = window.SizeForEgl();
-    TEST((testSize.iWidth==windowSize.iWidth) && (testSize.iHeight==windowSize.iHeight));
-
     window.Close();
     group.Close();  
     }

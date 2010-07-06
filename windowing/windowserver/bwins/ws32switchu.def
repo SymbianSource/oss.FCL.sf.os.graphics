@@ -333,7 +333,7 @@ EXPORTS
 	call_vector_332 @ 332 NONAME ; public: void __thiscall RWsSession::SetPointerCursorArea(int,class TRect const &)
 	call_vector_333 @ 333 NONAME ; public: void __thiscall RWsSession::SetPointerCursorMode(enum TPointerCursorMode)
 	call_vector_334 @ 334 NONAME ; public: int __thiscall RWsSession::SetPointerCursorPosition(class TPoint const &)
-	call_vector_335 @ 335 NONAME ; public: void __thiscall RWsSession::SimulateXyInputType(enum TXYInputType)
+	call_vector_335 @ 335 NONAME ; void RWsSession::SimulateXyInputType(int)
 	call_vector_336 @ 336 NONAME ; public: int __thiscall RWindowBase::MoveToGroup(int)
 	call_vector_337 @ 337 NONAME ; public: int __thiscall RWsSession::SendMessageToAllWindowGroups(int,class TUid,class TDesC8 const &)
 	call_vector_338 @ 338 NONAME ; public: int __thiscall RWsSession::SendMessageToAllWindowGroups(class TUid,class TDesC8 const &)

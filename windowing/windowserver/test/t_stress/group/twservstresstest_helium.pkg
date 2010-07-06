@@ -34,6 +34,5 @@
 ;*Files To Copy...<src> <destination>
 
 ;// script files
-"..\scripts\wservstresstest.script"-"c:\wstest\wservstresstest.script"
-"..\scripts\wservstresslog.script"-"c:\wstest\wservstresslog.script"
+"\epoc32\data\z\wstest\wservstresstest.script"-"c:\wstest\wservstresstest.script"
 

@@ -65,16 +65,13 @@ library		ws32.lib
 LIBRARY	    	testexecuteutils.lib tgraphicsharness.lib
 LIBRARY	    	testexecutelogclient.lib
 
-#if !defined(WINS)
-LIBRARY  viewsrv.lib
-#else
+#if defined (WINS)
 START WINS
 win32_library       gdi32.lib
 win32_library       user32.lib
 win32_library       kernel32.lib
 END
 #endif
-
 
 // We're quite heavy on the stack... 4k in WinS isn't enough...
 EPOCSTACKSIZE	0x6000

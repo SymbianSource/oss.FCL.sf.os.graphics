@@ -16,7 +16,7 @@
 #include <fntstore.h>
 #include <bitmap.h>
 #include <openfont.h>
-#include "fbsmessage.h"
+#include "FbsMessage.H"
 #include "SERVER.H"
 #include "BackGroundCompression.h"
 #include <shapeinfo.h>

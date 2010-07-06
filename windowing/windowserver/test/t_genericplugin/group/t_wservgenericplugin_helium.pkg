@@ -33,6 +33,5 @@
 
 ;*Files To Copy...<src> <destination>
 
-"..\scripts\graphics-wserv-genericplugin-load-nga.script"-"c:\wstest\genericplugin\graphics-wserv-genericplugin-load-nga.script"
-;"..\scripts\graphics-wserv-genericplugin-load-nonnga.script"-"c:\wstest\genericplugin\graphics-wserv-genericplugin-load-nonnga.script"
+"\epoc32\data\z\wstest\genericplugin\graphics-wserv-genericplugin-load-nga.script"-"c:\wstest\genericplugin\graphics-wserv-genericplugin-load-nga.script"
 

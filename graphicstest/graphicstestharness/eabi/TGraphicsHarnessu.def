@@ -44,4 +44,8 @@ EXPORTS
 	_ZTV21CTHashReferenceImages @ 43 NONAME
 	_ZThn4_N14CTGraphicsBase15RunTestCaseLeftEi @ 44 NONAME
 	_ZN17CTTMSGraphicsStep20MQCTestWithErrorCodeEiiPKhi @ 45 NONAME
+	_ZTI14TApaTaskFacade @ 46 NONAME
+	_ZTI18TApaTaskListFacade @ 47 NONAME
+	_ZTV14TApaTaskFacade @ 48 NONAME
+	_ZTV18TApaTaskListFacade @ 49 NONAME
 

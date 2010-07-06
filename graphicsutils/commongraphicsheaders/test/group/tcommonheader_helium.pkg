@@ -33,5 +33,5 @@
 
 ;*Files To Copy...<src> <destination>
 
-"..\scripts\tdisplayconfiguration.script"-"c:\commonheadertest\tdisplayconfiguration.script"
+"\epoc32\data\z\commonheadertest\tdisplayconfiguration.script"-"c:\commonheadertest\tdisplayconfiguration.script"
 

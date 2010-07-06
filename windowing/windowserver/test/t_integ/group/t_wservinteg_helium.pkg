@@ -33,7 +33,6 @@
 
 ;*Files To Copy...<src> <destination>
 
-"\epoc32\data\z\graphics\setup-graphics-wserv-integ.script"-"c:\graphics\setup-graphics-wserv-integ.script"
 "\epoc32\data\z\graphics\graphics-wserv-integ-basic.script"-"c:\graphics\graphics-wserv-integ-basic.script"
 "\epoc32\data\z\graphics\graphics-wserv-integ-surface1.script"-"c:\graphics\graphics-wserv-integ-surface1.script"
 "\epoc32\data\z\graphics\graphics-wserv-integ-surface2.script"-"c:\graphics\graphics-wserv-integ-surface2.script"

@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -33,13 +33,12 @@ TInt MainL()
 	TPckgBuf<TSgResIntTestInfo> infoPkg;
 	User::LeaveIfError(User::GetDesParameter(KSecondProcessParametersSlot, infoPkg));
 	TSgResIntTestInfo& info = infoPkg();
-	TSgResInternalTestCase testCase = info.iTestCase;
 	TInt result = 0;
 	
 	CTSgResInternalSecondProcessTestHandler* handler = CTSgResInternalSecondProcessTestHandler::NewLC();
 	handler->OpenDriverL();
 
-	result = handler->RunTestCaseL(testCase, info);
+	result = handler->RunTestCaseL(info);
 	CleanupStack::PopAndDestroy(handler);
 
 	// Handle check

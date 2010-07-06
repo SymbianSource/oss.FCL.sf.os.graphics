@@ -34,10 +34,10 @@
 ;*Files To Copy...<src> <destination>
 
 ;//script file
-"..\tgdi\scripts\gditest_T_Rgb.script"-"c:\gditest\gditest_T_Rgb.script"
-"..\tgdi\scripts\gditest_T_Types.script"-"c:\gditest\gditest_T_Types.script"
-"..\tgdi\scripts\gditest_T_BiDiDefect.script"-"c:\gditest\gditest_T_BiDiDefect.script"
-"..\tgdi\scripts\gditest_T_LineBreak.script"-"c:\gditest\gditest_T_LineBreak.script"
-"..\tgdi\scripts\gditest_T_GlyphSelection.script"-"c:\gditest\gditest_T_GlyphSelection.script"
-"..\tgdi\scripts\gditest_T_BiDi.script"-"c:\gditest\gditest_T_BiDi.script"
+"\epoc32\data\z\gditest\gditest_T_Rgb.script"-"c:\gditest\gditest_T_Rgb.script"
+"\epoc32\data\z\gditest\gditest_T_Types.script"-"c:\gditest\gditest_T_Types.script"
+"\epoc32\data\z\gditest\gditest_T_BiDiDefect.script"-"c:\gditest\gditest_T_BiDiDefect.script"
+"\epoc32\data\z\gditest\gditest_T_LineBreak.script"-"c:\gditest\gditest_T_LineBreak.script"
+"\epoc32\data\z\gditest\gditest_T_GlyphSelection.script"-"c:\gditest\gditest_T_GlyphSelection.script"
+"\epoc32\data\z\gditest\gditest_T_BiDi.script"-"c:\gditest\gditest_T_BiDi.script"
 

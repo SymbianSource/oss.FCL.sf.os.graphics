@@ -22,7 +22,7 @@
 
 NAME SMPL
 
-#include <techview/eikon.rh>
+#include <eikon.rh>
 #include <uiklafgt/eikcore.rsg>
 #include <appinfo.rh>
 #include "t_app1.hrh"

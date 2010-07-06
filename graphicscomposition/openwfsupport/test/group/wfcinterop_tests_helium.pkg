@@ -36,5 +36,5 @@
 ;REM OpenWFC adaptation Test Scripts [no plugins]
 ;//Please execute only the tests appropriate to your hardware capabilities.
 
-"..\scripts\wfctest\tstreamoperation.script"-"c:\wfctest\tstreamoperation.script"
+"\epoc32\data\z\wfctest\tstreamoperation.script"-"c:\wfctest\tstreamoperation.script"
 

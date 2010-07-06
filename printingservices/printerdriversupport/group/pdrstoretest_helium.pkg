@@ -34,7 +34,7 @@
 ;*Files To Copy...<src> <destination>
 
 ;//script file
-"..\tps\scripts\pdrstoretest_T_Pdr.script"-"c:\pdrstoretest\pdrstoretest_T_Pdr.script"
-"..\tps\scripts\pdrstoretest_T_PdrLst.script"-"c:\pdrstoretest\pdrstoretest_T_PdrLst.script"
-"..\tps\scripts\pdrstoretest_T_PdrMem.script"-"c:\pdrstoretest\pdrstoretest_T_PdrMem.script"
+"\epoc32\data\z\pdrstoretest\pdrstoretest_T_Pdr.script"-"c:\pdrstoretest\pdrstoretest_T_Pdr.script"
+"\epoc32\data\z\pdrstoretest\pdrstoretest_T_PdrLst.script"-"c:\pdrstoretest\pdrstoretest_T_PdrLst.script"
+"\epoc32\data\z\pdrstoretest\pdrstoretest_T_PdrMem.script"-"c:\pdrstoretest\pdrstoretest_T_PdrMem.script"
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -30,8 +30,7 @@ CAPABILITY		ProtServ
 userinclude	../../../graphicstest/graphicstestharness/inc
 userinclude	../tps ../inc
 
-MW_LAYER_SYSTEMINCLUDE_SYMBIAN
-OS_LAYER_SYSTEMINCLUDE_SYMBIAN
+OS_LAYER_SYSTEMINCLUDE
 
 SOURCEPATH  .
 SOURCEPATH  ../tps
@@ -50,10 +49,6 @@ LIBRARY		pdrstr.lib
 LIBRARY	    testexecuteutils.lib 
 LIBRARY	    tgraphicsharness.lib
 LIBRARY	    testexecutelogclient.lib
-
-#if !defined(WINS)
-LIBRARY  viewsrv.lib
-#endif
 
 // We're quite heavy on the stack... 4k in WinS isn't enough...
 EPOCSTACKSIZE	0x6000

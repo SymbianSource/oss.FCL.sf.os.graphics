@@ -19,7 +19,7 @@
 #include <graphics/shapeimpl.h>
 #include "UTILS.H"
 #include <graphics/shaperparams.h>
-#include "fbsmessage.h"
+#include "FbsMessage.H"
 #include <graphics/gdi/gdiconsts.h>
 #include <graphics/gdi/gdistructs.h>
 

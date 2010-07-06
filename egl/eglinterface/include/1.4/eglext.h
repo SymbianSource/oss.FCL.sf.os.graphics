@@ -301,10 +301,10 @@ typedef EGLBoolean ( *PFNEGLENDPOINTCANCELNOTIFICATIONNOKPROC) (EGLDisplay dpy, 
 #define EGL_SLOW_NOK            3
 
 #ifdef EGL_EGLEXT_PROTOTYPES
-EGLAPI EGLint EGLAPIENTRY eglQuerySurfaceScalingCapabilityNOK(EGLDisplay dpy, EGLConfig config, EGLint surface_width, EGLint surface_height, EGLint target_width, EGLint target_height);
+EGLAPI EGLBoolean EGLAPIENTRY eglQuerySurfaceScalingCapabilityNOK(EGLDisplay dpy, EGLConfig config, EGLint surface_width, EGLint surface_height, EGLint target_width, EGLint target_height, EGLint *value);
 EGLAPI EGLBoolean EGLAPIENTRY eglSetSurfaceScalingNOK(EGLDisplay dpy, EGLSurface surface, EGLint target_offset_x, EGLint target_offset_y, EGLint target_width, EGLint target_height);
 #endif
-typedef EGLint (EGLAPIENTRYP PFNEGLQUERYSURFACESCALINGCAPABILITYNOKPROC)(EGLDisplay dpy, EGLConfig config, EGLint surface_width, EGLint surface_height, EGLint target_width, EGLint target_height);
+typedef EGLBoolean (EGLAPIENTRYP PFNEGLQUERYSURFACESCALINGCAPABILITYNOKPROC)(EGLDisplay dpy, EGLConfig config, EGLint surface_width, EGLint surface_height, EGLint target_width, EGLint target_height, EGLint *value);
 typedef EGLBoolean (EGLAPIENTRYP PFNEGLSETSURFACESCALINGNOKPROC)(EGLDisplay dpy, EGLSurface surface, EGLint target_offset_x, EGLint target_offset_y, EGLint target_width, EGLint target_height);
 #endif /* EGL_NOK_SURFACE_SCALING */
 

@@ -21,7 +21,7 @@
 #include <fbs.h>
 #include "UTILS.H"
 #include "FBSMBMC.H"
-#include "fbsmessage.h"
+#include "FbsMessage.H"
 
 class CFbTop;
 class CFbsBackgroundCompression;

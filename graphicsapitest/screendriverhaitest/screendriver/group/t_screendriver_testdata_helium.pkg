@@ -35,5 +35,5 @@
 
 ;*Files To Copy...<src> <destination>
 
-"Epoc32\data\z\graphics\graphics-screendriver-cfbsdrawdevice-automated.script"-"c:\graphics\graphics-screendriver-cfbsdrawdevice-automated.script"
+"\epoc32\data\z\graphics\graphics-screendriver-cfbsdrawdevice-automated.script"-"c:\graphics\graphics-screendriver-cfbsdrawdevice-automated.script"
 

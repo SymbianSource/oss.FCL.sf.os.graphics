@@ -13,7 +13,6 @@
 // Description:
 //
 
-#include <prnsetup.h>
 #include "T_PDRLST.H"
 #include "prnpath.h"
 

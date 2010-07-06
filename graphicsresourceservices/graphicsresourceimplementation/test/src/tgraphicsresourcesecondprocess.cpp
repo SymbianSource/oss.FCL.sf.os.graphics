@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -36,7 +36,7 @@ TBool CompareInfos(TSgImageInfo& aInfo1, TSgImageInfo& aInfo2)
 	TBool result = EFalse;
 	if(aInfo1.iPixelFormat == aInfo2.iPixelFormat
 		&& aInfo1.iSizeInPixels == aInfo2.iSizeInPixels
-		&& aInfo1.iUsage | aInfo2.iUsage)
+		&& aInfo1.iUsage == aInfo2.iUsage)
 		{
 		result = ETrue;
 		}
@@ -79,18 +79,14 @@ TInt TestOpenImageL(TSgProcessTestInfo& aInfo)
 		{
 		result |= EFifthTestPassed;
 		}
-	if (id == aInfo.iDrawableId)
-		{
-		result |= ESixthTestPassed;
-		}	
 	TUid uid = { 0x12345678 };
 	if (KErrNotSupported == image.GetAttribute(uid, attribVal))
 	    {
-	    result |= ESeventhTestPassed;
+	    result |= ESixthTestPassed;
 	    }
 	if (KErrArgument == image.GetAttribute(KNullUid, attribVal))
 	    {
-	    result |= EEighthTestPassed;
+	    result |= ESeventhTestPassed;
 	    }
 	image.Close();
 
@@ -258,8 +254,8 @@ TInt TestCloseDriverOpenResources(RSgDriver& aDriver)
 /**
 Method executed by secondary thread for test TestOpenImageMulththreadedL
 */
-_LIT(KTestOpenImageMultithreadedSem1, "TestOpenImageMulththreadedSem1");
-_LIT(KTestOpenImageMultithreadedSem2, "TestOpenImageMulththreadedSem2");
+_LIT(KTestOpenImageMultithreadedSem1, "TestOpenImageMultithreadedSem1");
+_LIT(KTestOpenImageMultithreadedSem2, "TestOpenImageMultithreadedSem2");
 
 TInt OpenImageMultiSecondThread(TAny* aAny)
 	{
@@ -296,11 +292,11 @@ The main thread then opens a new handle to the image.
 The second thread will then close its handle to the image.
 The main thread will then attempt to access the data of the image.
  */
-TInt TestOpenImageMulththreadedL(TSgProcessTestInfo& aInfo)
+TInt TestOpenImageMultithreadedL(TSgProcessTestInfo& aInfo)
 	{
 	TInt result = 0;
 	
-	//create a semaphore
+	//create two semaphores
 	RSemaphore sem[2];
 	User::LeaveIfError(sem[0].CreateGlobal(KTestOpenImageMultithreadedSem1, 0, EOwnerThread));
 	CleanupClosePushL(sem[0]);
@@ -308,10 +304,9 @@ TInt TestOpenImageMulththreadedL(TSgProcessTestInfo& aInfo)
 	CleanupClosePushL(sem[1]);
 		
 	//create secondary thread
-	_LIT(KMultipleThreadName, "TestOpenImageMulththreadedL");
+	_LIT(KSecondaryThreadName, "TestOpenImageMultithreadedL");
 	RThread thread;
-	TBuf<50> threadName(KMultipleThreadName);
-	User::LeaveIfError(thread.Create(threadName, OpenImageMultiSecondThread, KDefaultStackSize, KSecondThreadMinHeapSize, KSecondThreadMaxHeapSize, &aInfo));
+	User::LeaveIfError(thread.Create(KSecondaryThreadName, OpenImageMultiSecondThread, KDefaultStackSize, KSecondThreadMinHeapSize, KSecondThreadMaxHeapSize, &aInfo));
 	thread.Resume();
 	
 	// Make the second thread open the image before this thread.
@@ -375,7 +370,7 @@ TInt MainL()
 				result = TestCloseDriverOpenResources(sgDriver);
 				break;
 			case ESgresSecondProcessOpenImageMultithreaded:
-				result = TestOpenImageMulththreadedL(info);
+				result = TestOpenImageMultithreadedL(info);
 				break;
 			}
 		}	

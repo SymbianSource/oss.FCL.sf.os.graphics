@@ -34,6 +34,6 @@
 ;*Files To Copy...<src> <destination>
 
 ;//script files
-"..\test\scripts\directgditest\directgditest_t_general_hw.script"-"c:\directgditest\directgditest_t_general.script"
-"..\test\scripts\directgditest\directgditest_t_no_adapter.script"-"c:\directgditest\directgditest_t_no_adapter.script"
+"\epoc32\z\data\directgditest\directgditest_t_general_hw.script"-"c:\directgditest\directgditest_t_general.script"
+"\epoc32\z\data\directgditest\directgditest_t_no_adapter.script"-"c:\directgditest\directgditest_t_no_adapter.script"
 

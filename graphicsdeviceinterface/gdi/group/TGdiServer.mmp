@@ -64,10 +64,6 @@ LIBRARY		fntstr.lib
 LIBRARY  	bitgdi.lib
 LIBRARY		fbscli.lib
 
-#if !defined(WINS)
-LIBRARY  viewsrv.lib
-#endif
-
 // We're quite heavy on the stack... 4k in WinS isn't enough...
 EPOCSTACKSIZE	0x10000
 

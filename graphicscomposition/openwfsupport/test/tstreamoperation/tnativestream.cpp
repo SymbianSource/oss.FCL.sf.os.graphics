@@ -954,7 +954,7 @@ void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0103L()
             
         ASSERT_EQUALS(attWidth, width);
         ASSERT_EQUALS(attHeight, height);
-        ASSERT_EQUALS(attStreamFormat, (TInt32)supportedFormats[x].symbianPixelFormat);
+        ASSERT_EQUALS((TInt32)attStreamFormat, (TInt32)supportedFormats[x].symbianPixelFormat);
         if (BytesPerPixel(supportedFormats[x].symbianPixelFormat) > 0)
             {
             ASSERT_EQUALS(attStreamStride, (streamPixelSize * width));
@@ -4746,7 +4746,7 @@ void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0142L()
         
         ASSERT_EQUALS(preFlipWidth, height);
         ASSERT_EQUALS(preFlipHeight, width);
-        ASSERT_EQUALS(preFlipStreamFormat, streamFormat);
+        ASSERT_EQUALS((TInt32)preFlipStreamFormat,(TInt32)streamFormat);
         ASSERT_TRUE(streamStride == halStride);
         ASSERT_EQUALS(preFlipStreamPixelSize, streamPixelSize); 
             

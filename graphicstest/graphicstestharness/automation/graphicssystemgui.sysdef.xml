@@ -249,7 +249,7 @@
 					</component>
 				</collection>
 			</block>
-			<block name="Text and Localisation">
+            		<block name="Text and Localisation">
 				<collection name="Font Services">
 					<component name="Font Store">
 						<unit bldFile="sf\os\textandloc\fontservices\fontstore\group" mrp="sf\os\textandloc\fontservices\fontstore\group\graphics_fntstore.mrp"/>
@@ -263,18 +263,8 @@
 					<component name="Reference Fonts">
 						<unit bldFile="sf\os\textandloc\fontservices\referencefonts\group" mrp="sf\os\textandloc\fontservices\referencefonts\group\graphics_fonts.mrp"/>
 					</component>
-					<component name="Text Shaper Plugin">
-						<unit bldFile="sf\os\textandloc\fontservices\textshaperplugin\group" mrp="sf\os\textandloc\fontservices\textshaperplugin\group\graphics_iculayoutengine.mrp"/>
-					</component>
 				</collection>
 			</block>
-		</layer>
-		<layer name="Additional Tools">
-			<collection name="ONB Tools">
-				<component name="Thindump" class="test">
-					<unit bldFile="thindump\group" />
-				</component>
-			</collection>
 		</layer>
 	</systemModel>
 </SystemDefinition>

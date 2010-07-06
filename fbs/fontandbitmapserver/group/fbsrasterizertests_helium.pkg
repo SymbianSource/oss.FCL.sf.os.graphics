@@ -35,5 +35,5 @@
 
 ;*Files To Copy...<src> <destination>
 
-"..\trasterizer\test\scripts\rasterizer_t_general.script"-"c:\rasterizertest\rasterizer_t_general.script"
+"\epoc32\data\z\rasterizertest\rasterizer_t_general.script"-"c:\rasterizertest\rasterizer_t_general.script"
 

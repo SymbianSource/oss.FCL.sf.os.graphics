@@ -17,7 +17,7 @@
 #include <fbs.h>
 #include "UTILS.H"
 #include <linkedfonts.h>
-#include "fbsmessage.h"
+#include "FbsMessage.H"
 
 GLREF_C void Panic(TFbsPanic aPanic);
 
