@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -75,12 +75,13 @@ class CScreen : public CBase, public MWsScreen, public MWsScreenConfigList, publ
 	{
 public:
 	enum {EGetScanLineBufLen=0x100};	// Buffer of for returning result of GetScanLine
-	enum TDisplayScreen
+	enum TDisplayScreenFlags
 		{
 		EBlankScreenOnRotation = 0x1,
  		EAutoClear = 0x2,
  		EHasDynamicSizeModes = 0x04,
 		EChangeTracking = 0x8,
+		ERepeatSettingHalOrientation = 0x20
 		};
 	
 	/**
@@ -249,6 +250,7 @@ public:
 	void ClearDsaSurface(const TRect& area, const TRgb& color);
 	void PositionUiElements(const TRect& aExtent,	const TRect& aViewport);
 	TInt SetConfiguration(const TDisplayConfiguration& aConfig);
+	TInt UpdateConfiguration(const TDisplayConfiguration& aConfig);
 	void UpdateDynamicScreenModes();
 	void RecalculateModeTwips(const TDisplayConfiguration* aConfig = NULL);
 	inline void IncreaseDisplaySpinner();

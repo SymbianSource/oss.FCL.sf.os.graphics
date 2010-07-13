@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1014,26 +1014,15 @@ Spawn a thread within WSERV process. This will lead to starting the surface upda
 		thus mustn't delete it. The pointer will be valid until server is operating, 
 		i.e. system is up.
 
-@panic KErrAccessDenied	If is called from process other than WSERV.	
 @return KErrNone if an operation is successful, any other system error codes otherwise
 */
 EXPORT_C TInt StartSurfaceUpdateServer(MSurfaceUpdateServerProvider*& aSurfaceUpdateServerProvider)
 	{
 #ifndef TEST_SURFACE_UPDATE
-	RProcess process;
-	TUidType uidType = process.Type();
-	const TInt32 KWservUid = 268450592;
-	const TUid& uid1 = uidType[2];
-
-	if(uid1.iUid != KWservUid) //only wserv process can start the server
-		{// some malicious client tries to launch the server
-		process.Panic(_L("Access denied"), KErrAccessDenied);
-		return KErrAccessDenied;
-		}	  
-	TPtrC serverName(KSurfaceUpdateServerName);
+    TPtrC serverName(KSurfaceUpdateServerName);
 #else
-	TPtrC serverName(KTestSurfaceUpdateServerName);
-#endif
+    TPtrC serverName(KTestSurfaceUpdateServerName);
+#endif    
 	TAny *provider = Dll::Tls();
 	if(provider)
 		{

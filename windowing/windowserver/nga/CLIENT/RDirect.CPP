@@ -528,7 +528,7 @@ void CDirectScreenAccess::Restart()
 	iAbort.Restart(iReason);
 	}
 
-void CDirectScreenAccess::UpdateSizeAndRotation(CFbsBitGc*/* aGc*/)
+void CDirectScreenAccess::UpdateSizeAndRotation(CFbsBitGc* aGc)
 	{
 	TPixelsAndRotation sizeAndRotation;
 	iWsScreenDevice->GetDefaultScreenSizeAndRotation(sizeAndRotation);
@@ -549,6 +549,8 @@ void CDirectScreenAccess::UpdateSizeAndRotation(CFbsBitGc*/* aGc*/)
 			iScreenDevice->SetDrawDeviceOffset(appAreaInDsa.iTl);
 			}
 		}
+	
+	aGc->Activate(iScreenDevice);
 	}
 
 void CDirectScreenAccess::RunL()
