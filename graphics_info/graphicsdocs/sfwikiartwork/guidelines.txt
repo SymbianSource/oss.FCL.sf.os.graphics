@@ -1,0 +1,29 @@
+/*
+* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+* Guidelines for artwork content for the Symbian Foundation Wiki Pages
+*/
+
+In order to update the Symbian Foundation Graphics Wiki pages in an
+open and collaborative way, the artwork used must be available under
+the EPL license, and must be created using Open Source tools.
+
+This allows other people to re-use our artwork, and allows it to be
+maintained by the community.
+
+The SVG artwork has been created using the Inkscape tool.
+
+Please put a pointer on your wiki page to the source files for your
+artwork, so the association between this repository and the wiki is
+understood.
