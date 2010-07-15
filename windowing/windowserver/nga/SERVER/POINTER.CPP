@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -53,7 +53,9 @@ TBool			   CWsPointerBuffer::iSignalled=EFalse;
 CWsPointerBuffer*  CWsPointerBuffer::iCurrentBuffer=NULL;
 CCirBuf<TPoint>*   CWsPointerBuffer::iPointerBuffer=NULL;
 TSglQue<CWsPointerBuffer> CWsPointerBuffer::iList(_FOFF(CWsPointerBuffer,iQue));
-TInt                TWsPointer::iYOffset;
+TInt                TWsPointer::iYOffsetTop;
+TInt                TWsPointer::iYOffsetBottom;
+TInt                TWsPointer::iYOffsetMax;
 #if defined(__WINS__)
 TBool               TWsPointer::iEmulatorRotatePointerCoords;
 #endif
@@ -62,17 +64,20 @@ static _LIT_SECURITY_POLICY_C1(KSecurityPolicy_SwEvent,ECapabilitySwEvent);
 
 void TWsPointer::InitStaticsL()
 	{
-	//This iYOffset setting is specific for capacitive touch screens, where user's finger is the pointer device.
+	//This iYOffsetTop setting is specific for capacitive touch screens, where user's finger is the pointer device.
 	//This is typically used so that the pointer event location is more inline with where the user perceives their 
 	//finger to be on the screen (for example, due to refraction and the relatively large touch area of a finger).
-	iYOffset = 0;
-    _LIT( KWSERVIniFileVarYShifting, "YSHIFTING");
-    TBool fetchingSucceeded = WsIniFile->FindVar(KWSERVIniFileVarYShifting, iYOffset);
-    WS_ASSERT_ALWAYS(iYOffset>=0, EWsPanicInvalidPointerOffset);
-    if ( !fetchingSucceeded )
-       {
-       iYOffset = 0;
-       }
+	//The logic used here is to use Yoffset value such that it is max the finger is at the top and keeps on reducing
+	//when the finger input is moved towards bottom of the screen
+	iYOffsetTop = 0;
+	iYOffsetBottom = 0;
+	iYOffsetMax = 0;
+    _LIT( KWSERVIniFileVarYShiftingTop, "YSHIFTINGTOP");
+    _LIT( KWSERVIniFileVarYShiftingBottom, "YSHIFTINGBOTTOM");
+    _LIT( KWSERVIniFileVarYShiftingMax, "YSHIFTINGMAX");
+    WsIniFile->FindVar(KWSERVIniFileVarYShiftingTop, iYOffsetTop);
+    WsIniFile->FindVar(KWSERVIniFileVarYShiftingBottom, iYOffsetBottom);
+    WsIniFile->FindVar(KWSERVIniFileVarYShiftingMax, iYOffsetMax);
 
 #if defined(__WINS__)    
 	//An emulator may or may not deploy a renderchain or displaydriver that supports rotated drawing.
@@ -1526,19 +1531,40 @@ away from few pixels north of the actual hit centre as detected by the digitizer
 will shift all pointer events by a specified Y displacement.
 
 @param aY Current y coordinate pointer position.
- 
- */
+*/
 void TWsPointer::ShiftYCoordinate(TInt& aY)
     {
-    WS_ASSERT_DEBUG(iYOffset>=0, EWsPanicInvalidPointerOffset);
-    if (aY >= iYOffset)
-        {
-        aY -=iYOffset;
-        }
-    else
-        {
-        aY=0;
-        }
+	// If iYOffsetMax is zero or both topOffset and bottomOffset is zero then return without doing anything
+	if (!iYOffsetMax || !(iYOffsetTop || iYOffsetBottom))
+		return;
+	
+	if (aY >= iYOffsetMax )	
+		{
+		CScreen* screen=iRootWindow->Screen();
+		TInt displayHeight = screen->SizeInPixels().iHeight;
+
+		// Gradual reduction of Yoffset depending upon the aY value
+		TInt offset = iYOffsetTop + iYOffsetBottom - ( iYOffsetTop * 
+				aY / displayHeight );
+		
+		if ( offset > iYOffsetMax )
+			{
+			offset = iYOffsetMax;
+			}
+		aY -=offset;
+		
+		// As the pixels are zero counted, digitiser would send a pointer with co-ordinates 
+		// from 0 to 239 or 0 to 639, if hieght of the screen was 240 or 640.
+		// And here we are calulating the Yvalue so it cannot be more than 239 or 639 
+		if ( aY > (displayHeight-1) )
+			{
+			aY = displayHeight-1;
+			}
+		}
+	else
+		{
+		aY = 0;
+		}
     }
 //
 CWsPointerTimer::CWsPointerTimer(MPointerTimerCallback& aPointerTimerCallback)

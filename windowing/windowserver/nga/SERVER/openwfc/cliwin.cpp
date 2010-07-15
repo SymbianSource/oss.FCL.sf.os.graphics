@@ -1426,6 +1426,13 @@ TBool CWsTopClientWindow::SetScreenDeviceValidStateFlag(TBool aState)
 			iFlags&=~EFlagScreenDeviceInvalid;
 		else
 			iFlags|=EFlagScreenDeviceInvalid;
+		
+		MWsWindowTreeObserver* windowTreeObserver = iScreen->WindowTreeObserver();
+		if (windowTreeObserver)
+			{
+			windowTreeObserver->FlagChanged(*this, MWsWindowTreeObserver::EScreenDeviceValid, aState);
+			}
+		
 		return ETrue;
 		}
 	return EFalse;

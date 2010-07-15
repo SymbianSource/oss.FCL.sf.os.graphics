@@ -264,4 +264,20 @@ EXPORTS
 	_ZNK10CFbsBitmap8DataSizeEv @ 263 NONAME
 	_ZN17CFbsTypefaceStore20UpdateLinkedTypefaceERK28CLinkedTypefaceSpecification @ 264 NONAME
 	_ZN10CFbsBitmap14GetExtraBufferEi @ 265 NONAME
-
+	_ZN21RFbsGlyphDataIterator4NextEv @ 266 NONAME ABSENT
+	_ZN21RFbsGlyphDataIterator4OpenER8CFbsFontPKji @ 267 NONAME ABSENT
+	_ZN21RFbsGlyphDataIterator5CloseEv @ 268 NONAME ABSENT
+	_ZN21RFbsGlyphDataIteratorC1Ev @ 269 NONAME ABSENT
+	_ZN21RFbsGlyphDataIteratorC2Ev @ 270 NONAME ABSENT
+	_ZN21RFbsGlyphMetricsArray3GetER8CFbsFontPKji @ 271 NONAME ABSENT
+	_ZN21RFbsGlyphMetricsArray5CloseEv @ 272 NONAME ABSENT
+	_ZN21RFbsGlyphMetricsArrayC1Ev @ 273 NONAME ABSENT
+	_ZN21RFbsGlyphMetricsArrayC2Ev @ 274 NONAME ABSENT
+	_ZNK21RFbsGlyphDataIterator4RectEv @ 275 NONAME ABSENT
+	_ZNK21RFbsGlyphDataIterator5ImageEv @ 276 NONAME ABSENT
+	_ZNK21RFbsGlyphDataIterator7MetricsEv @ 277 NONAME ABSENT
+	_ZNK21RFbsGlyphDataIterator9GlyphCodeEv @ 278 NONAME ABSENT
+	_ZNK21RFbsGlyphMetricsArray5CountEv @ 279 NONAME ABSENT
+	_ZNK21RFbsGlyphMetricsArrayixEi @ 280 NONAME ABSENT
+	_ZN11RFbsSession20GetGlyphCacheMetricsER18TGlyphCacheMetrics @ 281 NONAME ABSENT
+	
