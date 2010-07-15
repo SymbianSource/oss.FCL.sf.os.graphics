@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg3316"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   sodipodi:docname="nga_platsim_deployment_detail.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="r:\isolation_non_contrib_project\doc\nga_platsim_deployment_detail.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs3318">
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Lend"
+       style="overflow:visible;">
+      <path
+         id="path3889"
+         style="font-size:12.0;fill-rule:evenodd;stroke-width:0.62500000;stroke-linejoin:round;"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(1.1) rotate(180) translate(1,0)" />
+    </marker>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective3324" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.1858885"
+     inkscape:cx="195.18782"
+     inkscape:cy="22.11676"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer3"
+     showgrid="false"
+     inkscape:window-width="1280"
+     inkscape:window-height="836"
+     inkscape:window-x="-3"
+     inkscape:window-y="-13"
+     showguides="true"
+     inkscape:guide-bbox="true" />
+  <metadata
+     id="metadata3321">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="textlayer"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="48.026318"
+       y="45.12534"
+       id="text4643"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan4645"
+         x="48.026318"
+         y="45.12534">package</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="110.52632"
+       y="72.099022"
+       id="text4647"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan4649"
+         x="110.52632"
+         y="72.099022">collection</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="159.86842"
+       y="102.36218"
+       id="text4651"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan4653"
+         x="159.86842"
+         y="102.36218">component</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="319.73685"
+       y="101.04639"
+       id="text4655"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan4657"
+         x="319.73685"
+         y="101.04639">component.dll</tspan><tspan
+         id="tspan2480"
+         sodipodi:role="line"
+         x="319.73685"
+         y="115.08005"><tspan
+           id="tspan2482"
+           style="font-style:italic;-inkscape-font-specification:Arial Italic">componentpatched.dll</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="145.87607"
+       y="233.21176"
+       id="text4671"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan4673"
+         x="145.87607"
+         y="233.21176">Location of source being donated to form this component</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-opacity:1"
+       d="M 141.56332,228.47511 C 92.063006,208.01959 55.049638,123.10864 155.33708,97.427971"
+       id="path4675"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="238.8158"
+       y="21.44113"
+       id="text4687"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan4689"
+         x="238.8158"
+         y="21.44113">Deployment Diagram Key</tspan></text>
+    <path
+       transform="translate(-8.1133302,-275.0419)"
+       sodipodi:nodetypes="cc"
+       id="path2700"
+       d="M 144.27264,988.50493 C 60.199097,963.83318 62.745606,634.90073 163.03304,609.22006"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="142.87416"
+       y="716.07593"
+       id="text2696"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan2698"
+         x="142.87416"
+         y="716.07593">Nokia Internal R&amp;D code platsim/adaptation/platsim_graphics/* </tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="142.65715"
+       y="735.44855"
+       id="text2505"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan2507"
+         x="142.65715"
+         y="735.44855"
+         style="font-style:italic;-inkscape-font-specification:Arial Italic">patched with Nokia Internal mcl_201016_syborg/sf/adaptation/qemu/baseport/syborg/platsim_graphics/*</tspan></text>
+    <tspan
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       sodipodi:role="line"
+       id="tspan3320"
+       x="166.99693"
+       y="1444.7854">syborggraphicsdevice--xx</tspan>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="159.45107"
+       y="339.11237"
+       id="text2686"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan2688"
+         x="159.45107"
+         y="339.11237">platsimegl</tspan><tspan
+         sodipodi:role="line"
+         x="159.45107"
+         y="353.11237"
+         id="tspan2690">platsimopengles11</tspan><tspan
+         sodipodi:role="line"
+         x="159.45107"
+         y="367.11237"
+         id="tspan2692">platsimopenvg</tspan><tspan
+         sodipodi:role="line"
+         x="159.45107"
+         y="381.11237"
+         id="tspan2694">platsimopenvgu</tspan><tspan
+         sodipodi:role="line"
+         x="159.45107"
+         y="395.11237"
+         id="tspan2771">platsimvideodriver</tspan><tspan
+         sodipodi:role="line"
+         x="159.45107"
+         y="409.11237"
+         id="tspan2773">vghwserialiser</tspan><tspan
+         sodipodi:role="line"
+         x="159.45107"
+         y="423.11237"
+         id="tspan2775">vghwutils</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="325.89249"
+       y="337.70078"
+       id="text2668"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan2670"
+         x="325.89249"
+         y="337.70078"
+         style="font-style:italic;-inkscape-font-specification:Arial Italic">libegl.dll</tspan><tspan
+         sodipodi:role="line"
+         x="325.89249"
+         y="351.66711"
+         id="tspan2672">libGLESv1_CM.dll</tspan><tspan
+         sodipodi:role="line"
+         x="325.89249"
+         y="365.66711"
+         id="tspan2674">libopenvg.dll</tspan><tspan
+         sodipodi:role="line"
+         x="325.89249"
+         y="379.66711"
+         id="tspan2676">libopenvgu.dll</tspan><tspan
+         sodipodi:role="line"
+         x="325.89249"
+         y="393.70078"
+         id="tspan2777"><tspan
+   style="font-style:italic;-inkscape-font-specification:Arial Italic"
+   id="tspan2476">platsimvideohw.ldd</tspan>, <tspan
+   style="font-style:italic;-inkscape-font-specification:Arial Italic"
+   id="tspan2478">platsimvideohwapi.dll</tspan></tspan><tspan
+         sodipodi:role="line"
+         x="325.89249"
+         y="407.70773"
+         id="tspan2779">vghwserialiser.dll</tspan><tspan
+         sodipodi:role="line"
+         x="325.89249"
+         y="421.74139"
+         id="tspan2781"
+         style="font-style:italic;-inkscape-font-specification:Arial Italic">vghwutils.dll</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="158.65167"
+       y="504.57703"
+       id="text3467"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan3469"
+         x="158.65167"
+         y="504.57703">hostegl</tspan><tspan
+         sodipodi:role="line"
+         x="158.65167"
+         y="518.57703"
+         id="tspan3471">hostopengles11</tspan><tspan
+         sodipodi:role="line"
+         x="158.65167"
+         y="532.57703"
+         id="tspan3473">hostopenvg</tspan><tspan
+         sodipodi:role="line"
+         x="158.65167"
+         y="546.57703"
+         id="tspan3481">khronosapiwrapper</tspan><tspan
+         sodipodi:role="line"
+         x="158.65167"
+         y="560.57703"
+         id="tspan3511">syborggraphicswrapper</tspan><tspan
+         sodipodi:role="line"
+         x="158.65167"
+         y="574.57703"
+         id="tspan3531">hostthreadadapter</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="326.71173"
+       y="504.57724"
+       id="text3483"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan3485"
+         x="326.71173"
+         y="504.57724"
+         style="font-style:normal;-inkscape-font-specification:Arial">EGL.dll</tspan><tspan
+         sodipodi:role="line"
+         x="326.71173"
+         y="518.57727"
+         id="tspan3487">OpenGLES11.dll</tspan><tspan
+         sodipodi:role="line"
+         x="326.71173"
+         y="532.57727"
+         id="tspan3489">OpenVG.dll</tspan><tspan
+         sodipodi:role="line"
+         x="326.71173"
+         y="546.57727"
+         id="tspan3501"
+         style="font-style:normal;-inkscape-font-specification:Arial">KhronosAPIWrapper.dll</tspan><tspan
+         sodipodi:role="line"
+         x="326.71173"
+         y="560.57727"
+         style="font-style:normal;-inkscape-font-specification:Arial"
+         id="tspan3513">syborg-graphicswrapper.dll</tspan><tspan
+         sodipodi:role="line"
+         x="326.71173"
+         y="574.57727"
+         style="font-style:normal;-inkscape-font-specification:Arial"
+         id="tspan3533">hostthreadadapter.lib</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="110.10896"
+       y="308.84918"
+       id="text2682"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan2684"
+         x="110.10896"
+         y="308.84918">platsimrendering</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="47.608955"
+       y="281.87549"
+       id="text2678"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan2680"
+         x="47.608955"
+         y="281.87549">graphics.simulator</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="105.05195"
+       y="474.90079"
+       id="text3507"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan3509"
+         x="105.05195"
+         y="474.90079">hostsupport</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="154.83835"
+       y="636.04694"
+       id="text3570"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         x="154.83835"
+         y="636.04694"
+         id="tspan3582">Nokia Internal PlatsimUtil lib pruned to provide support for platformthreading.h platformtypes.h </tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="153.9951"
+       y="657.12817"
+       id="text3578"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan3580"
+         x="153.9951"
+         y="657.12817">Open Source qemu FCL:graphics-phase-3:/model-libraries/syborg-graphicswrapper/*</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="152.71156"
+       y="684.11212"
+       id="text3588"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan3590"
+         x="152.71156"
+         y="684.11212">Nokia Internal Platsim/NGA project work provided model-libraries/Graphics/*</tspan></text>
+    <tspan
+       transform="translate(-6.7459962,-607.98296)"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       y="1581.8473"
+       x="153.57375"
+       id="tspan3398"
+       sodipodi:role="line">Nokia Internal R&amp;D code platsim/adaptation/platsim_graphics/surfacemgr/* </tspan>
+    <tspan
+       transform="translate(-6.7459962,-607.98296)"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       y="1534.4663"
+       x="156.98335"
+       id="tspan3326"
+       sodipodi:role="line">sf/os/graphics/graphicshwdrivers/surfacemgr/src</tspan>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="302.2193"
+       y="836.19647"
+       id="text3306"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         x="302.2193"
+         y="836.19647"
+         id="tspan3308">platsimsurfacemanagerdriver.ldd</tspan><tspan
+         sodipodi:role="line"
+         x="302.2193"
+         y="850.19647"
+         id="tspan3367">syborgsurfacemanagerdriver.ldd</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="162.21951"
+       y="835.75848"
+       id="text3355"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan3357"
+         x="162.21951"
+         y="835.75848">surfacemgrplatsim</tspan><tspan
+         sodipodi:role="line"
+         x="162.21951"
+         y="849.75848"
+         id="tspan3359">surfacemgrsyborg</tspan><tspan
+         sodipodi:role="line"
+         x="162.21951"
+         y="863.75848"
+         id="tspan3377">surfacemgrcommon</tspan><tspan
+         sodipodi:role="line"
+         x="162.21951"
+         y="877.75848"
+         id="tspan3361" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="110.90883"
+       y="806.53925"
+       id="text3314"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan3316"
+         x="110.90883"
+         y="806.53925">graphicscompositionref</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="48.408825"
+       y="779.56561"
+       id="text3310"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan3312"
+         x="48.408825"
+         y="779.56561">graphics.nokia</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="147.58051"
+       y="951.4129"
+       id="text3388"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan3390"
+         x="147.58051"
+         y="951.4129">Nokia Internal mcl_201016_syborg/sf/adaptation/qemu/baseport/syborg/platsim_graphics/surfacemgr/*</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="148.41194"
+       y="928.40448"
+       id="text3233"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan3235"
+         x="148.41194"
+         y="928.40448">Open Source sf/os/graphics/graphicshwdrivers/surfacemgr/src/*</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="147.56868"
+       y="975.62646"
+       id="text3237"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan3239"
+         x="147.56868"
+         y="975.62646">Nokia Internal R&amp;D platsim/adaptation/platsim_graphics/surfacemgr/*</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="boxes1">
+    <rect
+       style="opacity:0.1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:3.00000006, 3.00000006;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect2524"
+       width="340.09805"
+       height="68.80365"
+       x="130.95554"
+       y="81.682053"
+       rx="10.500261" />
+    <rect
+       style="opacity:0.1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:3.00000004, 3.00000004;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect2520"
+       width="417.17465"
+       height="140.20096"
+       x="64.426208"
+       y="54.502388"
+       rx="12.879942" />
+    <rect
+       style="opacity:0.1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:3.00000013, 3.00000013;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect2704"
+       width="538.87463"
+       height="152.21136"
+       x="85.221802"
+       y="295.5065"
+       rx="16.637333" />
+    <rect
+       style="opacity:0.1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.99999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:2.99999996, 2.99999996;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect2702"
+       width="453.68463"
+       height="115.04963"
+       x="146.69167"
+       y="322.6861"
+       rx="14.007158" />
+    <rect
+       style="opacity:0.1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:3.00000013, 3.00000013;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect3445"
+       width="532.9718"
+       height="135.34637"
+       x="85.570763"
+       y="457.65799"
+       rx="16.637333" />
+    <rect
+       style="opacity:0.1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.99999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:2.99999996, 2.99999996;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect3447"
+       width="449.46829"
+       height="98.184593"
+       x="145.87401"
+       y="488.04434"
+       rx="14.007158" />
+    <rect
+       style="opacity:0.1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:3.00000025, 3.00000025;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect3330"
+       width="431.01807"
+       height="86.856369"
+       x="101.67068"
+       y="790.66669"
+       rx="13.280731" />
+    <rect
+       style="opacity:0.1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:3.00000009, 3.00000009;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect3328"
+       width="353.07935"
+       height="54.555435"
+       x="157.18129"
+       y="817.80872"
+       rx="10.901049"
+       ry="0" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="boxes2">
+    <rect
+       style="opacity:0.1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:3.00000013, 3.00000013;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect2706"
+       width="680.59937"
+       height="337.95953"
+       x="37.196068"
+       y="263.86282"
+       rx="17.914845" />
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;opacity:0.1;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="167.48976"
+       y="504.00253"
+       id="text2517"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan2519"
+         x="167.48976"
+         y="504.00253">surfacemgrplatsim</tspan><tspan
+         sodipodi:role="line"
+         x="167.48976"
+         y="518.00256"
+         id="tspan2525"
+         style="font-style:normal;fill:#ffff00;-inkscape-font-specification:Arial">surfacemgrsyborg</tspan></text>
+    <g
+       id="g4251"
+       transform="translate(9.294565,279.97989)">
+      <path
+         sodipodi:nodetypes="cc"
+         id="path2901"
+         d="M 144.23512,895.50433 C 110.15013,891.27543 103.96743,842.87453 153.14088,834.23183"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="100%"
+         id="text2859"
+         y="838.71271"
+         x="304.22119"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+         xml:space="preserve"><tspan
+           id="tspan2867"
+           y="838.71271"
+           x="304.22119"
+           sodipodi:role="line">syborg_graphicsdevice.py</tspan></text>
+      <text
+         sodipodi:linespacing="100%"
+         id="text2869"
+         y="780.35773"
+         x="49.54866"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+         xml:space="preserve"><tspan
+           y="780.35773"
+           x="49.54866"
+           id="tspan2871"
+           sodipodi:role="line">qemu</tspan></text>
+      <text
+         sodipodi:linespacing="100%"
+         id="text2873"
+         y="807.33136"
+         x="112.04865"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+         xml:space="preserve"><tspan
+           y="807.33136"
+           x="112.04865"
+           id="tspan2875"
+           sodipodi:role="line">svpplugins</tspan></text>
+      <text
+         sodipodi:linespacing="100%"
+         id="text2877"
+         y="837.59454"
+         x="161.39078"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+         xml:space="preserve"><tspan
+           y="837.59454"
+           x="161.39078"
+           id="tspan2879"
+           sodipodi:role="line">syborggraphicsdevice</tspan><tspan
+           id="tspan2885"
+           y="851.59454"
+           x="161.39078"
+           sodipodi:role="line" /></text>
+      <text
+         sodipodi:linespacing="100%"
+         id="text2897"
+         y="897.96515"
+         x="148.79099"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+         xml:space="preserve"><tspan
+           y="897.96515"
+           x="148.79099"
+           id="tspan2899"
+           sodipodi:role="line">Open Source qemu FCL:graphics-phase-3:/qemu-symbian-svp/plugins/syborg_graphicsdevice.py</tspan></text>
+      <rect
+         rx="10.901049"
+         y="816.91437"
+         x="132.47789"
+         height="34.727665"
+         width="353.07935"
+         id="rect2903"
+         style="opacity:0.1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:3.00000009, 3.00000009;stroke-dashoffset:0;stroke-opacity:1" />
+      <rect
+         rx="13.280731"
+         y="789.73468"
+         x="65.948547"
+         height="69.61499"
+         width="430.15601"
+         id="rect2905"
+         style="opacity:0.1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:3.00000025, 3.00000025;stroke-dashoffset:0;stroke-opacity:1" />
+      <rect
+         rx="15.560212"
+         y="760.62079"
+         x="33.101288"
+         height="106.12498"
+         width="503.98727"
+         id="rect2907"
+         style="opacity:0.1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.99999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:2.99999988, 2.99999988;stroke-dashoffset:0;stroke-opacity:1" />
+    </g>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-opacity:1"
+       d="M 150.03191,653.35977 C 133.65516,650.81738 103.72038,592.94921 149.01017,558.15231"
+       id="path2635"
+       sodipodi:nodetypes="cc" />
+    <rect
+       style="opacity:0.1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:3.00000002, 3.00000002;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4677"
+       width="472.34531"
+       height="181.57895"
+       x="31.578947"
+       y="25.388498"
+       rx="14.583291" />
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="166.99693"
+       y="1444.7854"
+       id="text3318"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         x="166.99693"
+         y="1444.7854"
+         id="tspan3322" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="150.23735"
+       y="926.48334"
+       id="text3324"
+       sodipodi:linespacing="100%" />
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
+       x="146.82774"
+       y="973.86432"
+       id="text3396"
+       sodipodi:linespacing="100%" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-opacity:1"
+       d="M 143.95735,922.29844 C 120.21719,917.20744 114.03449,870.53074 152.86311,861.02594"
+       id="path3304"
+       sodipodi:nodetypes="cc" />
+    <rect
+       style="opacity:0.1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.99999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:2.99999988, 2.99999988;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect3332"
+       width="684.44281"
+       height="249.47752"
+       x="40.337494"
+       y="763.3175"
+       rx="15.560212" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-opacity:1"
+       d="M 144.8908,946.71484 C 102.18512,942.48594 97.726574,846.67134 151.21036,845.78724"
+       id="path3392"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-opacity:1"
+       d="M 143.16667,970.85284 C 72.012718,956.27914 71.864505,838.91264 152.9345,833.71824"
+       id="path3394"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-opacity:1"
+       d="M 149.43614,632.00691 C 127.15664,625.24826 136.01135,588.46133 153.4739,573.90243"
+       id="path3586"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-opacity:1"
+       d="M 148.23947,681.0324 C 109.93823,660.78177 106.14419,535.45363 151.43398,500.65673"
+       id="path3596"
+       sodipodi:nodetypes="cc" />
+  </g>
+</svg>
