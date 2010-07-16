@@ -92,6 +92,9 @@ PRJ_EXPORTS
 
 ../../inc/Graphics/wsdrawresource.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdrawresource.h)
 
+// Workaround for Bug 3283
+../../inc/Graphics/wstfxconst.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wstfxconst.h)
+
 #ifdef SYMBIAN_BUILD_GCE
 //Surface support
 ../../inc/Graphics/surfaceconfiguration.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/surfaceconfiguration.h)
