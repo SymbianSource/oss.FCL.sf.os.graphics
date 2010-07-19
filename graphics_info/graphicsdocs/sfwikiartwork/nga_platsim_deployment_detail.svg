@@ -15,7 +15,7 @@
    inkscape:version="0.46"
    sodipodi:docname="nga_platsim_deployment_detail.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="r:\isolation_non_contrib_project\doc\nga_platsim_deployment_detail.png"
+   inkscape:export-filename="S:\hg\sf\os\graphics\graphics_info\graphicsdocs\sfwikiartwork\nga_platsim_deployment_detail.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -53,14 +53,14 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.1858885"
      inkscape:cx="195.18782"
-     inkscape:cy="22.11676"
+     inkscape:cy="730.44642"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
      showgrid="false"
      inkscape:window-width="1280"
      inkscape:window-height="836"
-     inkscape:window-x="-3"
-     inkscape:window-y="-13"
+     inkscape:window-x="0"
+     inkscape:window-y="154"
      showguides="true"
      inkscape:guide-bbox="true" />
   <metadata
@@ -200,23 +200,23 @@
          sodipodi:role="line"
          id="tspan2688"
          x="159.45107"
-         y="339.11237">platsimegl</tspan><tspan
+         y="339.11237">guestegl</tspan><tspan
          sodipodi:role="line"
          x="159.45107"
          y="353.11237"
-         id="tspan2690">platsimopengles11</tspan><tspan
+         id="tspan2690">guestopengles11</tspan><tspan
          sodipodi:role="line"
          x="159.45107"
          y="367.11237"
-         id="tspan2692">platsimopenvg</tspan><tspan
+         id="tspan2692">guestopenvg</tspan><tspan
          sodipodi:role="line"
          x="159.45107"
          y="381.11237"
-         id="tspan2694">platsimopenvgu</tspan><tspan
+         id="tspan2694">guestopenvgu</tspan><tspan
          sodipodi:role="line"
          x="159.45107"
          y="395.11237"
-         id="tspan2771">platsimvideodriver</tspan><tspan
+         id="tspan2771">guestvideodriver</tspan><tspan
          sodipodi:role="line"
          x="159.45107"
          y="409.11237"
@@ -254,9 +254,9 @@
          y="393.70078"
          id="tspan2777"><tspan
    style="font-style:italic;-inkscape-font-specification:Arial Italic"
-   id="tspan2476">platsimvideohw.ldd</tspan>, <tspan
+   id="tspan2476">guestvideohw.ldd</tspan>, <tspan
    style="font-style:italic;-inkscape-font-specification:Arial Italic"
-   id="tspan2478">platsimvideohwapi.dll</tspan></tspan><tspan
+   id="tspan2478">guestvideohwapi.dll</tspan></tspan><tspan
          sodipodi:role="line"
          x="325.89249"
          y="407.70773"
@@ -342,7 +342,7 @@
          sodipodi:role="line"
          id="tspan2684"
          x="110.10896"
-         y="308.84918">platsimrendering</tspan></text>
+         y="308.84918">guestrendering</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:100%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Arial;-inkscape-font-specification:Arial"
@@ -422,7 +422,7 @@
          sodipodi:role="line"
          x="302.2193"
          y="836.19647"
-         id="tspan3308">platsimsurfacemanagerdriver.ldd</tspan><tspan
+         id="tspan3308">guestsurfacemanagerdriver.ldd</tspan><tspan
          sodipodi:role="line"
          x="302.2193"
          y="850.19647"
@@ -437,7 +437,7 @@
          sodipodi:role="line"
          id="tspan3357"
          x="162.21951"
-         y="835.75848">surfacemgrplatsim</tspan><tspan
+         y="835.75848">surfacemgrguest</tspan><tspan
          sodipodi:role="line"
          x="162.21951"
          y="849.75848"
@@ -598,7 +598,7 @@
          sodipodi:role="line"
          id="tspan2519"
          x="167.48976"
-         y="504.00253">surfacemgrplatsim</tspan><tspan
+         y="504.00253">surfacemgrguest</tspan><tspan
          sodipodi:role="line"
          x="167.48976"
          y="518.00256"
