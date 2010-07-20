@@ -515,6 +515,9 @@ TBool CWsWindowBase::CommandL(TInt aOpcode, TWsWinCmdUnion &aCmd)
 				User::LeaveIfError(IsActivated()?KErrInUse:KErrNone);
 				iBaseWinFlags |= EBaseWinAdvancedPointersEnabled;
 				break;
+			case EWsWinOpSetSurfaceTransparency:
+				RDebug::Printf("[Bug 3343] OpCode EWsWinOpSetSurfaceTransparency not supported.");
+				break;
 		default:
 			return(EFalse);
 		}
