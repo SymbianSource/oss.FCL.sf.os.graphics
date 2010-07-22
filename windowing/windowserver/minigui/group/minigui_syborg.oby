@@ -31,7 +31,7 @@ define ROMDATE ##TODAY##
 #define SYMBIAN_GRAPHICS_USE_EGL_REF
 #define OPENWFCLIB_DRV <openwfc_ref.iby>
 #define __SYBORG__
-
+#undef __BT
 
 // Kernel
 //

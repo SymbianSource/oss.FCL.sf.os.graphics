@@ -27,6 +27,7 @@ define ROMDATE	##TODAY##
 #define SYMBIAN_BASE_USE_GCE
 #define SYMBIAN_EXCLUDE_SCDV
 #define USE_CUSTOM_MMC_PARTITION
+#undef __BT
 
 // Kernel
 //
