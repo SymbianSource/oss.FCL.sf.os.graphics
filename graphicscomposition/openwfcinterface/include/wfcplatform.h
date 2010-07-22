@@ -1,8 +1,8 @@
-/*********************************************************************
+/********************************************************************
  *                                                                   *
  * Sample implementation of wfcplatform.h, version 1.0, draft 18     *
  *                                                                   *
- * Copyright � 2007-2009 The Khronos Group                           *
+ * Copyright (c) 2007-2009 The Khronos Group                         *
  *                                                                   *
  *********************************************************************/
 
@@ -29,6 +29,9 @@ extern "C" {
 #ifndef WFC_DEFAULT_SCREEN_NUMBER
 #define WFC_DEFAULT_SCREEN_NUMBER (0)
 #endif
+
+/* for backward compatibility of wfcGetOnScreenStream symbol use */
+#define wfcGetOnScreenStream extwfcGetOnScreenStream
 
 typedef khronos_int32_t     WFCint;
 typedef khronos_float_t     WFCfloat;

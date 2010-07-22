@@ -18,7 +18,7 @@
 #include <fntstore.h>
 #include <bitmap.h>
 #include <ecom/ecom.h>
-#include "fbsmessage.h"
+#include "FbsMessage.H"
 #include <graphics/bitmapuid.h>
 #include "SERVER.H"
 #include "BackGroundCompression.h"

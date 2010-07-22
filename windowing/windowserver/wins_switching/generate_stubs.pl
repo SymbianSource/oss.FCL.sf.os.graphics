@@ -1,6 +1,6 @@
 #!/bin/perl -w
 
-# Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+# Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 # All rights reserved.
 # This component and the accompanying materials are made available
 # under the terms of "Eclipse Public License v1.0"
@@ -19,7 +19,17 @@
 #
 
 use strict;
-my $COPYRIGHT = "Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).";
+
+my $COPYRIGHT = <<"EndCopyrightAndLicense";
+/*
+ * Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
+ * All rights reserved.
+ * This component and the accompanying materials are made available
+ * under the terms of "Eclipse Public License v1.0"
+ * which accompanies this distribution, and is available
+ * at the URL "http://www.eclipse.org/legal/epl-v10.html".
+ */
+EndCopyrightAndLicense
 
 my $SOURCE_DEF_SIZE = 0;
 my $WS32_DEF = "../BWINS/";
@@ -99,9 +109,8 @@ sub printDefEnd(\$) {
 sub printHeaderStart(\$) {
 	my ($fh) = @_;
 
-	print $fh "// Generated from \"$WS32_DEF\" file size: $SOURCE_DEF_SIZE\n" .
-		"// $COPYRIGHT\n" .
-		"\n" .
+	print $fh "$COPYRIGHT\n" .
+		"/* Generated from  \"$WS32_DEF\" file size: $SOURCE_DEF_SIZE */\n\n" .
 		"extern \"C\" {\n" .
 		"void common_dispatch();\n" .
 		"\n";

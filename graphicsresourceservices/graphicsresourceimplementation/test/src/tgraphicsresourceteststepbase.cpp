@@ -339,17 +339,17 @@ TBool CTSgTestStepBase::CheckPixelFormatPresent(TSgPixelFormat aPixelFormat)
 /**
 Helper function to test the equivalence of two TSgImageInfo structures.
 
-@see     CTDirectGdiContextTarget::CompareInfos
 @param   aInfo1 A TSgImageInfo structure to compare.
-@param   aInfo2 A TSgImageInfo structure to compare.
+@param   aInfo2 A TSgImageInfo structure to compare (may have extra usage bits).
 
-@return  ETrue if the two are identical, EFalse otherwise.
+@return  ETrue if the two are equivalent, EFalse otherwise.
 */
 TBool CTSgTestStepBase::CompareInfos(TSgImageInfo& aInfo1, TSgImageInfo& aInfo2)
 	{
 	return (aInfo1.iPixelFormat == aInfo2.iPixelFormat
 		&& aInfo1.iSizeInPixels == aInfo2.iSizeInPixels
-		&& aInfo1.iUsage == aInfo2.iUsage);
+		// check that all requested usage bits are set in the returned usage bits
+		&& !(aInfo1.iUsage & ~aInfo2.iUsage));
 	}
 
 /**
@@ -621,13 +621,12 @@ TInt SgTestSecondThread::OpenImage(TSgThreadTestInfo* aInfo, RSgDriver& aSgDrive
 		{
 		result |= EFirstTestPassed;
 		}
-	TSgImageInfo info3;
-	if(KErrNone == image.GetInfo(info3))
+	TSgImageInfo info;
+	if(KErrNone == image.GetInfo(info))
 		{
 		result |= ESecondTestPassed;
 		}
-	TSgImageInfo info4 = aInfo->iImageInfo;
-	if(CTSgTestStepBase::CompareInfos(info4, info3))
+	if(CTSgTestStepBase::CompareInfos(aInfo->iImageInfo, info))
 		{
 		result |= EThirdTestPassed;
 		}

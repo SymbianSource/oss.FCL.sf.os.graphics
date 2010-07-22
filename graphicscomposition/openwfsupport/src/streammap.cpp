@@ -17,6 +17,7 @@
 
 #include "streammap.h"
 #include <graphics/updateserverprovider.h>
+#include <graphics/surfacemanager.h>
 #include <e32property.h>
 #include <e32std.h>
 #include <e32cmn.h>
@@ -119,7 +120,8 @@ EXPORT_C TInt COpenWfcStreamMap::Count()
 
 RSurfaceManager& COpenWfcStreamMap::SurfaceManager()
 	{
-	return iSurfaceManager;
+    WFCI_ASSERT_DEBUG(iSurfaceManager, EOwfPanicInvalidHasMap);
+	return *iSurfaceManager;
 	}
 
 TInt COpenWfcStreamMap::LockDestroy(CSurfaceStream* aStream)
@@ -157,6 +159,7 @@ TInt COpenWfcStreamMap::LockDestroy(CSurfaceStream* aStream)
 
 COpenWfcStreamMap::COpenWfcStreamMap():
 iMap(THashFunction32<TSurfaceId>(COpenWfcStreamMap::HashFunction), TIdentityRelation<TSurfaceId>()),
+iSurfaceManager(NULL),
 iRegisteredUpdaters()
 	{
 	}
@@ -202,7 +205,12 @@ COpenWfcStreamMap::~COpenWfcStreamMap()
             }
         }
 	iMap.Close();
-	iSurfaceManager.Close();
+    if (iSurfaceManager)
+        {
+        iSurfaceManager->Close();
+        delete iSurfaceManager;
+        iSurfaceManager = NULL;
+        }
 	iMutex.Signal();
 	iMutex.Close();
 	
@@ -241,7 +249,8 @@ void COpenWfcStreamMap::ConstructL()
 	TSurfaceId surface = TSurfaceId::CreateNullId();
 	User::LeaveIfError(iMap.Insert(surface, NULL));
 
-	User::LeaveIfError(iSurfaceManager.Open());
+	iSurfaceManager = new(ELeave) RSurfaceManager();
+	User::LeaveIfError(iSurfaceManager->Open());
 	RProcess process;
 	TUidType uidType = process.Type();
 	const TInt32 KWservUid = 268450592;

@@ -32,6 +32,8 @@
 #include "pointer.h"
 #include "debugbar.h"
 #include "wstraces.h"
+#include "Graphics/wsgraphicdrawerinternal.h"
+
 
 GLREF_D CDebugLogBase *wsDebugLog;
 

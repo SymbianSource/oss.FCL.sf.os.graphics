@@ -316,5 +316,8 @@ EXPORTS
 	?Open@RGlyphDataIterator@@QAEHAAVCFont@@PBIH@Z @ 315 NONAME ABSENT ; int RGlyphDataIterator::Open(class CFont &, unsigned int const *, int)
 	?SetName@TTypeface@@QAEXABVTDesC16@@@Z @ 316 NONAME ; void TTypeface::SetName(class TDesC16 const &)
 	?Name@TTypeface@@QBEABVTDesC16@@XZ @ 317 NONAME ; class TDesC16 const & TTypeface::Name(void) const
-	
+	?At@RHexTreeBase@@IBEPAXI@Z @ 318 NONAME ; void * RHexTreeBase::At(unsigned int) const
+	??0RHexTreeBase@@IAE@PAVRHeap@@@Z @ 319 NONAME ; RHexTreeBase::RHexTreeBase(class RHeap *)
+	?SetAt@RHexTreeBase@@IAEHIPAX@Z @ 320 NONAME ; int RHexTreeBase::SetAt(unsigned int, void *)
+	?ResetAndDestroy@RHexTreeBase@@QAEXXZ @ 321 NONAME ; void RHexTreeBase::ResetAndDestroy(void)
 

@@ -36,7 +36,7 @@ const TSgImageInfo KSgImageInfo2(TSize(), 0, 0);
 const TSgDrawableId KFakeSgDrawableId = {0xFFFFFFFFFFFFFFFF};
 
 const TInt KSecondThreadMinHeapSize = 0x1000;
-const TInt KSecondThreadMaxHeapSize = 0x1000;
+const TInt KSecondThreadMaxHeapSize = 0x5000;
 
 class CTSgTestStepBase : public CTTMSGraphicsStep
 	{

@@ -24,6 +24,7 @@
 #include "wstypes.h"
 #include "tcursor.h"
 #include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "Graphics/wsgraphicdrawerinternal.h"
 
 class CScreen;
 class CWsRenderStage;

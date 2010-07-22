@@ -18,7 +18,7 @@ TARGETTYPE	exe
 
 CAPABILITY 	PowerMgmt SwEvent WriteDeviceData ProtServ
 
-SOURCEPATH  	../tauto
+SOURCEPATH  	../test/tauto
   
 SOURCE		tclosepanicwindowprocess.cpp
 

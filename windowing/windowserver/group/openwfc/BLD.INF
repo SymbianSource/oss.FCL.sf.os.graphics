@@ -92,6 +92,9 @@ PRJ_EXPORTS
 
 ../../inc/Graphics/wsdrawresource.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdrawresource.h)
 
+// Workaround for Bug 3283
+../../inc/Graphics/wstfxconst.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wstfxconst.h)
+
 #ifdef SYMBIAN_BUILD_GCE
 //Surface support
 ../../inc/Graphics/surfaceconfiguration.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/surfaceconfiguration.h)
@@ -368,12 +371,12 @@ PRJ_TESTEXPORTS
 ../../test/test.mbm 	z:/wstest/test.mbm
 ../../test/trom.mbm 	z:/wstest/trom.mbm
 ../../test/MAILANIM.MBM 	z:/wstest/mailanim.mbm
-../../tanim/tanim.mbm 	z:/wstest/tanim.mbm
-../../tauto/tauto.mbm 	z:/wstest/tauto.mbm 
-../../tauto/Dither.MBM 	z:/wstest/dither.mbm
-../../tauto/mytest.mbm 	z:/wstest/mytest.mbm
-../../tauto/symball.gif	z:/wstest/symball.gif
-../../tauto/config/graphics-wserv-autotest.ini		z:/wstest/graphics-wserv-autotest.ini
+../../test/tanim/tanim.mbm 	z:/wstest/tanim.mbm
+../../test/tauto/tauto.mbm 	z:/wstest/tauto.mbm 
+../../test/tauto/Dither.MBM 	z:/wstest/dither.mbm
+../../test/tauto/mytest.mbm 	z:/wstest/mytest.mbm
+../../test/tauto/symball.gif	z:/wstest/symball.gif
+../../test/tauto/config/graphics-wserv-autotest.ini		z:/wstest/graphics-wserv-autotest.ini
 ../../group/DLL_LIST.TXT 		z:/system/data/dll_list.txt
 
 #ifdef SYMBIAN_BUILD_GCE

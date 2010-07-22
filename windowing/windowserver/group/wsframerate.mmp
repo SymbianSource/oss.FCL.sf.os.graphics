@@ -28,7 +28,7 @@ VENDORID		0x70000001
 
 DEFFILE			wsframerate.DEF
 
-SOURCEPATH		../tframerate
+SOURCEPATH		../test/tframerate
 
 SOURCE			wsframerate.cpp
 

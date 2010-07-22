@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -29,7 +29,7 @@ class CTSgResInternalSecondProcessTestHandler : public CBase
 	{
 public:
 	static CTSgResInternalSecondProcessTestHandler* NewLC();
-	TInt RunTestCaseL(TInt aTestCase, TSgResIntTestInfo& aInfo);
+	TInt RunTestCaseL(const TSgResIntTestInfo& aInfo);
 	void OpenDriverL();
 
 private:
@@ -45,7 +45,7 @@ private:
 	void DoDrawableMemoryTestsL();
 	TInt TestDriverInitializeAndShutdownL();
 	TInt TestDriverInitializeAndShutdownManyTimes();
-	TInt TestResourceProfiling(TSgResIntTestInfo& aInfo);
+	TInt TestResourceProfiling(const TSgResIntTestInfo& aInfo);
 	
 	void TestOpenImageL(TSgDrawableId aId);
 

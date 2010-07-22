@@ -29,6 +29,7 @@ PRJ_TESTEXPORTS
 ../rom/graphics_test1.iby			/epoc32/rom/include/graphics_test1.iby
 ../rom/graphics_test2.iby			/epoc32/rom/include/graphics_test2.iby
 ../rom/graphics_testharness.iby		/epoc32/rom/include/graphics_testharness.iby
+../rom/graphics_testharnessutils.iby		/epoc32/rom/include/graphics_testharnessutils.iby
 ../rom/graphics_autotest.iby		/epoc32/rom/include/graphics_autotest.iby
 ../rom/graphics_testall.iby			/epoc32/rom/include/graphics_testall.iby		//Contains all but the tests mentioned on the next line
 ../rom/graphics_testrast.iby		/epoc32/rom/include/graphics_testrast.iby		//Contains the tests that need to use an alternate rasteriser
@@ -38,6 +39,11 @@ PRJ_TESTEXPORTS
 ../rom/graphics_imagecomparison.iby	/epoc32/rom/include/graphics_imagecomparison.iby  
 ../rom/graphics_tprofiler.iby  		/epoc32/rom/include/graphics_tprofiler.iby
 ../rom/graphics_simload.iby  		/epoc32/rom/include/graphics_simload.iby
+
+// WSINI
+../rom/graphics_sirocco_wsini.hby  		/epoc32/rom/include/graphics_sirocco_wsini.hby
+../rom/graphics_sirocco_wsini.iby  		/epoc32/rom/include/graphics_sirocco_wsini.iby
+../wsini/wsini_vasco.ini		/epoc32/data/test_wsini/wsini_vasco.ini
 
 // ONB batch files
 ../batch/retain_files.cmd z:\graphicstest\retain_files.cmd
@@ -80,10 +86,10 @@ PRJ_TESTMMPFILES
 ../group/graphicsscreencomparison.mmp
 ../group/graphicsimagecomparison.mmp
 ../group/tprofiler.mmp
-t_simloadutils.mmp
-t_simloadapp1.mmp
-t_simloadapp2.mmp
-t_simloadapp3.mmp
+../group/t_simloadutils.mmp
+../group/t_simloadapp1.mmp
+../group/t_simloadapp2.mmp
+../group/t_simloadapp3.mmp
 
 #if defined(WINS)
 ../group/fontinjector.mmp

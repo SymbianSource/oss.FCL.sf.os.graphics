@@ -1123,6 +1123,15 @@ TBool CScreen::UpdateOrientation(MWsScene::TSceneRotation* aOldRotation)
 		
 		//updaterotation should not fail after this point (no cleanup)
 			
+        //update the last set config with the new rotation change so we don't incorrectly
+        //change the layer extents
+        if (iDisplayControl)
+            {
+            TDisplayConfiguration config;
+            config.SetRotation(static_cast<TDisplayConfiguration::TRotation>(newRotation));           
+            iConfigChangeNotifier->UpdateLastSetConfiguration(config);
+            }		
+		
 		TWservCrEvent crEvent(TWservCrEvent::EDeviceOrientationChanged,iScreenNumber,&gcOrientation);
 		TWindowServerEvent::NotifyDrawer(crEvent);
 		
@@ -1984,13 +1993,19 @@ TInt CScreen::SetConfiguration(const TDisplayConfiguration& aConfigInput)
 			{
 			TSize oldConfigRes;
 			oldConfig.GetResolution(oldConfigRes);
+            TDisplayConfiguration newConfig;
 			if (oldConfigRes.iWidth == 0 || oldConfigRes.iHeight == 0)
 				{
-				TDisplayConfiguration newConfig;
 				iDisplayControl->GetConfiguration(newConfig);
 				RecalculateModeTwips(&newConfig);	//needs res and twips information
 				}
 			UpdateDynamicScreenModes();
+			
+			//update the last set config in the config change notifier to 
+			//prevent SetConfiguration() from being called again!
+			newConfig.ClearAll();
+			iDisplayControl->GetConfiguration(newConfig);
+			iConfigChangeNotifier->UpdateLastSetConfiguration(newConfig); 			
 			
 			TWindowServerEvent::NotifyDrawer(TWservCrEvent(TWservCrEvent::EScreenSizeModeAboutToChange, iScreenSizeMode));
 			// This will remove all the DSA elements from the scene
@@ -2035,6 +2050,94 @@ TInt CScreen::SetConfiguration(const TDisplayConfiguration& aConfigInput)
 		}
 	return reply;
 	}
+
+/**
+ * Updates the screen device display properties. This is to ensure the screen device is 
+ * consistent with any configuration changes not made using CScreen::SetConfiguration.
+ * 
+ * @param aConfigInput a fully populated display configuration
+ **/
+TInt CScreen::UpdateConfiguration(const TDisplayConfiguration& aConfigInput)
+    {
+    TInt reply = KErrNone;
+    if(iDisplayControl)
+        {
+        TDisplayConfiguration config(aConfigInput);
+        TRect sizeModePosition;
+        if (iDisplayPolicy)
+            {   //validate config and update to a valid hardware config
+            reply = iDisplayPolicy->GetSizeModeConfiguration(iScreenSizeMode,config,sizeModePosition);
+            if (reply >= KErrNone)
+                {//set appmode in policy
+                if (iDisplayMapping)
+                    {
+                    iDisplayMapping->SetSizeModeExtent(sizeModePosition,MWsDisplayMapping::KOffsetAll);
+                    }
+                }
+            }
+        else
+            {   //exessive strategy: limit rotation agains curr app mode.
+                //really we want the system to accept the rotation change regardless of the app mode.
+            TDisplayConfiguration::TRotation newRot;
+            if (aConfigInput.GetRotation(newRot))
+                {   //This should cast between rotation enumertaions "properly"
+                if (!(iModes[0][iScreenSizeMode]->iAlternativeRotations&(1<<newRot)))
+                    {
+                    reply=KErrArgument;
+                    }
+                }
+            }
+
+        MWsScene::TSceneRotation oldRotation;
+        oldRotation = iScene->SceneRotation();
+        TSize newUiSize;
+        config.GetResolution(newUiSize);
+        if(iFlags&EHasDynamicSizeModes)
+            {
+            reply = iFallbackMap->Resize(newUiSize);
+            }
+
+        RecalculateModeTwips(&config);   //needs res and twips information
+        UpdateDynamicScreenModes();        
+        
+        TWindowServerEvent::NotifyDrawer(TWservCrEvent(TWservCrEvent::EScreenSizeModeAboutToChange, iScreenSizeMode));
+        // This will remove all the DSA elements from the scene
+        AbortAllDirectDrawing(RDirectScreenAccess::ETerminateRotation);
+        
+        //SetDigitiserAreas needs revisiting if/when we support dynamic resolutions
+        //on a screen with touch input.
+        //SetDigitiserAreas(newUiSize);
+        
+        //failure here should only be because of DSA orientation change failure, which shouldn't happen, either.
+        //Or there may be no change to do.
+        (void)UpdateOrientation(&oldRotation);
+        
+        iWindowElementSet->ResubmitAllElementExtents();
+        if(iDsaDevice && iDsaDevice->GraphicsAccelerator())
+            {
+            iDsaDevice->ChangeScreenDevice(iDsaDevice); // orientation has changed, therefore we need to re-initialise the screen device's graphics accelerator
+            }
+        
+        iRootWindow->AdjustCoordsDueToRotation();
+
+        //TODO jonas: we'd like to not have to clear at all... make the actual change to compositor etc lazily!
+        if(BlankScreenOnRotation())
+            {
+            iRootWindow->ClearDisplay();
+            }
+
+        CWsTop::ClearAllRedrawStores();
+        DiscardAllSchedules();
+        iRootWindow->InvalidateWholeScreen();
+        CWsWindowGroup::SetScreenDeviceValidStates(this);
+        TWindowServerEvent::SendScreenDeviceChangedEvents(this);
+        }
+    else
+        {
+        reply = KErrNotSupported;
+        }
+    return reply;  
+    }
 
 void CScreen::UpdateDynamicScreenModes()
 	{

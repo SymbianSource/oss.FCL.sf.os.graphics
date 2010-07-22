@@ -974,9 +974,6 @@ TBool CElementWrapper::FlushSceneChanges()
             }
         }
 
-     FlushAttributeChanges(iElement, EUpdate_ALL_ATTRIBS|EUpdate_DontLockSource);
-     wfcInsertElement(iOpenWfcWrapper.Device(),iElement,elementBelow);
-
     LILOG(("### EXIT CElementWrapper::FlushSceneChanges() FALSE"));
     return ETrue;
     }

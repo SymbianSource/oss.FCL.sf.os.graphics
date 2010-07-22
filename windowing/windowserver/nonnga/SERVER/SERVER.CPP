@@ -19,7 +19,6 @@
 #include "panics.h"
 #include "wstop.h"
 #include "EVENT.H"
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
 #include <bitdraw.h>
 #include <hal.h>
 #include "inifile.h"
@@ -82,6 +81,8 @@ public:
 	void OnActive();
 	void ScheduleRedraw(MWsScreen& aScreen,const TTime& aWhen);
 	void DoRedrawNow(MWsScreen& aScreen);
+	void DoRedrawNow(MWsScreen& aScreen, MWsAnimationScheduler::MScreenUpdateObserver& aObserver);
+	void ClearScreenUpdateObserver(const MWsAnimationScheduler::MScreenUpdateObserver& /*aObserver*/) {}
 	TInt RemoveGraphicDrawer(const TGraphicDrawerId &aId);
 	
 private:
@@ -325,6 +326,12 @@ void CWindowServer::CDefaultAnimationScheduler::DoRedrawNow(MWsScreen& /*aScreen
 	{
 	OnIdleCallBack(ETrue);
 	}
+	
+void CWindowServer::CDefaultAnimationScheduler::DoRedrawNow(MWsScreen& /*aScreen*/, MWsAnimationScheduler::MScreenUpdateObserver& aObserver)
+	{
+	OnIdleCallBack(ETrue);
+	aObserver.ScreenUpdateComplete(KErrNone);
+	}	
 	
 void CWindowServer::CDefaultAnimationScheduler::ScheduleAnimation(MWsScreen& aScreen,const TTime& aWhen)
 	{
@@ -646,7 +653,6 @@ CWindowServer::~CWindowServer()
 	
 	delete iDefaultAnimationScheduler;
 	iDefaultAnimationScheduler = NULL; // might be called from clients during server destruction
-	iCustomAnimationScheduler = NULL; // not owned
 	delete iPluginManager;
 	}
 	
@@ -714,37 +720,23 @@ const MWsScreen* CWindowServer::Screen(TInt aIndex) const
 /**
 Custom Animation Scheduler
 */
-TBool CWindowServer::SetCustomAnimationScheduler(MWsAnimationScheduler* aScheduler)
+TBool CWindowServer::SetCustomAnimationScheduler(MWsAnimationScheduler* /*aScheduler*/)
 	{
-	if(!iCustomAnimationScheduler && aScheduler)
-		{
-		iCustomAnimationScheduler = aScheduler;
-		return ETrue;
-		}
 	return EFalse;
 	}
 
 TBool CWindowServer::HasCustomAnimationScheduler() const
 	{
-	return !!iCustomAnimationScheduler;
+	return EFalse;
 	}
 
-TBool CWindowServer::ClearCustomAnimationScheduler(MWsAnimationScheduler* aCurrentScheduler)
+TBool CWindowServer::ClearCustomAnimationScheduler(MWsAnimationScheduler* /*aCurrentScheduler*/)
 	{
-	if(iCustomAnimationScheduler && (iCustomAnimationScheduler == aCurrentScheduler))
-		{
-		iCustomAnimationScheduler = NULL;
-		return ETrue;
-		}
 	return EFalse;
 	}
 	
 MWsAnimationScheduler* CWindowServer::AnimationScheduler()
 	{
-	if(iCustomAnimationScheduler)
-		{
-		return iCustomAnimationScheduler;
-		}
 	return iDefaultAnimationScheduler;
 	}
 

@@ -17,7 +17,7 @@ TARGET			click.dll
 CAPABILITY PowerMgmt ReadDeviceData WriteDeviceData ProtServ
 TARGETTYPE		DLL
 
-SOURCEPATH		../TClick
+SOURCEPATH		../test/TClick
 SOURCE			CLICK.CPP
 #if defined(WINS)
 SOURCE			LOGWIN.CPP

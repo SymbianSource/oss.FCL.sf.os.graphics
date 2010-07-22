@@ -947,14 +947,14 @@ void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0103L()
         TInt32 attWidth = 0;
         TInt32 attHeight = 0;
         TInt32 attStreamStride = 0;
-        TUidPixelFormat attStreamFormat = EUidPixelFormatUnknown;
+        TInt32 attStreamFormat = EUidPixelFormatUnknown;
         TInt32 attStreamPixelSize = 0;
         
         SymbianStreamGetHeader(ns, &attWidth, &attHeight, &attStreamStride, &attStreamFormat, &attStreamPixelSize);		
             
         ASSERT_EQUALS(attWidth, width);
         ASSERT_EQUALS(attHeight, height);
-        ASSERT_EQUALS(attStreamFormat, supportedFormats[x].symbianPixelFormat);
+        ASSERT_EQUALS((TInt32)attStreamFormat, (TInt32)supportedFormats[x].symbianPixelFormat);
         if (BytesPerPixel(supportedFormats[x].symbianPixelFormat) > 0)
             {
             ASSERT_EQUALS(attStreamStride, (streamPixelSize * width));
@@ -4678,14 +4678,14 @@ void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0142L()
     TInt32 preFlipWidth = 0;
     TInt32 preFlipHeight = 0;
     TInt32 preFlipStreamStride = 0;
-    TUidPixelFormat preFlipStreamFormat = EUidPixelFormatUnknown;
+    TInt32 preFlipStreamFormat = EUidPixelFormatUnknown;
     TInt32 preFlipStreamPixelSize = 0;
     
     // For header variables after flipping
     TInt32 width = 0;
     TInt32 height = 0;
     TInt32 streamStride = 0;
-    TUidPixelFormat streamFormat = EUidPixelFormatUnknown;
+    TInt32 streamFormat = EUidPixelFormatUnknown;
     TInt32 streamPixelSize = 0;
     
     for (TInt ii = 0; ii < size; ii++)
@@ -4746,7 +4746,7 @@ void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0142L()
         
         ASSERT_EQUALS(preFlipWidth, height);
         ASSERT_EQUALS(preFlipHeight, width);
-        ASSERT_EQUALS(preFlipStreamFormat, streamFormat);
+        ASSERT_EQUALS((TInt32)preFlipStreamFormat,(TInt32)streamFormat);
         ASSERT_TRUE(streamStride == halStride);
         ASSERT_EQUALS(preFlipStreamPixelSize, streamPixelSize); 
             

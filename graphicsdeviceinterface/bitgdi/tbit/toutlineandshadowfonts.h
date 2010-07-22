@@ -129,6 +129,7 @@ typedef struct
 	TRgb brushColor; //brush colour will set the colour of the fill of the font
 	TRgb penColor; //pen colour which will set the colour of the outline
 	TRgb shadowColor; //shadow colour which will set the colour of the shadow
+	TRgb backgroundColor; //colour of the target that the text is rendered onto
 	} STestFontParameters;
 
 // Test setting for TestOutlineandShadowFontsMetricsL() i.e. for test case 8
@@ -145,50 +146,51 @@ const STestFontParameters KTestSettingsToTestFontMetrics[KNumberOfSubTestsInTest
 
 // Test setting for TestDrawTextWithOutlineAndShadowL() i.e. for test case 10
 // All test case conditions are defined here and are called to test outline and shadow effects
-// STestFontParameters Format: outline | shadow | bitmaptype, BrushColor, PenColor, ShadowColor
-const TInt KNumberOfSubTestsInTest0010 = 34;
+// STestFontParameters Format: outline | shadow | bitmaptype, BrushColor, PenColor, ShadowColor, BackgroundColor
+const TInt KNumberOfSubTestsInTest0010 = 35;
 _LIT(KTestName0010, "OutlineShadowWithDrawTextNormalAndVertical");//test case name to used to generate test case id
 const STestFontParameters KTestSettingsToTestOutlineAndShadow[KNumberOfSubTestsInTest0010] =
 	{
 	// test with EMonochromeGlyphBitmap and alpha value 255
-	{EDropShadowOn | ESetMonochromeGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EOutlineOn | ESetMonochromeGlyphBitmap |  EVerticalDraw | ERotate90Degrees, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EDropShadowOn | EOutlineOn | ESetMonochromeGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EDropShadowOn | ESetMonochromeGlyphBitmap | EVerticalDraw, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EOutlineOn | ESetMonochromeGlyphBitmap | EVerticalDraw, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EDropShadowOn | EOutlineOn | ESetMonochromeGlyphBitmap | EVerticalDraw, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EDropShadowOn | ESetMonochromeGlyphBitmap, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EOutlineOn | ESetMonochromeGlyphBitmap, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EDropShadowOn | EOutlineOn | ESetMonochromeGlyphBitmap, KRgbGreen, KRgbBlack, KRgbBlue},
+	{EDropShadowOn | ESetMonochromeGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EOutlineOn | ESetMonochromeGlyphBitmap |  EVerticalDraw | ERotate90Degrees, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EDropShadowOn | EOutlineOn | ESetMonochromeGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EDropShadowOn | ESetMonochromeGlyphBitmap | EVerticalDraw, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EOutlineOn | ESetMonochromeGlyphBitmap | EVerticalDraw, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EDropShadowOn | EOutlineOn | ESetMonochromeGlyphBitmap | EVerticalDraw, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EDropShadowOn | ESetMonochromeGlyphBitmap, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EOutlineOn | ESetMonochromeGlyphBitmap, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EDropShadowOn | EOutlineOn | ESetMonochromeGlyphBitmap, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
 
 	// test with EAntiAliasedGlyphBitmap and alpha value 255
-	{EDropShadowOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EDropShadowOn | EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EDropShadowOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EDropShadowOn | EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EDropShadowOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbBlue, KRgbBlack, KRgbYellow},
-	{EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbBlue, KRgbBlack, KRgbYellow},
-	{EDropShadowOn | EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbBlue, KRgbBlack, KRgbYellow},
-	{EDropShadowOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw, KRgbBlue, KRgbBlack, KRgbYellow},
-	{EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw, KRgbBlue, KRgbBlack, KRgbYellow},
-	{EDropShadowOn | EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw, KRgbBlue, KRgbBlack, KRgbYellow},
-	{EDropShadowOn | ESetAntiAliasedGlyphBitmap, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EOutlineOn | ESetAntiAliasedGlyphBitmap, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EDropShadowOn |EOutlineOn | ESetAntiAliasedGlyphBitmap, KRgbGreen, KRgbBlack, KRgbBlue},
-	{EDropShadowOn | ESetAntiAliasedGlyphBitmap, KRgbBlue, KRgbGreen, KRgbYellow},
-	{EOutlineOn | ESetAntiAliasedGlyphBitmap, KRgbBlue, KRgbGreen, KRgbYellow},
-	{EDropShadowOn | EOutlineOn | ESetAntiAliasedGlyphBitmap, KRgbBlue, KRgbGreen, KRgbYellow},
-	{ESetAntiAliasedGlyphBitmap, KRgbBlue, KRgbGreen, KRgbYellow},
-	{ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbBlue, KRgbGreen, KRgbYellow},
+	{EDropShadowOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EDropShadowOn | EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EDropShadowOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EDropShadowOn | EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EDropShadowOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbBlue, KRgbBlack, KRgbYellow, KRgbWhite},
+	{EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbBlue, KRgbBlack, KRgbYellow, KRgbWhite},
+	{EDropShadowOn | EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbBlue, KRgbBlack, KRgbYellow, KRgbWhite},
+	{EDropShadowOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw, KRgbBlue, KRgbBlack, KRgbYellow, KRgbWhite},
+	{EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw, KRgbBlue, KRgbBlack, KRgbYellow, KRgbWhite},
+	{EDropShadowOn | EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw, KRgbBlue, KRgbBlack, KRgbYellow, KRgbWhite},
+	{EDropShadowOn | ESetAntiAliasedGlyphBitmap, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EOutlineOn | ESetAntiAliasedGlyphBitmap, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EDropShadowOn |EOutlineOn | ESetAntiAliasedGlyphBitmap, KRgbGreen, KRgbBlack, KRgbBlue, KRgbWhite},
+	{EDropShadowOn | ESetAntiAliasedGlyphBitmap, KRgbBlue, KRgbGreen, KRgbYellow, KRgbWhite},
+	{EOutlineOn | ESetAntiAliasedGlyphBitmap, KRgbBlue, KRgbGreen, KRgbYellow, KRgbWhite},
+	{EDropShadowOn | EOutlineOn | ESetAntiAliasedGlyphBitmap, KRgbBlue, KRgbGreen, KRgbYellow, KRgbWhite},
+	{ESetAntiAliasedGlyphBitmap, KRgbBlue, KRgbGreen, KRgbYellow, KRgbWhite},
+	{ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbBlue, KRgbGreen, KRgbYellow, KRgbWhite},
 	
 	// test with EAntiAliasedGlyphBitmap and alpha value < 255 (transparency)
-	{EDropShadowOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbBlue, TRgb(128,255,100,0), KRgbMagenta},
-	{EOutlineOn | ESetAntiAliasedGlyphBitmap, KRgbGreen, TRgb(128,200,100,32), KRgbYellow},
-	{EDropShadowOn | EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw, KRgbYellow, TRgb(100,200,100,64), KRgbGray},
-	{EDropShadowOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbWhite, TRgb(128,200,50,128), KRgbYellow},
-	{EOutlineOn | ESetAntiAliasedGlyphBitmap, KRgbBlack, TRgb(12,20,50,255), KRgbWhite}
+	{EDropShadowOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbBlue, TRgb(128,255,100,0), KRgbMagenta, KRgbWhite},
+	{EOutlineOn | ESetAntiAliasedGlyphBitmap, KRgbGreen, TRgb(128,200,100,32), KRgbYellow, KRgbWhite},
+	{EDropShadowOn | EOutlineOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw, KRgbYellow, TRgb(100,200,100,64), KRgbGray, KRgbWhite},
+	{EDropShadowOn | ESetAntiAliasedGlyphBitmap | EVerticalDraw | ERotate90Degrees, KRgbWhite, TRgb(128,200,50,128), KRgbYellow, KRgbWhite},
+	{EOutlineOn | ESetAntiAliasedGlyphBitmap, KRgbBlack, TRgb(12,20,50,255), KRgbWhite, KRgbWhite},
+	{EOutlineOn | ESetAntiAliasedGlyphBitmap, KRgbGreen, TRgb(255,0,0,127), KRgbYellow, TRgb(127, 127, 127, 0)}
 	};
 
 // Test setting for TestDrawTextWithStrikeThroughL() i.e. for test case 11

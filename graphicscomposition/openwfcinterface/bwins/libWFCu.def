@@ -26,7 +26,7 @@ EXPORTS
 	wfcGetElementAttribiv @ 25 NONAME
 	wfcGetElementBelow @ 26 NONAME
 	wfcGetError @ 27 NONAME
-	wfcGetOnScreenStream @ 28 NONAME
+	extwfcGetOnScreenStream @ 28 NONAME
 	wfcGetStrings @ 29 NONAME
 	wfcInsertElement @ 30 NONAME
 	wfcIsExtensionSupported @ 31 NONAME

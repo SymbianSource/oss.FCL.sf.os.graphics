@@ -1728,6 +1728,8 @@ public:
 	IMPORT_C void SetPurpose(TInt aPurpose);
 	IMPORT_C void SendEffectCommand(TInt aTfxCmd, const TDesC8& aTfxCmdData=KNullDesC8);
 	IMPORT_C void OverrideEffects(TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TBitFlags aFlags=0);
+    IMPORT_C TInt FixNativeOrientation();
+    IMPORT_C TSize SizeForEgl() const;
 protected:
 	TInt construct(const RWindowTreeNode &parent,TUint32 aHandle, TInt aType, TDisplayMode aDisplayMode);
 	};

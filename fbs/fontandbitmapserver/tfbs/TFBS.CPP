@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -84,7 +84,7 @@ CTFbs::CTFbs(CTestStep* aStep):
 void CTFbs::ConstructL()
 	{
 	ExpandCleanupStackL();
-	
+	User::LeaveIfError(Logger().ShareAuto());
 	TestConstruction();
 	AllocScanLineBuf();
 	
@@ -2145,6 +2145,8 @@ void CTFbs::TestSingletonServer()
 	are the same, thereby avoiding any unneccessary IPC calls.
 
 @SYMTestActions
+	Try to open a global semaphore called "FBSSessionCacheSemaphore" (this is a temporary measure to
+		ensure successful propagation of ou1cimx1#250526).
 	Create a large font which consumes a lot of memory.
 	Create a CFbsBitGc and a CFbsBitmap target.
 	Use the CFbsBitGc to render some text, thereby filling the font glyph cache. 
@@ -2156,6 +2158,7 @@ void CTFbs::TestSingletonServer()
 		returned from CBitmapFont::GetCharacterData().
 
 @SYMTestExpectedResults
+	No global semaphore called "FBSSessionCacheSemaphore" should exist.
 	When using KNullHandle, CharacterNeedsToBeRasterized() with the first character, is expected to pass
 		proving that the font cache is working as expected when glyphs can fit into it.
 	When using KNullHandle, CharacterNeedsToBeRasterized() with the last character, it expected to fail, 
@@ -2171,6 +2174,11 @@ void CTFbs::TestSingletonServer()
 void CTFbs::TestFontSessionCacheLookupL()
 	{
 	INFO_PRINTF1(_L("Test Font Session-cache Lookup"));
+
+	// Make sure the global semaphore is gone for good
+	_LIT(KSessionCacheSemaphoreName, "FBSSessionCacheSemaphore");
+	RSemaphore sem;
+	TEST(sem.OpenGlobal(KSessionCacheSemaphoreName) == KErrNotFound);
 
 	User::LeaveIfError(RFbsSession::Connect());    
 	RFbsSession* fbsSession = RFbsSession::GetSession();
@@ -2273,170 +2281,96 @@ void CTFbs::TestInvalidHandlesInIpcCallsL()
 	TEST(KErrNone == iFbs->SendCommand(EFbsMessSetTwipsHeight, fontHandle, 49));
 	// In a second thread, send a IPC command to set the font's height with the 
 	// bitmap's handle.  Should panic with FBServ -6.
-	TFbsTestThreadInfo threadInfo = {EFbsSecondThreadInvalidHandleInIpcCall};
- 	TExitCategoryName exitCategoryName(KFbsPanicCategory);
 	_LIT(KTestName, "TestInvalidHandlesInIpcCall");
- 	CreateSecondThreadAndCheckPanicL(threadInfo, -6, exitCategoryName, KTestName);
+ 	CreateSecondThreadAndCheckPanicL(SecondThreadPanicInvalidHandleInIpcCallL, KErrArgument, KFbsPanicCategory, KTestName);
 
 	iTs->ReleaseFont(font);
 	delete bmp;
 	}
 
 /**
-Creates a second thread and do some panic tests in it.
-@param aTestInfo The information for the tests
-@param aPanicCode The expected panic code
-@param aExitCategory The expected panic category
-@param aThreadName The name of the new thread
-@leave Gets system wide error code
-*/
-void CTFbs::CreateSecondThreadAndCheckPanicL(TFbsTestThreadInfo& aTestInfo, TInt aPanicCode, TExitCategoryName aExitCategory, const TDesC &aThreadName)
-	{
-	RThread secondThread;
-	User::LeaveIfError(secondThread.Create(aThreadName, SecondThreadStart, KDefaultStackSize, 0x1000, 0x1000, &aTestInfo));
-	// Launch second thread
-	TRequestStatus statusSecondThread;
-	secondThread.Logon(statusSecondThread);
-	secondThread.SetPriority(EPriorityLess);
-	secondThread.Resume();	
-	
-	User::WaitForRequest(statusSecondThread);
-	
-	if(EExitPanic != secondThread.ExitType())
-		{
-		ERR_PRINTF3(_L("Expected exit type: %d, Actual exit type: %d"), EExitPanic, secondThread.ExitType());
-		TEST(EFalse);
-		}
-	
-	if(aPanicCode != secondThread.ExitReason())
-		{
-		ERR_PRINTF3(_L("Expected panic code: %d, Actual panic code: %d"), aPanicCode, secondThread.ExitReason());
-        TEST(EFalse);
-		}
-	
-	TExitCategoryName secondThreadExitCategory = secondThread.ExitCategory();
-	if(aExitCategory != secondThreadExitCategory)
-		{
-		ERR_PRINTF3(_L("Expected panic category: %S, Actual panic category: %S"), &aExitCategory, &secondThreadExitCategory);
-        TEST(EFalse);
-		}
-	
-	//Close the handle
-	secondThread.Close();
-	}
-
-/**
-Second thread entry function.
-*/
-TInt CTFbs::SecondThreadStart(TAny* aTestInfo)
-	{
-	
-	__UHEAP_MARK;
-    TInt procHandles1  =0;
-    TInt threadHandles1=0;
-    RThread().HandleCount(procHandles1, threadHandles1);
-	CTrapCleanup* cleanupStack = CTrapCleanup::New();
-	
-	if (!cleanupStack)
-	    {
-	    __UHEAP_MARKEND;
-	    return KErrNoMemory;
-	    }
-	
-	TInt result = KErrNone;
-	TRAP(result, SecondThreadMainL(static_cast<TFbsTestThreadInfo*>(aTestInfo)));
-	
-	delete cleanupStack;
-
-    TInt procHandles2  =0;
-    TInt threadHandles2=0;
-    RThread().HandleCount(procHandles2,threadHandles2);
-    if (threadHandles1 != threadHandles2)
-        {
-        result = KErrGeneral;  // Thread-owned handles not closed
-        }
-	__UHEAP_MARKEND;
-
-	return result;
-	}
-
-/**
-Run the test contained within the TFbsTestThreadInfo object. A new thread is
-created for each test and only one of the cases in the switch statements
-below will be used.
-
-@param aTestInfo The parameters for the test
-@return One of the system wide error codes or an enumeration of passed tests.
+Second thread function for test GRAPHICS-FBSERV-0650. It should panic with FBSERV -6 if the test is successful.
  */
-TInt CTFbs::SecondThreadMainL(TFbsTestThreadInfo* aTestInfo)
-    {
-    TInt result = 0;
-    TFbsMultiThreadTestCase testcase = aTestInfo->iTestCase;
-
-    //test cases without the need of an initialised driver
-    switch (testcase)
-    	{
-    case EFbsSecondThreadInvalidHandleInIpcCall:
-    	result = SecondThreadPanicInvalidHandleInIpcCall();
-        break;
-    	}
-    return result;
-    }
-
-/**
-Implementation of SecondThread test EFbsSecondThreadInvalidHandleInIpcCall
-
-@panic FBSERV -6 If the test is successful
-
-@return One of the system wide error codes.
- */
-TInt CTFbs::SecondThreadPanicInvalidHandleInIpcCall()
+void CTFbs::SecondThreadPanicInvalidHandleInIpcCallL()
 	{
-	TInt result = RFbsSession::Connect();
-	if (KErrNone != result)
-		{
-		return result;
-		}
+	User::LeaveIfError(RFbsSession::Connect());
 	RFbsSession* fbs = RFbsSession::GetSession();
-	CFbsBitmapEx* bmp = new CFbsBitmapEx();
-	if (!bmp)
-		{
-		return KErrGeneral;
-		}
-	result = bmp->Create(TSize(1,1),EGray2);
-	if(KErrNone != result)
-		{
-		delete bmp;
-		return KErrGeneral;
-		}
-
-	CFbsTypefaceStore* ts = NULL;
-	ts = (CFbsTypefaceStore*)CFbsTypefaceStore::NewL(NULL);
-	if (!ts)
-		{
-		delete bmp;
-		return KErrGeneral;
-		}
-
-	CFbsFontEx* font=NULL;
-	result = ts->GetNearestFontToDesignHeightInPixels((CFont*&)font, TFontSpec(KTypefaceName, 15));
-	if (!font)
-		{
-		delete bmp;
-		delete ts;
-		return KErrGeneral;
-		}
-
-	TInt fontHandle = font->FontHandle();
+	CFbsBitmapEx* bmp = new(ELeave) CFbsBitmapEx();
+	CleanupStack::PushL(bmp);
+	User::LeaveIfError(bmp->Create(TSize(1,1), EGray2));
+	CFbsTypefaceStore* ts = CFbsTypefaceStore::NewL(NULL);
+	CleanupStack::PushL(ts);
+	CFbsFont* font=NULL;
+	User::LeaveIfError(ts->GetNearestFontToDesignHeightInPixels((CFont*&)font, TFontSpec(KTypefaceName, 15)));
 	TInt bitmapHandle = bmp->BitmapHandle();
 
 	// Send a IPC command to set twips height of font with a bitmap handle
-	result = fbs->SendCommand(EFbsMessSetTwipsHeight, bitmapHandle, 49);
+	(void)fbs->SendCommand(EFbsMessSetTwipsHeight, bitmapHandle, 49);
 
 	ts->ReleaseFont(font);
-	delete bmp;
-	delete ts;
-	return result;
+	CleanupStack::PopAndDestroy(2);
+	RFbsSession::Disconnect();
+	}
+
+
+struct TFbsTestDelegator
+	{
+	CTFbs* iTestBase;
+	void (CTFbs::*iMethodPtr)();
+	};
+
+/**
+Creates a second thread and checks that it panics.
+@param aMethodL The leaving method of CTFbs that the second thread is going to execute.
+@param aPanicCode The expected panic code.
+@param aPanicCategory The expected panic category.
+@param aThreadName The name of the new thread.
+*/
+void CTFbs::CreateSecondThreadAndCheckPanicL(void (CTFbs::*aMethodL)(), TInt aPanicCode, const TDesC& aPanicCategory, const TDesC& aThreadName)
+	{
+	RThread secondThread;
+	TFbsTestDelegator delegator;
+	delegator.iTestBase = this;
+	delegator.iMethodPtr = aMethodL;
+	User::LeaveIfError(secondThread.Create(aThreadName, MethodDelegatorThreadFunction, KDefaultStackSize, 0x1000, 0x1000, &delegator));
+	// Launch second thread
+	TRequestStatus statusSecondThread;
+	secondThread.Logon(statusSecondThread);
+	secondThread.Resume();
+	// Wait until second thread is finished
+	User::WaitForRequest(statusSecondThread);
+	// Check results
+	if (EExitPanic != secondThread.ExitType())
+		{
+		ERR_PRINTF2(_L("Expected exit type: EExitPanic, actual exit type: %d"), secondThread.ExitType());
+		TEST(EFalse);
+		}
+	if (aPanicCode != secondThread.ExitReason())
+		{
+		ERR_PRINTF3(_L("Expected exit reason: %d, actual exit reason: %d"), aPanicCode, secondThread.ExitReason());
+        TEST(EFalse);
+		}
+	TExitCategoryName secondThreadExitCategory = secondThread.ExitCategory();
+	if (aPanicCategory != secondThreadExitCategory)
+		{
+		ERR_PRINTF3(_L("Expected exit category: %S, actual exit category: %S"), &aPanicCategory, &secondThreadExitCategory);
+        TEST(EFalse);
+		}
+	// Dispose of the remains of the second thread
+	secondThread.Close();
+	}
+
+TInt CTFbs::MethodDelegatorThreadFunction(TAny* aDelegator)
+	{
+	CTrapCleanup* cleanupStack = CTrapCleanup::New();
+	if (!cleanupStack)
+	    {
+	    return KErrNoMemory;
+	    }
+	TFbsTestDelegator* delegator = static_cast<TFbsTestDelegator*>(aDelegator);
+	TRAPD(err, (delegator->iTestBase->*delegator->iMethodPtr)());
+	delete cleanupStack;
+	return err;
 	}
 
 /**

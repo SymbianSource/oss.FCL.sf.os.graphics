@@ -21,6 +21,8 @@
 #ifndef EGLTEST_STEP_H
 #define EGLTEST_STEP_H
 
+#include <e32msgqueue.h>
+
 #include <test/eglteststepfactory.h>
 
 _LIT(KEglTestStepDllName, "egltest.dll");

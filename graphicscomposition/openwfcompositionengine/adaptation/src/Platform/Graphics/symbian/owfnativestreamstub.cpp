@@ -336,7 +336,7 @@ owfNativeStreamGetHeader(OWFNativeStreamType stream,
                                 pixelSize);
         if (format)
             {   //translate format. If error then OWF_IMAGE_NOT_SUPPORTED is set.
-            PixelFormatConversion(symFormat,*format);
+            PixelFormatConversion(static_cast<TUidPixelFormat>(symFormat),*format);
             }
         }
 

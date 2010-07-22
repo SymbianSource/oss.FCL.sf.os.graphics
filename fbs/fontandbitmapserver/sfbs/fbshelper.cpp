@@ -20,7 +20,7 @@
 #include "UTILS.H"
 #include "fbshelper.h"
 #include "fbsrasterizer.h"
-#include "fbsmessage.h"
+#include "FbsMessage.H"
 
 GLREF_C void Panic(TFbsPanic aPanic);
 

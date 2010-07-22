@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -580,7 +580,10 @@ void CTSgImageGeneric::TestOpenImageL()
 	image1.GetInfo(getInfo1);
 	image2.GetInfo(getInfo2);
 	
-	TEST(CompareInfos(getInfo1, getInfo2));
+	TEST(CompareInfos(info1, getInfo1));
+	TEST(getInfo1.iPixelFormat == getInfo2.iPixelFormat
+		 && getInfo1.iSizeInPixels == getInfo2.iSizeInPixels
+		 && getInfo1.iUsage == getInfo2.iUsage);
 	
 	if (iEnableConformanceTests)
 		{
@@ -602,7 +605,7 @@ void CTSgImageGeneric::TestOpenImageL()
 		TEST(testResult & EEighthTestPassed);
 			
 		//opening image in a second process	
-		TSgProcessTestInfo processInfo(id1, info1, ESgresSecondProcessOpenImage);
+		TSgProcessTestInfo processInfo(id1, getInfo1, ESgresSecondProcessOpenImage);
 		TRAP(err, testResult = CreateSecondProcessAndDoTestL(KSecondProcess, processInfo));
 		TEST(err == KErrNone);
 		TEST(testResult >= 0);
@@ -614,7 +617,6 @@ void CTSgImageGeneric::TestOpenImageL()
 		TEST(testResult & EFifthTestPassed);
 		TEST(testResult & ESixthTestPassed);
 		TEST(testResult & ESeventhTestPassed);
-		TEST(testResult & EEighthTestPassed);
 		}
     
 	image1.Close();

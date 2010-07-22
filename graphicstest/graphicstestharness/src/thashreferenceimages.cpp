@@ -136,7 +136,7 @@ EXPORT_C void CTHashReferenceImages::CompareHashValuesL(const TDesC& aHashIndex)
 		{
 		//cannot use the macro //TEST((hashFromConfig.Compare(hexString)) == 0); since iStep needs to be 
 		//referenced
-		iStep->testBooleanTrue((hashFromConfig.Compare(hexString)) == 0, (TText8*)__FILE__, __LINE__);
+		iStep->testBooleanTrue((hashFromConfig.Compare(hexString)) == 0, (TText8*)__FILE__, __LINE__, ETrue);
 		}
 	else
 		{
@@ -204,6 +204,7 @@ EXPORT_C void CTHashReferenceImages::CopyScreenToBitmapL(const TDesC& aHashIndex
 	CleanupStack::PushL(device);
 	CFbsBitGc *gc;
 	User::LeaveIfError(device->CreateContext(gc));
+	gc->SetDrawMode(CGraphicsContext::EDrawModeWriteAlpha);
 	gc->BitBlt(TPoint(), iBitmap, rect);
 	TFileName mbmFile;
 	mbmFile.Format(iPath->Des(), &aHashIndex);

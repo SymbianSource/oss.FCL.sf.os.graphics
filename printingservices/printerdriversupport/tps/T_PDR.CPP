@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,6 +21,7 @@
 
 #include "T_PDR.H"
 #include <graphics/fbsdefs.h>
+#include "prnpath.h"
 
 
 #if defined (__WINS__)
@@ -373,10 +374,8 @@ void CTPdr::testPdrStore()
 	RFs fs;
 	ret=fs.Connect();
 	TEST(ret==KErrNone);
-#if defined(__X86GCC__)
 	_LIT(KPath,"C:\\system\\data\\");
 	fs.MkDirAll(KPath);
-#endif	//__X86GCC__
 	ret=file.Replace(fs,_L("C:\\system\\data\\WIDTHS.TMP"),EFileStream|EFileWrite);
 	if (ret!=KErrNone)
 		{

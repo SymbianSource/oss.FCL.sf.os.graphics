@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -36,11 +36,11 @@ Runs the specified test
 
 @param TInt The test case to be run
  */
-TInt CTSgResInternalSecondProcessTestHandler::RunTestCaseL(TInt aTestCase, TSgResIntTestInfo& aInfo)
+TInt CTSgResInternalSecondProcessTestHandler::RunTestCaseL(const TSgResIntTestInfo& aInfo)
 	{
-	RDebug::Printf("CTSgResSecondProcessTestHandler::RunTestCaseL(%i)", aTestCase);
+	RDebug::Printf("CTSgResSecondProcessTestHandler::RunTestCaseL(%i)", aInfo.iTestCase);
 	TInt result = 0;
-	switch (aTestCase)
+	switch (aInfo.iTestCase)
 		{
 		case ESgResIntDriverMemoryLeak:
 			TestDriverMemoryLeakL();
@@ -373,7 +373,7 @@ Test the SgDriver extension MSgDriver_Profiling is reporting the correct local a
 global memory usage and resource counts, when another process has created images 
 and then called into this process.
  */
-TInt CTSgResInternalSecondProcessTestHandler::TestResourceProfiling(TSgResIntTestInfo& aInfo)
+TInt CTSgResInternalSecondProcessTestHandler::TestResourceProfiling(const TSgResIntTestInfo& aInfo)
 	{
 	__UHEAP_MARK;
 	TInt result = 0;

@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -66,5 +66,8 @@ PRJ_TESTEXPORTS
 PRJ_TESTMMPFILES
 
 te_uibench_s60.mmp
-glplanets.mmp
-multiplesurfaces.mmp
+// These applications need to be migrated to QT because they cannot compile in
+// an NCP baseline since NCP baselines have no app or mw layer software.  They
+// should be then placed in the graphicsuis app level package
+//	glplanets.mmp
+//	multiplesurfaces.mmp

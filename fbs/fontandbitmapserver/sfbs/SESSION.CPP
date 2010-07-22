@@ -19,7 +19,7 @@
 #include "FBSVER.H"
 #include "FbsRalc.h"
 #include "fbshelper.h"
-#include "fbsmessage.h"
+#include "FbsMessage.H"
 
 GLDEF_C void Panic(TFbsPanic aPanic)
 	{

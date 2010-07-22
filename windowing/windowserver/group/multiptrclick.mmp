@@ -17,7 +17,7 @@ TARGET			multiptrclick.dll
 CAPABILITY PowerMgmt ReadDeviceData WriteDeviceData ProtServ
 TARGETTYPE		DLL
 
-SOURCEPATH		../TClick
+SOURCEPATH		../test/TClick
 SOURCE			multiptrclick.cpp
 
 USERINCLUDE		../inc

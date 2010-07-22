@@ -27,6 +27,8 @@ testexecute.exe z:\egltest\egltest_t_image_multiprocess.script
 testexecute.exe z:\egltest\egltest_t_vgimagetosurfaces.script
 testexecute.exe z:\egltest\egltest_t_image_negative.script
 testexecute.exe z:\egltest\egltest_t_benchmark_sgimage.script
+testexecute.exe z:\egltest\egltest_t_oom_sgimage.script
+testexecute.exe z:\egltest\egltest_t_stress_sgimage.script
 testexecute.exe z:\egltest\egltest_t_benchmark_swapbuffers.script
 
 :: Ignore the following if using this script for emulator testing.

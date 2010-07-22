@@ -17,7 +17,7 @@ TARGET			tcap_two.exe
 CAPABILITY 		PowerMgmt WriteDeviceData
 TARGETTYPE		EXE
 
-SOURCEPATH		../tcapability
+SOURCEPATH		../test/tcapability
 SOURCE			TCapTest.CPP
 
 OS_LAYER_SYSTEMINCLUDE

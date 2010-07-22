@@ -18,6 +18,7 @@
 
 //  Include Files  
 #include <e32def.h>
+#include <pixelformats.h>
 #include <graphics/suerror.h>
 #include "symbianstream.h"
 #include "surfacestream.h"
@@ -137,7 +138,7 @@ EXPORT_C void SymbianStreamGetHeader( SymbianStreamType aStream,
                             khronos_int32_t* aWidth, 
                             khronos_int32_t* aHeight, 
                             khronos_int32_t* aStride, 
-                            TUidPixelFormat* aFormat, 
+                            khronos_int32_t* aFormat, 
                             khronos_int32_t* aPixelSize)
 	{
 	CSurfaceStream*	stream=CSurfaceStream::FromHandle(aStream);

@@ -26,7 +26,10 @@ PRJ_TESTEXPORTS
 ../data/epoc.ini					z:/wstest/ratelimiter/epoc.ini
 ../data/epoc_singlescreen.ini				z:/wstest/ratelimiter/epoc_singlescreen.ini
 
+
 ../data/wsini.ini					z:/wstest/ratelimiter/wsini.ini
+../data/wsini_vasco_ratelimiter.ini					z:/wstest/ratelimiter/wsini_vasco_ratelimiter.ini
+
 ../data/wsini_changetracking.ini			z:/wstest/ratelimiter/wsini_changetracking.ini
 ../data/wsini_hw_singlescreen.ini			z:/wstest/ratelimiter/wsini_hw_singlescreen.ini
 ../data/wsini_hw_multiscreen.ini			z:/wstest/ratelimiter/wsini_hw_multiscreen.ini
