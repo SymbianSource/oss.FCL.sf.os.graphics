@@ -89,6 +89,7 @@ data=DATAZ_\wsini_minigui.ini	\system\data\wsini.ini
 #include <emime.iby>
 #include <scs.iby>
 #include <cflog.iby>
+#include <featmgr.iby>
 
 file=ABI_DIR\BUILD_DIR\abclient.dll 				sys\bin\abclient.dll
 file=ABI_DIR\BUILD_DIR\Http.dll 					sys\bin\http.dll
