@@ -232,7 +232,7 @@ static WFCboolean WFC_Element_ClampRectangle(const char* rtype,
     {
         if (fabs(rect[i]) > LIMIT)
         {
-#ifdef DEBUG
+#ifdef DEBUG_LOG
             static const char* coord[4] = {"x", "y", "width", "height"};
             (void)coord[0];
 #endif

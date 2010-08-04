@@ -136,7 +136,7 @@ void COWFScreenDisplayInfo::ConstructL()
             iScreenInfo.currentRotation = OWF_ROTATION_270;
             break;
         default:
-            DPRINT(("Unsupported rotation %d", rotation));
+            DPRINT(("Unsupported rotation %d", iDispChan.CurrentRotation()));
             User::Leave(KErrNotSupported);
         }
     
