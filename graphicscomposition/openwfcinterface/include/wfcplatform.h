@@ -30,6 +30,9 @@ extern "C" {
 #define WFC_DEFAULT_SCREEN_NUMBER (0)
 #endif
 
+/* for backward compatibility of wfcGetOnScreenStream symbol use */
+#define wfcGetOnScreenStream extwfcGetOnScreenStream
+
 typedef khronos_int32_t     WFCint;
 typedef khronos_float_t     WFCfloat;
 typedef khronos_uint32_t    WFCbitfield;

@@ -1001,7 +1001,7 @@ wfcIsExtensionSupported(WFCDevice dev,
 /*=========================================================================*/
 
 WFC_API_CALL WFCNativeStreamType WFC_APIENTRY
-wfcGetOnScreenStream(WFCDevice dev, WFCContext ctx) WFC_APIEXIT
+extwfcGetOnScreenStream(WFCDevice dev, WFCContext ctx) WFC_APIEXIT
 {
 	WFC_DEVICE*             device;
 	WFC_CONTEXT*            context;
