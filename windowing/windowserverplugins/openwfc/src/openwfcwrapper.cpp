@@ -340,10 +340,7 @@ void COpenWfcWrapper::DestroyElement(MWsElement* aElement)
 	    {	    
 	    CElementWrapper* element=static_cast<CElementWrapper*>(aElement);
 	    RemoveElementFromSceneList(element);
-	    if (!(element->UpdateFlags()&CElementWrapper::EUpdate_SceneCommited))
-	          {
-	             delete element;
-	          }
+	    delete element;
 	    }
 	}
 
