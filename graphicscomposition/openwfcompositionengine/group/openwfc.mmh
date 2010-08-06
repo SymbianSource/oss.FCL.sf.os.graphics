@@ -36,7 +36,7 @@ deffile SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(def/eabi/libWFC.def)
 MACRO                  __KHR_EXPORTS
 TARGETTYPE             dll
 CAPABILITY             PowerMgmt ReadDeviceData WriteDeviceData ProtServ
-UID                            0 KUidOpenWfcDllUidValue
+UID                    0x1000008D KUidOpenWfcDllUidValue
 
 OPTION ARMCC    -O3 -Otime --cpu 6
 ALWAYS_BUILD_AS_ARM
