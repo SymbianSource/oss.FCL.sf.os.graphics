@@ -1205,7 +1205,6 @@ OWF_API_CALL WFCErrorCode
 WFC_Context_RemoveElement(WFC_CONTEXT* context,
                           WFCElement element)
 {
-    WFCErrorCode            err = WFC_ERROR_BAD_HANDLE;
     WFC_ELEMENT*            elemento = NULL;
 
     OWF_ASSERT(context);
@@ -1220,11 +1219,9 @@ WFC_Context_RemoveElement(WFC_CONTEXT* context,
          */
         elemento->shared = WFC_FALSE;
         context->lowestElement = WFC_Scene_LowestElement(context->workScene);
-
-        err = WFC_ERROR_NONE;
     }
 
-    return err;
+    return WFC_ERROR_NONE;
 }
 
 /*!

@@ -509,7 +509,6 @@ OWF_Image_DestinationFormatConversion(OWF_IMAGE* dst, OWF_IMAGE* src)
     OWFint                  countY;
     OWFuint32*              dstPtr;
     OWFpixel*               srcPtr;
-    OWFuint8*               destination;
 #ifndef OWF_IMAGE_INTERNAL_PIXEL_IS_FLOAT
     OWFint                  widthBytes;
 #endif
@@ -542,15 +541,15 @@ OWF_Image_DestinationFormatConversion(OWF_IMAGE* dst, OWF_IMAGE* src)
         OWF_Image_UnpremultiplyAlpha(src);
     }
 
-    destination = (OWFuint8*) dst->data;
 #ifndef OWF_IMAGE_INTERNAL_PIXEL_IS_FLOAT
     widthBytes = OWF_Image_GetStride(src->width, &src->format, 0);
 #endif
 
     for (countY = 0; countY < src->height; countY++)
     {   
+        OWFuint8* destination = (OWFuint8*) dst->data;
+        destination += countY*dst->stride;
         dstPtr = (OWFuint32*) destination;    
-        destination += dst->stride;
 
         switch (dst->format.pixelFormat)
         {
@@ -983,7 +982,6 @@ OWF_Image_PointSamplingStretchBlit(OWF_IMAGE* dst,
                                    OWFfloat* srcRect)
 {
     OWFint                  ox = 0, oy = 0;
-    OWFfloat                dx = 0.f, dy = 0.f; 
     OWFint                  x, y;
 
     /* images must be valid */
@@ -1009,6 +1007,10 @@ OWF_Image_PointSamplingStretchBlit(OWF_IMAGE* dst,
         return OWF_FALSE;
     }
 
+#ifdef OWF_IMAGE_INTERNAL_PIXEL_IS_FLOAT
+    {
+        OWFfloat                dx = 0.f, dy = 0.f; 
+    
     /* solve scaling ratios for image */
     dx = (OWFfloat) srcRect[2] / (OWFfloat) dstRect->width;
     dy = (OWFfloat) srcRect[3] / (OWFfloat) dstRect->height;
@@ -1036,8 +1038,63 @@ OWF_Image_PointSamplingStretchBlit(OWF_IMAGE* dst,
                                dstRect->y + y,
                                pixel);
             
+            }
         }
     }
+#else
+    if (srcRect[0] < 0 || (srcRect[0] + srcRect[2]) > src->width ||
+            srcRect[1] < 0 || (srcRect[1] + srcRect[3]) > src->height)
+        {
+        /* Source rectangle out of bounds */
+        return OWF_FALSE;
+        }
+
+    if (dstRect->x < 0 || (dstRect->x + dstRect->width) > dst->width ||
+            dstRect->y < 0 || (dstRect->y + dstRect->height) > dst->height)
+        {
+        /* Destination rectangle out of bounds */
+        return OWF_FALSE;
+        }
+
+    {
+        OWFint dxFix, dyFix;
+        OWFint xFixStart, yFix;
+        OWFuint32 *dstPtr, *srcLinePtr;
+    
+/* Integer <-> 16.16 fixed point conversion macros */
+#define INT_TO_FIXED_PT(X) ((X) << 16)
+#define FIXED_PT_TO_INT(X) ((X) >> 16)
+    
+        /* Calculate scaling factors in fixed point (with rounding). */
+        dxFix = (OWFint)((srcRect[2] * INT_TO_FIXED_PT(1) + (dstRect->width >> 1)) / dstRect->width);
+        dyFix = (OWFint)((srcRect[3] * INT_TO_FIXED_PT(1) + (dstRect->height >> 1)) / dstRect->height);
+    
+        /* Calculate fixed point location in source, with half-pixel offset */
+        xFixStart = (OWFint)(srcRect[0] * INT_TO_FIXED_PT(1) + (dxFix >> 1));
+        yFix = (OWFint)(srcRect[1] * INT_TO_FIXED_PT(1) + (dyFix >> 1));
+    
+        /* Initial target address. */
+        dstPtr = (OWFuint32*)dst->data + dstRect->y * dst->width + dstRect->x;
+    
+        for (y = 0; y < dstRect->height; y++)
+        {
+            OWFint xFix = xFixStart;
+    
+            oy = FIXED_PT_TO_INT(yFix);
+            srcLinePtr = (OWFuint32*)src->data + oy * src->width;
+    
+            for (x = 0; x < dstRect->width; x++) 
+            {
+                ox = FIXED_PT_TO_INT(xFix);
+                dstPtr[x] = srcLinePtr[ox];
+                xFix += dxFix;
+            }
+    
+            dstPtr += dst->width;
+            yFix += dyFix;
+        }
+    }
+#endif
     return OWF_TRUE;
 }
 
@@ -1649,20 +1706,20 @@ OWF_Image_Blend(OWF_BLEND_INFO* blend,
     {
         case OWF_TRANSPARENCY_NONE:
         {
-#ifdef SLOW_CODE
             /*
             rgb     = src.rgb
             alpha    = 1
             */
             BLENDER_INNER_LOOP_BEGIN;
+#ifdef OWF_IMAGE_INTERNAL_PIXEL_IS_FLOAT
                 DR = SR;
                 DG = SG;
                 DB = SB;
                 DA = OWF_FULLY_OPAQUE;
-            BLENDER_INNER_LOOP_END_NO_MASK;
 #else
-            memcpy(dstPtr, srcPtr, drect.height*drect.width*4);
+                *(OWFuint32*)dstPtr = *(OWFuint32*)srcPtr | ARGB8888_ALPHA_MASK;
 #endif
+            BLENDER_INNER_LOOP_END_NO_MASK;
             break;
         }
 

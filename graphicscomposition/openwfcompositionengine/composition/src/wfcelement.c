@@ -390,10 +390,7 @@ WFC_Element_ValidateScalarAttributei(WFC_ELEMENT* element,
 
         case WFC_ELEMENT_SOURCE_FLIP:
         {
-            WFCboolean  flip = (WFCboolean) value;
-
-            result = BOOLEAN_TO_ERROR((WFC_TRUE == flip ||
-                                       WFC_FALSE == flip));
+            result = WFC_ERROR_NONE;
             break;
         }
 
