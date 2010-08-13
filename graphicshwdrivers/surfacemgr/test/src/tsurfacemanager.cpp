@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,6 +21,7 @@
  @internalComponent - Internal Symbian test code
 */
 
+
 #include "tsurfacemanager.h"
 #include <e32base.h>
 #include <e32cons.h>
@@ -29,6 +30,9 @@
 #include <e32cmn.h>	  
 #include <hal.h>
 #include <e32def_private.h>
+#include <graphics/surface_hints.h>
+
+using namespace surfaceHints;
 
 const TInt KCountLimit = 10000;
 
@@ -1242,7 +1246,10 @@ void CTSurfaceManager::TestCreateSurfaceNewChunk1L()
 
 	//contiguous attribute is not valid on emulator
 #ifndef __WINS__
-	TEST(iInfo.iContiguous == attributes.iContiguous);
+	if(attributes.iContiguous)
+	    TEST(iInfo.iContiguous == attributes.iContiguous);
+	else
+	    INFO_PRINTF1(_L("We didn't ask for contiguous memory so we don't care how it's going to be (can be contiguous or not)\n"));
 #else
 	INFO_PRINTF1(_L("Contiguous attribute test is not valid on emulator\n"));
 #endif
@@ -1369,7 +1376,10 @@ void CTSurfaceManager::CheckAttributesL(RSurfaceManager::TSurfaceCreationAttribu
 	TEST(aAttributes.iBuffers==iInfo.iBuffers);
 	TEST(aAttributes.iPixelFormat==iInfo.iPixelFormat);
 	TEST(aAttributes.iStride==iInfo.iStride);
-	TEST(aAttributes.iContiguous==iInfo.iContiguous);
+    if(aAttributes.iContiguous)
+        TEST(iInfo.iContiguous == aAttributes.iContiguous);
+    else
+        INFO_PRINTF1(_L("We didn't ask for contiguous memory so we don't care how it's going to be (can be contiguous or not)\n"));	
 	TEST(aAttributes.iCacheAttrib==iInfo.iCacheAttrib);
 	
 	//Test the chunk size is big enough to hold the surface when we create it 
@@ -3182,36 +3192,32 @@ void CTSurfaceManager::TestAddSurfaceHintL()
 	
 	//Add HintPair1
 	RSurfaceManager::THintPair hintPair1;
-	hintPair1.iKey.iUid = 0x123257;
-	hintPair1.iValue = 300;
-	hintPair1.iMutable = ETrue;
+	hintPair1.Set(TUid::Uid(KSurfaceContent), EStillImage, ETrue);
 	TEST(KErrNone == iSurfaceManager.AddSurfaceHint(surfaceId, hintPair1));
 	
 	RSurfaceManager::THintPair hintPairCheck1;
-	hintPairCheck1.iKey.iUid = 0x123257;
+	hintPairCheck1.iKey.iUid = KSurfaceContent;
 	CheckHintPair(surfaceId, hintPairCheck1, hintPair1);
 	
 	//Add HintPair2
 	RSurfaceManager::THintPair hintPair2;
-	hintPair2.iKey.iUid = 0x123267;
-	hintPair2.iValue = 100;
+	hintPair2.iKey.iUid = KSurfaceProtection;
+	hintPair2.iValue = EAllowAnalog | EAllowDigital;
 	hintPair2.iMutable = EFalse;
 	TEST(KErrNone == iSurfaceManager.AddSurfaceHint(surfaceId, hintPair2));
 		
 	RSurfaceManager::THintPair hintPairCheck2;
-	hintPairCheck2.iKey.iUid = 0x123267;
+	hintPairCheck2.iKey.iUid = KSurfaceProtection;
 	CheckHintPair(surfaceId, hintPairCheck2, hintPair2);
 	CheckHintPair(surfaceId, hintPairCheck1, hintPair1);
 
 	//Add HintPair3
 	RSurfaceManager::THintPair hintPair3;
-	hintPair3.iKey.iUid = 0x123324;
-	hintPair3.iValue = 500;
-	hintPair3.iMutable = ETrue;
+	hintPair3.Set(TUid::Uid(KSurfaceCharacteristics), ENotPersistable, EFalse);
 	TEST(KErrNone == iSurfaceManager.AddSurfaceHint(surfaceId, hintPair3));
 	
 	RSurfaceManager::THintPair hintPairCheck3;
-	hintPairCheck3.iKey.iUid = 0x123324;
+	hintPairCheck3.iKey.iUid = KSurfaceCharacteristics;
 	CheckHintPair(surfaceId, hintPairCheck3, hintPair3);
 	CheckHintPair(surfaceId, hintPairCheck2, hintPair2);
 	CheckHintPair(surfaceId, hintPairCheck1, hintPair1);

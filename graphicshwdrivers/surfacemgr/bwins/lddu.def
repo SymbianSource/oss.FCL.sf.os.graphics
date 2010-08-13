@@ -1,3 +1,0 @@
-EXPORTS
-	?CreateLogicalDevice@@YAPAVDLogicalDevice@@XZ @ 1 NONAME ; class DLogicalDevice * __cdecl CreateLogicalDevice(void)
-

@@ -1,2 +1,0 @@
-EXPORTS
-	_Z19CreateLogicalDevicev @ 1 NONAME ; CreateLogicalDevice()
