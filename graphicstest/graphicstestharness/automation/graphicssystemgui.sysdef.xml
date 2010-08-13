@@ -302,6 +302,14 @@
 						<unit bldFile="sf\os\graphics\printingservices\printerdriversupport\group" mrp="sf\os\graphics\printingservices\printerdriversupport\group\graphics_pdrstore.mrp"/>
 					</component>
 				</collection>
+                                <collection name="Graphics Platform Interfaces">
+                                        <component name="Guest Video Driver API">
+                                                <unit bldFile="sf\os\graphics\graphics_plat\guestvideodriver_api\group"/>
+                                        </component>
+                                        <component name="Surface Manager API">
+                                                <unit bldFile="sf\os\graphics\graphics_plat\surfacemanager_api\group"/>
+                                        </component>
+                                </collection>
 				<collection name="Windowing">
 					<component name="Window Server">
 						<unit bldFile="sf\os\graphics\windowing\windowserver\group" mrp="sf\os\graphics\windowing\windowserver\group\graphics_wserv.mrp"/>

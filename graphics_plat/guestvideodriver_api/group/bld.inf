@@ -1,0 +1,40 @@
+// Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// Guest side Virtual Video Driver Interface for adaptation layer software use
+//
+// This interface component provides an interface for adapt layer callers
+// only so one adapt layer package can call another adapy layer package.
+// The graphics package, nor any other app, mw, or os layer package may
+// call this interface.
+
+PRJ_PLATFORMS
+ARMV5
+
+PRJ_EXPORTS
+../inc/guestvideodriver.h					OS_LAYER_PLATFORM_EXPORT_PATH(graphics/guestvideodriver.h)
+../inc/guestvideodrivercommon.h				OS_LAYER_PLATFORM_EXPORT_PATH(graphics/guestvideodrivercommon.h)
+../inc/guestvideodriverinterfaceconstants.h	OS_LAYER_PLATFORM_EXPORT_PATH(graphics/guestvideodriverinterfaceconstants.h)
+../inc/guestvideodriverprotocol.h			OS_LAYER_PLATFORM_EXPORT_PATH(graphics/guestvideodriverprotocol.h)
+
+../ldd/inc/devicereqhandler.h				OS_LAYER_PLATFORM_EXPORT_PATH(graphics/devicereqhandler.h)
+../ldd/inc/reqhandlerextension.h			OS_LAYER_PLATFORM_EXPORT_PATH(graphics/reqhandlerextension.h)
+../ldd/inc/virtualvideohwchannel.h			OS_LAYER_PLATFORM_EXPORT_PATH(graphics/virtualvideohwchannel.h)
+../ldd/inc/virtualvideohwdevice.h			OS_LAYER_PLATFORM_EXPORT_PATH(graphics/virtualvideohwdevice.h)
+../ldd/inc/virtualvideohwdeviceinterface.h	OS_LAYER_PLATFORM_EXPORT_PATH(graphics/virtualvideohwdeviceinterface.h)
+../ldd/inc/virtualvideohwinterface.h		OS_LAYER_PLATFORM_EXPORT_PATH(graphics/virtualvideohwinterface.h)
+../ldd/inc/virtualvideotracing.h			OS_LAYER_PLATFORM_EXPORT_PATH(graphics/virtualvideotracing.h)
+
+PRJ_MMPFILES
+guestvideodriverlib.mmp
+guestvideohwlib.mmp
