@@ -18,7 +18,6 @@
 #define VIRTUALVIDEOHWINTERFACE_H
 
 #include <kernel/kernel.h>
-#include <internal/trace_utils.h>
 #include <graphics/guestvideodriverinterfaceconstants.h>
 
 /**
