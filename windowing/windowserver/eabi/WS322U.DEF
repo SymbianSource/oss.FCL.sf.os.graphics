@@ -659,5 +659,5 @@ EXPORTS
 	_ZN10RWsSession16UnregisterEffectEiij @ 658 NONAME
 	_ZN10RWsSession20UnregisterAllEffectsEv @ 659 NONAME
 	_ZN11RWindowBase15OverrideEffectsEiRK4TBufILi256EES3_S3_10TBitFlagsTImE @ 660 NONAME
-
+	_ZN10RWsSession22IndicateAppOrientationE18TRenderOrientation @ 661 NONAME
 

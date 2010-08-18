@@ -22,7 +22,7 @@
 */
 
 #include "TGRAPHICSDRAWER.H"
-#include "Graphics/WSGRAPHICMSGBUF.H"
+#include "graphics/WSGRAPHICMSGBUF.H"
 
 CTGraphicsDrawer::CTGraphicsDrawer(CTestStep* aStep):
 	CTGraphicsBase(aStep)

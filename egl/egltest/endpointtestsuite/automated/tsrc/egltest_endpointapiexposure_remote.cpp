@@ -72,7 +72,7 @@ TRemoteTestVerdict CEglTest_RemoteTestStep_EndpointApiExposure::RemoteApiExposur
         REMOTE_INFO_PRINTF1(_L("Rest of test is being skipped due to failure."));
         return ERtvFail;
         }
-
+    eglReleaseThread(); // otherwise we leak handles
     return ERtvPass;
     }
 

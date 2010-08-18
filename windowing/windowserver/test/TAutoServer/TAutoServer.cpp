@@ -72,6 +72,7 @@
 #include "TMULSCREENS.h"
 #include "TBUFFERSECURITY.H"
 #include "TFLICKERFREE.H"
+#include "tdevicerotation.h"
 #ifdef TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA
 #include "TFADINGBITMAP.H"
 #endif
@@ -85,6 +86,7 @@
 #include "tmultiptrevent.h"
 #include "tdrawresource.h"
 #include "twindowsizecache.h"
+
 
 /* Path to the script
 z:\GraphicsTest\gditest.script
@@ -309,6 +311,8 @@ CTestStep* CTAutoServer::CreateTestStep(const TDesC& aStepName)
   		testStep = new CTBufferSecurityStep();
    	else if(aStepName == KTFlickerFreeStep)
   		testStep = new CTFlickerFreeStep();
+    else if(aStepName == KTDeviceRotationStep)
+     testStep = new CTDeviceRotationStep();
 #ifdef TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA
 	else if(aStepName == KTFadingBitmapStep)
   		testStep = new CTFadingBitmapStep();

@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -24,9 +24,6 @@
 _LIT(KWsProtectedKey, "PROTECTEDKEY");
 _LIT(KWsProtectedWindowName, "PROTECTEDKEYWINDOWNAME");
 
-TPriQue<CWsCaptureKeyUpsAndDowns> CWsCaptureKeyUpsAndDowns::iCaptureKeysUpsAndDowns(_FOFF(CWsCaptureKeyUpsAndDowns,iLink));
-TPriQue<CWsCaptureLongKey> CWsCaptureLongKey::iCaptureLongKeys(_FOFF(CWsCaptureLongKey,iLink));
-
 
 /*CWsCaptureKey*/
 
@@ -35,20 +32,38 @@ CWsCaptureKey::CWsCaptureKey(CWsWindowGroup *aGroupWin) : CWsObject(aGroupWin?aG
 
 CWsCaptureKey::~CWsCaptureKey()
 	{
-	TWindowServerEvent::CancelCaptureKey((TUint32)this);
+	TWindowServerEvent::CancelCaptureKey(ECaptureTypeKey, this);
 	}
 
-void CWsCaptureKey::CmdToParams(const TWsWinCmdCaptureKey &aCaptureKey, TCaptureKey &aParams)
+/**
+Convert a window server key capture command to a capture request for the
+key routing plug-in.
+
+@param	aCaptureKey		Input capture command
+@param	aRequest		Output capture request
+*/
+void CWsCaptureKey::CmdToRequest(const TWsWinCmdCaptureKey &aCaptureKey, TKeyCaptureRequest &aRequest)
 	{
-	aParams.iModifiers.iMask=aCaptureKey.modifierMask;
-	aParams.iModifiers.iValue=aCaptureKey.modifiers;
-	aParams.iKeyCodePattern.iKeyCode=(TInt16)aCaptureKey.key;
-	aParams.iKeyCodePattern.iPattern=EMatchKey;
-	aParams.iKeyCodePattern.iFiller=STATIC_CAST(TUint8,aCaptureKey.priority);
-	aParams.iApp=(TUint32)iWindowGroup;
-	aParams.iHandle=(TUint32)this;
+	aRequest.iType = ECaptureTypeKey;
+	aRequest.iModifierMask = aCaptureKey.modifierMask;
+	aRequest.iModifiers = aCaptureKey.modifiers;
+	aRequest.iInputCode = aCaptureKey.key;
+	aRequest.iOutputCode = aCaptureKey.key;
+	aRequest.iPriority = aCaptureKey.priority;
+	aRequest.iWindowGroup = iWindowGroup;
+	aRequest.iWindowGroupId = iWindowGroup ? iWindowGroup->Identifier() : 0;
+	aRequest.iAppUid = iWsOwner ? TUid::Uid(iWsOwner->SecureId().iId) : KNullUid;
+	aRequest.iHandle = this;
 	}
 
+/**
+Check for protected key in a capture command
+
+@param	aWindowGroup	Window Group of capture request
+@param	aCaptureKey		Key capture command
+
+@leave KErrPermissionDenied		Capture key is protected
+*/
 void CheckProtectedKeyL(CWsWindowGroup* aWindowGroup,const TWsWinCmdCaptureKey &aCaptureKey)
 	{
 	//The key specified in the WSINI file with the keyword: PROTECTEDKEY can only be captured 
@@ -56,7 +71,7 @@ void CheckProtectedKeyL(CWsWindowGroup* aWindowGroup,const TWsWinCmdCaptureKey &
 	TInt protectedKey;
 	if(WsIniFile->FindVar(KWsProtectedKey,protectedKey))
 		{
-		if (aCaptureKey.key == (TUint)protectedKey)
+		if (aCaptureKey.key == static_cast<TUint>(protectedKey))
 			{
 			if (aWindowGroup->GroupName()==NULL)
 				{
@@ -73,20 +88,36 @@ void CheckProtectedKeyL(CWsWindowGroup* aWindowGroup,const TWsWinCmdCaptureKey &
 		}
 	}
 
+/**
+Construct a capture object for normal key events and make a capture request
+to the key routing plug-in.
+
+@param	aCaptureKey		Key capture command from RWindowGroup::CaptureKey(),
+						RWsSession::SetHotKey() or default hot key settings.
+*/
 void CWsCaptureKey::ConstructL(const TWsWinCmdCaptureKey &aCaptureKey)
 	{
 	CheckProtectedKeyL(iWindowGroup, aCaptureKey);
 	NewObjL();
-	TCaptureKey params;
-	CmdToParams(aCaptureKey, params);
-	TWindowServerEvent::AddCaptureKeyL(params);
+
+	TKeyCaptureRequest request;
+	CmdToRequest(aCaptureKey, request);
+	TWindowServerEvent::AddCaptureKeyL(request);
 	}
 
+/**
+Make a capture request update for normal key events to the key routing plug-in.
+
+@param	aCaptureKey		Key capture command from CWsHotKey::SetL()
+
+Note: this function is used only to disable hot key capture requests or to
+reset them to their defaults.
+*/
 void CWsCaptureKey::SetL(const TWsWinCmdCaptureKey &aCaptureKey)
 	{
-	TCaptureKey params;
-	CmdToParams(aCaptureKey, params);
-	TWindowServerEvent::SetCaptureKey((TUint32)this, params);
+	TKeyCaptureRequest request;
+	CmdToRequest(aCaptureKey, request);
+	TWindowServerEvent::UpdateCaptureKeyL(request);
 	}
 
 void CWsCaptureKey::CommandL(TInt , const TAny *)
@@ -101,35 +132,37 @@ CWsCaptureKeyUpsAndDowns::CWsCaptureKeyUpsAndDowns(CWsWindowGroup *aGroupWin) : 
 
 CWsCaptureKeyUpsAndDowns::~CWsCaptureKeyUpsAndDowns()
 	{
-	iLink.Deque();
+	TWindowServerEvent::CancelCaptureKey(ECaptureTypeKeyUpDown, this);
 	}
 
+/**
+Construct a capture object for up/down key events and make a capture request
+to the key routing plug-in.
+
+@param	aCaptureKey		Key capture command from
+						RWindowGroup::CaptureKeyUpAndDowns().
+*/
 void CWsCaptureKeyUpsAndDowns::ConstructL(const TWsWinCmdCaptureKey &aCaptureKey)
 	{
 	CheckProtectedKeyL(iWindowGroup, aCaptureKey);
 	NewObjL();
-	iModifierMask=aCaptureKey.modifierMask;
-	iModifierValue=aCaptureKey.modifiers;
-	iScanCode=aCaptureKey.key;
-	iLink.iPriority=aCaptureKey.priority + 1;
-	iCaptureKeysUpsAndDowns.Add(*this);
-	--iLink.iPriority;
+
+	TKeyCaptureRequest request;
+	request.iType = ECaptureTypeKeyUpDown;
+	request.iInputCode = aCaptureKey.key;
+	request.iOutputCode = aCaptureKey.key;
+	request.iModifiers = aCaptureKey.modifiers;
+	request.iModifierMask = aCaptureKey.modifierMask;
+	request.iPriority = aCaptureKey.priority;
+	request.iWindowGroup = iWindowGroup;
+	request.iWindowGroupId = iWindowGroup ? iWindowGroup->Identifier() : 0;
+	request.iAppUid = iWsOwner ? TUid::Uid(iWsOwner->SecureId().iId) : KNullUid;
+	request.iHandle = this;
+	TWindowServerEvent::AddCaptureKeyL(request);
 	}
 
 void CWsCaptureKeyUpsAndDowns::CommandL(TInt , const TAny *)
 	{
-	}
-
-CWsWindowGroup *CWsCaptureKeyUpsAndDowns::CheckForCapture(TUint aScanCode, TUint aModifiers)
-	{
-	TDblQueIter<CWsCaptureKeyUpsAndDowns> iter(iCaptureKeysUpsAndDowns);
-	CWsCaptureKeyUpsAndDowns* cap;
-	while ((cap=iter++)!=NULL)
-		{
-		if (cap->iScanCode==aScanCode && (aModifiers&cap->iModifierMask)==cap->iModifierValue)
-			return(cap->iWindowGroup);
-		}
-	return NULL;
 	}
 
 
@@ -141,35 +174,40 @@ CWsCaptureLongKey::CWsCaptureLongKey(CWsWindowGroup *aGroupWin)
 
 CWsCaptureLongKey::~CWsCaptureLongKey()
 	{
-	iLink.Deque();
+	TWindowServerEvent::CancelCaptureKey(ECaptureTypeLongKey, this);
 	}
 
+/**
+Construct a capture object for long key events and make a capture request
+to the key routing plug-in.
+
+@param	aCaptureKey		Key capture command from RWindowGroup::CaptureLongKey()
+*/
 void CWsCaptureLongKey::ConstructL(const TWsWinCmdCaptureLongKey &aCaptureKey)
 	{
 	NewObjL();
-	iData=aCaptureKey;
-	if (iData.delay.Int()<0)
+	iFlags = aCaptureKey.flags;
+	iDelay = aCaptureKey.delay;
+	if (iDelay.Int() < 0)
 		{
 		TTimeIntervalMicroSeconds32 time;
-		CKeyboardRepeat::GetRepeatTime(iData.delay,time);
+		CKeyboardRepeat::GetRepeatTime(iDelay, time);
 		}
-	iLink.iPriority=iData.priority + 1;
-	iCaptureLongKeys.Add(*this);
-	--iLink.iPriority;
+
+	TKeyCaptureRequest request;
+	request.iType = ECaptureTypeLongKey;
+	request.iInputCode = aCaptureKey.inputKey;
+	request.iOutputCode = aCaptureKey.outputKey;
+	request.iModifiers = aCaptureKey.modifiers;
+	request.iModifierMask = aCaptureKey.modifierMask;
+	request.iPriority = aCaptureKey.priority;
+	request.iWindowGroup = iWindowGroup;
+	request.iWindowGroupId = iWindowGroup ? iWindowGroup->Identifier() : 0;
+	request.iAppUid = iWsOwner ? TUid::Uid(iWsOwner->SecureId().iId) : KNullUid;
+	request.iHandle = this;
+	TWindowServerEvent::AddCaptureKeyL(request);
 	}
 
 void CWsCaptureLongKey::CommandL(TInt , const TAny *)
 	{
-	}
-
-CWsCaptureLongKey* CWsCaptureLongKey::CheckForCapture(TUint aKeyCode, TInt aModifiers)
-	{
-	TDblQueIter<CWsCaptureLongKey> iter(iCaptureLongKeys);
-	CWsCaptureLongKey* longCapture;
-	while ((longCapture=iter++)!=NULL)
-		{
-		if (aKeyCode==longCapture->iData.inputKey && (aModifiers&longCapture->iData.modifierMask)==longCapture->iData.modifiers)
-			return longCapture;
-		}
-	return NULL;
 	}

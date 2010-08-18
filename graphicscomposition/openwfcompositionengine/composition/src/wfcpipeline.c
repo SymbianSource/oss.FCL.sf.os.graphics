@@ -1,4 +1,5 @@
 /* Copyright (c) 2009-2010 The Khronos Group Inc.
+ * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -102,10 +103,6 @@ WFC_Pipeline_BlendInfo(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state)
     state->blendInfo.source.rectangle      = &state->scaledSrcRect;
     state->blendInfo.mask                  = state->originalMaskImage ? state->maskImage : NULL;
     state->blendInfo.globalAlpha           = state->globalAlpha;
-    
-    /* composition does not use these values ever */
-    state->blendInfo.tsColor                = NULL;
-    state->blendInfo.destinationFullyOpaque = OWF_FALSE;    
     
     DPRINT(("  globalAplha = %f", state->globalAlpha));
     /* no need to check with OWF_ALPHA_MIN_VALUE as it is zero */
@@ -337,7 +334,6 @@ WFC_Pipeline_BeginComposition(WFC_CONTEXT* context, WFC_ELEMENT* element)
         return NULL;
     }
 
-    
     /* setup temporary images used in composition. since the original
        source data must not be altered, we must copy it to scratch buffer
        and work it there. another scratch buffer is needed for scaling
@@ -352,7 +348,22 @@ WFC_Pipeline_BeginComposition(WFC_CONTEXT* context, WFC_ELEMENT* element)
     state->globalAlpha = element->globalAlpha;
     state->sourceScaleFilter = element->sourceScaleFilter;
     state->transparencyTypes = element->transparencyTypes;
-    /* replicate the source viewport rectangle and target extent rectangle */
+
+    if (state->transparencyTypes & WFC_TRANSPARENCY_ELEMENT_GLOBAL_ALPHA)
+        {
+        if (state->globalAlpha == OWF_FULLY_TRANSPARENT)
+            {
+            /* Fully transparent element - no contribution. */
+            return NULL;
+            }
+        if (state->globalAlpha == OWF_FULLY_OPAQUE)
+            {
+            /* Fully opaque global alpha - global alpha can be ignored */
+            state->transparencyTypes &= ~WFC_TRANSPARENCY_ELEMENT_GLOBAL_ALPHA;
+            }
+        }
+    
+/* replicate the source viewport rectangle and target extent rectangle */
     for (x = 0; x < 4; x++)
     {
         state->sourceRect[x] = element->srcRect[x];

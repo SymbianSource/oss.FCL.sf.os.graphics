@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1998-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,8 +20,9 @@
 #include <gdi.h>
 #include <fntstore.h>
 #include <bitmap.h>
+#include <sgresource/sgimage.h>
 
-
+class RFbsSession;
 
 /**
 @internalComponent
@@ -43,35 +44,43 @@ const TUid KUidCFbsBitmapCreation={0x0009A2C};
 */
 enum TFbsPanic
 	{
-	EFbsPanicNoConnection=1,
-	EFbsPanicBadConnection,
-	EFbsPanicUnknownMessage,
-	EFbsPanicActiveSchedulerError,
-	EFbsPanicStartupFailed,
-	EFbsTypefaceStoreError,
-	EFbsFontCreateFailed,
-	EFbsFontAddressViolation,
-	EFbsBitmapInvalidFormat,
-	EFbsBitmapInvalidMode,
-	EFbsBitmapInvalidCompression,
-	EFbsBitmapDecompressionError,
-	EFbsPanicChunkError,
-	EFbsColor256UtilError,
-	EFbsHardwareBitmapError,
-	EFbsNotSupportedForCompression,
-	EFbsBitmapAlignment,
-	EFbsBitmapInvalidScanLinePtr,
-	EFbsBitmapInvalidMode2,
-	EFbsBitmapInvalidMode3,
-	EFbsBitmapSwappingImpossible,
-	EFbsPanicBadHeapLock,
-	EFbsShaperNotYetCalled,
-	EFbsShaperInvalidArguments,
-	EFbsInvalidCompressionThreshold,
-	EFbsTypefaceIndexOutOfRange,
-	EFbsPanicBitmapDataCopy,
-	EFbsPanicBitmapReadOnly,
-	EFbsPanicInvalidBitmapType
+	EFbsPanicNoConnection = 1,
+	EFbsPanicBadConnection = 2,
+	EFbsPanicUnknownMessage = 3,
+	EFbsPanicActiveSchedulerError = 4,
+	EFbsPanicStartupFailed = 5,
+	EFbsTypefaceStoreError = 6,
+	EFbsFontCreateFailed = 7,
+	EFbsFontAddressViolation = 8,
+	EFbsBitmapInvalidFormat = 9,
+	EFbsBitmapInvalidMode = 10,
+	EFbsBitmapInvalidCompression = 11,
+	EFbsBitmapDecompressionError = 12,
+	EFbsPanicChunkError = 13,
+	EFbsColor256UtilError = 14,
+	EFbsHardwareBitmapError = 15,
+	EFbsNotSupportedForCompression = 16,
+	EFbsBitmapAlignment = 17,
+	EFbsBitmapInvalidScanLinePtr = 18,
+	EFbsBitmapInvalidMode2 = 19,
+	EFbsBitmapInvalidMode3 = 20,
+	EFbsBitmapSwappingImpossible = 21,
+	EFbsPanicBadHeapLock = 22,
+	EFbsShaperNotYetCalled = 23,
+	EFbsShaperInvalidArguments = 24,
+	EFbsInvalidCompressionThreshold = 25,
+	EFbsTypefaceIndexOutOfRange = 26,
+	EFbsPanicBitmapDataCopy = 27,
+	EFbsPanicBitmapReadOnly = 28,
+	EFbsPanicFontNullHandle = 29,
+    EFbsPanicGlyphDataIteratorClosed = 31,
+	EFbsPanicGlyphMetricsArrayOutOfBounds = 32,
+	EFbsPanicGlyphDataIteratorIndexOutOfRange = 33,
+	EFbsPanicInvalidBitmapType = 35,
+	EFbsPanicGlyphAtlasInconsistentState = 36,
+	EFbsPanicGlyphDataIteratorFailedToOpenImage = 37,
+	EFbsPanicGlyphDataIteratorInvalidState = 39,
+	EFbsPanicGlyphMetricsArrayInvalidState = 40,
 	};
 
 class TScanLine
@@ -125,9 +134,9 @@ class TSizeInfo
 @internalComponent
 */
 	{
-	public:
-		TSizeInfo(){}
-		TSizeInfo(TInt aMaxHeight,TSize aDevSize):iMaxHeight(aMaxHeight),iDevSize(aDevSize) {}
+public:
+	TSizeInfo(){}
+	TSizeInfo(TInt aMaxHeight,TSize aDevSize):iMaxHeight(aMaxHeight),iDevSize(aDevSize) {}
 
 	TInt iMaxHeight;
 	TSize iDevSize;
@@ -182,7 +191,8 @@ private:
 	void ShrinkSmallSection(TInt aShrinkBy);
 private:
 	RChunk iChunk;
-	TInt iPageSize, iPageMask;
+	TInt iPageSize;
+	TInt iPageMask;
 	RPointerArray<TUint8> iSmallCells; // last address is not a cell but the top of the small section
 	RArray<TInt> iFreeSmallCellLinks; // index of Nth free small cell is element 0 + element 1 + ... + element N-1
 	TInt iLargeSectionBottom; // boundary between small & large sections
@@ -264,6 +274,74 @@ public:
     TInt iLen;
     };
 
+/**
+Maximum number of glyphs to be sent to server/received from client at a time, 
+when retrieval of glyphs is necessary for implementation of RFbsGlyphDataIterator.
+*/
+const TInt KMaxGlyphBatchSize = 8;
+
+/**
+Maximum number of TOpenFontCharMetrics structures to be sent to server/received
+from client at a time, when retrieval of glyph metrics is necessary for
+implementation of RFbsGlyphMetricsArray.
+*/
+const TInt KMaxMetricsBatchSize = 16;
+
+/**
+Used by RFbsGlyphDataIterator for client/server communication of glyph info.
+Contains all the data necessary to retrieve a glyph from server and recreate
+glyph in client process.
+@internalComponent 
+ */
+class TGlyphImageInfo
+    {
+public:
+    inline TGlyphImageInfo() : iImageId(KSgNullDrawableId), iPosX(0), iPosY(0) {}
+public:
+    TSgDrawableId iImageId;
+    TInt16 iPosX;
+    TInt16 iPosY;
+    TOpenFontCharMetrics iMetrics;
+    };
+
+/**
+Used by CGlyphDataIteratorImpl. It is a container to group the 
+metadata and the image data of an individual glyph recevied from the
+server, all together. A collection of these is stored in the font,
+received from the server in batches.
+@internalComponent 
+*/
+struct TGlyphBatchItem
+    {
+    TSglQueLink iLink;
+    RSgImage iImage;
+    TGlyphImageInfo iInfo;
+    };
+
+/**
+Implementor class of RFbsGlyphDataIterator. This class contains all
+state information and contains much of the implementation of the
+behaviour.
+@internalComponent 
+ */
+NONSHARABLE_CLASS(CGlyphDataIteratorImpl) : public CBase
+    {
+public:
+    CGlyphDataIteratorImpl(TInt aFbsFontHandle, const TUint* aGlyphCodes, TInt aCount);
+    ~CGlyphDataIteratorImpl();
+    TInt Initialise();
+    TInt Next();
+    void UpdateGlyphRect();
+    TInt UpdateGlyphBatch(TInt aIndex);
+    
+public:    
+    TSglQue<TGlyphBatchItem> iGlyphBatch;   // Linked-list of the current batch of received glyphs.
+    const TUint* iGlyphDataIterCodes;       // An array of glyph codes
+    TInt  iGlyphDataIterCodeCount;          // The number of glyph codes in the array
+    TInt  iGlyphDataIterCodeIndex;          // The index of the current glyph code in the array
+    TRect iGlyphDataIterRect;               // The current glyph rectangle.
+    TInt  iFbsFontHandle;                   // The Font Handle the iterator was opened with  
+    RFbsSession* iFbs;
+    };
+
 #endif
-
-

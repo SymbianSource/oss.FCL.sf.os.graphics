@@ -99,6 +99,7 @@ SOURCE        tadvancedpointerevent.cpp
 SOURCE	      tmultiptrevent.cpp
 SOURCE	      tdrawresource.cpp
 SOURCE	      twindowsizecache.cpp
+SOURCE        tdevicerotation.cpp
 
 //Required to test CommamdBuffer::Play using MWsGraphicsContext in tgc
 SOURCE        directgdigcwrapper.cpp

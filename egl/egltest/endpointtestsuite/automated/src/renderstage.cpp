@@ -93,31 +93,25 @@ void CRenderStage::End(TRequestStatus* aCompositorReady)
 TInt CRenderStage::TestEnvThreadEntryPoint(TAny* /*aSelf*/)
     {
     RDebug::Printf("CRenderStage: Entering Test Environment Thread...");
-
+    
+    //Create cleanup stack.
     CTrapCleanup* cleanup = CTrapCleanup::New();
+    ASSERT(cleanup);
+    
+    //Create active scheduler.
+    CActiveScheduler* scheduler = new CActiveScheduler();
+    ASSERT(scheduler);
+    CActiveScheduler::Install(scheduler);
+    
+    //Create a CRemoteTestEnv.
+    CRemoteTestEnv* testEnv = NULL;
+    TRAPD(err, testEnv = CRemoteTestEnv::NewL());
+    __ASSERT_ALWAYS(err == KErrNone, User::Invariant());
+    testEnv->StartReceivingCmds();
 
-    TRAPD(err,
-        //Create active scheduler.
-        CActiveScheduler* scheduler = new (ELeave) CActiveScheduler();
-        CleanupStack::PushL(scheduler);
-        CActiveScheduler::Install(scheduler);
-
-        //Create a CRemoteTestEnv.
-        CRemoteTestEnv* testEnv = CRemoteTestEnv::NewL();
-        CleanupStack::PushL(testEnv);
-        testEnv->StartReceivingCmds();
-
-        //Clean up.
-        CleanupStack::PopAndDestroy(2, scheduler);
-        );
-
-    if(err != KErrNone)
-        {
-        User::Invariant();
-        }
-
+    //Clean up.
+    delete scheduler;
     delete cleanup;
-
     RDebug::Printf("CRenderStage: Leaving Test Environment Thread...");
     return KErrNone;
     }

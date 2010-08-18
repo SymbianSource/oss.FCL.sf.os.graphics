@@ -29,21 +29,18 @@
 #include "egltest_endpoint_engine_types.h"
 #include "egltest_endpoint_images.h"
 
-
-#define ENGINE_ASSERT(x) DoEngineAssert(x, #x, __FILE__, __LINE__)
+#define ENGINE_ASSERT(x) DoEngineAssert((x) != 0, #x, __FILE__, __LINE__)
 
 static inline void DoEngineAssert(TInt aX, const char *aXStr, 
         const char *aFile, TInt aLine)
     {
     if (!aX)
         {
-        RDebug::Printf("ENGINE_ASSERT(%s) failed (value %d) at %s:%d\n",
+        RDebug::Printf("EGL_ENDPOINT_TEST_ENGINE ASSERT(%s) failed (value %d) at %s:%d\n",
                 aXStr, aX, aFile, aLine);
         User::Panic(_L("ENGINE_ASSERT"), aLine);
         }
     }
-
-
 
 
 // This could be wrapped in #if/#else to allow us to generate non-unicode text content.
@@ -85,9 +82,11 @@ public:
     TVerdict             iBufferCountVerdict;
     // Get Surface parameter reply.
     TSurfaceParamsRemote iSurfaceParams;
-    // To check that we are in sync - it should match the request!
+    // To check that we are in sync - it should match the request.
     TEngineCases         iCase;
     };
+
+const TInt KMaxLoadThreads = 4;
 
 NONSHARABLE_CLASS(CEgltest_Local_Engine): public CLocalTestStepBase
     {
@@ -104,31 +103,41 @@ public:
     virtual TVerdict doTestStepL();
     virtual void DoPreambleL();
     virtual void DoPostambleL();
+    void SetTestCasesL(const TTestCases * const aTestCases, TInt aNumCases);
     
 private:
-    void RunTestCaseL(const TTestCases &aTestCase);
-    void LogDump(const TEngineTestCase &aItem);
-    void RunOneTestCaseL(const TTestCase& aTestCase, TSurfaceType aSurfType);
-    void RunSingleCaseL(const TTestCase& aTestCase, TSurfaceType aSurfType);
+    void RunTestCase(const TTestCases &aTestCase);
+    void RunOneTestCase(const TTestCase& aTestCase, TSurfaceType aSurfType);
     void SendLocalTestCase(const TRemoteTestParams &aParams);
-    TVerdict RunRemoteTestCase(TInt aTestCase, const TRemoteTestParams& aMessageIn);
-    void RunLocalTestCase(const TRemoteTestParams& aMessageIn, TExecResult& aResult);
     void RunLocalTestCase(TEngineCases aCase);
     void DoSyncToLocal();
     void GetLocalResult(TExecResult& aResult, TEngineCases aCase);
     void DoMonitorThreadEntry();
     void ForwardPanic(RThread& aThread, RThread& aOtherThread, TRequestStatus &aStatus);
     static TInt MonitorThreadEntry(TAny *aParam);
+    void RunControllerLocalAndRemoteL(const TEngineTestCase&, const TRemoteTestParams& params);
+    
+protected:
+    void RunLocalTestCase(const TRemoteTestParams& aMessageIn, TExecResult& aResult);
+    TVerdict RunRemoteTestCase(TInt aTestCase, const TRemoteTestParams& aMessageIn);
+    void RunSingleCaseL(const TTestCase& aTestCase, TSurfaceType aSurfType);
+    void CommonPreambleL();
+    CEgltest_Local_Engine();
+    // The StartThread and EndThread needs to be overridden in the 
+    // implementation to provide a good functionality. 
+    virtual void StartThreadL(TInt aThreadNumber);
+    virtual void EndThread(TInt aThreadNumber);
     
 protected:
     const TTestCases*                  iTestCases;
-    const TInt                         iNumCases;
+    TInt                               iNumCases;
     RThread                            iExecThread;
     RThread                            iMonitorThread;
     RThread                            iControllerThread;  // Controller thread
     RMsgQueue<TExecResult>             iExecResultOutQueue;
     RMsgQueue<TRemoteTestParamsPacket> iExecParamsInQueue;
     TExecState                         iExecState;
+    TBool                              iLogging;
     };
 
 
@@ -137,6 +146,13 @@ struct TRemoteTestArgs
     EGLDisplay     iDisplay;
     EGLEndpointNOK iEndpoint;
     EGLImageKHR    iImage;
+    };
+
+
+struct TAvailableMemory
+    {
+    TInt iHeapMemAvailable;
+    TInt iGpuMemAvailable;
     };
 
 // Base class that allows "script" style exectution of testcases.
@@ -166,6 +182,23 @@ private:
     void GetEndpointDirtyAreaL(const TRemoteTestParams& aParams, const TRemoteTestArgs& aArgs);
     void DoCheckRectsL(EGLint *aActualRects, EGLint aRectCount, EGLint aMaxRects,
                        TInt aRectsIndex, const TRect aSurfacRect);
+    void CheckForMemoryLeaks();
+    void CheckForMemoryLeaksFinish();
+    
+    TInt FillGpuMemory();
+    TInt CalculateAvailableGPUMemory();
+    TInt CalculateAvailableHeapMemory();
+    
+    // Thread entry points for "load" threads.
+    static TInt LoadHeapMemory(TAny *);
+    void LoadHeapMemoryL();
+    static TInt LoadGpuMemory(TAny *);
+    void LoadGpuMemoryL();
+
+    void StartThreadL(TInt aThreadNumber);
+    void EndThread(TInt aThreadNumber);
+    TThreadFunction GetThreadFunction(TInt aThreadNumber);
+
 private:
     EGLEndpointNOK iEndpoints[KMaxEndpoints];
     EGLImageKHR iEglImage[KMaxEndpoints];
@@ -174,6 +207,22 @@ private:
     TRemoteTestVerdict iTestVerdict;
     TBool iLogging;
     CEglWindowSurface *iSurface;
+    // when this flag is set, errors discovered during a test-step is logged.
+    // This is normally true, but for stress tests [etc], it can be turned
+    // off so that when a test is set up to run 1000 times, but only succeeds
+    // X times, we don't get "error, something failed", when we really didn't
+    // get an error.
+    TBool iLogErrors;
+    
+    // Tracking memory available. 
+    RArray<TAvailableMemory> iMemoryStats;
+    
+    // Variables to keep track of load-threads.
+    RThread iLoadThread[KMaxLoadThreads];
+    TBool   iStopThreadFlag[KMaxLoadThreads]; 
+    
+    RHeap* iMainThreadHeap;
+    PFNEGLQUERYPROFILINGDATANOKPROC ipfnEglQueryProfilingDataNOK;
     };
 
 
@@ -216,10 +265,31 @@ static inline const TText* EngineCaseName(TEngineCases aCase)
 	  CASE(EGetSurfaceParamsCase);
 	  CASE(EFinishedCase);
 	  CASE(ECreateVgImageCase);
+      CASE(EDestroySurfaceCase);
+      CASE(EStartLoadThreadCase);
+      CASE(EEndLoadThreadCase);
+      CASE(ECheckForMemoryLeaks);
+      CASE(ECheckForMemoryLeaksFinish);
         }
     return caseName;
     }
 
 #undef CASE
+
+
+inline void LogDump(CTestExecuteLogger &aLogger, const TEngineTestCase& aCase)
+{
+    const TText *caseName = EngineCaseName(aCase.iCase);
+    aLogger.LogExtra(((TText8*)__FILE__), __LINE__, ESevrInfo,
+                    _L("Performing subcase %d (%s), with flags=%d, err=%04x endpointidx=%d, image=%d, args=(%d, %d)"),
+                    aCase.iCase,
+                    caseName,
+                    aCase.iFlags,
+                    aCase.iErrorExpected,
+                    aCase.iEndpointIndex,
+                    aCase.iImageIndex,
+                    aCase.iArg1, aCase.iArg2);
+}
+
 
 #endif // __EGLTEST_ENDPOINT_ENGINE_H__

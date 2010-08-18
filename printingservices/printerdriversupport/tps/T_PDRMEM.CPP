@@ -14,7 +14,6 @@
 //
 
 #include "T_PDRMEM.H"
-#include "prnpath.h"
 
 _LIT( KDriveName, "z:" );
 _LIT( KEpsonFileName, "epson.pdr" );

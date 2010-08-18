@@ -155,6 +155,8 @@ public:
     virtual TRemoteTestVerdict DoRunRemoteTestCaseL(TInt aTestCase, const TRemoteTestParams& aMessageIn) = 0;
     virtual TRemoteTestVerdict DoEndRemoteTestStepL(const TRemoteTestParams& aMessageIn);
 
+    virtual TInt Timeout() const;
+    
     void Log(const TText8* aFile, TInt aLine, TInt aSeverity, TRefByValue<const TDesC> aFmt, ...);
     const TEglEndpointWrap& EglEndpoint() const;
 

@@ -65,7 +65,9 @@ behaviour is the same as documented in that class.
 EXPORT_C void CFbsBitGcFont::Reset()
 	{
 	if (!iCopy)
+		{
 		CFbsFont::Reset();
+		}
 	else
 		{
 		iAddressPointer = NULL;

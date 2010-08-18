@@ -312,7 +312,10 @@ TInt CDisplayRenderStage::ScreenNumber() const
 
 TDisplayMode CDisplayRenderStage::DisplayMode() const
 	{
-	return iRenderTarget->DisplayMode();
+	const TInt KThirtyTwoBpp = 32;
+	const TDisplayMode dm = iRenderTarget->DisplayMode();
+	const TInt bpp = TDisplayModeUtils::NumDisplayModeBitsPerPixel(dm);
+	return bpp == KThirtyTwoBpp ? CFbsDevice::DisplayMode16M() : dm;
 	}
 
 TSize CDisplayRenderStage::SizeInPixels() const

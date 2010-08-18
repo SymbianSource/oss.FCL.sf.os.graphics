@@ -16,11 +16,20 @@
 #include <fntstore.h>
 #include <bitmap.h>
 #include <openfont.h>
+#include <graphics/fbsoogmmessage.h>
 #include "FbsMessage.H"
 #include "SERVER.H"
 #include "BackGroundCompression.h"
 #include <shapeinfo.h>
 #include <graphics/shaperparams.h>
+#include "glyphatlas.h"
+
+
+/**
+Bitwise mask that sets the MSB to indicate to a font rasterizer
+that a code is a glyphcode and not a character code
+*/
+const TUint32 KTreatAsGlyphCodeFlag = 1UL << 31;
 
 /** Helper function for converting a pointer to an offset from the passed
 heap base. Use OffsetToPointer() to convert the returned offset back to a
@@ -33,11 +42,12 @@ back to a pointer using the function OffsetToPointer().
  */
 LOCAL_C TInt PointerToOffset(const TAny* aAny, TInt aHeapBase)
 	{
+	TInt offset = 0;
 	if (aAny && aHeapBase)
 		{
-		return reinterpret_cast<TInt>(aAny) - aHeapBase;
+		offset = reinterpret_cast<TInt>(aAny) - aHeapBase;
 		}
-	return 0;
+	return offset;
 	}
 
 /** Helper function for converting an offset (that was calculated using
@@ -58,9 +68,6 @@ LOCAL_C TAny* OffsetToPointer(TInt aOffset, TInt aHeapBase)
 
 CFbClient::CFbClient(RHeap* aHeap):
 	CSession2(),
-	iConnectionHandle(0),
-	iIx(NULL),
-	iResourceCount(0),
 	iHeap(aHeap)
 #ifdef _DEBUG
 	,iOwnHeapFailNumber(-1),
@@ -71,14 +78,24 @@ CFbClient::CFbClient(RHeap* aHeap):
 
 CFbClient* CFbClient::NewL(RHeap* aHeap)
 	{
-	CFbClient* c = new(ELeave) CFbClient(aHeap);
-	c->iOpenFontGlyphData = TOpenFontGlyphData::New(aHeap,4 * 1024);
-	if (!c->iOpenFontGlyphData)
+	CFbClient* self = new (ELeave) CFbClient(aHeap);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+/**
+Two-phase constructor.
+@leave KErrNoMemory if TOpenFontGlyphData construction failed.
+*/
+void CFbClient::ConstructL()
+	{
+	iOpenFontGlyphData = TOpenFontGlyphData::New(iHeap, 4 * 1024);
+	if (!iOpenFontGlyphData)
 		{
-		delete c;
 		User::Leave(KErrNoMemory);
 		}
-	return c;
 	}
 
 CFbClient::~CFbClient()
@@ -103,24 +120,32 @@ CFbClient::~CFbClient()
 		iHeap->Free(iOpenFontGlyphData);
 		}
 	
-	// delete fonts hold by the client
+	// delete fonts held by the client
 	delete iIx;
 	
-	// delete font files hold by the client
+	// delete font files held by the client
 	if (iFontFileIndex)
 		{
 		TInt count = iFontFileIndex->Count();
 		for (TInt index = 0;index < count; index++)
 			{
 			if (font_store)
+				{
 				font_store->RemoveFile(iFontFileIndex->At(0).iUid);
+				}
 			iFontFileIndex->Delete(0);
 			}
 		delete iFontFileIndex;
 		}
 
-	// Close the buffer used to hold the text thats needs shaping.
+	// Close the buffer used to hold the text that needs shaping.
 	iTextToShape.Close();
+
+	for (TInt i = iGlyphImagesInTransit.Count() - 1; i >= 0; --i)
+		{
+		iGlyphImagesInTransit[i].Close();
+		}
+	iGlyphImagesInTransit.Close();
 	}
 
 void CFbClient::Init(TUint aConnectionHandle)
@@ -143,9 +168,13 @@ CFbTop* CFbClient::TopLevelStore()
 	{
 	CFontBitmapServer* server = FontBitmapServer();
 	if (server)
+		{
 		return server->TopLevelStore();
+		}
 	else
+		{
 		return NULL;
+		}
 	}
 
 void CFbClient::CopyFontInfo(CFontObject* aFontObjPtr,TInt aHandle,TFontInfo& aFontInfo)
@@ -158,6 +187,7 @@ void CFbClient::CopyFontInfo(CFontObject* aFontObjPtr,TInt aHandle,TFontInfo& aF
 
 void CFbClient::ServiceL(const RMessage2& aMessage)
 	{
+
 #ifdef _DEBUG
 	TBool resetOwnHeap=EFalse;
 	TBool resetSharedHeap=EFalse;
@@ -189,6 +219,14 @@ void CFbClient::ServiceL(const RMessage2& aMessage)
 		__RHEAP_MARK(iHeap);
 		}		
 #endif		
+	//Call close on RSgImage handles being used to share glyph data with clients.
+	//The glyph images are held open to prevent the GlyphAtlas from closing them
+	//before a client can use them.
+	for (TInt i = iGlyphImagesInTransit.Count() - 1; i >= 0; --i)
+		{
+		iGlyphImagesInTransit[i].Close();
+		iGlyphImagesInTransit.Remove(i);
+		}
 	
 	switch(aMessage.Function())
 		{
@@ -246,6 +284,7 @@ void CFbClient::ServiceL(const RMessage2& aMessage)
 	case EFbsMessFetchLinkedTypeface:
 	case EFbsMessRegisterLinkedTypeface:
 	case EFbsMessUpdateLinkedTypeface:
+
 #ifdef _DEBUG
 		FontBitmapServer()->ProcMessage(aMessage,iSessionHandle,iRet);
 #else
@@ -277,6 +316,8 @@ void CFbClient::ServiceL(const RMessage2& aMessage)
 #if (_DEBUG)
 	case EFbsMessSetDuplicateFail:
 #endif
+	case EFbsMessGetGlyphs:
+	case EFbsMessGetGlyphMetrics:
 		ProcFontMessage(aMessage);
 		break;
 // bitmap messages
@@ -304,6 +345,31 @@ void CFbClient::ServiceL(const RMessage2& aMessage)
 #else
 		aMessage.Complete(KErrNone);
 #endif	
+		break;
+// Glyph Atlas messages (debug-only)
+	case EFbsMessAtlasFontCount:
+	case EFbsMessAtlasGlyphCount:
+#ifdef _DEBUG
+		ProcAtlasMessage(aMessage);
+#else
+		aMessage.Complete(KErrNotSupported);
+#endif
+		break;
+    case EFbsMessOogmNotification:
+
+        aMessage.Complete( HandleMesgOogmStatus( aMessage ) );
+        break;
+    case EFbsMessGetGlyphCacheMetrics:
+
+        HandleMesgGlyphCacheMetrics( aMessage );
+        break;
+
+//No-op message
+	case EFbsMessNoOp:
+#ifdef _DEBUG
+		iRet = KErrNone;
+#endif
+		aMessage.Complete(KErrNone);
 		break;
 	default:
 		aMessage.Panic(KFBSERVPanicCategory,KErrArgument);
@@ -372,7 +438,9 @@ TInt CFbClient::HandleMesgFontDuplicate(const RMessage2& aMessage, TBool& aPanic
 	{
 #if _DEBUG
 	if (iFontDuplicateToFail)
+		{
 		return KErrNoMemory; //return with this error since this error is possible
+		}
 #endif
 	CFontObject* fontptr = (CFontObject*) aMessage.Int0();
 	if(!TopLevelStore()->ValidFontHandle((TInt)fontptr))
@@ -380,7 +448,7 @@ TInt CFbClient::HandleMesgFontDuplicate(const RMessage2& aMessage, TBool& aPanic
 		return KErrUnknown;
 		}
 
-	TPckgBuf<TFontInfo> foninfo;
+	TPckgBuf<TFontInfo> fontinfo;
 	TInt localhandle = 0;
 	TInt ret = fontptr->Open();
 	if (ret != KErrNone)
@@ -393,9 +461,9 @@ TInt CFbClient::HandleMesgFontDuplicate(const RMessage2& aMessage, TBool& aPanic
 		fontptr->Close();
 		return ret;
 		}
-	CopyFontInfo(fontptr,localhandle,foninfo());
+	CopyFontInfo(fontptr,localhandle,fontinfo());
 	fontptr->iHeightInTwips = ((fontptr->iAddressPointer->HeightInPixels() * fontptr->iFontStore->iKPixelHeightInTwips) + 667) / 1000;
-	ret = aMessage.Write(1, foninfo);
+	ret = aMessage.Write(1, fontinfo);
 	if(ret != KErrNone)
 		{
 		iIx->Remove(localhandle);
@@ -422,14 +490,14 @@ TInt CFbClient::HandleMesgGetNearestFont(const RMessage2& aMessage, TBool& aPani
 	TInt pckgMaxHeight;
 	TPckgBuf<TSizeInfo> info;
 
-	const TFbsMessage	fbsMessage = static_cast<TFbsMessage>(aMessage.Function());
+	const TFbsMessage fbsMessage = static_cast<TFbsMessage>(aMessage.Function());
 
 	TInt ret = aMessage.Read(0, pckgFontSpec);
 	TFontSpec& fontSpec = pckgFontSpec();
 	if (ret == KErrNone )
 		{
 		TInt length = fontSpec.iTypeface.iName.Length();
-		if(length < 0 || length > TOpenFontFaceAttribBase::ENameLength)
+		if((length < 0) || (length > TOpenFontFaceAttribBase::ENameLength))
 			{
 			aPanicRequired = ETrue;
 			return KErrArgument;
@@ -644,6 +712,183 @@ TInt CFbClient::HandleMesgRasterize(const RMessage2& aMessage, TBool& aPanicRequ
 	return EFalse;
 	}
 
+/** Handler for EFbsMessGetGlyphs message.
+Reads a batch of up to KMaxGlyphBatchSize glyph codes, and on success returns
+the corresponding TGlyphImageInfo objects.
+ @param aMessage input parameters
+ @param aPanicRequired flag that is set if a client panic is required
+ @return KErrNone if successful, otherwise any system-wide error code.
+ */
+TInt CFbClient::HandleMesgGetGlyphs(const RMessage2& aMessage, TBool& aPanicRequired)
+	{
+	CFbTop* fbtop = TopLevelStore();
+	// Previously requested glyphs were closed in ServiceL()
+	CGlyphAtlas* glyphAtlas = fbtop->GlyphAtlas();
+	if (!glyphAtlas)
+		{
+		return KErrNotSupported;
+		}
+	CFontObject* fontptr = static_cast<CFontObject*>(iIx->At(aMessage.Int0(), fbtop->FontConUniqueID()));
+	if(!fontptr)
+		{
+		aPanicRequired = ETrue;
+		return KErrBadHandle;
+		}
+
+	TUint glyphCodes[KMaxGlyphBatchSize];
+	TGlyphImageInfo glyphImageInfo[KMaxGlyphBatchSize];
+	TPckg<TUint[KMaxGlyphBatchSize]> glyphBatchPckg(glyphCodes);
+
+	TInt err = aMessage.Read(1, glyphBatchPckg);
+	if (err != KErrNone)
+		{
+		aPanicRequired = ETrue;
+		return err;
+		}
+	TInt glyphCodesCount = glyphBatchPckg.Length() / sizeof(TUint);
+	if (glyphCodesCount > KMaxGlyphBatchSize)
+		{
+		aPanicRequired = ETrue;
+		return KErrOverflow;
+		}
+
+	TInt glyphsProcessed = 0;
+	CBitmapFont* font = fontptr->iAddressPointer;
+	for (; (glyphsProcessed < glyphCodesCount); ++glyphsProcessed)
+		{
+		TUint32 glyphCode = glyphCodes[glyphsProcessed];
+		err = glyphAtlas->GetGlyph(*font, glyphCode, glyphImageInfo[glyphsProcessed]);
+		// Search for glyph in glyph atlas
+		if (KErrNone != err)
+			{
+			const TUint8* bitmapData = NULL;
+			TOpenFontCharMetrics metrics;
+			// search for glyph in font glyph cache and session cache.
+			if (!font->GetCharacterData(iSessionHandle, glyphCode | KTreatAsGlyphCodeFlag, metrics, bitmapData))
+				{
+				// Rasterize the glyph
+				if(!font->Rasterize(iSessionHandle, glyphCode | KTreatAsGlyphCodeFlag, iOpenFontGlyphData))
+					{
+					err = KErrNoMemory;
+					break;
+					}
+				metrics = *(iOpenFontGlyphData->Metrics());
+				bitmapData = iOpenFontGlyphData->BitmapPointer();
+				}
+			CGlyphAtlas::TAddGlyphArgs args(bitmapData, glyphCode, metrics);
+			err = glyphAtlas->AddGlyph(*font, args, glyphImageInfo[glyphsProcessed]);
+			}
+		if ((err == KErrNone) && (glyphImageInfo[glyphsProcessed].iImageId != KSgNullDrawableId))
+			{
+			// To prevent other threads closing the glyph image in the glyph atlas 
+			// before client has had chance to open the drawable id, open a local
+			// handle to the glyph image for the session, which will be closed either
+			// next time a request is made or when EFbsMessCloseGlyphs is handled.
+			RSgImage glyphImage;
+			err = glyphImage.Open(glyphImageInfo[glyphsProcessed].iImageId);
+			if (err == KErrNone)
+				{
+				err = iGlyphImagesInTransit.Append(glyphImage);
+				}
+			}
+		// If an error occurred during this iteration, abort now before the glyphsProcessed
+		// counter is incremented, which would give one too many processed glyphs.
+		if (KErrNone != err)
+			{
+			break;
+			}
+		}
+
+	// Even if there was an error, if at least one glyph was processed successfully
+	// send that back to the client, and reset the error code.
+	if (glyphsProcessed > 0)
+		{
+		TPckg<TGlyphImageInfo[KMaxGlyphBatchSize]> glyphImageInfoPckg(glyphImageInfo);
+		glyphImageInfoPckg.SetLength(glyphsProcessed * sizeof(TGlyphImageInfo));
+		err = aMessage.Write(2, glyphImageInfoPckg);
+		if (err != KErrNone)
+			{
+			aPanicRequired = ETrue;
+			return err;
+			}
+		}
+	else
+		{
+		// No glyphs being returned, so an error code must be returned.
+		__ASSERT_DEBUG(err != KErrNone, User::Panic(KFBSERVPanicCategory, err));
+		}
+	return err;
+	}
+
+/**
+Handler for EFbsMessGetGlyphMetrics message.
+Reads an array of glyph codes, and returns the offset from the heap base for the 
+corresponding metrics object.
+@pre The glyph codes have already been searched client-side in the font glyph
+	cache and the session cache.
+@param aMessage input parameters
+@param aPanicRequired flag that is set if a client panic is required
+@return KErrNone if successful, otherwise any system-wide error code.
+ */
+TInt CFbClient::HandleMesgGetGlyphMetrics(const RMessage2& aMessage, TBool& aPanicRequired)
+	{
+	CFbTop* fbtop = TopLevelStore();
+	CFontObject* fontptr = static_cast<CFontObject*>(iIx->At(aMessage.Int0(), fbtop->FontConUniqueID()));
+	if(!fontptr)
+		{
+		aPanicRequired = ETrue;
+		return KErrBadHandle;
+		}
+	
+	TInt err = KErrNone;
+	TUint glyphCodes[KMaxMetricsBatchSize];
+	TPckg<TUint[KMaxMetricsBatchSize]> glyphBatchPckg(glyphCodes);
+	err = aMessage.Read(1, glyphBatchPckg);
+	if (err != KErrNone)
+		{
+		aPanicRequired = ETrue;
+		return err;
+		}
+	
+	TInt numGlyphCodes = glyphBatchPckg.Length() / sizeof(TUint);	
+	if (numGlyphCodes > KMaxMetricsBatchSize)
+		{
+		aPanicRequired = ETrue;
+		return KErrOverflow;
+		}
+	
+	CBitmapFont* font = fontptr->iAddressPointer;
+	const TInt heapbase = fbtop->HeapBase();
+
+	TInt glyphProcessed;
+	TInt glyphMetricsOffsets[KMaxMetricsBatchSize];
+	for (glyphProcessed = 0; (glyphProcessed < numGlyphCodes) && (err == KErrNone); ++glyphProcessed)
+		{
+		if (font->Rasterize(iSessionHandle, glyphCodes[glyphProcessed] | KTreatAsGlyphCodeFlag, iOpenFontGlyphData))
+			{
+			// Convert all pointers to be passed back to the client to offsets from
+			// the heap base so that they can be recreated client side relative to the
+			// client's heap base
+			glyphMetricsOffsets[glyphProcessed] = PointerToOffset(iOpenFontGlyphData->Metrics(), heapbase);
+			}
+		else
+			{
+			err = KErrNoMemory;
+			}
+		}
+
+	if (err == KErrNone)
+		{
+		TPckg<TInt[KMaxMetricsBatchSize]> glyphMetricsOffsetsPckg(glyphMetricsOffsets);
+		glyphMetricsOffsetsPckg.SetLength(glyphProcessed * sizeof(TInt));
+		err = aMessage.Write(2, glyphMetricsOffsetsPckg);
+		if (err != KErrNone)
+			{
+			aPanicRequired = ETrue;
+			}
+		}	
+	return err;
+	}
 
 /** Handler for EFbsMessFaceAttrib message
  @param aMessage Input and output parameters
@@ -661,21 +906,21 @@ TInt CFbClient::HandleMesgFaceAttrib(const RMessage2& aMessage, TBool& aPanicReq
 		}
 	CBitmapFont* bitmapFont = fontptr->iAddressPointer;
 
+	TInt ret = EFalse;
 	TPckgBuf<TOpenFontFaceAttrib> package;
 	if ( (bitmapFont != NULL) && (bitmapFont->GetFaceAttrib(package())) )
 		{
-		TInt ret = aMessage.Write(1,package);
+		ret = aMessage.Write(1,package);
 		if (ret == KErrNone)
 			{
-			return ETrue;
+			ret = ETrue;
 			}
 		else
 			{
 			aPanicRequired = ETrue;
-			return ret;
 			}
 		}
-	return EFalse;
+	return ret;
 	}
 
 
@@ -717,7 +962,6 @@ TInt CFbClient::HandleMesgShapeText(const RMessage2& aMessage, TBool& aPanicRequ
 	{
 	TInt error = KErrNone;
 	TShapeHeader* shape = 0;
-	TPckgBuf<TShapeMessageParameters> sp;
 	if (aMessage.GetDesLength(2) != sizeof(TShapeMessageParameters))
 		{
 		aPanicRequired = ETrue;
@@ -731,7 +975,6 @@ TInt CFbClient::HandleMesgShapeText(const RMessage2& aMessage, TBool& aPanicRequ
 		aPanicRequired = ETrue;
 		return KErrArgument;
 		}
-	CBitmapFont* bitmapFont = fontptr->iAddressPointer;
 
 	TInt inputTextLength = aMessage.GetDesLength(1);
 	if (inputTextLength < 0)
@@ -744,7 +987,9 @@ TInt CFbClient::HandleMesgShapeText(const RMessage2& aMessage, TBool& aPanicRequ
 		{
 		iTextToShape.Zero();
 		if (iTextToShape.MaxLength() < inputTextLength)
+			{
 			error = iTextToShape.ReAlloc(inputTextLength);
+			}
 		}
 	if (error == KErrNone)
 		{
@@ -754,12 +999,14 @@ TInt CFbClient::HandleMesgShapeText(const RMessage2& aMessage, TBool& aPanicRequ
 			aPanicRequired = ETrue;
 			return error;
 			}
+		TPckgBuf<TShapeMessageParameters> sp;
 		error = aMessage.Read(2, sp);
 		if (error != KErrNone)
 			{
 			aPanicRequired = ETrue;
 			return error;
 			}
+		CBitmapFont* bitmapFont = fontptr->iAddressPointer;
 		TRAP(error, shape = bitmapFont->ShapeTextL(iTextToShape, iSessionHandle, sp()) );
 		if (error == KErrNone)
 			{
@@ -953,9 +1200,70 @@ TInt CFbClient::HandleMesgGetFontTable(const RMessage2& aMessage, TBool& aPanicR
 	return ret;
 	}
 
+
+/**
+ Called in response to the GoomMonitor framework's call into FbsOogmPlugin.
+ We wish to either free some GPU memory, or reinstate its normal usage.
+
+@param  aMessage The IPC message.
+@return KErrNone If the value contained in the TFbsOogmMessage enumeration member is meaningful and the glyph atlas is present.
+        KErrNotSupported if there is no glyph atlas.
+        KErrUnknown if the value contained in the TFbsOogmMessage enumeration member is not meaningful.
+ */
+TInt CFbClient::HandleMesgOogmStatus( const RMessage2& aMessage )
+    {
+    TInt ret = KErrNone;
+    CGlyphAtlas* glyphAtlas = TopLevelStore()->GlyphAtlas();
+
+    if ( NULL == glyphAtlas )
+        {
+        return KErrNotSupported;
+        }
+
+
+    TPckgBuf<TFbsOogmMessage> oogmMessage;
+    aMessage.Read( 0, oogmMessage );
+
+    switch( oogmMessage().iOogmNotification )
+        {
+    case TFbsOogmMessage::EFbsOogmNoAction:
+        break;
+
+    case TFbsOogmMessage::EFbsOogmLowNotification:
+        {
+        glyphAtlas->ReleaseGpuMemory( oogmMessage().iBytesToFree, oogmMessage().iFlags );
+        }
+         break;
+
+    case TFbsOogmMessage::EFbsOogmOkayNotification:
+        {
+        glyphAtlas->InstateGpuMemory( oogmMessage().iFlags );
+        }
+        break;
+
+    default:
+        ret = KErrUnknown;
+        break;
+        }
+
+    return ret;
+    }
+
+
+void CFbClient::HandleMesgGlyphCacheMetrics( const RMessage2& aMessage )
+    {
+    CGlyphAtlas* glyphAtlas = TopLevelStore()->GlyphAtlas();
+    TPckgBuf<TGlyphCacheMetrics>  metrics;
+
+    glyphAtlas->GetGlyphCacheMetrics( metrics() );
+
+    aMessage.Complete( aMessage.Write(0, metrics) );
+    }
+
+
 void CFbClient::ProcFontMessage(const RMessage2& aMessage)
 	{
-	TInt ret = KErrUnknown;
+	TInt ret = KErrNone;
 	TBool panicRequired = EFalse;
 
 	switch(aMessage.Function())
@@ -1082,9 +1390,20 @@ void CFbClient::ProcFontMessage(const RMessage2& aMessage)
 			ret = HandleMesgReleaseFontTable(aMessage, panicRequired);
 			break;
 			}
+		case EFbsMessGetGlyphs:
+			{
+			ret = HandleMesgGetGlyphs(aMessage, panicRequired);
+			break;
+			}
+		case EFbsMessGetGlyphMetrics:
+			{
+			ret = HandleMesgGetGlyphMetrics(aMessage, panicRequired);
+			break;
+			}
 
 #ifdef _DEBUG
 		case EFbsMessSetDuplicateFail:
+			{
 			TInt argument =aMessage.Int0();
 			if (argument)
 				{
@@ -1096,7 +1415,10 @@ void CFbClient::ProcFontMessage(const RMessage2& aMessage)
 				}
 			ret=KErrNone;
 			break;
+			}
 #endif
+		default:
+			ret = KErrUnknown;
 		}
 
 	// either have a result or an error code to panic the client with
@@ -1120,7 +1442,7 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 	{
 	CBitmapObject* bmpptr=NULL;
 	TInt localhandle=0;
-	TInt ret=KErrUnknown;
+	TInt ret = KErrNone;
 	switch(aMessage.Function())
 		{
 	case EFbsMessBitmapCreate:
@@ -1283,14 +1605,18 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 			}
 		ret = fbtop->GetCleanBitmap(bmpptr);
 		if (ret != KErrNone)
+			{
 			break;
+			}
 		TSize newsize(aMessage.Int1(),aMessage.Int2());
  		const TBool compressedInRam = bmpptr->Address()->IsCompressedInRAM();  //It must be set before the resizing is done.
 		const TDisplayMode dispMode = bmpptr->Address()->DisplayMode();
 		CBitmapObject* newbmpptr = NULL;
 		TRAP(ret, newbmpptr = fbtop->CreateBitmapL(newsize, dispMode, KUidCFbsBitmapCreation, ETrue));
 		if (ret != KErrNone)
+			{
 			break;
+			}
 		ret = newbmpptr->Address()->CopyData(*bmpptr->Address());
 		if (ret != KErrNone)
 			{
@@ -1325,7 +1651,9 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 			}
 		bmpptr->SetCleanBitmap(newbmpptr);
 		if (bmpptr->AccessCount() >= 2)
+			{
 			fbtop->NotifyDirtyBitmap(*bmpptr, this);
+			}
 		iIx->Remove(localhandle);
 		TPckgBuf<TBmpHandles> handlebuffer;
 		handlebuffer().iHandle = newlocalhandle;
@@ -1353,7 +1681,9 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 		TopLevelStore()->GetCleanBitmap(bmpptr);
 		ret = bmpptr->Open();
 		if (ret != KErrNone)
+			{
 			break;
+			}
 		TPckgBuf<TBmpHandles> handlebuffer;
 		TRAP(ret,localhandle=iIx->AddL(bmpptr));
 		if(ret!=KErrNone)
@@ -1386,13 +1716,17 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 			}
 		ret = fbtop->GetCleanBitmap(bmpptr);
 		if (ret != KErrNone)
+			{
 			break;
+			}
 		const TSize size = bmpptr->Address()->SizeInPixels();
 		const TDisplayMode dispMode = bmpptr->Address()->DisplayMode();
 		CBitmapObject* newbmpptr = NULL;
 		TRAP(ret, newbmpptr = fbtop->CreateBitmapL(size, dispMode, KUidCFbsBitmapCreation, ETrue));
 		if (ret != KErrNone)
+			{
 			break;
+			}
 		ret = newbmpptr->Address()->CopyData(*bmpptr->Address());
 		if (ret != KErrNone)
 			{
@@ -1420,7 +1754,9 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 			}
 		bmpptr->SetCleanBitmap(newbmpptr);
 		if (bmpptr->AccessCount() >= 2)
+			{
 			fbtop->NotifyDirtyBitmap(*bmpptr, this);
+			}
 		iIx->Remove(localhandle);
 		TPckgBuf<TBmpHandles> handlebuffer;
 		handlebuffer().iHandle = newlocalhandle;
@@ -1451,7 +1787,9 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 		if (ret != KErrNone)
 			{
 			if (!async)
+				{
 				ret = KErrNone;
+				}
 			break;
 			}
 		ret = bmpptr->Address()->CheckBackgroundCompressData();
@@ -1459,10 +1797,14 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 			{
 			ret = fbtop->BackgroundCompression()->AddToCompressionQueue(bmpptr, scheme, async ? &aMessage : NULL);
 			if (ret == KErrNone && async)
+				{
 				return; // do not complete the client's request - that will be done by the background compression thread
+				}
 			}
 		if (KErrAlreadyExists == ret)
+			{
 			ret = KErrNone;
+			}
 		break;
 		}
 	case EFbsMessBitmapClean:
@@ -1477,10 +1819,14 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 			}
 		ret = fbtop->GetCleanBitmap(bmpptr);
 		if (ret != KErrNone)
+			{
 			break;
+			}
 		ret = bmpptr->Open();
 		if (ret != KErrNone)
+			{
 			break;
+			}
 		TInt cleanlocalhandle = 0;
 		TRAP(ret, cleanlocalhandle = iIx->AddL(bmpptr));
 		if (ret != KErrNone)
@@ -1530,17 +1876,19 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 			iHelper->iMessage = aMessage;
 			return; // do not complete the client's request yet - that will be done when a bitmap becomes dirty
 			}
-		ret = KErrNone;
 		iHelper->iDirty = EFalse;
 		}
 		break;
 	case EFbsMessBitmapCancelNotifyDirty:
 		{
 		if (iHelper != NULL && !iHelper->iMessage.IsNull())
+			{
 			iHelper->iMessage.Complete(KErrCancel);
-		ret = KErrNone;
+			}
 		}
 		break;
+	default:
+		ret = KErrUnknown;
 		}
 		
 	if(!aMessage.IsNull())
@@ -1616,7 +1964,9 @@ void CFbClient::Disconnect(const RMessage2 &aMessage)
 	if (iHelper)
 		{
 		if (!iHelper->iMessage.IsNull())
+			{
 			iHelper->iMessage.Complete(KErrDisconnected);
+			}
 		iHelper->Deque();
 		delete iHelper;
 		iHelper = NULL;
@@ -1678,7 +2028,58 @@ void CFbClient::ProcMemMessage(const RMessage2 &aMessage)
 			break;
 		case EFbsMessHeap:
 			ret=(TInt)iHeap;
-			break;			
+			break;
+		default:
+			ret = KErrUnknown;
+		}
+	aMessage.Complete(ret);
+	iRet=ret;
+	}
+
+/**
+Processes messages associated with the Glyph Atlas.
+@param aMessage The message used to perform IPC to the client.
+ */
+void CFbClient::ProcAtlasMessage(const RMessage2 &aMessage)
+	{
+	TInt ret = KErrNone;
+	CFbTop* fbtop = TopLevelStore();
+	CGlyphAtlas* glyphAtlas = fbtop->GlyphAtlas();
+	if (!glyphAtlas)
+		{
+		ret = KErrNotSupported;
+		}
+	else
+		{
+		switch(aMessage.Function())
+			{
+			case EFbsMessAtlasFontCount:
+				ret = glyphAtlas->FontCount();
+				break;
+			case EFbsMessAtlasGlyphCount:
+				{
+				TInt fontHandle = aMessage.Int0();
+				if (fontHandle != 0)
+					{
+					if (fbtop->ValidFontHandle(fontHandle))
+						{
+						CFontObject* fontptr = reinterpret_cast<CFontObject*>(fontHandle);
+						ret = glyphAtlas->GlyphCount(static_cast<CBitmapFont&>(*(fontptr->iAddressPointer)));
+						}
+					else
+						{
+						ret = KErrNotFound;
+						}
+					}
+				else
+					{
+					ret = glyphAtlas->GlyphCount();
+					}
+				}
+				break;
+			default:
+				ret = KErrUnknown;
+			}
 		}
 	aMessage.Complete(ret);
 	iRet=ret;

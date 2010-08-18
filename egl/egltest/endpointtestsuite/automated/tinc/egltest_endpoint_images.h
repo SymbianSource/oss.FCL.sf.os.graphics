@@ -85,6 +85,7 @@ protected:
 class CTestVgEglImage: public CTestVgImage
     {
 public:
+    static CTestVgEglImage *New(EGLImageKHR aEglImage);
     static CTestVgEglImage *NewL(EGLImageKHR aEglImage);
 private:
     void ConstructL(EGLImageKHR aEglImage);

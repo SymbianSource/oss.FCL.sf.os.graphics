@@ -13,7 +13,7 @@
 // Description:
 //
 
-#include "Graphics/WSGRAPHICMSGBUF.H"
+#include "graphics/WSGRAPHICMSGBUF.H"
 #include "DrawSection.h"
 #include "CommandBuffer.h"
 #include "BitmapCache.h"

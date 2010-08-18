@@ -1468,6 +1468,7 @@ TVerdict CEglTest_EGL_Image_Multi_Process_ThemeServer::doTestPartialStepL()
     	TInt stride = bitmap->DataStride();
     	address += (bitmapSize.iHeight - 1) * stride;
     	vgWritePixels(address, -stride, iSurfaceFormat, 0,0, bitmapSize.iWidth, bitmapSize.iHeight);
+   	    eglWaitClient();   // wait for writing to finish
 		delete bitmap;
 		bitmap = NULL;
 		ASSERT_TRUE(vgGetError()==VG_NO_ERROR);

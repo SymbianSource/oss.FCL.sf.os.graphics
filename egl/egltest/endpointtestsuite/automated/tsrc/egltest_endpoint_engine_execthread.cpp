@@ -115,6 +115,7 @@ TInt CEgltest_Local_Engine_Exec::ThreadEntry(TAny */* aDummy */)
     delete cleanUpStack;
     if (err != KErrNone)
         {
+        RDebug::Printf("Thread left with err=%d", err);
         User::Panic(_L("ExecThread"), __LINE__);
         }
     return err;
@@ -128,15 +129,16 @@ void CEgltest_Local_Engine_Exec::ThreadEntryL()
     TInt err = KErrNone;
     TInt ret = 0;
     do {
-        self->SetUpL();
         TRAP(err, ret = self->ThreadLoopL());
         if (err != KErrNone)
             {
             self->SetTestStepResult(EFail);
+            RDebug::Printf("%s:%d: Leaving with %d", __FILE__, __LINE__, err);
             User::Leave(err);
             }
-        self->TidyUp();
+        self->Logger().Close();
     } while(ret != KTerminated);
+    self->TidyUp();
     CleanupStack::PopAndDestroy(self);
     }
 
@@ -149,7 +151,7 @@ void CEgltest_Local_Engine_Exec::SetUpL()
     if (iDisplay == EGL_NO_DISPLAY)
         {
         err = eglGetError();
-        INFO_PRINTF2(_L("EglInitialize failed: err = %x"), err);
+        INFO_PRINTF2(_L("eglGetDisplay failed: err = %x"), err);
         User::Leave(KErrNotSupported);
         }
 
@@ -164,7 +166,6 @@ void CEgltest_Local_Engine_Exec::SetUpL()
 void CEgltest_Local_Engine_Exec::TidyUp()
     {
     // Clean up. 
-    Logger().Close();
     iSurfaceTypeDisplayed = EFalse;
     for(TInt i = 0; i < KMaxEndpoints; i++)
         {
@@ -177,22 +178,6 @@ void CEgltest_Local_Engine_Exec::TidyUp()
     eglTerminate(iDisplay);
     eglReleaseThread();
     }
-
-
-void CEgltest_Local_Engine_Exec::LogDump(const TEngineTestCase& aCase)
-    {
-    const TText *caseName = EngineCaseName(aCase.iCase);
-    Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrInfo,
-                    _L("Performing subcase %d (%s), with flags=%d, err=%04x endpointidx=%d, image=%d, args=(%d, %d)"),
-                    aCase.iCase,
-                    caseName,
-                    aCase.iFlags,
-                    aCase.iErrorExpected,
-                    aCase.iEndpointIndex,
-                    aCase.iImageIndex,
-                    aCase.iArg1, aCase.iArg2);
-    }
-
 
 void CEgltest_Local_Engine_Exec::SetTestStepResult(TVerdict aVerdict)
     {
@@ -227,49 +212,110 @@ TInt CEgltest_Local_Engine_Exec::ThreadLoopL()
         
         if (iLogging)
             {
-            LogDump(ec);
+            LogDump(Logger(), ec);
             }
 
         switch(ec.iCase)
             {
+            case EInitializeCase:
+                TidyUp();
+                SetUpL();
+                break;
+                
             case ECreateSurfaceCase:
                 {
                 ENGINE_ASSERT(endpointIndex < KMaxEndpoints);
                 ENGINE_ASSERT(!iSurfaces[endpointIndex]);
                 TSurfaceType surfType = params.iParams.iEndpointEngine.iSurfaceParams.iSurfaceType;
                 iSurfaces[endpointIndex] = CSurface::SurfaceFactoryL(surfType);
-                if (!iSurfaceTypeDisplayed)
+                TRAPD(err, iSurfaces[endpointIndex]->CreateL(index));
+                if (err == KErrNone)
                     {
-                    INFO_PRINTF2(_L("Using surfaces of type %s"), iSurfaces[endpointIndex]->GetSurfaceTypeStr());
-                    iSurfaceTypeDisplayed = ETrue;
+                    if (!iSurfaceTypeDisplayed)
+                        {
+                        INFO_PRINTF4(_L("Using surfaces of type %s (%dx%d pixels)"), 
+                                iSurfaces[endpointIndex]->GetSurfaceTypeStr(),
+                                        iSurfaces[endpointIndex]->Size().iWidth,
+                                        iSurfaces[endpointIndex]->Size().iHeight);
+                        iSurfaceTypeDisplayed = ETrue;
+                        }
                     }
-                iSurfaces[endpointIndex]->CreateL(index);
+                else
+                    {
+                    INFO_PRINTF2(_L("Could not create surface, err=%d"), err);
+                    delete iSurfaces[endpointIndex];
+                    iSurfaces[endpointIndex] = NULL;
+                    SetTestStepResult(EFail);
+                    }
+                }
+                break;
+                
+            case EDestroySurfaceCase:
+                {
+                delete iSurfaces[endpointIndex];
+                iSurfaces[endpointIndex] = NULL;
                 }
                 break;
 
             case EContentUpdateCase:
-                iSurfaces[endpointIndex]->SubmitContentL(!(ec.iFlags & ENoWait), index);
+                {
+                TInt err;
+                if (!iSurfaces[endpointIndex])
+                    {
+                    err = KErrNotSupported;
+                    }
+                else
+                    {
+                    err = iSurfaces[endpointIndex]->SubmitContent(!(ec.iFlags & ENoWait), index);
+                    }
+                
+                if (err != KErrNone)
+                    {
+                    ERR_PRINTF2(_L("ContentUpdate failed, err=%d"), err);
+                    SetTestStepResult(EFail);
+                    }
+                }
                 break;
 
             case EDrawContentCase:
-                iSurfaces[endpointIndex]->DrawContentL(index);
+                if (iSurfaces[endpointIndex])
+                    {
+                    TRAPD(err, iSurfaces[endpointIndex]->DrawContentL(index % CTestImage::KImageCount));
+                    if (err != KErrNone)
+                        {
+                        SetTestStepResult(EFail);
+                        }
+                    }
+                else
+                    {
+                    SetTestStepResult(EFail);
+                    }
                 break;
 
             case EBufferCountCase:
                 {
+                TBool pass = ETrue;
                 TSurfaceParamsRemote surfParams;
-                iSurfaces[endpointIndex]->GetSurfaceParamsL(surfParams);
-                TInt buffers = surfParams.iCommonParams.iBuffers;
+                TInt buffers = 0;
                 TInt min = ec.iArg1;
                 TInt max = ec.iArg2;
-                TBool pass = ETrue;
-                if (min && buffers < min)
+
+                if (!iSurfaces[endpointIndex])
                     {
                     pass = EFalse;
                     }
-                if (max && buffers > max)
+                else
                     {
-                    pass = EFalse;
+                    iSurfaces[endpointIndex]->GetSurfaceParamsL(surfParams);
+                    buffers = surfParams.iCommonParams.iBuffers;
+                    if (min && buffers < min)
+                        {
+                        pass = EFalse;
+                        }
+                    if (max && buffers > max)
+                        {
+                        pass = EFalse;
+                        }
                     }
                 if (!pass)
                     {
@@ -287,12 +333,19 @@ TInt CEgltest_Local_Engine_Exec::ThreadLoopL()
 
             case ENotifyWhenCase:
                 {
-                TInt err = iSurfaces[endpointIndex]->Notify((TNotification)index, iStatus[endpointIndex], ec.iArg1);
-                if (err != ec.iErrorExpected)
+                if (!iSurfaces[endpointIndex])
                     {
-                    ERR_PRINTF4(_L("Wrong error code from 'NotifyWhen' for notifiction %d - error %d, expected %d"),
-                                index, err, ec.iErrorExpected);
                     SetTestStepResult(EFail);
+                    }
+                else
+                    {
+                    TInt err = iSurfaces[endpointIndex]->Notify((TNotification)index, iStatus[endpointIndex], ec.iArg1);
+                    if (err != ec.iErrorExpected)
+                        {
+                        ERR_PRINTF4(_L("Wrong error code from 'NotifyWhen' for notifiction %d - error %d, expected %d"),
+                                    index, err, ec.iErrorExpected);
+                        SetTestStepResult(EFail);
+                        }
                     }
                 }
                 break;
@@ -307,32 +360,39 @@ TInt CEgltest_Local_Engine_Exec::ThreadLoopL()
                 TUint32 beginTimeStamp = iTimeStamp[endpointIndex];
                 TUint32 endTimeStamp = User::FastCounter();
                 ENGINE_ASSERT(endpointIndex < KMaxEndpoints);
-                TInt err = iSurfaces[endpointIndex]->WaitFor((TNotification)index,
-                        iStatus[endpointIndex], ec.iArg1, endTimeStamp);
-
-                //Now, figure out the delta in microseconds.
-                TUint32 deltaTime = endTimeStamp - beginTimeStamp;
-                deltaTime *= 1000;
-                deltaTime /= (iFastFreq / 1000);
-
-                if (err != ec.iErrorExpected)
+                if (!iSurfaces[endpointIndex])
                     {
-                    ERR_PRINTF4(_L("Wrong error code from 'WaitFor' for notifiction %d - error %d, expected %d"),
-                                index, err, ec.iErrorExpected);
-                    INFO_PRINTF5(_L("Timeout: %d, beginTimeStamp = %u, endTimeStamp = %u, deltaTime = %u"),
-                                 ec.iArg1, beginTimeStamp, endTimeStamp, deltaTime);
                     SetTestStepResult(EFail);
                     }
-                // If iArg2 is non-zero, and we waited for "displayed" and no error, check the timestamp.
-                if (index == ENotifyWhenDisplayed && err == KErrNone && ec.iArg2)
+                else
                     {
-                    if (Abs((TInt)deltaTime - ec.iArg2) > KDiffAllowed)
+                    TInt err = iSurfaces[endpointIndex]->WaitFor((TNotification)index,
+                            iStatus[endpointIndex], ec.iArg1, endTimeStamp);
+    
+                    //Now, figure out the delta in microseconds.
+                    TUint32 deltaTime = endTimeStamp - beginTimeStamp;
+                    deltaTime *= 1000;
+                    deltaTime /= (iFastFreq / 1000);
+    
+                    if (err != ec.iErrorExpected)
                         {
-                        ERR_PRINTF3(_L("TimeStamp is incorrect - expected %d microseconds, got %d microseconds"),
-                                ec.iArg2, deltaTime);
-                        INFO_PRINTF4(_L("original timestamp: %u, endpoint ts=%u, iFastFreq=%u"),
-                                endTimeStamp, iTimeStamp[endpointIndex], iFastFreq);
+                        ERR_PRINTF4(_L("Wrong error code from 'WaitFor' for notifiction %d - error %d, expected %d"),
+                                    index, err, ec.iErrorExpected);
+                        INFO_PRINTF5(_L("Timeout: %d, beginTimeStamp = %u, endTimeStamp = %u, deltaTime = %u"),
+                                     ec.iArg1, beginTimeStamp, endTimeStamp, deltaTime);
                         SetTestStepResult(EFail);
+                        }
+                    // If iArg2 is non-zero, and we waited for "displayed" and no error, check the timestamp.
+                    if (index == ENotifyWhenDisplayed && err == KErrNone && ec.iArg2)
+                        {
+                        if (Abs((TInt)deltaTime - ec.iArg2) > KDiffAllowed)
+                            {
+                            ERR_PRINTF3(_L("TimeStamp is incorrect - expected %d microseconds, got %d microseconds"),
+                                    ec.iArg2, deltaTime);
+                            INFO_PRINTF4(_L("original timestamp: %u, endpoint ts=%u, iFastFreq=%u"),
+                                    endTimeStamp, iTimeStamp[endpointIndex], iFastFreq);
+                            SetTestStepResult(EFail);
+                            }
                         }
                     }
                 }
@@ -348,17 +408,11 @@ TInt CEgltest_Local_Engine_Exec::ThreadLoopL()
                 break;
                 
             case EBreakPointCase:
-                if (ec.iFlags & EDebugLocal)
-                    {
-                    __BREAKPOINT();
-                    }
+                __BREAKPOINT();
                 break;
                 
             case ELogEnableCase:
-                if (ec.iFlags & EDebugLocal)
-                    {
-                    iLogging = ETrue;
-                    }
+                iLogging = ETrue;
                 break;
                 
             case ESyncLocalCase:
@@ -370,7 +424,10 @@ TInt CEgltest_Local_Engine_Exec::ThreadLoopL()
             case EGetSurfaceParamsCase:
                 {
                 TExecResult result(TestStepResult(), ec.iCase);
-                iSurfaces[endpointIndex]->GetSurfaceParamsL(result.iSurfaceParams);
+                if (iSurfaces[endpointIndex])
+                    {
+                    iSurfaces[endpointIndex]->GetSurfaceParamsL(result.iSurfaceParams);
+                    }
                 SendResult(result);
                 }
                 break;
@@ -379,17 +436,22 @@ TInt CEgltest_Local_Engine_Exec::ThreadLoopL()
                 SendResult(TExecResult(TestStepResult(), ec.iCase));
                 return KTerminated;
                 
+            case ESetVerdictCase:
+                {
+                SetTestStepResult(static_cast<TVerdict>(endpointIndex));
+                TExecResult result(TestStepResult(), ec.iCase);
+                SendResult(result);
+                }
+                break;
+                
             case EPanicCase:
                 // This part is intended to be used to test the implementation.
                 // In normal tests, this functionality should not be used.
                 // If anyone decides to use this for some purpose in normal
                 // code, then please change the above comment to reflect
                 // that it IS used, and explain why it makes sense.
-                if (ec.iFlags & EDebugLocal)
-                    {
-                    INFO_PRINTF1(_L("Performing intentional panic!"));
-                    User::Panic(_L("EPanicCase"), -1);
-                    }
+                INFO_PRINTF1(_L("Performing intentional panic!"));
+                User::Panic(_L("EPanicCase"), -1);
                 break;
                 
             default:

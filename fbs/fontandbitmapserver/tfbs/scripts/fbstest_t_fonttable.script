@@ -16,10 +16,10 @@
 PRINT Run TFontTableAndGlyphOutline Fbserv test 
 
 RUN_UTILS MakeReadWrite C:\DejaVuSans.ttf
-RUN_UTILS CopyFile z:\RESOURCE\FONTS\DejaVuSans.ttf C:\DejaVuSans.ttf
+RUN_UTILS CopyFile z:\RESOURCE\FONTS\DejaVuSansCondensed.ttf C:\DejaVuSans.ttf
 RUN_UTILS MakeReadWrite C:\DejaVuSans.TTF 
 RUN_UTILS MakeReadWrite C:\DejaVuSerif.ttf
-RUN_UTILS CopyFile z:\RESOURCE\FONTS\DejaVuSerif.ttf C:\DejaVuSerif.ttf
+RUN_UTILS CopyFile z:\RESOURCE\FONTS\DejaVuSerifCondensed.ttf C:\DejaVuSerif.ttf
 RUN_UTILS MakeReadWrite C:\DejaVuSerif.ttf
 
 // Set test server to have no Capabilitities

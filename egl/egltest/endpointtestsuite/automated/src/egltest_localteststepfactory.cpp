@@ -30,6 +30,10 @@
 #include "egltest_endpointstreamingtests.h"
 #include "egltest_endpointnotification.h"
 #include "egltest_endpointdirtyarea.h"
+#include "egltest_endpoint_stresstests.h"
+#include "egltest_endpoint_stressload.h"
+#include "egltest_threadedstress.h"
+#include "egltest_releaseimagegles.h"
 
 //LocalTestStep factory.
 CTestStep* CEglEndpointTestServer::CreateTestStep(const TDesC& aStepName)
@@ -86,7 +90,27 @@ CTestStep* CEglEndpointTestServer::CreateTestStep(const TDesC& aStepName)
         {
         return new CEglTest_LocalTestStep_EndpointDirtyArea;
         }
-
+    if (aStepName == KEGL_EndpointStressTests)
+        {
+        return CEglTest_TestStep_StressTests::New();
+        }
+    if (aStepName == KEGL_EndpointStressLoad)
+        {
+        return CEglTest_TestStep_StressLoad::New();
+        }
+    if (aStepName == KEGL_EndpointCrazyThreading)
+        {
+        return new CEglTest_LocalTestStep_EndpointCrazyThreading();
+        }
+    if (aStepName == KEGL_EndpointOutOfHeapMemory)
+        {
+        return new CEglTest_LocalTestStep_EndpointOutOfHeapMemory();
+        }
+    if (aStepName == KEGL_EndpointReleaseImageGles)
+        {
+        return new CEglTest_LocalTestStep_EndpointReleaseImageGles();
+        }
+    
     return NULL;
     }
 

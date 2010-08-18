@@ -34,7 +34,8 @@
 ;*Files To Copy...<src> <destination>
 
 ;//script files
-"\epoc32\data\z\surfacemgtest\surfacemgtest_T_auto.script"-"c:\surfacemgtest\surfacemgtest_T_auto.script"
+;COMMENTED OUT FOR 10T38 ZERO TOLERANCE TEST STRATEGY
+;"\epoc32\data\z\surfacemgtest\surfacemgtest_T_auto.script"-"c:\surfacemgtest\surfacemgtest_T_auto.script"
 "\epoc32\data\z\surfacemgtest\surfacemgtest_T_multiprocess.script"-"c:\surfacemgtest\surfacemgtest_T_multiprocess.script"
 "\epoc32\data\z\surfacemgtest\surfacemgtest_T_multithread.script"-"c:\surfacemgtest\surfacemgtest_T_multithread.script"
 

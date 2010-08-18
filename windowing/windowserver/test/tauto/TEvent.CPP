@@ -1,4 +1,4 @@
-// Copyright (c) 1996-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1996-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -36,6 +36,9 @@
 #define LOGGING 1	//Uncomment this when there is a fail so that you get more logging
 
 _LIT(KKeyClickPluginDll, "click.dll");
+
+const TInt KLongKeyCaptureLowPriority = 1;
+const TInt KLongKeyCaptureHighPriority = 2;
 
 CTQueueClient::CTQueueClient(CTEventTest *aTest) : iTest(aTest)
 	{
@@ -203,6 +206,7 @@ void CTQueueTestEvent::doRunL()
 		TestL(wsEvent.Type()==expectedEvent.Type() && wsEvent.Handle()==expectedEvent.Handle());
 		}		
 	iLastEventError=(wsEvent.Type()==EEventErrorMessage);
+
 	switch(wsEvent.Type())
 		{
 		case EEventKey:
@@ -212,7 +216,7 @@ void CTQueueTestEvent::doRunL()
 				{
 				_LIT(KKeysDiff,"Count=%d  Key Code Exp=%d (%c)  Act=%d (%c)");
 				buf.Copy(KStartString);
-				buf.AppendFormat(KKeysDiff,iEventCount,iEventCount,eKeyCode,eKeyCode,wsKeyCode,wsKeyCode);
+				buf.AppendFormat(KKeysDiff,iEventCount,eKeyCode,eKeyCode,wsKeyCode,wsKeyCode);
 				iTest->LOG_MESSAGE(buf);
 				}
 			wsKeyRepeat=wsEvent.Key()->iRepeats,eKeyRepeat=expectedEvent.Key()->iRepeats;
@@ -224,10 +228,15 @@ void CTQueueTestEvent::doRunL()
 				iTest->LOG_MESSAGE(buf);
 				}
 		#endif
-			TestL(wsEvent.Key()->iCode==expectedEvent.Key()->iCode && wsEvent.Key()->iRepeats>=expectedEvent.Key()->iRepeats
-								&& (wsEvent.Key()->iRepeats>0)==(expectedEvent.Key()->iRepeats>0));		//Fall Through
+			TestL(wsEvent.Key()->iCode==expectedEvent.Key()->iCode &&
+				wsEvent.Key()->iRepeats>=expectedEvent.Key()->iRepeats &&
+				(wsEvent.Key()->iRepeats>0)==(expectedEvent.Key()->iRepeats>0));
+			// Fall Through
 		case EEventKeyDown:
 		case EEventKeyUp:
+			{
+			TUint wsModifiers = wsEvent.Key()->iModifiers;
+			TUint eModifiers = expectedEvent.Key()->iModifiers;
 		#if defined(FAIL_LOGGING)
 			wsKeyScan=wsEvent.Key()->iScanCode,eKeyScan=expectedEvent.Key()->iScanCode;
 			if (wsKeyScan!=eKeyScan)
@@ -237,8 +246,18 @@ void CTQueueTestEvent::doRunL()
 				buf.AppendFormat(KScanDiff,iEventCount,eKeyScan,eKeyScan,wsKeyScan,wsKeyScan);
 				iTest->LOG_MESSAGE(buf);
 				}
+
+			if (eModifiers != KModifiersIgnore && wsModifiers != eModifiers)
+				{
+				_LIT(KModDiff,"Count=%d  Modifiers Exp=0x%x  Act=0x%x");
+				buf.Copy(KStartString);
+				buf.AppendFormat(KModDiff, iEventCount, eModifiers, wsModifiers);
+				iTest->LOG_MESSAGE(buf);
+				}
 		#endif
-			TestL(wsEvent.Key()->iScanCode==expectedEvent.Key()->iScanCode);
+			TestL(wsEvent.Key()->iScanCode == expectedEvent.Key()->iScanCode &&
+				(eModifiers == KModifiersIgnore || wsModifiers == eModifiers));
+			}
 			break;
 		case EEventModifiersChanged:
 			{
@@ -708,7 +727,8 @@ void CTEventTest::ConstructL()
 		{
 		iIs3DPointer=EFalse;
 		}
-#endif		
+#endif
+	TheClient->iWs.GetKeyboardRepeatRate(iKeyBoardRepeatInitialDelay, iKeyBoardRepeatNextDelay);
 	}
 
 void CTEventTest::Failed()
@@ -820,7 +840,7 @@ void CTEventTest::General2()
 	group.SetOrdinalPosition(position,priority);
 	}
 
-void CTEventTest::AddExpectedKey(TInt aEventCode, TInt aScanCode, TInt aCode/*=0*/, TInt aRepeats/*=0*/, TUint aModifiers/*=0*/)
+void CTEventTest::AddExpectedKey(TInt aEventCode, TInt aScanCode, TInt aCode/*=0*/, TInt aRepeats/*=0*/, TUint aModifiers/*=KModifiersIgnore*/)
 	{
 	TPckgBuf<TWsEvent> evtPkg;
 	TWsEvent& event=evtPkg();
@@ -834,15 +854,27 @@ void CTEventTest::AddExpectedKey(TInt aEventCode, TInt aScanCode, TInt aCode/*=0
 	event.Key()->iRepeats=aRepeats;
 	iQueueClient->AddExpectedEvent(event);
 	if (iAddToClick)
+		{
+		if (aModifiers == KModifiersIgnore)
+			{
+			// Key click tests assume zero modifiers in click event by default
+			event.Key()->iModifiers = 0;
+			}
 		iClick.CommandReply(EClickEventAdd,evtPkg);
+		}
 	}
 
-void CTEventTest::AddExpectedKeyDownUp(TInt aScanCode, TInt aCode/*=0*/, TInt aRepeats/*=0*/, TUint aModifiers/*=0*/)
+void CTEventTest::AddExpectedKeyDownUp(TInt aScanCode, TInt aCode/*=0*/, TInt aRepeats/*=0*/, TUint aModifiers/*=KModifiersIgnore*/)
 	{
 	__ASSERT_DEBUG(aScanCode<'a' || aScanCode>'z',AutoPanic(EAutoPanicScanCapital));
-	AddExpectedKey(EEventKeyDown,aScanCode,0,aRepeats,aModifiers);
+	// EModiferAutorepeatable can be present in EEventKey but is never valid
+	// in EEventKeyDown and EEventKeyUp. 
+	TUint modifiersDownUp = (aModifiers == KModifiersIgnore) ?
+		aModifiers : aModifiers & ~EModifierAutorepeatable;
+
+	AddExpectedKey(EEventKeyDown,aScanCode,0,aRepeats,modifiersDownUp);
 	AddExpectedKey(EEventKey,aScanCode,aCode,aRepeats,aModifiers);
-	AddExpectedKey(EEventKeyUp,aScanCode,0,aRepeats,aModifiers);
+	AddExpectedKey(EEventKeyUp,aScanCode,0,aRepeats,modifiersDownUp);
 	}
 
 void CTEventTest::AddExpectedEvent(TInt aEventCode, CTWinBase* aWin)
@@ -1160,20 +1192,32 @@ void CTEventTest::NextSetOfEventsL()
 	case 27:
 	    RawEventRepeatTest_NextSetOfEventsL();
 	    break;
-	    
-#ifdef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS	    
+
 #ifndef TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA 	    
     case 28:
-        SurfaceVisibilityChanged1_NextSetOfEventsL();
+        KeyEventTranslation_NextSetOfEventsL();
         break;
     case 29:
-        SurfaceVisibilityChanged2_NextSetOfEventsL();
+        KeyEventBlocking_NextSetOfEventsL();
         break;
     case 30:
+        KeyEventAppRestriction_NextSetOfEventsL();
+        break;
+    case 31:
+        KeyEventAppPriority_NextSetOfEventsL();
+        break;
+#ifdef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS	    
+    case 32:
+        SurfaceVisibilityChanged1_NextSetOfEventsL();
+        break;
+    case 33:
+        SurfaceVisibilityChanged2_NextSetOfEventsL();
+        break;
+    case 34:
         SurfaceVisibilityChanged3_NextSetOfEventsL();
         break;
-#endif // TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA
 #endif // SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS
+#endif // TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA
         
 	default:
 		AutoPanic(EAutoPanicWrongTest);
@@ -3545,8 +3589,8 @@ void CTEventTest::KeyClicks_NextSetOfEvents()
 			break;
 		case 2:
 			AddExpectedKey(EEventKeyDown,EStdKeyRightShift,0,0,EModifierRightShift|EModifierShift);
-			AddExpectedKeyDownUp('B','B',0,EModifierRightShift|EModifierShift);
-			AddExpectedKeyDownUp('W','W',0,EModifierRightShift|EModifierShift);
+			AddExpectedKeyDownUp('B','B',0,EModifierRightShift|EModifierShift|EModifierAutorepeatable);
+			AddExpectedKeyDownUp('W','W',0,EModifierRightShift|EModifierShift|EModifierAutorepeatable);
 			AddExpectedKey(EEventKeyUp,EStdKeyRightShift);
 			iQueueClient->iWs.Flush();
 			iTest->SimulateKey(TRawEvent::EKeyDown,EStdKeyRightShift);		//1 event
@@ -3854,11 +3898,9 @@ void CTEventTest::KeyClicks_NextSetOfEvents()
 
 void CTEventTest::CaptureLong_NextSetOfEventsL()
 	{
-	TTimeIntervalMicroSeconds32 initialTime,time;
-	TheClient->iWs.GetKeyboardRepeatRate(initialTime,time);
 	#if defined(LOGGING)
 		TLogMessageText logMessageText;
-		_LIT(KSet,"CaptureLong SetOfEvents: %d of 14");
+		_LIT(KSet,"CaptureLong SetOfEvents: %d of 23");
 		logMessageText.Format(KSet,iEventSet);
 		INFO_PRINTF1(logMessageText);
 	#endif
@@ -3872,53 +3914,72 @@ void CTEventTest::CaptureLong_NextSetOfEventsL()
 			AddExpectedKeyDownUp('A','a');
 			break;
 		case 1:
-			iCaptureKey=iQueueClient->iGroup->GroupWin()->CaptureLongKey(' ','a',0,0,2,ELongCaptureNormal);
+			// Test CaptureLongKey() with modifier value EModifierShift and flag value ELongCaptureNormal
+			iCaptureKey=iQueueClient->iGroup->GroupWin()->CaptureLongKey(' ','a',EModifierShift,EModifierShift,2,ELongCaptureNormal);
 			iQueueClient->iWs.Flush();
+			iTest->SimulateKey(TRawEvent::EKeyDown,EStdKeyLeftShift);
 			iTest->SimulateKey(TRawEvent::EKeyDown,EStdKeySpace);
 			TheClient->iWs.Flush();
-			User::After(initialTime.Int()+time.Int()/3);
+			DelayForRepeatEvents(1, 3);
 			iTest->SimulateKey(TRawEvent::EKeyUp,EStdKeySpace);
+			iTest->SimulateKey(TRawEvent::EKeyUp,EStdKeyLeftShift);
+			AddExpectedKey(EEventKeyDown,EStdKeyLeftShift);
 			AddExpectedKey(EEventKeyDown,EStdKeySpace);
-			AddExpectedKey(EEventKey,EStdKeySpace,' ');
-			AddExpectedKey(EEventKey,EStdKeySpace,'a',1);
+			AddExpectedKey(EEventKey,EStdKeySpace,' ',0,EModifierLeftShift|EModifierShift|EModifierAutorepeatable);
+			AddExpectedKey(EEventKey,EStdKeySpace,'a',1,EModifierLongKey|EModifierLeftShift|EModifierShift|EModifierAutorepeatable);
 			AddExpectedKey(EEventKeyUp,EStdKeySpace);
+			AddExpectedKey(EEventKeyUp,EStdKeyLeftShift);
 			iQueueClient->iGroup->GroupWin()->CancelCaptureLongKey(iCaptureKey);
 			break;
-		case 2:
-			iCaptureKey=iQueueClient->iGroup->GroupWin()->CaptureLongKey(' ','a',0,0,2,ELongCaptureWaitShort);
+		case 2:	
+			// Test CaptureLongKey() with modifier value EModifierFunc and flag value ELongCaptureWaitShort
+			iCaptureKey=iQueueClient->iGroup->GroupWin()->CaptureLongKey(EKeyEnter,'a',EModifierFunc,EModifierFunc,2,ELongCaptureWaitShort);
 			iQueueClient->iWs.Flush();
-			iTest->SimulateKey(TRawEvent::EKeyDown,EStdKeySpace);
+			iTest->SimulateKey(TRawEvent::EKeyDown,EStdKeyLeftFunc);
+			iTest->SimulateKey(TRawEvent::EKeyDown,EStdKeyEnter);
 			TheClient->iWs.Flush();
-			User::After(initialTime.Int()+time.Int()/3);
-			iTest->SimulateKey(TRawEvent::EKeyUp,EStdKeySpace);
+			DelayForRepeatEvents(1, 3);
+			iTest->SimulateKey(TRawEvent::EKeyUp,EStdKeyEnter);
+			iTest->SimulateKey(TRawEvent::EKeyUp,EStdKeyLeftFunc);
 			iTest->SimulateKeyDownUp(EStdKeySpace);
-			AddExpectedKey(EEventKeyDown,EStdKeySpace);
-			AddExpectedKey(EEventKey,EStdKeySpace,'a',1);
-			AddExpectedKey(EEventKeyUp,EStdKeySpace);
+			AddExpectedKey(EEventKeyDown,EStdKeyLeftFunc);
+			AddExpectedKey(EEventKeyDown,EStdKeyEnter);
+			AddExpectedKey(EEventKey,EStdKeyEnter,'a',1,EModifierLongKey|EModifierLeftFunc|EModifierFunc|EModifierAutorepeatable);
+			AddExpectedKey(EEventKeyUp,EStdKeyEnter);
+			AddExpectedKey(EEventKeyUp,EStdKeyLeftFunc);
 			AddExpectedKeyDownUp(EStdKeySpace,' ');
 			iQueueClient->iGroup->GroupWin()->CancelCaptureLongKey(iCaptureKey);
 			break;
 		case 3:
-			iCaptureKey=iQueueClient->iGroup->GroupWin()->CaptureLongKey(' ','a',0,0,2,ELongCaptureNormal|ELongCaptureRepeatEvents);
+			// Test CaptureLongKey() with modifier values EModifierFunc|EModifierAlt and flag values ELongCaptureNormal|ELongCaptureRepeatEvents)
+			iCaptureKey=iQueueClient->iGroup->GroupWin()->CaptureLongKey(EKeyEnter,'a',EModifierFunc|EModifierAlt,EModifierFunc|EModifierAlt,2,ELongCaptureNormal|ELongCaptureRepeatEvents);
 			iQueueClient->iWs.Flush();
-			iTest->SimulateKey(TRawEvent::EKeyDown,EStdKeySpace);
+			iTest->SimulateKey(TRawEvent::EKeyDown,EStdKeyLeftFunc);
+			iTest->SimulateKey(TRawEvent::EKeyDown,EStdKeyLeftAlt);
+			iTest->SimulateKey(TRawEvent::EKeyDown,EStdKeyEnter);
 			TheClient->iWs.Flush();
-			User::After(initialTime.Int()+5*time.Int());
-			iTest->SimulateKey(TRawEvent::EKeyUp,EStdKeySpace);
-			AddExpectedKey(EEventKeyDown,EStdKeySpace);
-			AddExpectedKey(EEventKey,EStdKeySpace,' ');
-			AddExpectedKey(EEventKey,EStdKeySpace,'a',2);
-			AddExpectedKey(EEventKeyUp,EStdKeySpace);
+			DelayForRepeatEvents(5, 1);
+			iTest->SimulateKey(TRawEvent::EKeyUp,EStdKeyEnter);
+			iTest->SimulateKey(TRawEvent::EKeyUp,EStdKeyLeftAlt);
+			iTest->SimulateKey(TRawEvent::EKeyUp,EStdKeyLeftFunc);
+			AddExpectedKey(EEventKeyDown,EStdKeyLeftFunc);
+			AddExpectedKey(EEventKeyDown,EStdKeyLeftAlt);
+			AddExpectedKey(EEventKeyDown,EStdKeyEnter);
+			AddExpectedKey(EEventKey,EStdKeyEnter,EKeyEnter,0,EModifierLeftFunc|EModifierFunc|EModifierLeftAlt|EModifierAlt|EModifierAutorepeatable);
+			AddExpectedKey(EEventKey,EStdKeyEnter,'a',2,EModifierLongKey|EModifierLeftFunc|EModifierFunc|EModifierLeftAlt|EModifierAlt|EModifierAutorepeatable);
+			AddExpectedKey(EEventKeyUp,EStdKeyEnter);
+			AddExpectedKey(EEventKeyUp,EStdKeyLeftAlt);
+			AddExpectedKey(EEventKeyUp,EStdKeyLeftFunc);
 			iQueueClient->iGroup->GroupWin()->CancelCaptureLongKey(iCaptureKey);
 			break;
 		case 4:
 			iQueueClient->iWs.Flush();
 			iTest->SimulateKey(TRawEvent::EKeyDown,'Z');
 			TheClient->iWs.Flush();
-			User::After(initialTime.Int()+3*time.Int());
+			DelayForRepeatEvents(3, 1);
 			iTest->SimulateKey(TRawEvent::EKeyDown,'Y');
 			TheClient->iWs.Flush();
-			User::After(initialTime.Int()+2*time.Int());
+			DelayForRepeatEvents(2, 1);
 			iTest->SimulateKey(TRawEvent::EKeyUp,'Z');
 			iTest->SimulateKey(TRawEvent::EKeyUp,'Y');
 			AddExpectedKey(EEventKeyDown,'Z');
@@ -3934,13 +3995,13 @@ void CTEventTest::CaptureLong_NextSetOfEventsL()
 			iQueueClient->iWs.Flush();
 			iTest->SimulateKey(TRawEvent::EKeyDown,'Z');
 			TheClient->iWs.Flush();
-			User::After(initialTime.Int()+3*time.Int());
+			DelayForRepeatEvents(3, 1);
 			iTest->SimulateKey(TRawEvent::EKeyDown,'Y');
 			TheClient->iWs.Flush();
-			User::After(initialTime.Int()+5*time.Int()/2);
+			DelayForRepeatEvents(5, 2);
 			iTest->SimulateKey(TRawEvent::EKeyUp,'Y');
 			TheClient->iWs.Flush();
-			User::After(initialTime.Int()+2*time.Int());
+			DelayForRepeatEvents(2, 1);
 			iTest->SimulateKey(TRawEvent::EKeyUp,'Z');
 			AddExpectedKey(EEventKeyDown,'Z');
 			AddExpectedKey(EEventKey,'Z','z');
@@ -3957,12 +4018,12 @@ void CTEventTest::CaptureLong_NextSetOfEventsL()
 			iQueueClient->iWs.Flush();
 			iTest->SimulateKey(TRawEvent::EKeyDown,'X');
 			TheClient->iWs.Flush();
-			User::After(initialTime.Int()+3*time.Int());
+			DelayForRepeatEvents(3, 1);
 			iTest->SimulateKeyDownUp(EStdKeySpace);
 			TheClient->iWs.Flush();
 			if(!iTest->IsFullRomL())
 				{
-				User::After(initialTime.Int()+2*time.Int());
+				DelayForRepeatEvents(2, 1);
 				}
 			iTest->SimulateKey(TRawEvent::EKeyUp,'X');
 			AddExpectedKey(EEventKeyDown,'X');
@@ -3983,14 +4044,14 @@ void CTEventTest::CaptureLong_NextSetOfEventsL()
 			iQueueClient->iWs.Flush();
 			iTest->SimulateKey(TRawEvent::EKeyDown,'X');
 			TheClient->iWs.Flush();
-			User::After(initialTime.Int()+5*time.Int());
+			DelayForRepeatEvents(5, 1);
 			iTest->SimulateKey(TRawEvent::EKeyDown,EStdKeySpace);
 			TheClient->iWs.Flush();
-			User::After(initialTime.Int()+time.Int()/3);
+			DelayForRepeatEvents(1, 3);
 			iTest->SimulateKey(TRawEvent::EKeyUp,EStdKeySpace);
 			TheClient->iWs.Flush();
 			User::ResetInactivityTime();
-			User::After(initialTime.Int()+4*time.Int());
+			DelayForRepeatEvents(4, 1);
 			iTest->SimulateKey(TRawEvent::EKeyUp,'X');
 			AddExpectedKey(EEventKeyDown,'X');
 			AddExpectedKey(EEventKey,'X','x');
@@ -4008,7 +4069,7 @@ void CTEventTest::CaptureLong_NextSetOfEventsL()
 			iQueueClient->iWs.Flush();
 			iTest->SimulateKey(TRawEvent::EKeyDown,EStdKeySpace);
 			TheClient->iWs.Flush();
-			User::After(initialTime.Int()+5*time.Int());
+			DelayForRepeatEvents(5, 1);
 			iTest->SimulateKey(TRawEvent::EKeyUp,EStdKeySpace);
 			AddExpectedKey(EEventKeyDown,EStdKeySpace);
 			AddExpectedKey(EEventKey,EStdKeySpace,'c',1);
@@ -4022,10 +4083,10 @@ void CTEventTest::CaptureLong_NextSetOfEventsL()
 			iQueueClient->iWs.Flush();
 			iTest->SimulateKey(TRawEvent::EKeyDown,EStdKeySpace);
 			TheClient->iWs.Flush();
-			User::After(initialTime.Int()+5*time.Int()/2);
+			DelayForRepeatEvents(5, 2);
 			iTest->SimulateKeyDownUp(EStdKeyEscape);
 			TheClient->iWs.Flush();
-			User::After(initialTime.Int()+3*time.Int());
+			DelayForRepeatEvents(3, 1);
 			iTest->SimulateKey(TRawEvent::EKeyUp,EStdKeySpace);
 			AddExpectedKey(EEventKeyDown,EStdKeySpace);
 			AddExpectedKey(EEventKey,EStdKeySpace,' ');
@@ -4045,33 +4106,36 @@ void CTEventTest::CaptureLong_NextSetOfEventsL()
 			iTest->SimulateKey(TRawEvent::EKeyDown,EStdKeySpace);
 			TheClient->iWs.Flush();
 			iQueueClient->iGroup->GroupWin()->CancelCaptureLongKey(iCaptureKey);
-			User::After(initialTime.Int()+5*time.Int());
+			DelayForRepeatEvents(5, 1);
 			iTest->SimulateKey(TRawEvent::EKeyUp,EStdKeySpace);
 			AddExpectedKey(EEventKeyDown,EStdKeySpace);
 			AddExpectedKey(EEventKey,EStdKeySpace,' ');
 			AddExpectedKey(EEventKeyUp,EStdKeySpace);
 			break;
 		case 11:
-			//Cancel a capture key up and down event whilst a repeat is underway
-			iCaptureKey=iQueueClient->iGroup->GroupWin()->CaptureKeyUpAndDowns(EStdKeySpace,0,0);
+			// Cancel a key up/down capture whilst a repeat is underway.
+			// This should have no effect since only key press events are
+			// repeated.
+			iCaptureKey=iQueueClient->iGroup->GroupWin()->CaptureKeyUpAndDowns('X',0,0);
 			iQueueClient->iWs.Flush();
 			iTest->SimulateKey(TRawEvent::EKeyDown,'X');
 			TheClient->iWs.Flush();
 			iQueueClient->iGroup->GroupWin()->CancelCaptureKeyUpAndDowns(iCaptureKey);
-			User::After(initialTime.Int()+5*time.Int());
+			DelayForRepeatEvents(5, 1);
 			iTest->SimulateKey(TRawEvent::EKeyUp,'X');
 			AddExpectedKey(EEventKeyDown,'X');
 			AddExpectedKey(EEventKey,'X','x');
+			AddExpectedKey(EEventKey,'X','x',2);
 			AddExpectedKey(EEventKeyUp,'X');
 			break;
 		case 12:
 			//Cancel a capture key event whilst a repeat is underway
-			iCaptureKey=iQueueClient->iGroup->GroupWin()->CaptureKey(EStdKeySpace,0,0);
+			iCaptureKey=iQueueClient->iGroup->GroupWin()->CaptureKey('y',0,0);
 			iQueueClient->iWs.Flush();
 			iTest->SimulateKey(TRawEvent::EKeyDown,'Y');
 			TheClient->iWs.Flush();
 			iQueueClient->iGroup->GroupWin()->CancelCaptureKey(iCaptureKey);
-			User::After(initialTime.Int()+5*time.Int());
+			DelayForRepeatEvents(5, 1);
 			iTest->SimulateKey(TRawEvent::EKeyUp,'Y');
 			AddExpectedKey(EEventKeyDown,'Y');
 			AddExpectedKey(EEventKey,'Y','y');
@@ -4079,13 +4143,13 @@ void CTEventTest::CaptureLong_NextSetOfEventsL()
 			break;
 		case 13:
 			//Variation on case 12 i.e. change in the timing of the CancelCaptureKey call
-			iCaptureKey=iQueueClient->iGroup->GroupWin()->CaptureKey(EStdKeySpace,0,0);
+			iCaptureKey=iQueueClient->iGroup->GroupWin()->CaptureKey('z',0,0);
 			iQueueClient->iWs.Flush();
 			iTest->SimulateKey(TRawEvent::EKeyDown,'Z');
 			TheClient->iWs.Flush();
-			User::After(initialTime.Int()+5*time.Int()/2);
+			DelayForRepeatEvents(5, 2);
 			iQueueClient->iGroup->GroupWin()->CancelCaptureKey(iCaptureKey);
-			User::After(initialTime.Int()+5*time.Int()/2);
+			DelayForRepeatEvents(5, 2);
 			iTest->SimulateKey(TRawEvent::EKeyUp,'Z');
 			AddExpectedKey(EEventKeyDown,'Z');
 			AddExpectedKey(EEventKey,'Z','z');
@@ -4102,12 +4166,138 @@ void CTEventTest::CaptureLong_NextSetOfEventsL()
 			iTest->SimulateKey(TRawEvent::EKeyDown,EStdKeySpace);
 			TheClient->iWs.Flush();
 			iQueueClient->iGroup->GroupWin()->CancelCaptureLongKey(iCaptureKey);
-			User::After(initialTime.Int()+time.Int()/3);
+			DelayForRepeatEvents(1, 3);
 
 			TheClient->iGroup->GroupWin()->CancelCaptureKey(shortCaptKey);
 			iTest->SimulateKey(TRawEvent::EKeyUp,EStdKeySpace);
 			AddExpectedKey(EEventKeyDown,EStdKeySpace);
 			AddExpectedKey(EEventKeyUp,EStdKeySpace);
+			}
+			break;
+		case 15:
+			// @SYMPREQ 417-61800: Check that long key events are marked with
+			// EModifierLongKey and short events are not.
+			iCaptureKey = iQueueClient->iGroup->GroupWin()->CaptureLongKey('m', 'm', 0, 0, 0, ELongCaptureNormal);
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKey(TRawEvent::EKeyDown, 'M');
+			TheClient->iWs.Flush();
+			DelayForRepeatEvents(1, 3);
+			iTest->SimulateKey(TRawEvent::EKeyUp, 'M');
+			AddExpectedKey(EEventKeyDown, 'M', 0, 0, 0);
+			AddExpectedKey(EEventKey, 'M', 'm', 0, EModifierAutorepeatable);
+			AddExpectedKey(EEventKey, 'M', 'm', 1, EModifierLongKey | EModifierAutorepeatable);
+			AddExpectedKey(EEventKeyUp, 'M', 0, 0, 0);
+			iQueueClient->iGroup->GroupWin()->CancelCaptureLongKey(iCaptureKey);
+			break;
+		case 16:
+			CheckLongkeyCaptureWithPriority(ELongkeyCaptureDiffPriority);
+			break;
+		case 17:
+			CheckLongkeyCaptureWithPriority(ELongkeyCaptureSamePriority);
+			break;
+		case 18:
+			// Test CaptureLongKey() with flag value ELongCaptureWaitShort
+			// when key is not held down long enough to generate a long event.
+			// Verify that short event is delivered when the key is released.
+			iCaptureKey = iQueueClient->iGroup->GroupWin()->CaptureLongKey('p', 'p', 0, 0, 0, ELongCaptureWaitShort);
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKey(TRawEvent::EKeyDown, 'P');
+			TheClient->iWs.Flush();
+			User::After(iKeyBoardRepeatInitialDelay.Int() / 2);
+			iTest->SimulateKey(TRawEvent::EKeyUp, 'P');
+			TheClient->iWs.Flush();
+			iTest->SimulateKeyDownUp(EStdKeySpace);
+			AddExpectedKey(EEventKeyDown, 'P');
+			AddExpectedKey(EEventKey, 'P', 'p', 0, EModifierAutorepeatable);
+			AddExpectedKey(EEventKeyUp, 'P');
+			AddExpectedKeyDownUp(EStdKeySpace, ' ');
+			iQueueClient->iGroup->GroupWin()->CancelCaptureLongKey(iCaptureKey);
+			break;
+		case 19:
+			{
+			// Cancel a capture key event whilst a repeat is underway for a
+			// different capture. This should not cancel repeating.
+			iCaptureKey = iQueueClient->iGroup->GroupWin()->CaptureKey('q', 0, 0);
+			TInt captureKey2 = iQueueClient->iGroup->GroupWin()->CaptureKey('r', 0, 0);
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKey(TRawEvent::EKeyDown, 'Q');
+			TheClient->iWs.Flush();
+			iQueueClient->iGroup->GroupWin()->CancelCaptureKey(captureKey2);
+			DelayForRepeatEvents(5, 1);
+			iTest->SimulateKey(TRawEvent::EKeyUp, 'Q');
+			AddExpectedKey(EEventKeyDown, 'Q');
+			AddExpectedKey(EEventKey, 'Q', 'q', 0, EModifierAutorepeatable);
+			AddExpectedKey(EEventKey, 'Q', 'q', 2, EModifierAutorepeatable);
+			AddExpectedKey(EEventKeyUp, 'Q');
+			iQueueClient->iGroup->GroupWin()->CancelCaptureKey(iCaptureKey);
+			}
+			break;
+		case 20:
+			{
+			// Cancel a long capture key event whilst a repeat is underway for
+			// a different capture. This should not cancel repeating.
+			iCaptureKey = iQueueClient->iGroup->GroupWin()->CaptureLongKey('s', 's', 0, 0, 2, ELongCaptureNormal|ELongCaptureRepeatEvents);
+			TInt captureKey2 = iQueueClient->iGroup->GroupWin()->CaptureLongKey('t', 't', 0, 0, 2, ELongCaptureNormal|ELongCaptureRepeatEvents);
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKey(TRawEvent::EKeyDown, 'S');
+			TheClient->iWs.Flush();
+			iQueueClient->iGroup->GroupWin()->CancelCaptureLongKey(captureKey2);
+			DelayForRepeatEvents(5, 1);
+			iTest->SimulateKey(TRawEvent::EKeyUp, 'S');
+			AddExpectedKey(EEventKeyDown, 'S');
+			AddExpectedKey(EEventKey, 'S', 's', 0, EModifierAutorepeatable);
+			AddExpectedKey(EEventKey, 'S', 's', 2, EModifierLongKey | EModifierAutorepeatable);
+			AddExpectedKey(EEventKeyUp, 'S');
+			iQueueClient->iGroup->GroupWin()->CancelCaptureLongKey(iCaptureKey);
+			}
+			break;
+		case 21:
+			{
+			// Test CaptureLongKey() with a user specified initial repeat time.
+			// Simulate holding down the key for a period shorter than the
+			// specified delay. Verify that a long key event is NOT generated.
+			// (Note that the period is longer than the default initial repeat
+			// time, thus proving that CaptureLongKey() has honoured the delay
+			// argument.)
+			TTimeIntervalMicroSeconds32 delay(iKeyBoardRepeatInitialDelay.Int() * 4);
+			iCaptureKey = iQueueClient->iGroup->GroupWin()->CaptureLongKey(delay, 'u', 'u', 0, 0, 0, ELongCaptureNormal);
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKey(TRawEvent::EKeyDown, 'U');
+			TheClient->iWs.Flush();
+			User::After(delay.Int() / 2);
+			iTest->SimulateKey(TRawEvent::EKeyUp, 'U');
+			TheClient->iWs.Flush();
+			iTest->SimulateKeyDownUp(EStdKeySpace);
+			AddExpectedKey(EEventKeyDown, 'U');
+			AddExpectedKey(EEventKey, 'U', 'u', 0, EModifierAutorepeatable);
+			AddExpectedKey(EEventKeyUp, 'U');
+			AddExpectedKeyDownUp(EStdKeySpace, ' ');
+			iQueueClient->iGroup->GroupWin()->CancelCaptureLongKey(iCaptureKey);
+			}
+			break;
+		case 22:
+			{
+			// Test CaptureLongKey() with a user specified initial repeat time.
+			// Simulate holding down the key for a period longer than the
+			// specified delay. Verify that a long key event is generated.
+			// (Note that the period is shorter than the default initial repeat
+			// time, thus proving that CaptureLongKey() has honoured the delay
+			// argument.)
+			TTimeIntervalMicroSeconds32 delay(iKeyBoardRepeatInitialDelay.Int() / 4);
+			iCaptureKey = iQueueClient->iGroup->GroupWin()->CaptureLongKey(delay, 'v', 'v', 0, 0, 0, ELongCaptureNormal);
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKey(TRawEvent::EKeyDown, 'V');
+			TheClient->iWs.Flush();
+			User::After(delay.Int() * 2);
+			iTest->SimulateKey(TRawEvent::EKeyUp, 'V');
+			TheClient->iWs.Flush();
+			iTest->SimulateKeyDownUp(EStdKeySpace);
+			AddExpectedKey(EEventKeyDown, 'V');
+			AddExpectedKey(EEventKey, 'V', 'v', 0, EModifierAutorepeatable);
+			AddExpectedKey(EEventKey, 'V', 'v', 1, EModifierLongKey | EModifierAutorepeatable);
+			AddExpectedKey(EEventKeyUp, 'V');
+			AddExpectedKeyDownUp(EStdKeySpace, ' ');
+			iQueueClient->iGroup->GroupWin()->CancelCaptureLongKey(iCaptureKey);
 			}
 			break;
 		default:
@@ -4116,6 +4306,485 @@ void CTEventTest::CaptureLong_NextSetOfEventsL()
 		}
 	TheClient->iWs.Flush();
 	}
+
+/** Function used for checking CaptureLongKey() works fine with different priorities.
+
+If two window groups have requested capture of the same key with different priorities, 
+then the event should be delivered to the group that specified higher priority 
+(even if it is in the background).
+
+If two window groups have requested capture of the same key with same priorities,
+then the event should be delivered to the group that requested capture most recently.
+
+@param aTestType Enum value specifying test with same priority or with different priority
+*/
+void CTEventTest::CheckLongkeyCaptureWithPriority(TLongkeyCapPriorityTests aTestType)
+	{
+	TInt ordinalPriority = TheClient->iGroup->GroupWin()->OrdinalPriority();
+	TInt ordinalPosition = TheClient->iGroup->GroupWin()->OrdinalPosition();
+	// Bring other window group to foreground and request capture with lower/same priority
+	// And request capture from iQueueClient group window with higher priority
+	TheClient->iGroup->GroupWin()->SetOrdinalPosition(0, 10);
+	TInt capKeyFrontWin = TheClient->iGroup->GroupWin()->CaptureLongKey('m', 'm', 0, 0, (aTestType == ELongkeyCaptureDiffPriority ? KLongKeyCaptureLowPriority : KLongKeyCaptureHighPriority), ELongCaptureNormal);
+	iCaptureKey = iQueueClient->iGroup->GroupWin()->CaptureLongKey('m', 'm', 0, 0, KLongKeyCaptureHighPriority, ELongCaptureNormal);
+	iQueueClient->iWs.Flush();
+	iTest->SimulateKey(TRawEvent::EKeyDown, 'M');
+	TheClient->iWs.Flush();
+	DelayForRepeatEvents(1, 3);
+	iTest->SimulateKey(TRawEvent::EKeyUp, 'M');
+	AddExpectedEvent(EEventFocusLost);
+	//Note: Button down/up events along with immediate key events are not delivered to iQueueCLient's window group
+	//as they are sent to foreground/focused window group
+	AddExpectedKey(EEventKey, 'M', 'm', 1, EModifierLongKey | EModifierAutorepeatable);
+	iQueueClient->iGroup->GroupWin()->CancelCaptureLongKey(iCaptureKey);
+	TheClient->iGroup->GroupWin()->CancelCaptureLongKey(capKeyFrontWin);
+	TheClient->iGroup->GroupWin()->SetOrdinalPosition(ordinalPosition, ordinalPriority);
+	AddExpectedEvent(EEventFocusGained);
+	}
+
+/** Function used for delaying current thread so that repeat events can be generated.
+
+It uses iKeyBoardRepeatInitialDelay and iKeyBoardRepeatNextDelay variables to get the desired delay.
+The idea is to wait for initial delay + some extra value so that first repeat is generated.
+For more than one repeat events, wait will be initial delay + next delay + some extra value, and so on.
+
+The extra value is taken as fraction of iKeyBoardRepeatNextDelay.
+
+@param aNumeratorFracVal Numerator value of the fraction.
+@param aDenominatorFracVal Denominator value of the fraction.
+*/
+void CTEventTest::DelayForRepeatEvents(TInt aNumeratorFracVal, TInt aDenominatorFracVal)
+	{
+	if (!aNumeratorFracVal || !aDenominatorFracVal)
+		return;
+	User::After(iKeyBoardRepeatInitialDelay.Int() + (iKeyBoardRepeatNextDelay.Int()*aNumeratorFracVal/aDenominatorFracVal));
+	}
+
+#ifndef TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA  	
+void CTEventTest::KeyEventTranslation_NextSetOfEventsL()
+	{
+	TTimeIntervalMicroSeconds32 initialTime;
+	TTimeIntervalMicroSeconds32 time;
+	TheClient->iWs.GetKeyboardRepeatRate(initialTime, time);
+
+	RWindowGroup* wg = iQueueClient->iGroup->GroupWin();
+
+	#if defined(LOGGING)
+		TLogMessageText logMessageText;
+		_LIT(KSet,"KeyEventTranslation SetOfEvents: %d of 5");
+		logMessageText.Format(KSet,iEventSet);
+		INFO_PRINTF1(logMessageText);
+	#endif
+
+	switch (iEventSet++)
+		{
+		case 0:
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKeyDownUp('A');
+			AddExpectedEvent(EEventFocusGained);
+			AddExpectedKeyDownUp('A','a');
+			break;
+		case 1:
+			// Test key event translation using CaptureKey()
+			iCaptureKey = wg->CaptureKey(EKeyDevice0, 0, 0);
+			TEST(iCaptureKey >= 0);
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKeyDownUp(EStdKeyDevice1);
+			TheClient->iWs.Flush();
+			AddExpectedKey(EEventKeyDown, EStdKeyDevice1, 0, 0);
+			AddExpectedKey(EEventKey, EStdKeyDevice1, EKeyDevice0, 0);
+			AddExpectedKey(EEventKeyUp, EStdKeyDevice1, 0, 0);
+			wg->CancelCaptureKey(iCaptureKey);
+			break;
+		case 2:
+			// Test key event translation using CaptureKeyUpAndDowns()
+			iCaptureKey = wg->CaptureKeyUpAndDowns(EStdKeyDevice0, 0, 0);
+			TEST(iCaptureKey >= 0);
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKeyDownUp(EStdKeyDevice1);
+			TheClient->iWs.Flush();
+			AddExpectedKey(EEventKeyDown, EStdKeyDevice0, 0, 0);
+			AddExpectedKey(EEventKey, EStdKeyDevice1, EKeyDevice1, 0);
+			AddExpectedKey(EEventKeyUp, EStdKeyDevice0, 0, 0);
+			wg->CancelCaptureKeyUpAndDowns(iCaptureKey);
+			break;
+		case 3:
+			// Test key event translation using CaptureLongKey()
+			iCaptureKey = wg->CaptureLongKey(EKeyDevice0, EKeyDevice0, 0, 0, 0, ELongCaptureNormal);
+			TEST(iCaptureKey >= 0);
+			iQueueClient->iWs.Flush();
+
+			iTest->SimulateKey(TRawEvent::EKeyDown, EStdKeyDevice1);
+			TheClient->iWs.Flush();
+			User::After(initialTime.Int() + time.Int() / 3);
+			iTest->SimulateKey(TRawEvent::EKeyUp, EStdKeyDevice1);
+			TheClient->iWs.Flush();
+
+			AddExpectedKey(EEventKeyDown, EStdKeyDevice1, 0, 0);
+			AddExpectedKey(EEventKey, EStdKeyDevice1, EKeyDevice1, 0, EModifierAutorepeatable);
+			AddExpectedKey(EEventKey, EStdKeyDevice1, EKeyDevice0, 1, EModifierLongKey | EModifierAutorepeatable);
+			AddExpectedKey(EEventKeyUp, EStdKeyDevice1, 0, 0);
+
+			wg->CancelCaptureLongKey(iCaptureKey);
+			break;
+		case 4:
+			// Negative test: check that the capture key code listed in the
+			// translation table of the Key Routing Plug-in is not translated
+			// in the absence of any capture request for the mapped key.
+			iTest->SimulateKeyDownUp(EStdKeyDevice1);
+			TheClient->iWs.Flush();
+			AddExpectedKey(EEventKeyDown, EStdKeyDevice1, 0, 0);
+			AddExpectedKey(EEventKey, EStdKeyDevice1, EKeyDevice1, 0);
+			AddExpectedKey(EEventKeyUp, EStdKeyDevice1, 0, 0);
+			break;
+		default:
+			CActiveScheduler::Stop();
+			break;
+		}
+
+	TheClient->iWs.Flush();
+	}
+
+void CTEventTest::KeyEventBlocking_NextSetOfEventsL()
+	{
+	TTimeIntervalMicroSeconds32 initialTime;
+	TTimeIntervalMicroSeconds32 time;
+	TheClient->iWs.GetKeyboardRepeatRate(initialTime, time);
+
+	RWindowGroup* wg = iQueueClient->iGroup->GroupWin();
+
+	#if defined(LOGGING)
+		TLogMessageText logMessageText;
+		_LIT(KSet,"KeyEventBlocking SetOfEvents: %d of 5");
+		logMessageText.Format(KSet,iEventSet);
+		INFO_PRINTF1(logMessageText);
+	#endif
+
+	switch (iEventSet++)
+		{
+		case 0:
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKeyDownUp('A');
+			AddExpectedEvent(EEventFocusGained);
+			AddExpectedKeyDownUp('A','a');
+			break;
+		case 1:
+			// Simulate pressing a blocked key (Device3) while no
+			// key capture is in effect.
+			iTest->SimulateKeyDownUp(EStdKeyDevice3);
+			iTest->SimulateKeyDownUp('B');
+			TheClient->iWs.Flush();
+			AddExpectedKeyDownUp('B','b');
+			break;
+		case 2:
+			// Use RWindowGroup::CaptureKey() to capture EKeyDevice3
+			// and simulate pressing the blocked key again.
+			iCaptureKey = wg->CaptureKey(EKeyDevice3, 0, 0);
+			TEST(iCaptureKey >= 0);
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKeyDownUp(EStdKeyDevice3);
+			iTest->SimulateKeyDownUp('B');
+			TheClient->iWs.Flush();
+			AddExpectedKey(EEventKey, EStdKeyDevice3, EKeyDevice3, 0);
+			AddExpectedKeyDownUp('B','b');
+			wg->CancelCaptureKey(iCaptureKey);
+			break;
+		case 3:
+			// Repeat using CaptureKeyUpAndDowns()
+			iCaptureKey = wg->CaptureKeyUpAndDowns(EStdKeyDevice3, 0, 0);
+			TEST(iCaptureKey >= 0);
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKeyDownUp(EStdKeyDevice3);
+			iTest->SimulateKeyDownUp('B');
+			TheClient->iWs.Flush();
+			AddExpectedKey(EEventKeyDown, EStdKeyDevice3, 0, 0);
+			AddExpectedKey(EEventKeyUp, EStdKeyDevice3, 0, 0);
+			AddExpectedKeyDownUp('B','b');
+			wg->CancelCaptureKeyUpAndDowns(iCaptureKey);
+			break;
+		case 4:
+			// Repeat using CaptureLongKey()
+			iCaptureKey = wg->CaptureLongKey(EKeyDevice3, EKeyDevice3, 0, 0, 0, ELongCaptureNormal);
+			TEST(iCaptureKey >= 0);
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKey(TRawEvent::EKeyDown, EStdKeyDevice3);
+			TheClient->iWs.Flush();
+			User::After(initialTime.Int() + time.Int() / 3);
+			iTest->SimulateKey(TRawEvent::EKeyUp, EStdKeyDevice3);
+			iTest->SimulateKeyDownUp('B');
+			TheClient->iWs.Flush();
+			AddExpectedKey(EEventKey, EStdKeyDevice3, EKeyDevice3, 1, EModifierLongKey | EModifierAutorepeatable);
+			AddExpectedKeyDownUp('B','b');
+			wg->CancelCaptureLongKey(iCaptureKey);
+			break;
+		default:
+			CActiveScheduler::Stop();
+			break;
+		}
+
+	TheClient->iWs.Flush();
+	}
+
+void CTEventTest::KeyEventAppRestriction_NextSetOfEventsL()
+	{
+	TTimeIntervalMicroSeconds32 initialTime;
+	TTimeIntervalMicroSeconds32 time;
+	TheClient->iWs.GetKeyboardRepeatRate(initialTime, time);
+
+	RWindowGroup* wg = iQueueClient->iGroup->GroupWin();
+
+	#if defined(LOGGING)
+		TLogMessageText logMessageText;
+		_LIT(KSet,"KeyEventAppRestriction SetOfEvents: %d of 4");
+		logMessageText.Format(KSet,iEventSet);
+		INFO_PRINTF1(logMessageText);
+	#endif
+
+	switch (iEventSet++)
+		{
+		case 0:
+			// Make window group non-focusable so that it receives only
+			// keys that are captured and not those that are default-routed.
+			wg->EnableReceiptOfFocus(EFalse);
+			iQueueClient->iWs.Flush();
+			AddExpectedEvent(EEventFocusGained);
+			AddExpectedEvent(EEventFocusLost);
+			break;
+		case 1:
+			// Using RWindowGroup::CaptureKey(), attempt to capture a key
+			// that is restricted by UID to another application.
+			iCaptureKey = wg->CaptureKey(EKeyF20, 0, 0);
+			TEST(iCaptureKey == KErrPermissionDenied);
+			// Now capture a key that is restricted to the current
+			// application's UID and simulate pressing the restricted key.
+			iCaptureKey = wg->CaptureKey(EKeyF21, 0, 0);
+			TEST(iCaptureKey >= 0);
+			iQueueClient->iWs.Flush();
+			// Can't use SimulateKeyDownUp() here due to its check that scan
+			// codes are not in the range corresponding to lower case letters
+			iTest->SimulateKey(TRawEvent::EKeyDown, EStdKeyF21);
+			iTest->SimulateKey(TRawEvent::EKeyUp, EStdKeyF21);
+			TheClient->iWs.Flush();
+			AddExpectedKey(EEventKey, EStdKeyF21, EKeyF21, 0);
+			wg->CancelCaptureKey(iCaptureKey);
+			break;
+		case 2:
+			// Repeat using CaptureKeyUpAndDowns()
+			iCaptureKey = wg->CaptureKeyUpAndDowns(EStdKeyF20, 0, 0);
+			TEST(iCaptureKey == KErrPermissionDenied);
+			iCaptureKey = wg->CaptureKeyUpAndDowns(EStdKeyF21, 0, 0);
+			TEST(iCaptureKey >= 0);
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKey(TRawEvent::EKeyDown, EStdKeyF21);
+			iTest->SimulateKey(TRawEvent::EKeyUp, EStdKeyF21);
+			TheClient->iWs.Flush();
+			AddExpectedKey(EEventKeyDown, EStdKeyF21, 0, 0);
+			AddExpectedKey(EEventKeyUp, EStdKeyF21, 0, 0);
+			wg->CancelCaptureKeyUpAndDowns(iCaptureKey);
+			break;
+		case 3:
+			// Repeat using CaptureLongKey()
+			iCaptureKey = wg->CaptureLongKey(EKeyF20, EKeyF20, 0, 0, 0, ELongCaptureNormal);
+			TEST(iCaptureKey == KErrPermissionDenied);
+			iCaptureKey = wg->CaptureLongKey(EKeyF21, EKeyF21, 0, 0, 0, ELongCaptureNormal);
+			TEST(iCaptureKey >= 0);
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKey(TRawEvent::EKeyDown, EStdKeyF21);
+			TheClient->iWs.Flush();
+			User::After(initialTime.Int() + time.Int() / 3);
+			iTest->SimulateKey(TRawEvent::EKeyUp, EStdKeyF21);
+			TheClient->iWs.Flush();
+			AddExpectedKey(EEventKey, EStdKeyF21, EKeyF21, 1, EModifierLongKey | EModifierAutorepeatable);
+			wg->CancelCaptureLongKey(iCaptureKey);
+			break;
+		default:
+			CActiveScheduler::Stop();
+			break;
+		}
+
+	TheClient->iWs.Flush();
+	}
+
+void CTEventTest::KeyEventAppPriority_NextSetOfEventsL()
+	{
+	TTimeIntervalMicroSeconds32 initialTime;
+	TTimeIntervalMicroSeconds32 time;
+	TheClient->iWs.GetKeyboardRepeatRate(initialTime, time);
+
+	RWindowGroup* wg = iQueueClient->iGroup->GroupWin();
+	TInt handle1 = 0;
+	TInt handle2 = 0;
+	TInt handle3 = 0;
+	TInt handle4 = 0;
+	TInt handle5 = 0;
+	TInt handle6 = 0;
+
+	#if defined(LOGGING)
+		TLogMessageText logMessageText;
+		_LIT(KSet,"KeyEventAppPriority SetOfEvents: %d of 5");
+		logMessageText.Format(KSet,iEventSet);
+		INFO_PRINTF1(logMessageText);
+	#endif
+
+	switch (iEventSet++)
+		{
+		case 0:
+			SpawnCaptureAppL(iCaptureApp1);
+			iQueueClient->iWs.Flush();
+			AddExpectedEvent(EEventFocusGained);
+			AddExpectedEvent(EEventFocusLost);
+			break;
+		case 1:
+			// Use RWindowGroup::CaptureKey() to capture EKeyF22
+			// and EKeyF23 with priority 0. Simulate pressing both
+			// keys. Since the current application has precedence by UID
+			// for capture of EKeyF22, it should receive that key
+			// but should not receive EKeyF23.
+			handle1 = wg->CaptureKey(EKeyF22, 0, 0);
+			handle2 = wg->CaptureKey(EKeyF23, 0, 0);
+			TEST(handle1 >= 0);
+			TEST(handle2 >= 0);
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKey(TRawEvent::EKeyDown, EStdKeyF22);
+			iTest->SimulateKey(TRawEvent::EKeyUp, EStdKeyF22);
+			iTest->SimulateKey(TRawEvent::EKeyDown, EStdKeyF23);
+			iTest->SimulateKey(TRawEvent::EKeyUp, EStdKeyF23);
+			TheClient->iWs.Flush();
+			AddExpectedKey(EEventKey, EStdKeyF22, EKeyF22, 0);
+			wg->CancelCaptureKey(handle1);
+			wg->CancelCaptureKey(handle2);
+			break;
+		case 2:
+			// Repeat using CaptureKeyUpAndDowns()
+			handle1 = wg->CaptureKeyUpAndDowns(EStdKeyF22, 0, 0);
+			handle2 = wg->CaptureKeyUpAndDowns(EStdKeyF23, 0, 0);
+			TEST(handle1 >= 0);
+			TEST(handle2 >= 0);
+			iQueueClient->iWs.Flush();
+			iTest->SimulateKey(TRawEvent::EKeyDown, EStdKeyF22);
+			iTest->SimulateKey(TRawEvent::EKeyUp, EStdKeyF22);
+			iTest->SimulateKey(TRawEvent::EKeyDown, EStdKeyF23);
+			iTest->SimulateKey(TRawEvent::EKeyUp, EStdKeyF23);
+			TheClient->iWs.Flush();
+			AddExpectedKey(EEventKeyDown, EStdKeyF22, 0, 0);
+			AddExpectedKey(EEventKeyUp, EStdKeyF22, 0, 0);
+			wg->CancelCaptureKeyUpAndDowns(handle1);
+			wg->CancelCaptureKeyUpAndDowns(handle2);
+			break;
+		case 3:
+			// Repeat using CaptureLongKey()
+			handle1 = wg->CaptureLongKey(EKeyF22, EKeyF22, 0, 0, 0, ELongCaptureNormal);
+			handle2 = wg->CaptureLongKey(EKeyF23, EKeyF23, 0, 0, 0, ELongCaptureNormal);
+			TEST(handle1 >= 0);
+			TEST(handle2 >= 0);
+			iQueueClient->iWs.Flush();
+
+			iTest->SimulateKey(TRawEvent::EKeyDown, EStdKeyF22);
+			TheClient->iWs.Flush();
+			User::After(initialTime.Int() + time.Int() / 3);
+			iTest->SimulateKey(TRawEvent::EKeyUp, EStdKeyF22);
+
+			iTest->SimulateKey(TRawEvent::EKeyDown, EStdKeyF23);
+			TheClient->iWs.Flush();
+			User::After(initialTime.Int() + time.Int() / 3);
+			iTest->SimulateKey(TRawEvent::EKeyUp, EStdKeyF23);
+			TheClient->iWs.Flush();
+
+			AddExpectedKey(EEventKey, EStdKeyF22, EKeyF22, 1, EModifierLongKey | EModifierAutorepeatable);
+			wg->CancelCaptureLongKey(handle1);
+			wg->CancelCaptureLongKey(handle2);
+			break;
+		case 4:
+			// Repeat with additional capture requests for improved code
+			// coverage. (Also verifies that UID-based precedence works even
+			// when another app makes the most recent capture request.)
+			// Spawn a second capture app so that requests occur in the
+			// following order:
+			// 1. CaptureApp1, priority 1 (outstanding)
+			// 2. Current App, priority 0, precedence by UID
+			// 3. CaptureApp2, priority 1
+			// Note that all three capture types are tested together here.
+			handle1 = wg->CaptureKey(EKeyF22, 0, 0);
+			handle2 = wg->CaptureKey(EKeyF23, 0, 0);
+			handle3 = wg->CaptureKeyUpAndDowns(EStdKeyF22, 0, 0);
+			handle4 = wg->CaptureKeyUpAndDowns(EStdKeyF23, 0, 0);
+			handle5 = wg->CaptureLongKey(EKeyF22, EKeyF22, 0, 0, 0, ELongCaptureNormal);
+			handle6 = wg->CaptureLongKey(EKeyF23, EKeyF23, 0, 0, 0, ELongCaptureNormal);
+			TEST(handle1 >= 0);
+			TEST(handle2 >= 0);
+			TEST(handle3 >= 0);
+			TEST(handle4 >= 0);
+			TEST(handle5 >= 0);
+			TEST(handle6 >= 0);
+			iQueueClient->iWs.Flush();
+
+			SpawnCaptureAppL(iCaptureApp2);
+
+			iTest->SimulateKey(TRawEvent::EKeyDown, EStdKeyF22);
+			TheClient->iWs.Flush();
+			User::After(initialTime.Int() + time.Int() / 3);
+			iTest->SimulateKey(TRawEvent::EKeyUp, EStdKeyF22);
+
+			iTest->SimulateKey(TRawEvent::EKeyDown, EStdKeyF23);
+			TheClient->iWs.Flush();
+			User::After(initialTime.Int() + time.Int() / 3);
+			iTest->SimulateKey(TRawEvent::EKeyUp, EStdKeyF23);
+			TheClient->iWs.Flush();
+
+			AddExpectedKey(EEventKeyDown, EStdKeyF22, 0, 0);
+			AddExpectedKey(EEventKey, EStdKeyF22, EKeyF22, 0);
+			AddExpectedKey(EEventKey, EStdKeyF22, EKeyF22, 1, EModifierLongKey | EModifierAutorepeatable);
+			AddExpectedKey(EEventKeyUp, EStdKeyF22, 0, 0);
+			wg->CancelCaptureKey(handle1);
+			wg->CancelCaptureKey(handle2);
+			wg->CancelCaptureKeyUpAndDowns(handle3);
+			wg->CancelCaptureKeyUpAndDowns(handle4);
+			wg->CancelCaptureLongKey(handle5);
+			wg->CancelCaptureLongKey(handle6);
+			break;
+		default:
+			iCaptureApp1.Kill(KErrNone);
+			iCaptureApp2.Kill(KErrNone);
+			iCaptureApp1.Close();
+			iCaptureApp2.Close();
+			CActiveScheduler::Stop();
+			break;
+		}
+
+	TheClient->iWs.Flush();
+	}
+
+/**
+Spawn another application that will capture the keys EKeyF22 and
+EKeyF23 with high priority.
+
+@param aProcess		Process to create
+*/
+void CTEventTest::SpawnCaptureAppL(RProcess& aProcess)
+	{
+	_LIT(KCaptureApp, "tevent_captureapp.exe");
+	TInt error = aProcess.Create(KCaptureApp, KNullDesC);
+	if (error != KErrNone)
+		{
+#if defined(LOGGING)
+		TLogMessageText logMessageText;
+		_LIT(KLog, "Cannot create capture app - error %d");
+		logMessageText.Format(KLog, error);
+		INFO_PRINTF1(logMessageText);
+#endif
+		User::Leave(error);
+		}
+
+	// Make rendezvous request to capture app
+	TRequestStatus status;
+	aProcess.Rendezvous(status);
+	aProcess.Resume();
+
+	// Wait for capture app to make its capture requests
+	User::WaitForRequest(status);
+	TEST(status.Int() == KErrNone);
+	}
+#endif // TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA  	
 
 #define PASSWORD_START_OF_DAY 4
 void CTEventTest::Password_NextSetOfEvents()
@@ -6316,15 +6985,19 @@ void CTEventTest::RunTestCaseL(TInt /*aCurTestCase*/)
 	_LIT(KTest25,"Mismatched Pointer Events");
 	_LIT(KTest26,"Pointer Buffer Purge");
 	_LIT(KTest27,"TRawEvent test for Repeats");
-#ifdef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS            
 #ifndef TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA 
-	_LIT(KTest28,"Transparent Surface Visibility Changed Events 1");
-	_LIT(KTest29,"Transparent Surface Visibility Changed Events 2");
-	_LIT(KTest30,"Transparent Surface Visibility Changed Events 3");
-#endif // TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA
+	_LIT(KTest28,"Translation of key events by routing plug-in");
+	_LIT(KTest29,"Blocking of key events by routing plug-in");
+	_LIT(KTest30,"App UID based restriction of key capture");
+	_LIT(KTest31,"App UID based routing of key events");
+#ifdef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS            
+	_LIT(KTest32,"Transparent Surface Visibility Changed Events 1");
+	_LIT(KTest33,"Transparent Surface Visibility Changed Events 2");
+	_LIT(KTest34,"Transparent Surface Visibility Changed Events 3");
 #endif // SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS
-	_LIT(KTest31A,"Initialize Queue Size without inactive queue");
-	_LIT(KTest31B,"Initialize Queue Size with inactive queue");	
+#endif // TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA
+	_LIT(KTest35A,"Initialize Queue Size without inactive queue");
+	_LIT(KTest35B,"Initialize Queue Size with inactive queue");	
 	
 	if (!TestBase()->ConfigurationSupportsPointerEventTesting())
 	    {
@@ -6644,15 +7317,16 @@ void CTEventTest::RunTestCaseL(TInt /*aCurTestCase*/)
 
 @SYMDEF             DEF081259
 
-@SYMTestCaseDesc    Send events for capturing large areas of text
+@SYMTestCaseDesc    Test RWindowGroup::CaptureLongKey()
 
 @SYMTestPriority    High
 
 @SYMTestStatus      Implemented
 
-@SYMTestActions     Send events for capturing large areas of text
+@SYMTestActions     Simulate long key presses and check that long key capture
+					and key repeat work as expected.
 
-@SYMTestExpectedResults The events are sent to the window without
+@SYMTestExpectedResults The correct key events are sent to the window without
 						error
 */
 		case 15:
@@ -6925,8 +7599,118 @@ void CTEventTest::RunTestCaseL(TInt /*aCurTestCase*/)
 		    RunTestsL();
 		    break;
 		    
-#ifdef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS            
 #ifndef TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA            
+/**
+@SYMTestCaseID      GRAPHICS-WSERV-0751, GRAPHICS-WSERV-0752, GRAPHICS-WSERV-0753
+@SYMPREQ			417-61800
+@SYMTestCaseDesc    Test translation of key events by Key Event Routing plug-in
+@SYMTestPriority    High
+@SYMTestStatus      Implemented
+@SYMTestActions     Use RWindowGroup::CaptureKey() to capture pseudo key
+					Device0 (key code EKeyDevice0, scan code EStdKeyDevice0).
+					Simulate pressing key Device1.
+					Repeat using CaptureKeyUpAndDowns().
+					Repeat using CaptureLongKey().
+					Repeat without any capture requests.
+@SYMTestExpectedResults
+					The key event delivered contains the key or scan code for
+					Device0, if captured. When using CaptureKey() and
+					CaptureLongKey(), only the key code is translated. Using
+					CaptureKeyUpAndDowns(), only the scan code is translated.
+
+Note: this test requires an entry in the translation table of the Key Routing
+Plug-in to map Device0 to Device1 at capture request time.
+*/
+		case 28:
+            ((CTEventTestStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0751"));
+            iTest->LogSubTest(KTest28);
+            RunTestsL();
+            break;
+
+/**
+@SYMTestCaseID      GRAPHICS-WSERV-0760, GRAPHICS-WSERV-0761, GRAPHICS-WSERV-0762
+@SYMPREQ			417-61800
+@SYMTestCaseDesc    Test blocking of key events by Key Event Routing plug-in
+@SYMTestPriority    High
+@SYMTestStatus      Implemented
+@SYMTestActions     Simulate pressing a blocked key (Device3) while no
+					key capture is in effect.
+					Use RWindowGroup::CaptureKey() to capture EKeyDevice3
+					and simulate pressing the blocked key again.
+					Repeat using CaptureKeyUpAndDowns().
+					Repeat using CaptureLongKey().
+@SYMTestExpectedResults
+					The blocked key event is only delivered when captured and
+					is not routed to the focussed window group by default.
+
+Note: this test requires entries in the Blocked Key Table of the Reference
+Key Routing Plug-in for EKeyDevice3 and EStdKeyDevice3.
+*/
+		case 29:
+            ((CTEventTestStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0760"));
+            iTest->LogSubTest(KTest29);
+            RunTestsL();
+            break;
+
+/**
+@SYMTestCaseID      GRAPHICS-WSERV-0754, GRAPHICS-WSERV-0755, GRAPHICS-WSERV-0756
+@SYMPREQ			417-61800
+@SYMTestCaseDesc    Test application UID-based restriction of key capture by
+					Key Event Routing plug-in.
+@SYMTestPriority    High
+@SYMTestStatus      Implemented
+@SYMTestActions     Attempt to capture a key that is restricted by UID
+					to another application.
+					Use RWindowGroup::CaptureKey() to capture a key that is
+					restricted to the current application's UID.
+					Simulate pressing the second key.
+					Repeat using CaptureKeyUpAndDowns().
+					Repeat using CaptureLongKey().
+@SYMTestExpectedResults
+					Capture of the first key fails with KErrPermissionDenied.
+					Capture of the second key succeeds and the key event is
+					delivered.
+
+Note: this test requires entries in the Restricted Key Table of the Reference
+Key Routing Plug-in for the chosen keys.
+*/
+		case 30:
+            ((CTEventTestStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0754"));
+            iTest->LogSubTest(KTest30);
+            RunTestsL();
+            break;
+
+/**
+@SYMTestCaseID      GRAPHICS-WSERV-0757, GRAPHICS-WSERV-0758, GRAPHICS-WSERV-0759
+@SYMPREQ			417-61800
+@SYMTestCaseDesc    Test application UID-based routing of key events by
+					Key Event Routing plug-in.
+@SYMTestPriority    High
+@SYMTestStatus      Implemented
+@SYMTestActions     Invoke another application to capture two different keys
+					with high priority using each of RWindowGroup::CaptureKey(),
+					CaptureKeyUpAndDowns() and CaptureLongKey(). One key of
+					each pair has precedence for capture by the current
+					application's UID (i.e. this test).
+					In the current application, use RWindowGroup::CaptureKey()
+					to capture both keys with lower priority.
+					Simulate pressing the keys.
+					Repeat using CaptureKeyUpAndDowns().
+					Repeat using CaptureLongKey().
+@SYMTestExpectedResults
+					The key event with UID-based precedence is delivered to
+					the current application but the other key is not.
+
+Note: this test requires entries in the Priority Application Table of the
+Reference Key Routing Plug-in for the chosen key.
+*/
+		case 31:
+            ((CTEventTestStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0757"));
+            iTest->LogSubTest(KTest31);
+            RunTestsL();
+            break;
+
+#ifdef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS            
 /**
 @SYMTestCaseID      GRAPHICS-WSERV-2669-0015
 @SYMREQ             REQ13202: Possibility for external layers to appear above UI layer
@@ -6938,9 +7722,9 @@ void CTEventTest::RunTestCaseL(TInt /*aCurTestCase*/)
 @SYMTestActions     Call SetSurfaceTransparency(ETrue) on win2
 @SYMTestExpectedResults Win1 receives visibility event
 */            
-        case 28:
+        case 32:
             ((CTEventTestStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-2669-0015"));
-            iTest->LogSubTest(KTest28);
+            iTest->LogSubTest(KTest32);
             RunTestsL();
             break;
 /**
@@ -6955,9 +7739,9 @@ void CTEventTest::RunTestCaseL(TInt /*aCurTestCase*/)
 @SYMTestActions     Delete win3
 @SYMTestExpectedResults Both win1 and win2 receive visibility events
 */            
-        case 29:
+        case 33:
             ((CTEventTestStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-2669-0016"));
-            iTest->LogSubTest(KTest29);
+            iTest->LogSubTest(KTest33);
             RunTestsL();
             break;
 /**
@@ -6971,13 +7755,13 @@ void CTEventTest::RunTestCaseL(TInt /*aCurTestCase*/)
 @SYMTestActions     Move win2 to overlap win1
 @SYMTestExpectedResults No visibility event is received (win1 is still fully visible)
 */            
-        case 30:
+        case 34:
             ((CTEventTestStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-2669-0017"));
-            iTest->LogSubTest(KTest30);
+            iTest->LogSubTest(KTest34);
             RunTestsL();
             break;
-#endif // TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA
 #endif // SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS  
+#endif // TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA
 
 /**
 @SYMTestCaseID      GRAPHICS-WSERV-0559
@@ -6994,17 +7778,17 @@ void CTEventTest::RunTestCaseL(TInt /*aCurTestCase*/)
 		case 28:
 #else
 #ifdef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS
-		case 31:
+		case 35:
 #else
-		case 28:
+		case 32:
 #endif
 #endif
 		    // This test was moved to be the last test in the test suite, because it sometimes leaves events in the event queue, 
 		    //it can affect the results of other tests. This test case should be the last test in the test suite. 
 		    ((CTEventTestStep*)iStep)->SetTestStepID(_L("GRAPHICS-WSERV-0484"));
-		    iTest->LogSubTest(KTest31A);
+		    iTest->LogSubTest(KTest35A);
 		    InitializeQueueSizeTestL(EFalse);
-		    iTest->LogSubTest(KTest31B);
+		    iTest->LogSubTest(KTest35B);
 		    InitializeQueueSizeTestL(ETrue);
 		    break;    
 			

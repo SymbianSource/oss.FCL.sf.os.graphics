@@ -22,8 +22,8 @@
 #ifndef __REDIRECTOR_H__
 #define __REDIRECTOR_H__
 
-#include "Graphics/WSGRAPHICDRAWER.H"
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "graphics/WSGRAPHICDRAWER.H"
+#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
 
 class CFbsBitmap;
 class CFbsBitmapDevice;

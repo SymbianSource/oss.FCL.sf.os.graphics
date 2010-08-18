@@ -1,4 +1,4 @@
-// Copyright (c) 1996-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1996-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -32,6 +32,8 @@
 typedef TBuf<0x40> TOomTestName;
 
 class CTOom;
+
+const TInt KNumCapKeyRequest = 20;
 
 
 class COomFailBase : public CBase
@@ -192,32 +194,45 @@ public:
 	TOomTestName TestName();
 	};
 
-class COomCaptureKey : public COomSetup
+class COomCaptureKeyBase : public COomSetup
+	{
+public:
+	COomCaptureKeyBase(CTOom *aTest);
+	~COomCaptureKeyBase();
+	void ConstructL();
+protected:
+	TInt32 iCapKey[KNumCapKeyRequest];
+	TInt iIndex;	
+	};
+
+class COomCaptureKey : public COomCaptureKeyBase
 	{
 public:
 	COomCaptureKey(CTOom *aTest);
 	~COomCaptureKey();
-	void ConstructL();
 	void ClearUpL();
 	TInt Fail();
 	TOomTestName TestName();
-private:
-	TInt32 iCapKey[20];
-	TInt iIndex;
 	};
 
-class COomCaptureKeyUpDown : public COomSetup
+class COomCaptureKeyUpDown : public COomCaptureKeyBase
 	{
 public:
 	COomCaptureKeyUpDown(CTOom *aTest);
 	~COomCaptureKeyUpDown();
-	void ConstructL();
 	void ClearUpL();
 	TInt Fail();
 	TOomTestName TestName();
-private:
-	TInt32 iCapKey[20];
-	TInt iIndex;
+	};
+
+class COomLongKeyCapture : public COomCaptureKeyBase
+	{
+public:
+	COomLongKeyCapture(CTOom *aTest);
+	~COomLongKeyCapture();
+	void ClearUpL();
+	TInt Fail();
+	TOomTestName TestName();
 	};
 
 class COomHotKey : public COomSetup

@@ -585,5 +585,5 @@ EXPORTS
 	?OverrideEffects@RWsSession@@QAEXHHABV?$TBuf@$0BAA@@@00V?$TBitFlagsT@K@@@Z @ 584 NONAME ; void RWsSession::OverrideEffects(int, int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &, class TBitFlagsT<unsigned long>)
 	?UnregisterEffect@RWsSession@@QAEXHHI@Z @ 585 NONAME ; void RWsSession::UnregisterEffect(int, int, unsigned int)
 	?UnregisterAllEffects@RWsSession@@QAEXXZ @ 586 NONAME ; void RWsSession::UnregisterAllEffects(void)
-
+	?IndicateAppOrientation@RWsSession@@QAEXW4TRenderOrientation@@@Z @ 587 NONAME ; void RWsSession::IndicateAppOrientation(enum TRenderOrientation)
 

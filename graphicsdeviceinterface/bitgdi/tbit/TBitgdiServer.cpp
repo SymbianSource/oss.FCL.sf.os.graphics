@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -35,6 +35,7 @@
 #include "TFont.h"
 #include "toutlineandshadowfonts.h"
 #include "textendedbitmap.h"
+#include "tmultiplescreens.h"
 
  
 
@@ -163,6 +164,10 @@ CTestStep* CTBitgdiServer::CreateTestStep(const TDesC& aStepName)
 	else if(aStepName == KTExtendedBitmapNegativeStep)
 		{
 		testStep = new CTExtendedBitmapNegativeStep();
+		}
+	else if(aStepName == KTMultipleScreensStep)
+		{
+		testStep = new CTMultipleScreensStep();
 		}
 	TBuf<64> log;
 	_LIT(KBitgdi,"BITGDI Test %S ");

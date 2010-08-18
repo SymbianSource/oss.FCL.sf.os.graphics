@@ -35,6 +35,7 @@
 
 ;//script file
 "\epoc32\data\z\sgresourcetest\sgresourcetest_t_generic.script"-"c:\sgresourcetest\sgresourcetest_t_generic.script"
-"\epoc32\data\z\sgresourcetest\sgresourcetest_t_internal.script"-"c:\sgresourcetest\sgresourcetest_t_internal.script"
-"\epoc32\data\z\sgresourcetest\sgresourcetest_t_stress_auto.script"-"c:\sgresourcetest\sgresourcetest_t_stress_auto.script"
+;COMMENTED OUT FOR 10T38 ZERO TOLERANCE TEST STRATEGY
+;"\epoc32\data\z\sgresourcetest\sgresourcetest_t_internal.script"-"c:\sgresourcetest\sgresourcetest_t_internal.script"
+;"\epoc32\data\z\sgresourcetest\sgresourcetest_t_stress_auto.script"-"c:\sgresourcetest\sgresourcetest_t_stress_auto.script"
 

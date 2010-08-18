@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -40,6 +40,15 @@ Indicates version of the font and bitmap server without heap locking.
 */
 #define SYMBIAN_FBSERV_V2
 
+/**
+Indicates version of FBS that provides the CFbsFont extension 
+interfaces RFbsGlyphDataIterator for using hardware glyphs, and
+RFbsGlyphMetricsArray.
+@publishedAll
+@prototype
+*/
+//#define SYMBIAN_FBSERV_GLYPHDATA
+
 /** 
 Character width and adjustment information. 
 @publishedAll
@@ -61,6 +70,8 @@ public:
 class CFbsRalCache;
 class CFbsSessionHelper;
 class CFbsRasterizer;
+class TGlyphCacheMetrics;
+class TFbsOogmMessage;
 
 /** 
 A session with the font and bitmap server. 
@@ -101,6 +112,9 @@ public:
 	HBufC8* GetDecompressionBuffer(TInt aSize);
 	HBufC8* GetExtraBuffer(TInt aSize);
     TInt ServerSessionHandle() const;
+    IMPORT_C TInt GetGlyphCacheMetrics(TGlyphCacheMetrics& aGlyphCacheMetrics);
+    IMPORT_C TInt ConveyOogmMessage( TFbsOogmMessage& aOogmMessage );
+
 public:
 	/** WARNING: For internal use ONLY.  Compatibility is not guaranteed in future releases.	 
 	Used for testing server side out of memory failures.	
@@ -149,6 +163,8 @@ The class implements a number of functions inherited from CFont.
 class CFbsFont: public CFont
 	{
 	friend class CFbsTypefaceStore;
+	friend class RFbsGlyphDataIterator;
+	friend class RFbsGlyphMetricsArray;
 
 private:
 	// From CFont
@@ -208,7 +224,7 @@ protected:
 	RFbsSession* iFbs;
 	CBitmapFont* iAddressPointer;
 	TInt iHandle;
-	TInt iServerHandle;
+    TInt iServerHandle;
 	};
 
 /**
@@ -505,4 +521,22 @@ private:
 	CDitherColor256* iDither;
 	};
 
-#endif
+
+/**
+ A class encapsulating the current state of the glyph cache.
+
+ @publishedAll
+ @released
+*/
+class TGlyphCacheMetrics
+    {
+public:
+    TInt iMaxCacheSizeInBytes;
+    TInt iMaxCacheSizeHigh;
+    TInt iMaxCacheSizeLow;
+    TInt iCacheSizeInBytes;
+    TBool iGpuCacheSizeLimitIsMax;
+    };
+
+#endif // __FBS_H__
+

@@ -511,10 +511,18 @@ TBool CWsWindowBase::CommandL(TInt aOpcode, TWsWinCmdUnion &aCmd)
 				}
 			}
 			break;
-			case EWsWinOpEnableAdvancedPointers:
-				User::LeaveIfError(IsActivated()?KErrInUse:KErrNone);
-				iBaseWinFlags |= EBaseWinAdvancedPointersEnabled;
-				break;
+		case EWsWinOpEnableAdvancedPointers:
+      if(!IsActivated())
+          {
+          // Must call this BEFORE activating the window.
+          iBaseWinFlags |= EBaseWinAdvancedPointersEnabled;
+          }
+      else
+          {                    
+          // Called after activation, so panic the client.                
+          OwnerPanic(EWservPanicUnableToEnableAdvPointer);
+          }
+			break;
 		default:
 			return(EFalse);
 		}

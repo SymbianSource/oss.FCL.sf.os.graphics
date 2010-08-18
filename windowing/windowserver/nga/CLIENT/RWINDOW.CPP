@@ -1363,7 +1363,7 @@ one finger touching it at the same time), then this method will enable deliverin
 events from all detected pointers to this window.
 
 This method must be called before the window is activated by calling RWindowBase::Activate().
-Otherwise this will be ignored (release build), or panic (debug build). 
+Otherwise the client is panicked with the code EWservPanicUnableToEnableAdvPointer.
 
 If this method is not called for the window, it is assumed that the window is not
 able to receive events from multiple pointers, and thus only events from a single
@@ -2798,6 +2798,7 @@ aModifierMask need to be set and which need to be unset. For example, see the
 description above. 
 @param aPriority A priority value - if more than one window group has requested 
 capture for the same key event, the one with the highest priority will capture it.
+The value must be greater than KMinTInt.
 @return A handle identifying the capture key, or one of the system-wide error 
 codes (if <0). KErrPermissionDenied indicates that the requested key cannot be 
 captured by this window group, because it has been protected by another window group. 
@@ -2866,6 +2867,7 @@ Possible values are defined in TEventModifier.
 aModifierMask need to be set and which need to be unset. 
 @param aPriority A priority value - if more than one window group has requested 
 capture for the same key event, the one with the highest priority will capture it.
+The value must be greater than KMinTInt.
 @return A handle identifying the capture key, or one of the system-wide error 
 codes (if < 0). KErrPermissionDenied indicates that the requested key cannot be captured by this 
 window group, because it has been protected by another window group. For more information, see 
@@ -2937,6 +2939,7 @@ in aModifierMask match these states, where 1 = modifier set, and 0 = modifier
 not set. Modifier key states are defined in TEventModifier. 
 @param aPriority If more than one window group has requested capture for the 
 same long key event, the one with the highest priority will capture the event.
+The value must be greater than KMinTInt.
 @param aFlags Configures the long key capture behaviour. See the TLongCaptureFlags 
 enum.
 @return Identifying value for the long key capture. For use with the CancelCaptureLongKey() 
@@ -2972,6 +2975,7 @@ in aModifierMask match these states, where 1 = modifier set, and 0 = modifier
 not set. Modifier key states are defined in TEventModifier. 
 @param aPriority If more than one window group has requested capture for the 
 same long key event, the one with the highest priority will capture the event.
+The value must be greater than KMinTInt.
 @param aFlags Configures the long key capture behaviour. See the TLongCaptureFlags 
 enum.
 @return Identifying value for the long key capture. For use with the CancelCaptureLongKey() 

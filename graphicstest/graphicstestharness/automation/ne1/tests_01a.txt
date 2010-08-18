@@ -32,6 +32,8 @@ TESTEXECUTE, \logs\testexecute\fbstest_T_Secure.htm,					, z:\fbstest\fbstest_T_
 TESTEXECUTE, \logs\testexecute\fbstest_T_StreamIdCache.htm,				, z:\fbstest\fbstest_T_StreamIdCache.script, 800
 TESTEXECUTE, \logs\testexecute\fbstest_t_extendedbitmap.htm,			, z:\fbstest\fbstest_t_extendedbitmap.script, 1200
 TESTEXECUTE, \logs\testexecute\fbstest_t_fonttable.htm,			        , z:\fbstest\fbstest_t_fonttable.script, 800
+TESTEXECUTE, \logs\testexecute\fbstest_t_glyphdata.htm,					, z:\fbstest\fbstest_t_glyphdata.script, 800
+TESTEXECUTE, \logs\testexecute\fbstest_t_glyphdataoutlineshadow.htm,		, z:\fbstest\fbstest_t_glyphdataoutlineshadow.script, 800, ,z\ityperast_config.cmd install, z\ityperast_config.cmd uninstall
 
 # See also tests_95_hw00.txt
 # See also tests_95_hw02.txt

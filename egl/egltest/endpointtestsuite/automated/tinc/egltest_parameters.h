@@ -188,7 +188,6 @@ void CParameters<T>::MakeBadParamsL(const RArray<T>& aValidParamsArray)
                 break;
                 }
             }
-        // Can/should we use "search" here?
         // Check if it's already in the list - no point in testing the same value more than once.
         for(TInt j = 0; useCurParam && j < iParams.Count(); j++)
             {

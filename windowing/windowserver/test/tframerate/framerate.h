@@ -23,8 +23,8 @@
 #define __GRAPHICDRAWERTESTFRAMERATE_H__
 
 #include <e32std.h>
-#include "Graphics/WSGRAPHICDRAWER.H"
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "graphics/WSGRAPHICDRAWER.H"
+#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
 
 //Maximum number of animations at a time.
 #define KMaxAnim 100

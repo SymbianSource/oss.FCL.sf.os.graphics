@@ -24,8 +24,8 @@
 #ifndef __WSGRAPHICDRAWER_COVERAGE_H__
 #define __WSGRAPHICDRAWER_COVERAGE_H__
 
-#include "Graphics/WSGRAPHICDRAWER.H"
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "graphics/WSGRAPHICDRAWER.H"
+#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
 
 #include "gdcovcommon.h"
 

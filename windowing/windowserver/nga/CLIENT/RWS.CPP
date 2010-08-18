@@ -22,6 +22,7 @@
 #include "CLIENT.H"
 #include "graphics/windowserverconstants.h"
 #include "rtfxeffect.h"
+#include <wspublishandsubscribedata.h>
 
 const TInt KMaxWSERVMessagesSlot=-1;
 
@@ -2584,4 +2585,16 @@ Please refer RWsSession::RegisterEffect() comments for more information on anima
 	{
 	RTFXEffect tfxEffect(iWsHandle, iBuffer);
 	tfxEffect.OverrideTFXEffect(RTFXEffect::ETFXSession, aAction, aPurpose, aResourceDir, aFilenameOutgoing, aFilenameIncoming, aFlags);
+	}
+
+EXPORT_C void RWsSession::IndicateAppOrientation(TRenderOrientation aOrientation)
+/**
+Application informs window server the orientation of rendering it intends to use
+
+@param aOrientation The orientation the application intends to use
+
+@publishedPartner
+*/
+	{
+	return(WriteInt(aOrientation,EWsClOpIndicateAppOrientation));
 	}

@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -46,7 +46,10 @@ RUN_TEST_STEP !PanicCode=-6 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.in
 RUN_TEST_STEP !PanicCode=-6 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini ShapeDelete
 RUN_TEST_STEP !PanicCode=-6 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini SetTwipsHeight
 RUN_TEST_STEP !PanicCode=-6 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini GetTwipsHeight
+RUN_TEST_STEP !PanicCode=-8 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini GetGlyphs
+RUN_TEST_STEP !PanicCode=-8 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini GetGlyphMetrics
 RUN_TEST_STEP !PanicCode=-6 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini GetFontTableWrongMsg
 RUN_TEST_STEP !PanicCode=-6 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini ReleaseFontTableWrongMsg
 RUN_TEST_STEP !PanicCode=-38 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini GetGlyphOutlineWrongMsg
 RUN_TEST_STEP !PanicCode=-38 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini ReleaseGlyphOutlineWrongMsg
+

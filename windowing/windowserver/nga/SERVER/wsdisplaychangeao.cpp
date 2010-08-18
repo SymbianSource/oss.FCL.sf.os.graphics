@@ -248,19 +248,19 @@ void CWsConfigChangeNotifier::UpdateLastSetConfiguration(TDisplayConfiguration& 
     TSize resolution(0,0);
     if (aNewConfig.GetResolution(resolution))
         {
-        iLastConfig.SetResolution(resolution);
+        iLastSetConfig.SetResolution(resolution);
         }
     
     TSize resolutionTwips(0,0);
     if (aNewConfig.GetResolutionTwips(resolutionTwips))
         {
-        iLastConfig.SetResolutionTwips(resolutionTwips);   
+        iLastSetConfig.SetResolutionTwips(resolutionTwips);   
         }
     
     TDisplayConfiguration1::TRotation rotation;
     if (aNewConfig.GetRotation(rotation))
         {
-        iLastConfig.SetRotation(rotation);
+        iLastSetConfig.SetRotation(rotation);
         }
     }
 

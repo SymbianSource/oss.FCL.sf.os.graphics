@@ -85,7 +85,9 @@ EXPORT_C CFbsFont::~CFbsFont()
 EXPORT_C void CFbsFont::Reset()
 	{
 	if (iHandle)
+	    {
 		iFbs->SendCommand(EFbsMessClose,iHandle);
+	    }
 	iHandle = 0;
 	}
 	
@@ -115,7 +117,7 @@ EXPORT_C TInt CFbsFont::Duplicate(TInt aFontHandle)
 	if (!aFontHandle)
 		return KErrUnknown;
 	// close any existing handle
-	Reset();
+	Reset();	
 	// ask server to create the duplicate handle
 	TPckgBuf<TFontInfo> tfpckg;
 	TIpcArgs args(aFontHandle,&tfpckg);
@@ -137,7 +139,9 @@ EXPORT_C TInt CFbsFont::Duplicate(TInt aFontHandle)
 EXPORT_C TInt CFbsFont::Handle() const
 	{
 	if (!iHandle)
+		{
 		return 0;
+		}
 	return iServerHandle;
 	}
 
@@ -727,6 +731,9 @@ that it does not recognize and handle.
 provide and/or return information to/from the particular extension function,
 defaults to NULL.
 @return Integer return value from extension function, a system wide error code.
+@panic FBSCLI 31, in debug builds only, if iExtra is NULL when it must not be.
+@panic FBSCLI 38, in debug builds only, if a reserved error code is returned 
+	from an extended function.
 @internalTechnology
 @released
 */

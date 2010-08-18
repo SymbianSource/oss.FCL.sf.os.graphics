@@ -834,7 +834,13 @@ void TWsDecoder::DecodeClient(TBuf<LogTBufSize> &aText, TInt aOpcode, const TAny
 		_LIT(LogGetExitHighPressureThreshold,"EWsClOpGetExitHighPressureThreshold()");
 		aText.AppendFormat(LogGetExitHighPressureThreshold);		
 		}
-		break;	
+		break;
+	case EWsClOpIndicateAppOrientation:
+	    {
+        _LIT(LogIndicateAppOrientation,"EWsClOpIndicateAppOrientation(%d)");
+        aText.AppendFormat(LogIndicateAppOrientation, *pData.Orientation);       	    
+	    }
+	    break;
 	case EWsClOpLastEnumValue:
 		{		
 		_LIT(LogLastEnumValue,"EWsClOpLastEnumValue enum");

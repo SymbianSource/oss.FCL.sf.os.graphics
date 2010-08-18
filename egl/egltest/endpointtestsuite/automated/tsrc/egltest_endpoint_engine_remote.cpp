@@ -20,20 +20,31 @@
 */
 
 #include <e32std.h>
+#include <e32math.h>
+#include <e32atomics.h> 
 #include "egltest_endpoint_engine.h"
 #include "egltest_endpoint_images.h"
 #include "egltest_surface.h"
 #include "egltest_parameters.h"
 
+
+const TInt KMemStatsReserve = 3;
+
 CEgltest_Remote_Engine::CEgltest_Remote_Engine()
     : CRemoteTestStepBase(ETestUidEndpointEngine), iTestVerdict(ERtvPass), iLogging(EFalse), iSurface(0)
     {
+    iMainThreadHeap = &User::Heap();   // ?? Is this the right heap ??
     for (TInt i = 0; i < KMaxEndpoints; i++)
         {
         iEndpoints[i] = EGL_NO_ENDPOINT_NOK;
         iEglImage[i] = EGL_NO_IMAGE_KHR;
         iVgImage[i] = NULL;
         iRequestStatus[i] = KRequestPending;
+        }
+    ipfnEglQueryProfilingDataNOK = reinterpret_cast<PFNEGLQUERYPROFILINGDATANOKPROC>(eglGetProcAddress("eglQueryProfilingDataNOK"));
+    if (ipfnEglQueryProfilingDataNOK)
+        {
+        RDebug::Printf("%s:%d: found eglQueryProfilingDataNOK function");
         }
     }
 
@@ -45,19 +56,23 @@ CEgltest_Remote_Engine::~CEgltest_Remote_Engine()
     }
 
 TRemoteTestVerdict CEgltest_Remote_Engine::DoStartRemoteTestStepL(
-        const TRemoteTestParams& /* aParams */)
+        const TRemoteTestParams& aParams)
     {
+    iMainThreadHeap = &User::Heap();   
+    
+    iMemoryStats.ReserveL(KMemStatsReserve);
     iLogging = EFalse;
+    iLogErrors = aParams.iEndpointEngineConfig.iLogErrors;
     return ERtvPass;
     }
 
 TRemoteTestVerdict CEgltest_Remote_Engine::DoEndRemoteTestStepL(
         const TRemoteTestParams& /* aParams */)
     {
+    iMemoryStats.Close();
     delete iSurface;
     return ERtvPass;
     }
-
 
 void CEgltest_Remote_Engine::CheckReturn(TInt aRetval,
         const TEngineTestCase& aEngineTestCase, TInt aFailValue,
@@ -69,44 +84,61 @@ void CEgltest_Remote_Engine::CheckReturn(TInt aRetval,
     EGLint err = eglGetError();
     if (err != aEngineTestCase.iErrorExpected)
         {
-        REMOTE_ERR_PRINTF3(_L("testcase failed: expected %04x, got %04x"), aEngineTestCase.iErrorExpected, err);
+        if (iLogErrors)
+            {
+            REMOTE_ERR_PRINTF3(_L("testcase failed: expected %04x, got %04x"), aEngineTestCase.iErrorExpected, err);
+            }
         iTestVerdict = ERtvFail;
         }
 
     if (!isEqual && expectFail)
         {
-        REMOTE_ERR_PRINTF5(
-                _L("return value when failing from %s is not expected fail value %s (%d). Value returned is %d"),
-                aFunction, aFailSymbol, aFailValue, aRetval);
+        if (iLogErrors)
+            {
+            REMOTE_ERR_PRINTF5(
+                    _L("return value when failing from %s is not expected fail value %s (%d). Value returned is %d"),
+                    aFunction, aFailSymbol, aFailValue, aRetval);
+            }
         iTestVerdict = ERtvFail;
         }
     else if (isEqual && !expectFail)
         {
-        REMOTE_ERR_PRINTF5(
-                _L("return value when succeeding from %s is equal to expected fail value %s (%d). Value returned is %d"),
-                aFunction, aFailSymbol, aFailValue, aRetval);
+        if (iLogErrors)
+            {
+            REMOTE_ERR_PRINTF5(
+                    _L("return value when succeeding from %s is equal to expected fail value %s (%d). Value returned is %d"),
+                    aFunction, aFailSymbol, aFailValue, aRetval);
+            }
         iTestVerdict = ERtvFail;
         }
     if (isEqual != expectFail)
         {
-        RDebug::Printf(
-                "%s:%d: Called for %s, with expected fail %s, flags = %d",
-                __FILE__, __LINE__, aFunction, aFailSymbol,
-                aEngineTestCase.iFlags);
+        if (iLogErrors)
+            {
+            REMOTE_ERR_PRINTF4(_L("Unexpected result for %s, failvalue is %s, flags = %d"),
+                    aFunction, aFailSymbol,
+                    aEngineTestCase.iFlags);
+            }
         iTestVerdict = ERtvFail;
         }
     // Now check
     if (expectFail && err == EGL_SUCCESS)
         {
-        REMOTE_ERR_PRINTF2(_L("Got EGL_SUCCESS in error when calling %s, when we expected an error"),
-                aFunction);
+        if (iLogErrors)
+            {
+            REMOTE_ERR_PRINTF2(_L("Got EGL_SUCCESS in error when calling %s, when we expected an error"),
+                    aFunction);
+            }
         iTestVerdict = ERtvFail;
         }
     // Didn't expect to fail, so we
     else if (!expectFail && err != EGL_SUCCESS)
         {
-        REMOTE_ERR_PRINTF3(_L("Got an error (%x) on successful call to %s, when expecting EGL_SUCCESS"),
-                err, aFunction);
+        if (iLogErrors)
+            {
+            REMOTE_ERR_PRINTF3(_L("Got an error (%x) on successful call to %s, when expecting EGL_SUCCESS"),
+                    err, aFunction);
+            }
         iTestVerdict = ERtvFail;
         }
     }
@@ -164,7 +196,7 @@ TRemoteTestVerdict CEgltest_Remote_Engine::DoRunRemoteTestCaseL(
                 args.iImage = (*imageParams)[imageIter];
 
                 RunCaseL(aTestCase, aParams, args);
-                if (iTestVerdict != ERtvPass || iLogging)
+                if (iLogErrors && iTestVerdict != ERtvPass || iLogging)
                     {
                     if (iTestVerdict != ERtvPass)
                         {
@@ -187,12 +219,164 @@ void CEgltest_Remote_Engine::ActivateVgContextL()
     if (!iSurface)
         {
         iSurface = CEglWindowSurface::NewL();
-        RDebug::Printf("%s:%d: iSurface = %08x", __FILE__, __LINE__, iSurface);
-        iSurface->CreateL(EStandardSurface);
+        iSurface->CreateL(EStandardSurface, TPoint(0, 110));
         }
     iSurface->ActivateL();
     }
 
+
+TInt CEgltest_Remote_Engine::FillGpuMemory()
+    {
+    TSurfaceIndex table[] = 
+            {
+            ELargeSurface,
+            EStandard128sqSurface,
+            ESmallSurface,
+            ETinySurface
+            };
+    const TInt KNumSurfaceTypes = sizeof(table) / sizeof(table[0]);
+    
+    TInt nSurfaces = 0;
+    const TInt KMaxSurfaceAllocs = 1000;
+    CSurface **surfaces = new CSurface*[KMaxSurfaceAllocs];
+    TInt size = 0;
+    ENGINE_ASSERT(surfaces);
+    for(TInt i = 0; i < KNumSurfaceTypes; i++)
+        {
+        TInt err = KErrNone;
+        while(err == KErrNone)     
+            {
+            ENGINE_ASSERT(nSurfaces < KMaxSurfaceAllocs);
+            CSurface* s = CSurface::SurfaceFactoryL(ESurfTypePBuffer);
+            if (s)
+                {
+                TRAP(err, s->CreateL(table[i]));
+                if (err == KErrNone)
+                    {
+                    surfaces[nSurfaces++] = s;
+//                    s->DrawContentL(TRgb(0x10, 0x20, 0xB0));
+                    size += s->SizeInBytes();
+                    }
+                }
+            }
+        }
+    RDebug::Printf("nSurfaces=%d", nSurfaces);
+    while(nSurfaces)
+        {
+        delete surfaces[--nSurfaces];
+        }
+    delete [] surfaces;
+    return size;
+    }
+
+TInt CEgltest_Remote_Engine::CalculateAvailableGPUMemory()
+    {
+    TInt result = 0;
+    if (ipfnEglQueryProfilingDataNOK)
+        {
+        EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+        ENGINE_ASSERT(display != EGL_NO_DISPLAY);
+        TInt count;
+        ipfnEglQueryProfilingDataNOK(
+                display, EGL_PROF_QUERY_MEMORY_USAGE_BIT_NOK, 
+                NULL, 0, &count);
+        ENGINE_ASSERT(count);
+        TInt *mem = new TInt[count * 2];
+        ENGINE_ASSERT(mem);
+        TInt newCount;
+        ipfnEglQueryProfilingDataNOK(
+                display, EGL_PROF_QUERY_MEMORY_USAGE_BIT_NOK, 
+                mem, count, &newCount);
+        ENGINE_ASSERT(newCount == count);
+        for(TInt i = 0; i < count; i ++)
+            {
+            switch(mem[i*2])
+                {
+            case EGL_PROF_USED_MEMORY_NOK:
+                // Assert that we only have one entry - if there are
+                // more than one, we can't really know what is the "right" one.
+                ENGINE_ASSERT(!result);
+                result = mem[i*2+1];
+                break;
+                }
+            }
+        delete [] mem;
+        }
+    else
+        {
+#if 1
+        result = 1000;
+#else
+        // This code currently causes a memory leak to be detected when the
+        // remote thread is destroyed. This causes further tests to be skipped.
+        // We disable this function at the moment, to allow other tests to run.
+        result = FillGpuMemory();
+#endif
+        }
+    return result;
+    }
+
+
+TInt CEgltest_Remote_Engine::CalculateAvailableHeapMemory()
+    {
+    TInt biggest = 0;
+    return User::Heap().Available(biggest);
+    }
+
+
+void CEgltest_Remote_Engine::CheckForMemoryLeaks()
+    {
+    TAvailableMemory mem;
+    mem.iGpuMemAvailable = CalculateAvailableGPUMemory();
+    mem.iHeapMemAvailable = CalculateAvailableHeapMemory();
+    
+    REMOTE_INFO_PRINTF3(_L("GPU memory available: %d, heapmemory available: %d"), 
+            mem.iGpuMemAvailable, mem.iHeapMemAvailable);
+    if (iMemoryStats.Count() ==  KMemStatsReserve)
+        {
+        REMOTE_INFO_PRINTF2(_L("false positive HEAP leak possible, as reserved memory is exhausted... (%d)"), KMemStatsReserve);
+        }
+    TInt err = iMemoryStats.Append(mem); 
+    if (err)
+        {
+        REMOTE_ERR_PRINTF2(_L("CheckForMemoryLeaks could not append to iMemoryStats. err=%d"), err);
+        }
+    }
+
+void CEgltest_Remote_Engine::CheckForMemoryLeaksFinish()
+    {
+    TInt count = iMemoryStats.Count();
+    if (count)
+        {
+        TReal sumGpu = 0.0;
+        TReal sumHeap = 0.0;
+        
+        for(TInt i = 0; i < count; i++)
+            {
+            sumGpu += iMemoryStats[i].iGpuMemAvailable;
+            sumHeap += iMemoryStats[i].iHeapMemAvailable;
+            }
+        REMOTE_INFO_PRINTF2(_L("CheckMemoryLeaksFinish - average = %6.2f"), sumGpu / count);
+        REMOTE_INFO_PRINTF2(_L("CheckMemoryLeaksFinish - average = %6.2f"), sumHeap / count);
+        }
+    else
+        {
+        REMOTE_INFO_PRINTF1(_L("CheckMemoryLeaksFinish - no data collected"));
+        }
+    iMemoryStats.Close();
+    }
+
+TRemoteTestVerdict ConvertToLocalVerdict(TInt aVerdict)
+    {
+    switch(aVerdict)
+        {
+        case EPass:
+            return ERtvPass;
+        case EFail:
+            return ERtvFail;
+        }
+        return ERtvInconclusive;
+    }
 
 void CEgltest_Remote_Engine::RunCaseL(TInt aTestCase, const TRemoteTestParams &aParams, const TRemoteTestArgs& aArgs)
     {
@@ -233,28 +417,44 @@ void CEgltest_Remote_Engine::RunCaseL(TInt aTestCase, const TRemoteTestParams &a
 
                 CTestCFbsImage *image = CTestCFbsImage::NewL(si.iImageIndex);
                 CleanupStack::PushL(image);
-                CTestVgEglImage *vgImage = CTestVgEglImage::NewL(iEglImage[si.iEndpointIndex]);
-                CleanupStack::PushL(vgImage);
-                TBool res = vgImage->CompareImageL(image, !!(si.iFlags & EExpectError));
-                if (res != !(si.iFlags & EExpectError))
+                CTestVgEglImage *vgImage = CTestVgEglImage::New(iEglImage[si.iEndpointIndex]);
+                if (!vgImage)
                     {
-                    REMOTE_ERR_PRINTF1(_L("Pixel comparison failed...."));
-                    iTestVerdict = ERtvFail;
+                    REMOTE_INFO_PRINTF2(_L("Could not create vgimage from eglimage: endpointindex=%d"), 
+                            si.iEndpointIndex);
                     }
-                else if (!(si.iFlags & EExpectError))
+                else
                     {
-                    TInt imageIndex2 = (si.iImageIndex + 1) % CTestImage::KImageCount;
-                    CTestCFbsImage *image2 = CTestCFbsImage::NewL(imageIndex2);
-                    CleanupStack::PushL(image2);
-                    res = vgImage->CompareImageL(image2, !(si.iFlags & EExpectError));
-                    if (res == !(si.iFlags & EExpectError))
+                    CleanupStack::PushL(vgImage);
+                    TBool res = vgImage->CompareImageL(image, !!(si.iFlags & EExpectError));
+                    if (res != !(si.iFlags & EExpectError))
                         {
-                        REMOTE_ERR_PRINTF1(_L("Pixel comparison didn't fail - two images the same?...."));
+                        if (iLogErrors)
+                            {
+                        REMOTE_ERR_PRINTF1(_L("Pixel comparison failed...."));
+                            }
                         iTestVerdict = ERtvFail;
                         }
-                    CleanupStack::PopAndDestroy(image2);
+                    else if (!(si.iFlags & EExpectError))
+                        {
+                        // Extra check that ANOTHER image doesn't match the image
+                        // we compared with.
+                        // This would detect when images have incorrect content or
+                        // the code for comparing images have been broken. 
+                        TInt imageIndex2 = (si.iImageIndex + 1) % CTestImage::KImageCount;
+                        CTestCFbsImage *image2 = CTestCFbsImage::NewL(imageIndex2);
+                        CleanupStack::PushL(image2);
+                        res = vgImage->CompareImageL(image2, ETrue);
+                        if (res)
+                            {
+                            REMOTE_ERR_PRINTF1(_L("Pixel comparison didn't fail - two images the same?...."));
+                            iTestVerdict = ERtvFail;
+                            }
+                        CleanupStack::PopAndDestroy(image2);
+                        }
+                    CleanupStack::PopAndDestroy(vgImage);
                     }
-                CleanupStack::PopAndDestroy(2, image);
+                CleanupStack::PopAndDestroy(image);
                 }
             break;
 
@@ -277,7 +477,7 @@ void CEgltest_Remote_Engine::RunCaseL(TInt aTestCase, const TRemoteTestParams &a
         case EGetAttribCase:
             {
             TInt value = EglEndpoint().GetEndpointAttrib(dpy, endpoint, si.iArg1);
-            // We can't use the macro CHECK_RETURN_L here, as the return value for
+            // We can't use the macro CHECK_RETURN here, as the return value for
             // "success" can be any integer value, including "EGL_FALSE". So we can
             // only check when we expect failure.
             if (si.iFlags & EExpectFailureMask)
@@ -444,30 +644,44 @@ void CEgltest_Remote_Engine::RunCaseL(TInt aTestCase, const TRemoteTestParams &a
             REMOTE_INFO_PRINTF1(_L("calling EglEndL()"));
             EglEndL();
             break;
+            
+        // Memory leak checking functions.
+        case ECheckForMemoryLeaks:
+            CheckForMemoryLeaks();
+            break;
+            
+        case ECheckForMemoryLeaksFinish:
+            CheckForMemoryLeaksFinish();
+            break;
+            
+            
+        case EStartLoadThreadCase:
+            StartThreadL(si.iEndpointIndex);
+            break;
+            
+        case EEndLoadThreadCase:
+            EndThread(si.iEndpointIndex);
+            break;
+            
+        case ESetVerdictCase:
+            iTestVerdict = ConvertToLocalVerdict(si.iEndpointIndex);
+            break;
+            
 
         /*
          * Debug cases
          */
 
         case EBreakPointCase:
-            if (si.iFlags & EDebugRemote)
-                {
-                __BREAKPOINT();
-                }
+            __BREAKPOINT();
             break;
 
         case ELogEnableCase:
-            if (si.iFlags & EDebugRemote)
-                {
-                iLogging = ETrue;
-                }
+            iLogging = ETrue;
             break;
             
         case EPanicCase:
-            if (si.iFlags & EDebugRemote)
-                {
-                User::Panic(_L("EPanicCase"), -1);
-                }
+            User::Panic(_L("EPanicCase"), -1);
             break;
 
         default:
@@ -475,6 +689,61 @@ void CEgltest_Remote_Engine::RunCaseL(TInt aTestCase, const TRemoteTestParams &a
             User::Invariant();
             break;
         }
+    }
+
+
+// Create thread that consumes some sort of resource (e.g. Heap or GPU memory)
+// @param aThreadNumber indicates "which" 
+void CEgltest_Remote_Engine::StartThreadL(TInt aThreadNumber)
+    {
+    const TInt KStackSize = 12000;
+    const TInt KHeapMinSize = 16000;
+    const TInt KHeapMaxSize = 1000000;
+
+    if (aThreadNumber >= KMaxLoadThreads)
+        {
+        User::Panic(_L("StartThreadL"), __LINE__);
+        }
+    
+    __e32_atomic_store_rel32(&iStopThreadFlag[aThreadNumber], EFalse);
+    
+    TUint32 random = Math::Random();
+    TName threadName;
+    _LIT(KThreadNameFormat, "%S-%u");
+
+    // Create a load-thread.
+    _LIT(KThreadName, "EpTestLoadThread");
+    threadName.Format(KThreadNameFormat, &KThreadName, random);
+    TThreadFunction threadFunc = GetThreadFunction(aThreadNumber);
+    if (threadFunc == NULL)
+        {
+        REMOTE_ERR_PRINTF2(_L("Requested thread function %d, got NULL pointer back!"), aThreadNumber);
+        User::Leave(KErrArgument);
+        }
+    TInt err = iLoadThread[aThreadNumber].Create(threadName, threadFunc, 
+                    KStackSize, KHeapMinSize, KHeapMaxSize, this, EOwnerThread);
+    if(err != KErrNone)
+        {
+        REMOTE_ERR_PRINTF2(_L("Could not create load thread - err=%d"), err);
+        User::Leave(err);
+        }
+    iLoadThread[aThreadNumber].Resume();
+    }
+
+
+void CEgltest_Remote_Engine::EndThread(TInt aThreadNumber)
+    {
+    if (aThreadNumber >= KMaxLoadThreads)
+        {
+        User::Panic(_L("StartThreadL"), __LINE__);
+        }
+
+    TRequestStatus status;
+    iLoadThread[aThreadNumber].Logon(status);
+    // Tell thread to go away. 
+    __e32_atomic_store_rel32(&iStopThreadFlag[aThreadNumber], ETrue);
+    User::WaitForRequest(status);
+    iLoadThread[aThreadNumber].Close();
     }
 
 
@@ -694,3 +963,158 @@ void CEgltest_Remote_Engine::GetEndpointDirtyAreaL(const TRemoteTestParams& aPar
         }
     }
 
+
+TInt CEgltest_Remote_Engine::LoadHeapMemory(TAny *aSelf)
+    {
+    CEgltest_Remote_Engine* self = reinterpret_cast<CEgltest_Remote_Engine*>(aSelf);
+    User::SwitchHeap(self->iMainThreadHeap);
+    CTrapCleanup *cleanUpStack = CTrapCleanup::New();
+    if (!cleanUpStack)
+       {
+       // Can't use INFO_PRINTF here, as we have not yet
+       // created the logger object - nor can we until we have
+       // a working cleanupstack, so we just do our best at a 
+       // reasonable error message.
+       RDebug::Printf("Could not allocate memory for cleanupStack!");
+       User::Panic(_L("LoadThread"), __LINE__);
+       return KErrNoMemory;
+       }
+
+    TRAPD(err, self->LoadHeapMemoryL());
+    delete cleanUpStack;
+    if (err != KErrNone)
+        {
+        RDebug::Printf("LoadThreadL left with %d", err);
+        User::Panic(_L("LoadThread"), __LINE__);
+        }
+    return err;    
+    }
+
+
+void CEgltest_Remote_Engine::LoadHeapMemoryL()
+    {
+    const TInt KMaxAllocs = 40000;
+    char **ptr = new char*[KMaxAllocs];
+    TInt nAllocs = 0;
+    while(!__e32_atomic_load_acq32(&iStopThreadFlag[EThreadLoadHeapMemory]))
+        {
+        char *p = new char[1000];
+        if (p)
+            {
+            if (nAllocs >= KMaxAllocs)
+                {
+                User::Panic(_L("KMaxAllocs"), -3);
+                }
+            ptr[nAllocs++] = p;
+            }
+        else
+            {
+            RDebug::Printf("Memory full after %d allocations - freeing some", nAllocs);
+            // Now release 1/4 of the allocations...
+            TInt nRelease = nAllocs / 4;
+            for(int i = 0; i < nRelease; i++)
+                {
+                // Decrement first, then use as index.
+                delete [] ptr[--nAllocs];
+                }
+            User::After(10 * 1000);   // Let others run for a bit
+            }
+        }
+    // Done - let's deallocate.
+    while(nAllocs)
+        {
+        delete [] ptr[--nAllocs];
+        }
+    delete [] ptr;
+    eglReleaseThread();
+    }
+
+
+TInt CEgltest_Remote_Engine::LoadGpuMemory(TAny* aSelf)
+    { 
+    CEgltest_Remote_Engine* self = reinterpret_cast<CEgltest_Remote_Engine*>(aSelf);
+    CTrapCleanup *cleanUpStack = CTrapCleanup::New();
+    if (!cleanUpStack)
+       {
+       // Can't use INFO_PRINTF here, as we have not yet
+       // created the logger object - nor can we until we have
+       // a working cleanupstack, so we just do our best at a 
+       // reasonable error message.
+       RDebug::Printf("Could not allocate memory for cleanupStack!");
+       User::Panic(_L("LoadThread"), __LINE__);
+       return KErrNoMemory;
+       }
+
+    TRAPD(err, self->LoadGpuMemoryL());
+    delete cleanUpStack;
+    if (err != KErrNone)
+        {
+        RDebug::Printf("LoadThreadL left with %d", err);
+        User::Panic(_L("LoadThread"), __LINE__);
+        }
+    return err;
+    }
+
+
+void CEgltest_Remote_Engine::LoadGpuMemoryL()
+    {
+    const TInt KMaxSurfaceAllocs = 1000;
+    CSurface **surfaces = new CSurface*[KMaxSurfaceAllocs];
+    ENGINE_ASSERT(surfaces);
+    TInt nSurfaces = 0;
+    while(!__e32_atomic_load_acq32(&iStopThreadFlag[EThreadLoadGpuMemory]))     
+        {
+        ENGINE_ASSERT(nSurfaces < KMaxSurfaceAllocs);
+        CSurface* s = CSurface::SurfaceFactoryL(ESurfTypePBuffer);
+        if (s)
+            {
+            TRAPD(err, s->CreateL(ELargeSurface));
+            if (err == KErrNone)
+                {
+                if (nSurfaces >= KMaxSurfaceAllocs)
+                    {
+                    User::Panic(_L("KMaxAllocs"), -3);
+                    }
+                surfaces[nSurfaces++] = s;
+                s->DrawContentL(TRgb(0x10, 0x20, 0xB0));
+                }
+            else
+                {
+                delete s;
+                s = NULL;
+                }
+            }
+        if (!s)
+            {
+            User::After(100 * 1000);
+            TInt nRelease = nSurfaces / 4;
+            for(TInt i = 0; i < nRelease; i++)
+                {
+                delete surfaces[--nSurfaces];
+                surfaces[nSurfaces] = NULL;
+                }
+            User::After(100 * 1000); // 100 ms. 
+            }
+        }
+    while(nSurfaces)
+        {
+        delete surfaces[--nSurfaces];
+        }
+    delete [] surfaces;
+    eglReleaseThread();
+    }
+
+
+
+TThreadFunction CEgltest_Remote_Engine::GetThreadFunction(TInt aThreadNumber)
+    {
+    switch(aThreadNumber)
+        {
+        case EThreadLoadHeapMemory:
+            return LoadHeapMemory;
+        case EThreadLoadGpuMemory:
+            return LoadGpuMemory;
+        }
+    RDebug::Printf("%s:%d: Unknown thread function %d", __FILE__, __LINE__, aThreadNumber);
+    return NULL;
+    }

@@ -27,20 +27,6 @@
 
 static const TInt KOpenWfcInteropCleanupKey = 0x10286FC5;
 
-TEMPLATE_SPECIALIZATION class RHashTableBase::Defaults<TSurfaceId, RHashTableBase::EDefaultSpecifier_Normal>
-	{
-public:
-	inline static TGeneralHashFunction32 Hash();
-	inline static TGeneralIdentityRelation Id();
-	};
-
-inline TGeneralHashFunction32 RHashTableBase::Defaults<TSurfaceId, RHashTableBase::EDefaultSpecifier_Normal>::Hash()
-	{return (TGeneralHashFunction32)&DefaultHash::Integer;}
-
-inline TGeneralIdentityRelation RHashTableBase::Defaults<TSurfaceId, RHashTableBase::EDefaultSpecifier_Normal>::Id()
-	{return (TGeneralIdentityRelation)&DefaultIdentity::Integer;}
-
-
 COpenWfcStreamMap* COpenWfcStreamMap::pInstance = NULL;
 
 TUint32 COpenWfcStreamMap::HashFunction(const TSurfaceId& aHashKey)
@@ -64,13 +50,6 @@ EXPORT_C COpenWfcStreamMap& COpenWfcStreamMap::InstanceL()
 		pInstance=newInstance;
 		}
 	return *pInstance;
-	}
-
-EXPORT_C TInt COpenWfcStreamMap::Reserve(TInt aExpand)
-	{
-	Guard g(iMutex);
-	TInt ret = iMap.Reserve(aExpand);
-	return ret;
 	}
 
 CSurfaceStream* COpenWfcStreamMap::Find(const TSurfaceId& aSurfaceId)
@@ -118,7 +97,7 @@ EXPORT_C TInt COpenWfcStreamMap::Count()
 	return count;
 	}
 
-RSurfaceManager& COpenWfcStreamMap::SurfaceManager()
+EXPORT_C RSurfaceManager& COpenWfcStreamMap::SurfaceManager()
 	{
     WFCI_ASSERT_DEBUG(iSurfaceManager, EOwfPanicInvalidHasMap);
 	return *iSurfaceManager;
@@ -196,7 +175,7 @@ COpenWfcStreamMap::~COpenWfcStreamMap()
         CSurfaceStream* const* ns = NULL;
         while (nextKey)
             {
-            ns = iter.NextValue();
+            ns = iter.CurrentValue();
             if (ns && *ns)
                 {
                 delete (*ns);
@@ -220,7 +199,7 @@ COpenWfcStreamMap::~COpenWfcStreamMap()
         CExtensionContainer* const* extensionContainer = NULL;
         while (nextKey)
             {
-            extensionContainer = iter.NextValue();
+            extensionContainer = iter.CurrentValue();
             if (extensionContainer && *extensionContainer)
                 {
                 delete (*extensionContainer);
@@ -229,17 +208,6 @@ COpenWfcStreamMap::~COpenWfcStreamMap()
             }
         }
 	iRegisteredUpdaters.Close();
-	}
-
-COpenWfcStreamMap::COpenWfcStreamMap(const COpenWfcStreamMap&)
-	{
-	Panic(EOwfPanicInvalidCallStreamMap);
-	}
-
-COpenWfcStreamMap& COpenWfcStreamMap::operator= (const COpenWfcStreamMap&)
-	{
-	Panic(EOwfPanicInvalidCallStreamMap);
-	return *this;
 	}
 
 void COpenWfcStreamMap::ConstructL()

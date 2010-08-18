@@ -46,3 +46,4 @@ TESTEXECUTE, \logs\testexecute\egltest_t_vgimagetosurfaces.htm,                 
 TESTEXECUTE, \logs\testexecute\egltest_t_benchmark_sgimage.htm,                 , z:\egltest\egltest_t_benchmark_sgimage.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_oom_sgimage.htm,                       , z:\egltest\egltest_t_oom_sgimage.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_stress_sgimage.htm,                    , z:\egltest\egltest_t_stress_sgimage.script, 1200
+TESTEXECUTE, \logs\testexecute\egltest_t_surfacescaling.htm,                    , z:\egltest\egltest_t_surfacescaling.script, 600

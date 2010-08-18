@@ -23,8 +23,8 @@
 #define RATELIMITDRAWER_H_
 
 #include <e32std.h>
-#include "Graphics/WSGRAPHICDRAWER.H"
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "graphics/WSGRAPHICDRAWER.H"
+#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
 #include "../inc/constants.h"
 
 /**

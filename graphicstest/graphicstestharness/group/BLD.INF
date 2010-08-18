@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -39,11 +39,15 @@ PRJ_TESTEXPORTS
 ../rom/graphics_imagecomparison.iby	/epoc32/rom/include/graphics_imagecomparison.iby  
 ../rom/graphics_tprofiler.iby  		/epoc32/rom/include/graphics_tprofiler.iby
 ../rom/graphics_simload.iby  		/epoc32/rom/include/graphics_simload.iby
-
+../rom/graphics_testfontutils.iby  	/epoc32/rom/include/graphics_testfontutils.iby
+../rom/minigui_chassis_bats.oby  		/epoc32/rom/include/minigui_chassis_bats.oby
+../rom/minigui_naviengine_smp.oby  		/epoc32/rom/include/minigui_naviengine_smp.oby
 // WSINI
 ../rom/graphics_sirocco_wsini.hby  		/epoc32/rom/include/graphics_sirocco_wsini.hby
 ../rom/graphics_sirocco_wsini.iby  		/epoc32/rom/include/graphics_sirocco_wsini.iby
+../rom/graphics_sirocco_ne_wsini.iby  	/epoc32/rom/include/graphics_sirocco_ne_wsini.iby
 ../wsini/wsini_vasco.ini		/epoc32/data/test_wsini/wsini_vasco.ini
+../wsini/wsini_naviengine.ini		/epoc32/data/test_wsini/wsini_naviengine.ini
 
 // ONB batch files
 ../batch/retain_files.cmd z:\graphicstest\retain_files.cmd
@@ -63,6 +67,7 @@ PRJ_TESTEXPORTS
 ../inc/graphicsimagecomparison.h OS_LAYER_PLATFORM_EXPORT_PATH(test/graphicsimagecomparison.h)
 ../inc/tprofiler.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(test/tprofiler.h)
 ../inc/t_simload.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(test/t_simload.h)
+../inc/singletontestexithelper.inl OS_LAYER_PLATFORM_EXPORT_PATH(test/singletontestexithelper.inl)
 
 //Data files for reboot test harness
 ../rom/graphics_rebootharnesslog.htm /epoc32/data/Z/reboot/dummylog.htm
@@ -74,6 +79,9 @@ PRJ_TESTEXPORTS
 
 // Headers for FontInjector DLL
 ../fontinjector/fontinjector.h OS_LAYER_PLATFORM_EXPORT_PATH(test/fontinjector.h)
+
+// Headers for font utilities
+../inc/graphicsfontutils.h OS_LAYER_PLATFORM_EXPORT_PATH(test/graphicsfontutils.h)
 
 PRJ_TESTMMPFILES
 ../group/TGraphicsHarness.mmp
@@ -90,6 +98,7 @@ PRJ_TESTMMPFILES
 ../group/t_simloadapp1.mmp
 ../group/t_simloadapp2.mmp
 ../group/t_simloadapp3.mmp
+../group/tgraphicsfontutils.mmp
 
 #if defined(WINS)
 ../group/fontinjector.mmp

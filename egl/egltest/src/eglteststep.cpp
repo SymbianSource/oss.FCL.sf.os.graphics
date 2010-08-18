@@ -34,6 +34,7 @@
 #include "egltest_oom_sgimage.h"
 #include "egltest_stress_sgimage.h"
 #include "egltest_benchmark_swapbuffers.h"
+#include "egltest_surfacescaling.h"
 
 /*
 Entry point from egltest to create test step
@@ -67,7 +68,7 @@ EXPORT_C CEglTestStep* EglTestStepFactory::GetEglTestStep(const TDesC& aStepName
     else if (aStepName == KDisplay_OOM_ClientHeap_Initialize)                                       testStep = new CEglTest_Display_OOM_ClientHeap_Initialize;
 
 	// SyncObject tests excluding WaitFlush which requires OpenVG and OpenGL ES
-	else if (aStepName == KSyncObject_Positive_GetProcAddress)											testStep = new CEglTest_SyncObject_Positive_GetProcAddress;
+	else if (aStepName == KSyncObject_Positive_GetProcAddress)										testStep = new CEglTest_SyncObject_Positive_GetProcAddress;
 	else if (aStepName == KSyncObject_Positive_CreateDestroy)										testStep = new CEglTest_SyncObject_Positive_CreateDestroy;
 	else if (aStepName == KSyncObject_Positive_WaitSignal)											testStep = new CEglTest_SyncObject_Positive_WaitSignal;
 	else if (aStepName == KSyncObject_Positive_WaitSignal2)											testStep = new CEglTest_SyncObject_Positive_WaitSignal2;
@@ -171,5 +172,28 @@ EXPORT_C CEglTestStep* EglTestStepFactory::GetEglTestStep(const TDesC& aStepName
     //Stress - SgImage
     else if (aStepName == KStress)                                                                  testStep = new CEglTest_Stress;
 
+    // Surface Scaling
+    else if (aStepName == KSurfaceScaling_Positive)                                                 testStep = new CEglTest_SurfaceScaling_Positive;
+    else if (aStepName == KSurfaceScaling_WindowResize)                                             testStep = new CEglTest_SurfaceScaling_WindowResize;
+    else if (aStepName == KSurfaceScaling_ExtentPositionChange)                                     testStep = new CEglTest_SurfaceScaling_ExtentPositionChange;
+    else if (aStepName == KSurfaceScaling_ExtentSizeChange)                                     	testStep = new CEglTest_SurfaceScaling_ExtentSizeChange;
+    else if (aStepName == KSurfaceScaling_SwapBuffers)                                     			testStep = new CEglTest_SurfaceScaling_SwapBuffers;
+    else if (aStepName == KSurfaceScaling_WindowSurface_Check)                                      testStep = new CEglTest_SurfaceScaling_WindowSurface_Check;
+	else if (aStepName == KSurfaceScaling_Negative_CreateWindowSurface)                             testStep = new CEglTest_SurfaceScaling_Negative_CreateWindowSurface;
+    else if (aStepName == KSurfaceScaling_Negative_FixedSize_NonWindowSurface)                      testStep = new CEglTest_SurfaceScaling_Negative_FixedSize_NonWindowSurface;
+    else if (aStepName == KSurfaceScalingDefaultBorderColor)                                        testStep = new CEglTest_SurfaceScalingDefaultBorderColor;
+    else if (aStepName == KSurfaceScalingModifyingBorderColor)                                      testStep = new CEglTest_SurfaceScalingModifyingBorderColor;
+    else if (aStepName == KSurfaceScalingModifyingBorderColorNonFixed)                          	testStep = new CEglTest_SurfaceScalingModifyingBorderColorNonFixed;
+    else if (aStepName == KSurfaceScalingModifyingInvalidBorderColor)                               testStep = new CEglTest_SurfaceScalingModifyingInvalidBorderColor;
+    else if (aStepName == KSurfaceScalingModifyingExtent)                                           testStep = new CEglTest_SurfaceScalingModifyingExtent;
+    else if (aStepName == KSurfaceScalingModifyingExtentNonFixed)                                   testStep = new CEglTest_SurfaceScalingModifyingExtentNonFixed;
+    else if (aStepName == KSurfaceScalingQuerySurface)                                              testStep = new CEglTest_SurfaceScalingQuerySurface;
+    else if (aStepName == KSurfaceScalingQuerySurfaceNonFixed)                                      testStep = new CEglTest_SurfaceScalingQuerySurfaceNonFixed;
+    else if (aStepName == KSurfaceScalingCapability)                                                testStep = new CEglTest_SurfaceScalingCapability;
+    else if (aStepName == KSurfaceScalingSet)                                                		testStep = new CEglTest_SurfaceScalingSet;
+    else if (aStepName == KSurfaceScalingSetNonFixed)                              					testStep = new CEglTest_SurfaceScalingSetNonFixed;
+    else if (aStepName == KSurfaceScalingSetInvalidAttributes)                                      testStep = new CEglTest_SurfaceScalingSetInvalidAttributes;
+    else if (aStepName == KSurfaceScalingNotInitialized)                                      		testStep = new CEglTest_SurfaceScalingNotInitialized;
+		
 	return testStep;
 	}

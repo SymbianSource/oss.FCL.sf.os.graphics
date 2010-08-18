@@ -49,11 +49,14 @@ SOURCE				egltest_remoteteststepfactory.cpp
 SOURCEPATH			../tsrc
 SOURCE				egltest_endpointapiexposure_remote.cpp
 SOURCE				egltest_endpointtearing_remote.cpp
+SOURCE				egltest_threadedstress_remote.cpp
+SOURCE				egltest_releaseimagegles_remote.cpp
 
 // Utility code. 
 SOURCE				egltest_endpoint_images.cpp
 SOURCE				egltest_surface.cpp 
 SOURCE				egltest_endpoint_engine_remote.cpp
+SOURCE				egltest_threadmonitor.cpp
 
 LIBRARY				euser.lib
 LIBRARY				estor.lib
@@ -63,6 +66,7 @@ LIBRARY				libEGL.lib
 library             fbscli.lib
 LIBRARY             gdi.lib
 library         	libOpenVG.lib
+LIBRARY             libOpenVGU.lib
 library 			surfacemanager.lib
 library             surfaceupdateclient.lib
 

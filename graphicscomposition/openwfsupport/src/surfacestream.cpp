@@ -670,15 +670,18 @@ void* CSurfaceStream::GetBufferPtrL(SymbianStreamBuffer aBuffer)
              if (iBufferChunk.Handle() == 0)
                  {
                  RChunk threadChunk;
-                 User::LeaveIfError(GetSingletonL().SurfaceManager().MapSurface(iSurfaceId, threadChunk));
-				 CleanupClosePushL(threadChunk);
-
+                 RSurfaceManager sm;
+                 sm.Open();
+                 TInt err = sm.MapSurface(iSurfaceId, threadChunk);
+                 sm.Close();
+                 CleanupClosePushL(threadChunk);
+                 				 			
 				 RChunk duplicateChunk;
 				 duplicateChunk.SetHandle(threadChunk.Handle());
-				 User::LeaveIfError(duplicateChunk.Duplicate(RThread(), EOwnerProcess));
-
+                 User::LeaveIfError(duplicateChunk.Duplicate(RThread(), EOwnerProcess));
+ 
                  iBufferChunk.SetHandle(duplicateChunk.Handle());
-				 CleanupStack::PopAndDestroy(&threadChunk);
+                 CleanupStack::PopAndDestroy(&threadChunk);
                  }
              break;
              }
@@ -1367,10 +1370,10 @@ void CSurfaceStream::SetNotifications(TInt            aBuffer,
     serialNumber = param.serialNumber;
     
     
-    // we take, initially in consideration "availble" even if we might not have received a consumed request status
+    // we take, initially in consideration "available" even if we might not have received a consumed request status
     eventsToProcess = 0;
     
-    // we try to figure out which are the vents we have to process and to get hold of their position
+    // we try to figure out which are the events we have to process and to get hold of their position
     // in the observers array, in order to avoid traversing it again
     TInt idx = iCallBacks.Count();
     //we will intend to mark the visited events, as an optimisation
@@ -2133,4 +2136,9 @@ void CSurfaceStream::SetFlipState(TBool aFlip)
         {
         iNewFlip = EFlippedTargetNormal;
         }
+    }
+
+TInt CSurfaceStream::GetChunkHandle()
+    {
+    return iBufferChunk.Handle();
     }

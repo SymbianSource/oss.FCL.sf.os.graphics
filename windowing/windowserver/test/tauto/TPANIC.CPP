@@ -1,4 +1,4 @@
-// Copyright (c) 1996-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1996-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1150,6 +1150,27 @@ LOCAL_C TInt DoTestSpriteActivatePanicL(TInt aTest, TAny *aScreenNumber)
 	return(EWsExitReasonBad);
 	}
 
+/** Checks that activating a RWindow before calling EnableAdvancedPointers will panic the client.
+*/
+LOCAL_C TInt DoTestAdvancePointerActivatePanicL(TInt /*aTest*/,TAny *aScreenNumber)
+    {
+    RWsSession ws;
+    User::LeaveIfError(ws.Connect());
+
+    CWsScreenDevice *scrdev=new(ELeave) CWsScreenDevice(ws);
+    User::LeaveIfError(scrdev->Construct((TInt)aScreenNumber));
+    
+    RWindowGroup group(ws);
+    User::LeaveIfError(group.Construct(888));
+    RWindow win(ws);
+    User::LeaveIfError(win.Construct(group, 1));
+    win.Activate();
+    win.EnableAdvancedPointers(); // This will panic
+    ws.Flush();
+    return(EWsExitReasonBad);
+    }
+
+
 LOCAL_C TInt DoMoveToGroupPanicTestL(TInt aTest, TAny *aScreenNumber)
 	{
 	RWsSession ws;
@@ -1617,6 +1638,11 @@ void CTPanic::TestUnInitPanicL()
 	TEST(iTest->TestWsPanicL(&DoUnInitPanicTest,EWservPanicUninitialisedClient,0,(TAny*)iTest->iScreenNumber));
 	}
 
+void CTPanic::TestEnableAdvancePointerActivatePanicL()
+    {
+    TEST(iTest->TestWsPanicL(&DoTestAdvancePointerActivatePanicL,EWservPanicUnableToEnableAdvPointer, 0, (TAny*)iTest->iScreenNumber));
+    }
+
 void CTPanic::ConstructL()
 	{
 	TheGc->Activate(*BaseWin->Win());
@@ -1874,7 +1900,16 @@ void CTPanic::RunTestCaseL(TInt /*aCurTestCase*/)
 			_LIT(KPanicTest, "Non-Redraw Drawing inside Redrawer Panic Test");
 			iTest->LogSubTest(KPanicTest);
 			TestNonRedrawRedrawerL();
-			}			
+			}
+			break;
+	  case 18:
+      {
+      _LIT(KPanicTest, "Enable advanced pointer Panic Test");
+      iTest->LogSubTest(KPanicTest);
+      TestEnableAdvancePointerActivatePanicL();
+      }   
+			break;
+						
 #endif			
 		default:
             		((CTPanicStep*)iStep)->SetTestStepID(KNotATestSYMTestCaseIDName);

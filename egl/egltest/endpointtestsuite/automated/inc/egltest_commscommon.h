@@ -70,6 +70,15 @@ enum TTestUid
 
     //Image Tearing Test.
     ETestUidEndpointTearing,
+    
+    //Multithreaded stress tests.
+    ETestUidEndpointThreadStress,
+    
+    //Release Image with Gles context tests.
+    ETestUidEndpointReleaseImageGles,
+    
+    // vgThreading test.
+    ETestUidVgThreading,
     };
 
 
@@ -91,6 +100,16 @@ struct TTestEndpointTearing
     TSurfaceId iSurfaceId;
     };
 
+struct TTestEndpointThreadStress
+    {
+    TInt iNumThreads;
+    };
+
+struct TTestEndpointReleaseImageGles
+    {
+    TBool iUseValidGlesContext;
+    };
+
 
 //Union for all of the structs that tests use to pass
 //params between the local side and the remote side.
@@ -101,9 +120,18 @@ union TRemoteTestParams
 
     //Endpoint engine data.
     TTestEndpointEngine iEndpointEngine;
+    
+    // Endpoint Engine configuration data.
+    TTestEndpointEngineConfig iEndpointEngineConfig;
 
     //Image Tearing Test.
     TTestEndpointTearing iEndpointTearing;
+    
+    //Multithreaded stress tests.
+    TTestEndpointThreadStress iEndpointThreadStress;
+    
+    //Release Image with Gles context tests.
+    TTestEndpointReleaseImageGles iEndpointReleaseImageGles;
     };
 
 

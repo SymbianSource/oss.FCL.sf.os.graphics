@@ -16,4 +16,6 @@
 PRINT Run Graphics Resource Internal Tests
 //
 LOAD_SUITE tgraphicsresourceinternal2
-RUN_TEST_STEP 100 tgraphicsresourceinternal2 TGraphicsResourceInternal
+
+//COMMENTED OUT FOR 10T38 ZERO TOLERANCE TEST STRATEGY
+//RUN_TEST_STEP 100 tgraphicsresourceinternal2 TGraphicsResourceInternal

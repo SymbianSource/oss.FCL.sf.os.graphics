@@ -509,6 +509,7 @@ void	CWsDynamicResBasic::GRAPHICS_WSERV_DYNAMICRES_0004L()
 	For each, check if event has been received
 @SYMTestExpectedResults	
 	Based on type of change, check event
+	@note Test uses HAL to simulate display disconnection. Not supported on production platforms.
 */
 void	CWsDynamicResBasic::GRAPHICS_WSERV_DYNAMICRES_0005L()
 	{
@@ -683,16 +684,12 @@ void	CWsDynamicResBasic::GRAPHICS_WSERV_DYNAMICRES_0006L()
 	TInt error;
 	MakeTitleAndCompareWindowsL(_L("GFX_WSERV_DYNAMICRES_0006L"),_L("Change Resolution"));
 
-	iTestBack=RWindow(iSession);
+	iTestBack=RBlankWindow(iSession);
 	ASSERT_EQUALS(iTestBack.Construct(iGroup, ++iWindowHandle), KErrNone);
 	iTestBack.SetRequiredDisplayMode(iDisplayMode);
-	iTestBack.SetBackgroundColor(TRgb(255,0,0));
+	iTestBack.SetColor(TRgb(255,0,0));
 	iTestBack.SetExtent(iTestPos.iTl,iTestPos.Size());
 	iTestBack.Activate();
-	iTestBack.BeginRedraw();
-	ActivateWithWipe(iGc,iTestBack,TRgb(255,0,0));
-	iGc->Deactivate();
-	iTestBack.EndRedraw();
 	iTestBack.SetVisible(ETrue);
 	
 	struct DrawCompare
@@ -902,17 +899,14 @@ void	CWsDynamicResBasic::GRAPHICS_WSERV_DYNAMICRES_0008L()
 	TInt error;
 	MakeTitleAndCompareWindowsL(_L("GFX_WSERV_DYNAMICRES_0008L"),_L("Change Size Mode"));
 
-	iTestBack=RWindow(iSession);
-	ASSERT_EQUALS(iTestBack.Construct(iGroup, ++iWindowHandle), KErrNone);
-	iTestBack.SetRequiredDisplayMode(iDisplayMode);
-	iTestBack.SetBackgroundColor(TRgb(255,0,0));
-	iTestBack.SetExtent(iTestPos.iTl,iTestPos.Size());
-	iTestBack.Activate();
-	iTestBack.BeginRedraw();
-	ActivateWithWipe(iGc,iTestBack,TRgb(255,0,0));
-	iGc->Deactivate();
-	iTestBack.EndRedraw();
-	iTestBack.SetVisible(ETrue);
+    iTestBack=RBlankWindow(iSession);
+    ASSERT_EQUALS(iTestBack.Construct(iGroup, ++iWindowHandle), KErrNone);
+    iTestBack.SetRequiredDisplayMode(iDisplayMode);
+    iTestBack.SetColor(TRgb(255,0,0));
+    iTestBack.SetExtent(iTestPos.iTl,iTestPos.Size());
+    iTestBack.Activate();
+    iTestBack.SetVisible(ETrue);
+    iSession.Finish(ETrue);
 	
 	
 	if (CWindowGc*	gc=BeginActivateWithWipe(ETrue,iCompare,TRgb(128,128,128)))
@@ -1084,17 +1078,13 @@ void	CWsDynamicResBasic::GRAPHICS_WSERV_DYNAMICRES_0009L()
 	MakeTitleAndCompareWindowsL(_L("GFX_WSERV_DYNAMICRES_0009L"),_L("Change Size Mode"));
 	iSession.Finish(ETrue);
 
-	iTestBack=RWindow(iSession);
-	ASSERT_EQUALS(iTestBack.Construct(iGroup, ++iWindowHandle), KErrNone);
-	iTestBack.SetRequiredDisplayMode(iDisplayMode);
-	iTestBack.SetBackgroundColor(TRgb(255,0,0));
-	iTestBack.SetExtent(iTestPos.iTl,iTestPos.Size());
-	iTestBack.Activate();
-	iTestBack.BeginRedraw();
-	ActivateWithWipe(iGc,iTestBack,TRgb(255,0,0));
-	iGc->Deactivate();
-	iTestBack.EndRedraw();
-	iTestBack.SetVisible(ETrue);
+    iTestBack=RBlankWindow(iSession);
+    ASSERT_EQUALS(iTestBack.Construct(iGroup, ++iWindowHandle), KErrNone);
+    iTestBack.SetRequiredDisplayMode(iDisplayMode);
+    iTestBack.SetColor(TRgb(255,0,0));
+    iTestBack.SetExtent(iTestPos.iTl,iTestPos.Size());
+    iTestBack.Activate();
+    iTestBack.SetVisible(ETrue);
 	iSession.Finish(ETrue);
 	
 	struct DrawCompare
@@ -1503,8 +1493,7 @@ void CDSATestDrawing::RunL()
 
 void CDSATestDrawing::Draw()
 	{
-	iWin->Invalidate();
-	iWin->BeginRedraw();
+	//Should not invalidate the window containing DSA drawing. That's the whole point!
 	CFbsBitGc* gc = iDSA->Gc();
 	gc->SetPenStyle(gc->ESolidPen);
 	gc->SetPenColor(TRgb(255,0,0));
@@ -1512,7 +1501,6 @@ void CDSATestDrawing::Draw()
 	iRect.Shrink(1, 1);
 	gc->DrawRect(iRect);
 	iDSA->ScreenDevice()->Update();
-	iWin->EndRedraw();
 	
 	}
 void CDSATestDrawing::Restart(RDirectScreenAccess::TTerminationReasons /*aReason*/) 
@@ -1637,8 +1625,6 @@ void	CWsDynamicResBasic::GRAPHICS_WSERV_DYNAMICRES_0011L()
 			continue;
 			}
 		
-		//if my rectangle's iTl is (0,0) and iBr is (100,100). Why does it gives me the rect width and height
-		//both 100? 0 - 100 is 101 pixels drawn. Or does this indicates iBr is exclusive and iTl is inclusive?
 		//Ruo: Oh I almost believe iBr is exclusive now
 		TDisplayConfiguration dispConfigAfter2;
 		interface->GetConfiguration(dispConfigAfter2);
@@ -2722,12 +2708,16 @@ void	CWsDynamicResBasic::GRAPHICS_WSERV_DYNAMICRES_0032L()
 		TInt completeCount = 0;
 		while (notComplete)
 			{
+            RDebug::Printf("iInfoScreenDevice->SetAppScreenMode");
 			iInfoScreenDevice->SetAppScreenMode(screenModeList[index]);
 			iSession.Finish(ETrue);
 			iSession.HeapSetFail(RHeap::EDeterministic,heapFail);
+            RDebug::Printf("iInfoScreenDevice->SetAppScreenMode");
 			iInfoScreenDevice->SetScreenMode(screenModeList[index]);
+            RDebug::Printf("SetScreenMode done");
 			iSession.HeapSetFail(RHeap::ENone,0);
 			iSession.Finish(ETrue);
+            RDebug::Printf("Finish done");
 			Pause(50);
 			TInt newMode = iInfoScreenDevice->CurrentScreenMode();
 
@@ -2736,7 +2726,7 @@ void	CWsDynamicResBasic::GRAPHICS_WSERV_DYNAMICRES_0032L()
 				completeCount++;
 				if (completeCount == 5)
 					{
-					INFO_PRINTF2(_L("Succeeded with heapFail = %d"),heapFail);
+					INFO_PRINTF3(_L("Mode %i Succeeded with heapFail = %d"),index, heapFail);
 					notComplete = EFalse;
 					}
 				iInfoScreenDevice->SetAppScreenMode(screenModeList[0]);
@@ -3740,6 +3730,8 @@ TBool CWsDynamicResBasic::Compare(const CFbsBitmap& aBitmap,
 
 	if (aBitmapRegionPairArray.Count()>0)
 		{
+        RDebug::Printf("Checking");
+        TInt countchecks=0;
 		for (TInt i=0; i<width; i++)
 			{
 			for (TInt j=0; j<height; j++)
@@ -3822,6 +3814,7 @@ TBool CWsDynamicResBasic::Compare(const CFbsBitmap& aBitmap,
 				}
 			}
 		}
+	
 	ignoreDueToResizing.Close();
 	if (errorPixels+diffPixels < 2)
 		{

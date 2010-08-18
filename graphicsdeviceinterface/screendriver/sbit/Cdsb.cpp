@@ -348,9 +348,9 @@ TInt CGenericDirectScreenBitmap::DoCreate()
 		case 24:
 		case 32:
 			iBitmapInfo.iPixelShift = 5;
-			iBitmapInfo.iDisplayMode = EColor16MAP;
+			iBitmapInfo.iDisplayMode = EColor16MA;
 #ifdef SYMBIAN_GRAPHICS_GCE
-			iPixelFormat = EUidPixelFormatARGB_8888_PRE;
+			iPixelFormat = EUidPixelFormatARGB_8888;
 			iBytesPerPixel = 4;
 #endif
 			break;

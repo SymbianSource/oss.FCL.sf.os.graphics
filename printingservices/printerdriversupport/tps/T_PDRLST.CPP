@@ -14,7 +14,7 @@
 //
 
 #include "T_PDRLST.H"
-#include "prnpath.h"
+
 
 class CTPdrLst : public CTGraphicsBase
 	{

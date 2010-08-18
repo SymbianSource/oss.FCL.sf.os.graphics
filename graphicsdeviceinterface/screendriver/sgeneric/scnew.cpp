@@ -276,7 +276,7 @@ EXPORT_C CFbsDrawDevice* CFbsDrawDevice::NewScreenDeviceL(TInt aScreenNo,
 */
 EXPORT_C TDisplayMode CFbsDrawDevice::DisplayMode16M()
 	{
-	return EColor16MAP;
+	return EColor16MA;
 	}
 
 
@@ -372,24 +372,6 @@ void CScreenDeviceHelper::Update(TRequestStatus& aStatus)
 		}
 	}
 
-/**
-Implementation of corresponding function in CDrawDevice, utilizing a tracked
-update region. Adds the given region to the update region and updates the
-screen.
-@param aRegion	Additional region to be updated.
-*/
-void CScreenDeviceHelper::Update(const TRegion& aRegion)
-	{
-	if(!aRegion.IsEmpty() && !aRegion.CheckError())
-		{
-		TInt rcCnt = aRegion.Count();
-		for (TInt ii=0; ii < rcCnt; ++ii)
-			{
-			UpdateRegion(aRegion[ii]);
-			}
-		}
-	Update();
-	}
 
 /**
 Implementation of corresponding function in CDrawDevice, utilizing a tracked

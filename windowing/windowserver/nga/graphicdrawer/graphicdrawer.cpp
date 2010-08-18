@@ -17,8 +17,8 @@
 //
 
 #include "../SERVER/w32cmd.h"
-#include "Graphics/WSGRAPHICDRAWER.H"
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "graphics/WSGRAPHICDRAWER.H"
+#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
 #include <s32mem.h>
 #include "panics.h"
 

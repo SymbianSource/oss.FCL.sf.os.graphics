@@ -13,7 +13,7 @@
 // Description:
 //
 
-#include "Graphics/W32STDGRAPHICTEST.H"
+#include "graphics/W32STDGRAPHICTEST.H"
 
 EXPORT_C TWsGraphicFrameRate::TWsGraphicFrameRate():
 	TWsGraphicMsgFixedBase(TUid::Uid(ETypeId),sizeof(*this))

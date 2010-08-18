@@ -1,4 +1,4 @@
-// Copyright (c) 1996-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1996-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,7 +19,6 @@
 /**
  @file
  @test
- @internalComponent - Internal Symbian test code
 */
 
 #include "TGWHANDLE.H"
@@ -1195,6 +1194,7 @@ void CTGwHandle::UnchainWindowGroupsL()
 	{
 	RArray<RWsSession::TWindowGroupChainInfo>* windowHandles=new(ELeave) RArray<RWsSession::TWindowGroupChainInfo>;
 	CleanupStack::PushL(windowHandles);
+	CleanupClosePushL(*windowHandles);
 	GetGwListL(0,windowHandles);
 	TInt shellWindow=windowHandles->Count();
 	//Creating chained window groups.
@@ -1282,7 +1282,8 @@ void CTGwHandle::UnchainWindowGroupsL()
 
 	CleanupStack::PopAndDestroy(ENumChained-3,iChained[ENumChained-4]);
 	windowHandles->Close();
-	CleanupStack::PopAndDestroy(windowHandles);
+	CleanupStack::PopAndDestroy(windowHandles); // causes windowsHandles->Close() called
+	CleanupStack::PopAndDestroy(windowHandles); // causes delete windowsHandles	called
 	}
 
 TInt CTGwHandle::ChainedWindowCount(RArray<RWsSession::TWindowGroupChainInfo>* aWindowHandles)

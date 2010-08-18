@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -17,7 +17,7 @@
 #define TFONTTABLEANDGLYPH_H_
 
 #include <gdi.h>
-#include "TGraphicsHarness.h"
+#include "test/TGraphicsHarness.h"
 
 class CTFontAndGlyphStep : public CTGraphicsStep
     {

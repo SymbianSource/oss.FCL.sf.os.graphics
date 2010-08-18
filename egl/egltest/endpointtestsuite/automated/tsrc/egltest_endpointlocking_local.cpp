@@ -60,58 +60,6 @@ of a valid notification.
 static const TTestCase KLockingMultibufferCases[] =
 {
     {
-        TESTIDS("571"),
-        CASETITLE("Functional Locking: Multiple Buffers: Surface Update Server Basic Notifications"),
-        SurfaceTypes1(ESurfTypeRaw),
-        {
-        { EInitializeCase,      0,              EGL_SUCCESS },
-        { ECreateSurfaceCase,   0,              EGL_SUCCESS, 0, EStandardSurface },
-        { ECreateEndpointCase,  0,              EGL_SUCCESS },
-        { EDrawContentCase,     0,              EGL_SUCCESS },
-        { EContentUpdateCase,   0,              EGL_SUCCESS },
-        { EBeginStreamingCase,  0,              EGL_SUCCESS },
-        { ESetAttribCase,       0,              EGL_SUCCESS,  0, 0, EGL_DELAY_NOK, 50000 }, //50ms delay
-        { ENotifyWhenCase,      0,              KErrNone,     0, ENotifyWhenAvailable },
-        { EContentUpdateCase,   ENoWait,        EGL_SUCCESS },
-        { EAcquireImageCase,    0,              EGL_SUCCESS },
-        { EWaitForCase,         0,              KErrTimedOut,     0, ENotifyWhenAvailable, 100000, 50000 }, //100 ms timeout, timestamp not used
-        { EReleaseImageCase,    0,              EGL_SUCCESS },
-        { EContentUpdateCase,   0,              EGL_SUCCESS },
-        { EAcquireImageCase,    0,              EGL_SUCCESS },
-        { EContentUpdateCase,   0,              EGL_SUCCESS },
-        { EWaitForCase,         0,              KErrNone,     0, ENotifyWhenAvailable, 100000, 50000 }, //100 ms timeout, timestamp not used
-        { EReleaseImageCase,    0,              EGL_SUCCESS },
-        { EEndStreamingCase,    0,              EGL_SUCCESS },
-        { EDestroyEndpointCase, 0,              EGL_SUCCESS },
-        { ETerminateCase,       0,              EGL_SUCCESS },
-        { EFinishedCase }
-        },
-    },
-    {
-        TESTIDS("575"),
-        CASETITLE("Functional Locking: Multiple Buffers: Update Server Notifications with eglEndpointEndStreamingNOK"),
-        SurfaceTypes1(ESurfTypeRaw),
-        {
-        { EInitializeCase,      0,              EGL_SUCCESS },
-        { ECreateSurfaceCase,   0,              EGL_SUCCESS, 0, EStandardSurface },
-        { ECreateEndpointCase,  0,              EGL_SUCCESS },
-        { EDrawContentCase,     0,              EGL_SUCCESS },
-        { EContentUpdateCase,   0,              EGL_SUCCESS },
-        { EBeginStreamingCase,  0,              EGL_SUCCESS },
-        { ESetAttribCase,       0,              EGL_SUCCESS,  0, 0, EGL_DELAY_NOK, 50000 }, //50ms delay
-        { ENotifyWhenCase,      0,              KErrNone,     0, ENotifyWhenAvailable },
-        { EContentUpdateCase,   0,              EGL_SUCCESS },
-        { EAcquireImageCase,    0,              EGL_SUCCESS },
-        { EWaitForCase,         0,              KErrTimedOut,     0, ENotifyWhenAvailable, 100000, 50000 }, //100 ms timeout, timestamp not used
-        { EEndStreamingCase,    0,              EGL_SUCCESS },
-        { EContentUpdateCase,   0,              EGL_SUCCESS },
-        { EWaitForCase,         0,              KErrNone,     0, ENotifyWhenAvailable, 100000, 50000 }, //100 ms timeout, timestamp not used
-        { EDestroyEndpointCase, 0,              EGL_SUCCESS },
-        { ETerminateCase,       0,              EGL_SUCCESS },
-        { EFinishedCase }
-        },
-    },
-    {
         TESTIDS("611"),
         CASETITLE("Functional Locking: Update Server Notifications with acquire and release"),
         SurfaceTypes1(ESurfTypeRaw),
@@ -126,28 +74,6 @@ static const TTestCase KLockingMultibufferCases[] =
         { ENotifyWhenCase,      0,              KErrNone,     0, ENotifyWhenAvailable },
         { EContentUpdateCase,   ENoWait,        EGL_SUCCESS },
         { EAcquireImageCase,    0,              EGL_SUCCESS },
-        { EDestroyEndpointCase, 0,              EGL_SUCCESS },
-        { EWaitForCase,         0,              KErrNone,     0, ENotifyWhenAvailable, 100000, 50000 }, //100 ms timeout, timestamp not used
-        { ETerminateCase,       0,              EGL_SUCCESS },
-        { EFinishedCase }
-        },
-    },
-    {
-        TESTIDS("576"),
-        CASETITLE("Functional Locking: Multiple Buffers: Update Server Notifications with eglDestroyEndpointNOK"),
-        SurfaceTypes1(ESurfTypeRaw),
-        {
-        { EInitializeCase,      0,              EGL_SUCCESS },
-        { ECreateSurfaceCase,   0,              EGL_SUCCESS, 0, EStandardSurface },
-        { ECreateEndpointCase,  0,              EGL_SUCCESS },
-        { EDrawContentCase,     0,              EGL_SUCCESS },
-        { EContentUpdateCase,   0,              EGL_SUCCESS },
-        { EBeginStreamingCase,  0,              EGL_SUCCESS },
-        { ESetAttribCase,       0,              EGL_SUCCESS,  0, 0, EGL_DELAY_NOK, 50000 }, //50ms delay
-        { ENotifyWhenCase,      0,              KErrNone,     0, ENotifyWhenAvailable },
-        { EContentUpdateCase,   0,              EGL_SUCCESS },
-        { EAcquireImageCase,    0,              EGL_SUCCESS },
-        { EWaitForCase,         0,              KErrTimedOut,     0, ENotifyWhenAvailable, 100000, 50000 }, //100 ms timeout, timestamp not used
         { EDestroyEndpointCase, 0,              EGL_SUCCESS },
         { EWaitForCase,         0,              KErrNone,     0, ENotifyWhenAvailable, 100000, 50000 }, //100 ms timeout, timestamp not used
         { ETerminateCase,       0,              EGL_SUCCESS },

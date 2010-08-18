@@ -85,7 +85,7 @@ TVerdict CEglTest_LocalTestStep_EndpointImageLifetimeProcess::doTestStepL()
 
     // Draw something.
     surface->DrawContentL(0);
-    surface->SubmitContentL(EFalse);
+    User::LeaveIfError(surface->SubmitContent(ETrue));
 
     if (result)
         {

@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -11,8 +11,8 @@
 // Contributors:
 //
 // Description:
-// A copy of shutdown cleanup functions that should be called  
-// to properly support openWF.
+// Test shutdown cleanup functions that should be called to destroy singletons
+// before the heap is destroyed, in particular when using TEF steps.
 // These methods are implemented and called from Window Server - WServ, CWsTop
 // but this copy can be called by any low-level unit tests that bypass WServ   
 // but need to provide the same clean-up behaviour.
@@ -27,6 +27,7 @@
 // Note that while these cleanups are only required by OWF-C implementations,
 // the methods called should be harmless if called 
 // when some other composition solution is in action.
+
 #include <e32property.h>
 #include <EGL/egl.h>
 

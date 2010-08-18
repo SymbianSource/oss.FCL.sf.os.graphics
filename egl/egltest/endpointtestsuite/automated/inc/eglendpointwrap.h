@@ -40,7 +40,7 @@ typedef void (*TAnyFuncPtr)(...);
  * were resolved. Trying to use one of the endpoint functions in the event of a
  * construction error will result in a panic.
  */
-class TEglEndpointWrap : public CBase
+class TEglEndpointWrap
     {
 public:
     TEglEndpointWrap();

@@ -23,8 +23,8 @@
 #define __LISTENER_H__
 
 #include <bitstd.h>
-#include "Graphics/WSGRAPHICDRAWER.H"
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "graphics/WSGRAPHICDRAWER.H"
+#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
 
 class CFbsBitmap;
 class CFbsBitmapDevice;

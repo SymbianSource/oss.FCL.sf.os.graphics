@@ -20,7 +20,7 @@
 
 #include <e32std.h>
 #include <e32base.h>
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
 #include "W32STD.H"
 
 class CWsClient;

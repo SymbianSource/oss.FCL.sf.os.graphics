@@ -71,6 +71,7 @@ TVerdict CLocalTestStepBase::doTestStepPostambleL()
     
     DoPostambleL();
     delete iResultLog;
+    iResultLog = NULL;
     iResultOutQueue.Close();
     iParamsInQueue.Close();
     return EPass;
@@ -405,7 +406,8 @@ void CTestIdResultLogger::SetCurrentTestIds(const TDesC& aTestString)
 
 void CTestIdResultLogger::LogResult(TVerdict aVerdict)
     {
-    TBuf<20> verdict;
+    const TInt KMaxVerdictLength = 20;
+    TBuf<KMaxVerdictLength> verdict;
     switch(aVerdict)
         {
         case EPass:           verdict.Append(_L("PASS"));            break;
@@ -432,24 +434,21 @@ void CTestIdResultLogger::LogResult(CTestExecuteLogger& aLogger, const TTestId& 
 
 TInt CTestIdResultLogger::PanicMonitorMain(TAny* aSelf)
     {
-    CTrapCleanup* cleanup = CTrapCleanup::New();
-
-    TRAPD(err,
-        //Create active scheduler.
-        CActiveScheduler* scheduler = new (ELeave) CActiveScheduler();
-        CleanupStack::PushL(scheduler);
-        CActiveScheduler::Install(scheduler);
-
-        //Run MainL.
-        CTestIdResultLogger* self = static_cast<CTestIdResultLogger*>(aSelf);
-        self->PanicMonitorMainL();
-
-        //Clean up.
-        CleanupStack::PopAndDestroy(scheduler);
-        );
+    CTestIdResultLogger* self = static_cast<CTestIdResultLogger*>(aSelf);
     
+    //Create cleanup stack.
+    CTrapCleanup* cleanup = CTrapCleanup::New();
+    ASSERT(cleanup);
+    
+    //Create active scheduler.
+    CActiveScheduler* scheduler = new CActiveScheduler();
+    ASSERT(scheduler);
+    CActiveScheduler::Install(scheduler);
+    
+    TRAPD(err,  self->PanicMonitorMainL());
     __ASSERT_ALWAYS(err == KErrNone, User::Invariant());
-
+    
+    delete scheduler;
     delete cleanup;
     return KErrNone;
     }
@@ -541,7 +540,7 @@ TInt E32Main()
 	{
 	__UHEAP_MARK;
 	CTrapCleanup* cleanup = CTrapCleanup::New();
-	if(cleanup == NULL)
+	if(!cleanup)
 		{
 		return KErrNoMemory;
 		}

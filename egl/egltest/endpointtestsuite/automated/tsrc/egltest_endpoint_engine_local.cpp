@@ -51,6 +51,14 @@ CEgltest_Local_Engine::CEgltest_Local_Engine(const TTestCases *aTestCases, TInt 
     {
     }
 
+CEgltest_Local_Engine::CEgltest_Local_Engine() :
+    CLocalTestStepBase(ETestUidEndpointEngine),
+    iTestCases(NULL),
+    iNumCases(0)
+    {
+    }
+
+
 CEgltest_Local_Engine::~CEgltest_Local_Engine()
     {
     }
@@ -67,12 +75,15 @@ void CEgltest_Local_Engine::DoPreambleL()
         TInt numInnerCases = outerCases[curOuterCase].iCount;
         for(TInt curInnerCase = 0; curInnerCase < numInnerCases; curInnerCase++)
             {
-            TPtrC testIds(innerCases[curInnerCase].iRelatedTestIds);
+            TPtrC testIds(innerCases[curInnerCase].iBase.iRelatedTestIds);
             RegisterTestIdsL(testIds);
             }
         }
-    
-    
+    CommonPreambleL();
+    }
+
+void CEgltest_Local_Engine::CommonPreambleL()
+    {
     // For details about the threads, see comment in the egltest_local_engine_exec.cpp
     
     // Amount of stack-space we allow for the execution thread. 
@@ -142,14 +153,12 @@ void CEgltest_Local_Engine::DoPreambleL()
     iExecThread.Resume();
     }
 
-
 TInt CEgltest_Local_Engine::MonitorThreadEntry(TAny *aParam)
     {
     CEgltest_Local_Engine *self = reinterpret_cast<CEgltest_Local_Engine *>(aParam);
     self->DoMonitorThreadEntry();
     return 0;
     }
-
 
 // Forward a the panic from the controller to the exec thread or vice versa.
 void CEgltest_Local_Engine::DoMonitorThreadEntry()
@@ -200,7 +209,6 @@ void CEgltest_Local_Engine::DoMonitorThreadEntry()
     execThread.Close();
     }
 
-
 // Tear down threads.
 void CEgltest_Local_Engine::DoPostambleL()
     {
@@ -222,27 +230,29 @@ TVerdict CEgltest_Local_Engine::doTestStepL()
     INFO_PRINTF2(_L("Executing test with %d cases..."), iNumCases);
     for(TInt runCase = 0; runCase < iNumCases; runCase++)
         {
-        RunTestCaseL(iTestCases[runCase]);
+        RunTestCase(iTestCases[runCase]);
         }
     return TestStepResult();
     }
 
-
-
-void CEgltest_Local_Engine::RunTestCaseL(const TTestCases &aTestCases)
+void CEgltest_Local_Engine::RunTestCase(const TTestCases &aTestCases)
     {
     for(TInt testCase = 0; testCase < aTestCases.iCount; testCase++)
         {
         const TTestCase &thisCase = aTestCases.iCase[testCase];
         
         //Set the Ids of the test case as the current ones.
-        TPtrC testIds(thisCase.iRelatedTestIds);
+        TPtrC testIds(thisCase.iBase.iRelatedTestIds);
         SetCurrentTestIds(testIds);
         
-        for(TInt surfIter= 0; surfIter < thisCase.iSurfaceTypeCount; surfIter++)
+        for(TInt surfIter= 0; surfIter < thisCase.iBase.iSurfaceTypeCount; surfIter++)
             {
-            TSurfaceType surfType = thisCase.iSurfaceTypeList[surfIter];
-            RunOneTestCaseL(thisCase, surfType);
+            TSurfaceType surfType = thisCase.iBase.iSurfaceTypeList[surfIter];
+            
+            INFO_PRINTF3(_L("Running testcase GRAPHICS-EGL-%s: %s"),
+                    thisCase.iBase.iRelatedTestIds, thisCase.iBase.iName);
+
+            RunOneTestCase(thisCase, surfType);
             }
         }
     }
@@ -308,6 +318,61 @@ void CEgltest_Local_Engine::RunLocalTestCase(TEngineCases aCase)
     RunLocalTestCase(params, result);
     }
 
+
+void CEgltest_Local_Engine::StartThreadL(TInt aThreadNumber)
+    {
+    INFO_PRINTF2(_L("Attempt to start thread %d using base-class StartThreadL"), aThreadNumber);
+    User::Panic(_L("StartThreadL"), __LINE__);
+    }
+
+
+void CEgltest_Local_Engine::EndThread(TInt aThreadNumber)
+    {
+    INFO_PRINTF2(_L("Attempt to end thread %d using base-class EndThread"), aThreadNumber);
+    User::Panic(_L("EndThread"), __LINE__);
+    }
+
+void CEgltest_Local_Engine::RunControllerLocalAndRemoteL(const TEngineTestCase& aCase, const TRemoteTestParams& aParams)
+    {
+    if (aCase.iFlags & EDebugController)
+        {
+        switch(aCase.iCase)
+            {
+            case EBreakPointCase:
+                __BREAKPOINT();
+                break;
+            case ELogEnableCase:
+                iLogging = ETrue;
+                break;
+            case EEndLoadThreadCase:
+                EndThread(aCase.iEndpointIndex);
+                break;
+            case EStartLoadThreadCase:
+                StartThreadL(aCase.iEndpointIndex);
+                break;
+            case EPanicCase:
+                User::Panic(_L("EPanicCase"), -1);
+                break;
+            case ESetVerdictCase:
+                SetTestStepResult(static_cast<TVerdict>(aCase.iEndpointIndex));
+                break;
+            default:
+                ERR_PRINTF2(_L("Unrecognised case %d"), aCase.iCase);
+                User::Panic(_L("BADCASE"), -2);
+                break;
+            }
+        }
+    if (aCase.iFlags & EDebugExecThread)
+        {
+        SendLocalTestCase(aParams);
+        }
+    if (aCase.iFlags & EDebugRemote)
+        {
+        RunRemoteTestCase(aCase.iCase, aParams);
+        }
+    }
+
+
 // This function runs one set of table entries for one surface type. 
 void CEgltest_Local_Engine::RunSingleCaseL(const TTestCase& aTestCase, TSurfaceType aSurfType)
     {
@@ -321,11 +386,17 @@ void CEgltest_Local_Engine::RunSingleCaseL(const TTestCase& aTestCase, TSurfaceT
         const TEngineTestCase& ec = cs.iEngineTestCase[j];
         params.iEndpointEngine.iEngineTestCase = ec;
         params.iEndpointEngine.iSurfaceParams.iSurfaceType = aSurfType;
+        
+        if (iLogging)
+            {
+            LogDump(Logger(), ec);
+            }
 
         switch(ec.iCase)
             {
             // Work done locally. 
             case ECreateSurfaceCase:
+            case EDestroySurfaceCase:
             case EDrawContentCase:
             case ENotifyWhenCase:
             case EWaitForCase:
@@ -367,7 +438,6 @@ void CEgltest_Local_Engine::RunSingleCaseL(const TTestCase& aTestCase, TSurfaceT
             case EReleaseImageCase:
             case EDestroyEndpointCase:
             case EBeginStreamingCase:
-            case EInitializeCase:
             case ETerminateCase:
             case EGetAttribCase:
             case ESetAttribCase:
@@ -380,6 +450,9 @@ void CEgltest_Local_Engine::RunSingleCaseL(const TTestCase& aTestCase, TSurfaceT
             case ECancelNotificationCase:
             case EWaitForNotificationCase:
             case EGetEndpointDirtyAreaCase:
+            case ECheckForMemoryLeaks:
+            case ECheckForMemoryLeaksFinish:
+            case ESpecialEglHeapCase:
                 RunRemoteTestCase(ec.iCase, params);
                 break;
 
@@ -397,31 +470,24 @@ void CEgltest_Local_Engine::RunSingleCaseL(const TTestCase& aTestCase, TSurfaceT
                 RunRemoteTestCase(ec.iCase, params);
                 }
                 break;
+                
+            case EInitializeCase:
+                SendLocalTestCase(params);
+                RunRemoteTestCase(ec.iCase, params);
+                break;
+                
 
-            // Some commands that go to BOTH local and remote side!
+            // These commands are controlled by the EDebugXXX flags
+            // They may go to this thread, the exectrhead or the remote RS.
+            case EStartLoadThreadCase:
+            case EEndLoadThreadCase:
             case ELogEnableCase:
-                SendLocalTestCase(params);
-                RunRemoteTestCase(ec.iCase, params);
-                break;
-                
             case EBreakPointCase:
-                if (ec.iFlags & EDebugController)
-                    {
-                    __BREAKPOINT();
-                    }
-                SendLocalTestCase(params);
-                RunRemoteTestCase(ec.iCase, params);
+            case EPanicCase:
+            case ESetVerdictCase:
+                RunControllerLocalAndRemoteL(ec, params);
                 break;
                 
-            case EPanicCase:
-                if (ec.iFlags & EDebugController)
-                    {
-                    User::Panic(_L("EPanicCase"), -1);
-                    }
-                SendLocalTestCase(params);
-                RunRemoteTestCase(ec.iCase, params);
-                break;
-
            default:
                 ERR_PRINTF2(_L("Unknown case: %d"), ec.iCase);
                 SetTestStepResult(EFail);
@@ -432,23 +498,17 @@ void CEgltest_Local_Engine::RunSingleCaseL(const TTestCase& aTestCase, TSurfaceT
     RunLocalTestCase(EFinishedCase);
     }
 
-
-
-void CEgltest_Local_Engine::RunOneTestCaseL(const TTestCase& aTestCase, TSurfaceType aSurfType)
+void CEgltest_Local_Engine::RunOneTestCase(const TTestCase& aTestCase, TSurfaceType aSurfType)
     {
-    INFO_PRINTF3(_L("Running testcase GRAPHICS-EGL-%s: %s"),
-            aTestCase.iRelatedTestIds, aTestCase.iName);
-    static const TRemoteTestParams nullParams = {};
+    TRemoteTestParams nullParams = {};
+    nullParams.iEndpointEngineConfig.iLogErrors = ETrue;
+    
     StartRemoteTestStep(nullParams);
 
-    TRAPD(err2, RunSingleCaseL(aTestCase, aSurfType));
-    if (err2 != KErrNone)
+    TRAPD(err, RunSingleCaseL(aTestCase, aSurfType));
+    if (err != KErrNone)
         {
-        INFO_PRINTF2(_L("RunSingleCaseL left with an error: %d"), err2);
-        }
-    else
-        {
-        INFO_PRINTF1(_L("testcase finished..."));
+        INFO_PRINTF2(_L("RunSingleCaseL left with an error: %d"), err);
         }
 
     EndRemoteTestStep(nullParams);

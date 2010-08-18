@@ -146,6 +146,12 @@
 					<component name="OpenWF Composition Engine">
 						<unit bldFile="sf\os\graphics\graphicscomposition\openwfcompositionengine\group" mrp="sf\os\graphics\graphicscomposition\openwfcompositionengine\group\graphics_openwfcompositionengine.mrp"/>
 					</component>
+					<component name="OpenWF Composition Display Driver Adaptation for Display Channel">
+						<unit bldFile="sf\os\graphics\graphicscomposition\openwfc_ri_displaychannel\group" mrp="sf\os\graphics\graphicscomposition\openwfc_ri_displaychannel\group\graphics_openwfc_ri_displaychannel.mrp"/>
+					</component>            		
+					<component name="OpenWF Tests">
+						<unit bldFile="sf\os\graphics\graphicscomposition\openwftest\group" mrp="sf\os\graphics\graphicscomposition\openwftest\group\graphics_openwftest.mrp"/>
+					</component>            		
 				</collection>
 				<collection name="Graphics Device Interface">
 					<component name="BitGDI">
@@ -265,6 +271,13 @@
 					</component>
 				</collection>
 			</block>
+		</layer>
+		<layer name="Additional Tools">
+			<collection name="ONB Tools">
+				<component name="Thindump" class="test">
+					<unit bldFile="thindump\group" />
+				</component>
+			</collection>
 		</layer>
 	</systemModel>
 </SystemDefinition>

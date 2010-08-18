@@ -98,13 +98,30 @@ template <class T> void CGenericScreenDevice<T>::Update()
 
 template <class T> void CGenericScreenDevice<T>::Update(const TRegion& aRegion)
 	{
-	iHelper.Update(aRegion);
+    if(!aRegion.IsEmpty() && !aRegion.CheckError())
+        {
+        if (aRegion.Count()>KMaxUpdateRegionRectangles)
+            {
+            UpdateRegion(aRegion.BoundingRect());
+            }
+        else
+            {
+            TInt rcCnt = aRegion.Count();
+            for (TInt ii=0; ii < rcCnt; ++ii)
+                {  
+                UpdateRegion(aRegion[ii]);  //Applies deorientate (offset, scale, rotate)
+                }
+            }
+        }
+    Update();
 	}
 
 template <class T> void CGenericScreenDevice<T>::UpdateRegion(const TRect& aRect)
-	{
-	iHelper.UpdateRegion(aRect);
-	}
+    {
+    const TRect rect = CDrawXxxBppBitmap::DeOrientate(aRect);//rect - physical coordinates
+    
+    iHelper.UpdateRegion(rect);
+    }
 
 template <class T> TInt CGenericScreenDevice<T>::GetInterface(TInt aInterfaceId, TAny*& aInterface)
 	{

@@ -33,5 +33,6 @@
 
 ;*Files To Copy...<src> <destination>
 
-"\epoc32\data\z\wstest\ratelimiter\graphics-wserv-ratelimiter-test.script"-"c:\wstest\ratelimiter\graphics-wserv-ratelimiter-test.script"
+;COMMENTED OUT FOR 10T38 ZERO TOLERANCE TEST STRATEGY
+;"\epoc32\data\z\wstest\ratelimiter\graphics-wserv-ratelimiter-test.script"-"c:\wstest\ratelimiter\graphics-wserv-ratelimiter-test.script"
 

@@ -56,7 +56,7 @@ enum TEngineCases
     // iEndpointIndex indicates which surface to use.
     // iImageIndex index to the rectangle set to pass in as "dirty rectangles".
     //             if index = 0, then a NULL is passed - indicating full surface 
-    //             (no other value currently supported)!
+    //             (no other value currently supported).
     // iFlags: ENoWait: complete immediately, rather than wait for displayed 
     //                  notification (only valid for non-EGL surfaces).
     //         ENoSync: Do not wait for contentupdate to complete, instead, 
@@ -105,7 +105,7 @@ enum TEngineCases
     ECreateSurfaceCase = 11,
 
     // EDrawContentCase
-    // Also draws an image before swapping.
+    // Draws an image.
     // iEndpointIndex indicates the surface to draw to.
     // iImageIndex is the index of the image to be drawn.
     EDrawContentCase = 12,
@@ -206,19 +206,76 @@ enum TEngineCases
     // RWindow component that is part of an EGL surface in the thread that
     // created the RWindow.
     EGetSurfaceParamsCase = 26, 
+    
+    // EDestroySurfaceCase
+    // Opposite of ECreatSurfaceCase.
+    // iEndpointIndex indicates which surface object
+    EDestroySurfaceCase = 27,
+    
+    // EStartLoadThreadCase
+    // For tests that have some sort of second thread that does "loading" 
+    // (e.g. heavy drawing or using up memory), this will start that thread.
+    // iEndpointIndex is the thread number. 
+    // Note, relies on the thread implementing a StartLoadThread() function -
+    // default implementation will panic.
+    EStartLoadThreadCase = 28,
+    
+    // EEndLoadThreadCase
+    // For tests that have some sort of second thread that does "loading" 
+    // (e.g. heavy drawing or using up memory), this will end the thread.
+    // iEndpointIndex is the thread number. 
+    // Note, relies on the thread implementing a EndLoadThread() function -
+    // default implementation will panic.
+    EEndLoadThreadCase = 29,
+    
+    // ECheckForMemoryLeaks
+    // Used by tests that perform for example out-of-memory testing. 
+    // Executed on the in the remote engine code. 
+    // The amount of memory available is stored in an array, and when 
+    // the ECheckForMemoryLeaksFinish is called, the statistics is
+    // calculated abd deternubed if there is a leak or not. 
+    ECheckForMemoryLeaks = 30,
+    
+    // ECheckForMemoryLeaksFinish
+    // Check the collected data from ECheckForMemoryLeaks, and determine the
+    // trend of memory usage. 
+    // See ECheckForMemoryLeaks
+    ECheckForMemoryLeaksFinish = 31,
+    
+    // ESpecialEglHeapCase
+    // Configure a heap for the EGL calls. 
+    // This is used to allow egl calls to be done with a heap that is full.
+    // iEndpointIndex = min size
+    // iImageIndex = max size
+    // IMPORTANT NOTE: This HAS TO BE the first case sent to the remote engine. 
+    ESpecialEglHeapCase = 32,
 
+    
     ///
     /// Debug cases
     ///
     // EBreakPointCase
     // Used for debugging.
-    // iFlags = EDebugLocal, EDebugRemote - break local and/or remote side engine.
+    // iFlags = EDebugExecThread, EDebugController, EDebugRemote - break 
+    // exec_thread, controller and/or remote part of engine.
     EBreakPointCase = 64,
 
     // ELogEnableCase
     // Logging enable - all items executed after this point are written out, including data parameters.
     // iFlags = EDebugLocal, EDebugRemote - log on local/remote side.
     ELogEnableCase = 65,
+
+    ///////////////////////////////////////////////////////
+    // Control messages - "done", "sync", etc.
+    ///////////////////////////////////////////////////////
+    
+    // ESetVerdictCase
+    // Used to set the relevant threads "teststepresult".
+    // Flags indicate which thread is updated.
+    // iEndpointIndex = verdict to set. 
+    // Note: Remote value is not using the ERtvXXX values, the standard
+    // values in Test Framework are translated in the remote step.
+    ESetVerdictCase = 996,
     
     // ESyncLocalCase
     // Used for synchronizing the local execution thread. 
@@ -228,7 +285,8 @@ enum TEngineCases
 
     // EPanicCase
     // Cause panic on local or remote side. Used for testing purposes only.
-    // iFlags = EDebugLocal, EDebugRemote - choose between local/remote side.
+    // iFlags = EDebugExecThread, EDebugController, EDebugRemote - break 
+    // exec_thread, controller and/or remote part of engine.
     EPanicCase = 998,
 
     // EIllegalCase
@@ -236,7 +294,7 @@ enum TEngineCases
     // statement for this in the engine, it should be treated as a "unknown" case,
     // and cause any test to fail in the same way as if an unused value was put
     // in the table. Used for testing purposes, and can also be used to make a
-    // particular test fail on purpose (e.g. due to production code bugs!)
+    // particular test fail on purpose (e.g. due to production code bugs).
     // All arguments ignored.
     EIllegalCase = 999,
 
@@ -265,10 +323,19 @@ enum TEngineFlags
     ENoWait             = 1 << 14,
     ENoSync             = 1 << 15,
 
-    // Debug flags
-    EDebugLocal         = 1 << 16,
+    // Debug flags - perform operation on "Local"
+    EDebugExecThread      = 1 << 16,
     EDebugRemote        = 1 << 17,
     EDebugController    = 1 << 18,
+    
+    // ThreadingFlags - just rename the debug flags, because it's actually the
+    // same thing. We _RELY_ on this being the same to simplify the code in 
+    // the controller thread.
+    // Note: the lack of "execthread" is intentional. Since controller and exec
+    // are in the same process, there is no reason to use the ExecThread to 
+    // start a new thread. ??This may need to be changed int he future.??
+    EThreadRemote       = EDebugRemote,
+    EThreadController   = EDebugController,
     };
 
 enum TEngineFlagsMask
@@ -284,15 +351,23 @@ enum TEngineFlagsMask
                           EUseBadApi           |
                           EUseBadSync          |
                           EUseBadRects         |
-                          0   // So that it's easier to merge!
+                          0   // So that it's easier to merge.
     };
 
 
+enum TRemoteThreadEngineThread
+    {
+    EUnknownThread = 0,
+    EThreadLoadHeapMemory = 1,
+    EThreadLoadGpuMemory = 2,
+    EThreadLoadGpuProcessor = 3,
+    };
+
 struct TEngineTestCase
     {
-    TEngineCases iCase;
+    TEngineCases iCase;             // Command to execute. See TEngineCases for details.
     TInt         iFlags;            // Flags to indicate for example bad parameters (TEngineFlags).
-    TInt         iErrorExpected;    // What value is expected in eglGetError()?
+    TInt         iErrorExpected;    // The value that eglGetError() is expected to return.
     TInt         iEndpointIndex;    // Index to the endpoint to use.
     TInt         iImageIndex;       // Index to image to draw/compare(egltest_endpoint_images)
     TInt         iArg1;             // E.g. GetAttrib or SetAttrib attrib.
@@ -306,19 +381,44 @@ struct TTestEndpointEngine
     TEngineTestCase      iEngineTestCase;
     };
 
+// Passed to StartRemoteTestStep() during test startup.
+struct TTestEndpointEngineConfig
+    {
+    TBool iLogErrors; 
+    };
+
+// Number of small steps that each test is allowed to contain. Since each test
+// that uses the engine has at least one table like this, increasing this 
+// hugely will increase the overall  memory usage of the application (each 
+// entry is about 28 bytes). So, don't go multiplying by 10 or some such
+// unless there is a REAL need for that.
+// THe current tables take up approximately 28 * 80 = 2240 bytes.
+// As of right now, there are about 100 tests -> 220KB of tables.
 const TInt KMaxCases    = 80;
+
 // Should be PLENTY of endpoints [also used for surfaces, images and other
-// objects that have roughly 1:1 mapping with endpoints.
-const TInt KMaxEndpoints = 400;
+// objects that have roughly 1:1 mapping with endpoints. This is dynamically
+// allocated in the constructor of the engine class.
+const TInt KMaxEndpoints = 1000;
+
+// Max number of surfacetypes we expect to be listed. 
+// This can be increased as and when needed. 
+const TInt KMaxSurfaceList = 4;   
+
+struct TTestCaseBase
+    {
+    const TText*       iRelatedTestIds;
+    const TText*       iName;
+    TInt               iSurfaceTypeCount;
+    TSurfaceType       iSurfaceTypeList[KMaxSurfaceList];
+    };
 
 // Structure for lists of cases to execute
 struct TTestCase
     {
-    const TText*    iRelatedTestIds;
-    const TText*    iName;
-    TInt            iSurfaceTypeCount;
-    TSurfaceType    iSurfaceTypeList[ESurfTypeMaxTypes];
-    TEngineTestCase iEngineTestCase[KMaxCases];
+    // Use anonymous struct to avoid changing code all over the place.
+    TTestCaseBase      iBase;
+    TEngineTestCase    iEngineTestCase[KMaxCases];
     };
 
 struct TTestCases
@@ -326,6 +426,5 @@ struct TTestCases
     const TTestCase *iCase;
     TInt             iCount;
     };
-
 
 #endif

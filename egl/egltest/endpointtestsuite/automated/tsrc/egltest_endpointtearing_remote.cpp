@@ -90,7 +90,7 @@ TRemoteTestVerdict CEglTest_RemoteTestStep_EndpointTearing::TearingTestCaseL(con
     //Create an EglWindowSurface so we have a current context for vg operations.
     CEglWindowSurface* surface = CEglWindowSurface::NewL();
     CleanupStack::PushL(surface);
-    surface->CreateL(EStandardSurface);
+    surface->CreateL(EStandardSurface, TPoint(0, 0));
     surface->ActivateL();
     
     REMOTE_INFO_PRINTF1(_L("Repeatedly acquiring images and checking for evidence of tearing."));

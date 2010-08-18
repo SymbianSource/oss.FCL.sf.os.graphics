@@ -213,7 +213,9 @@ void CEglTest_LocalTestStep_EndpointTearing::EnterDrawLoopL()
     iStartDraw.Wait();
     surface->DrawContentL(TRgb(currentColour, 255));
     surface->Notify(ENotifyWhenAvailable, availableStat[currentStat++ & 1], 0);
-    surface->SubmitContentL(EFalse);
+    // We must wait until the image is copied; the endpoint isn't ready until the ContentUpdated has been processed by GCE BE.
+    // It isn't enough to simply call SubmitContentL; there's multiple process/thread boundaries to cross before the endpoint is 'ready'
+    User::LeaveIfError(surface->SubmitContent(ETrue));
     iFirstDrawDone.Signal();
     
     //Loop until we are told to stop drawing.
@@ -222,7 +224,7 @@ void CEglTest_LocalTestStep_EndpointTearing::EnterDrawLoopL()
         //Draw content, ask for notification when the buffer we have drawn to is available and submit.
         surface->DrawContentL(TRgb(currentColour, 255));
         surface->Notify(ENotifyWhenAvailable, availableStat[currentStat++ & 1], 0);
-        surface->SubmitContentL(EFalse);
+        User::LeaveIfError(surface->SubmitContent(EFalse));
         
         //Wait until the other buffer is free, so we don't tear. There are 2 buffers 
         //in the surface: We asked for ELargeSurface, which is double buffered.

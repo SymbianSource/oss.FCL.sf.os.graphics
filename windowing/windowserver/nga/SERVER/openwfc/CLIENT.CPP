@@ -1286,6 +1286,9 @@ void CWsClient::ExecuteCommandL(TInt aOpcode, const TAny* aCmdData)	// (step #6)
 		case EWsClOpCreateDrawableSource:
 			CreateDrawableSourceL(*pData.CreateDrawableSource);
 			break;
+		case EWsClOpIndicateAppOrientation:
+			IndicateAppOrientation(*pData.Orientation);
+			break;
 		default:
 			PPanic(EWservPanicOpcode);
 			break;
@@ -2137,6 +2140,17 @@ void CWsClient::CreateDrawableSourceL(const TWsClCmdCreateDrawableSource& aDrawa
 	CleanupStack::PushL(drawableSource);
 	drawableSource->ConstructL(aDrawableSourceData);
 	CleanupStack::Pop();
+	}
+	
+void CWsClient::IndicateAppOrientation(TRenderOrientation aOrientation)
+	{
+	iIndicatedAppOrientation = aOrientation;
+	CWsTop::CheckRenderOrientation();
+	}
+
+TInt CWsClient::GetIndicatedAppOrientation()
+	{
+	return iIndicatedAppOrientation;
 	}
 
 //

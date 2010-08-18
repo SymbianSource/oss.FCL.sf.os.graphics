@@ -1,4 +1,4 @@
-// Copyright (c) 1996-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1996-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -66,6 +66,9 @@ COomFailBase *CreateOomCaptureKey(CTOom *aTest)
 COomFailBase *CreateOomCaptureKeyUpDown(CTOom *aTest)
 	{return(new(ELeave) COomCaptureKeyUpDown(aTest));}
 
+COomFailBase *CreateOomLongKeyCapture(CTOom *aTest)
+	{return(new(ELeave) COomLongKeyCapture(aTest));}
+
 COomFailBase *CreateOomHotKey(CTOom *aTest)
 	{return(new(ELeave) COomHotKey(aTest));}
 
@@ -113,6 +116,7 @@ COmmCreate CreateOomFailTest[]={
 	CreateOomPriorityKey,
 	CreateOomCaptureKey,
 	CreateOomCaptureKeyUpDown,
+	CreateOomLongKeyCapture,
 	CreateOomHotKey,
 	CreateOomGroupName,
 	CreateOomSprite,
@@ -421,7 +425,18 @@ void COomPriorityKey::ClearUpL()
 
 //
 
-COomCaptureKey::COomCaptureKey(CTOom *aTest) : COomSetup(aTest)
+COomCaptureKeyBase::COomCaptureKeyBase(CTOom *aTest) : COomSetup(aTest)
+	{}
+
+COomCaptureKeyBase::~COomCaptureKeyBase()
+	{}
+
+void COomCaptureKeyBase::ConstructL()
+	{
+	COomSetup::ConstructL();
+	}
+
+COomCaptureKey::COomCaptureKey(CTOom *aTest) : COomCaptureKeyBase(aTest)
 	{}
 
 COomCaptureKey::~COomCaptureKey()
@@ -431,11 +446,6 @@ COomCaptureKey::~COomCaptureKey()
 TOomTestName COomCaptureKey::TestName()
 	{
 	return(_L("Capture key"));
-	}
-
-void COomCaptureKey::ConstructL()
-	{
-	COomSetup::ConstructL();
 	}
 
 /** Requests a capture keys for a previously created window group
@@ -460,7 +470,7 @@ void COomCaptureKey::ClearUpL()
 
 //
 
-COomCaptureKeyUpDown::COomCaptureKeyUpDown(CTOom *aTest) : COomSetup(aTest)
+COomCaptureKeyUpDown::COomCaptureKeyUpDown(CTOom *aTest) : COomCaptureKeyBase(aTest)
 	{}
 
 COomCaptureKeyUpDown::~COomCaptureKeyUpDown()
@@ -470,11 +480,6 @@ COomCaptureKeyUpDown::~COomCaptureKeyUpDown()
 TOomTestName COomCaptureKeyUpDown::TestName()
 	{
 	return(_L("Capture up/down keys"));
-	}
-
-void COomCaptureKeyUpDown::ConstructL()
-	{
-	COomSetup::ConstructL();
 	}
 
 /** Requests the capture of key-up and key-down events for a previously created window group
@@ -495,6 +500,42 @@ void COomCaptureKeyUpDown::ClearUpL()
 	{
 	for (TInt index=0;index<iIndex;index++)
 		iWinGroup.CancelCaptureKeyUpAndDowns(iCapKey[index]);
+	}
+
+//
+
+COomLongKeyCapture::COomLongKeyCapture(CTOom *aTest) : COomCaptureKeyBase(aTest)
+	{}
+
+COomLongKeyCapture::~COomLongKeyCapture()
+	{
+	}
+
+TOomTestName COomLongKeyCapture::TestName()
+	{
+	_LIT(KLongKeyCapTestName, "Long key capture");
+	return KLongKeyCapTestName();
+	}
+
+/** 
+Requests capture of long key events for a previously created window group
+*/
+TInt COomLongKeyCapture::Fail()
+	{
+	for (iIndex=0; iIndex < KNumCapKeyRequest; iIndex++)
+		{
+		TInt ret=iWinGroup.CaptureLongKey(' ','a',0,0,2,ELongCaptureNormal);
+		if (ret<0)
+			return(ret);
+		iCapKey[iIndex]=ret;
+		}
+	return(KErrNone);
+	}
+
+void COomLongKeyCapture::ClearUpL()
+	{
+	for (TInt index=0;index<iIndex;index++)
+		iWinGroup.CancelCaptureLongKey(iCapKey[index]);
 	}
 
 //

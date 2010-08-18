@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -233,6 +233,9 @@ void CTFont::DoAllFontsL()
 	TInt top=0;
 	TInt bottom=0;
 
+	// Maximum height of font allowed by iType rasteriser
+	const TInt KMaxITypeHeightInPixels = 256;
+
 	for (TInt count = 0; count < typefaces; count++)
 		{
 		iDev->TypefaceSupport(info,count);
@@ -240,11 +243,34 @@ void CTFont::DoAllFontsL()
 		for (TInt index = 0; index < info.iNumHeights; index++)
 			{
 			TInt height = iDev->FontHeightInPixels(count,index);
+			if (height > KMaxITypeHeightInPixels)
+				{
+				continue;
+				}
 			fs.iTypeface = info.iTypeface;
 			fs.iHeight = height;
 
 			User::LeaveIfError(GetNearestFontToDesignHeightInPixels(iFont,fs));
-			TEST(iFont->HeightInPixels() == height);
+			TInt heightInPixels = iFont->HeightInPixels();
+			if ( heightInPixels == height )
+				{
+				TEST( ETrue );
+				}
+			else
+				{
+				TOpenFontFaceAttrib attrib;
+				if( iFont->GetFaceAttrib( attrib ) )
+					{
+					_LIT(KErrorMessageWithFontName, "Font: %S, pixel height requested: %d, pixel height of font: %d");
+					INFO_PRINTF4(KErrorMessageWithFontName, &attrib.FullName(), height, heightInPixels);
+					}
+				else
+					{
+					_LIT(KErrorMessage, "Pixel height requested: %d, pixel height of font: %d");
+					INFO_PRINTF3(KErrorMessage, height, heightInPixels);
+					}
+				TEST( EFalse );
+				}
 
 			if (height >= 5)
 				{

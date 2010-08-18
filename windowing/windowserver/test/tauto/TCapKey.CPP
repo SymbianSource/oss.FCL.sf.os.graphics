@@ -1,4 +1,4 @@
-// Copyright (c) 1996-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1996-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -455,16 +455,39 @@ void CTCaptureKey::BadParams()
 	TInt retVal;
 	TInt resCount=Client()->iWs.ResourceCount();
 	for(TInt index=0;index<numErrorKeys;index++)
-	{
-		retVal = Client()->iGroup->GroupWin()->CaptureKey(errorKeys[index].keyCode,errorKeys[index].modifier_mask,errorKeys[index].modifiers);
+		{
+		retVal = Client()->iGroup->GroupWin()->CaptureKey(errorKeys[index].keyCode,errorKeys[index].modifier_mask,errorKeys[index].modifiers, errorKeys[index].priority);
 		TEST(retVal==KErrArgument);
 		if (retVal!=KErrArgument)
-			INFO_PRINTF3(_L("Client()->iGroup->GroupWin()->CaptureKey() return value - Expected: %d, Actual: %d"), KErrArgument, retVal);	
-	}
+			{
+			_LIT(KMsg, "CaptureKey() with bad parameter set %d returned %d - expected KErrArgument (%d)");
+			LOG_MESSAGE4(KMsg, index, retVal, KErrArgument);	
+			}
+
+		retVal = Client()->iGroup->GroupWin()->CaptureKeyUpAndDowns(errorKeys[index].keyCode, errorKeys[index].modifier_mask, errorKeys[index].modifiers, errorKeys[index].priority);
+		TEST(retVal == KErrArgument);
+		if (retVal != KErrArgument)
+			{
+			_LIT(KMsg, "CaptureKeyUpAndDowns() with bad parameter set %d returned %d - expected KErrArgument (%d)");
+			LOG_MESSAGE4(KMsg, index, retVal, KErrArgument);	
+			}
+
+		retVal = Client()->iGroup->GroupWin()->CaptureLongKey(errorKeys[index].keyCode, errorKeys[index].keyCode, errorKeys[index].modifier_mask, errorKeys[index].modifiers, errorKeys[index].priority, ELongCaptureNormal);
+		TEST(retVal == KErrArgument);
+		if (retVal != KErrArgument)
+			{
+			_LIT(KMsg, "CaptureLongKey() with bad parameter set %d returned %d - expected KErrArgument (%d)");
+			LOG_MESSAGE4(KMsg, index, retVal, KErrArgument);	
+			}
+		}
+
 	retVal = Client()->iWs.ResourceCount();
 	TEST(retVal==resCount);
 	if (retVal!=resCount)
-		INFO_PRINTF3(_L("Client()->iWs.ResourceCount() return value - Expected: %d, Actual: %d"), resCount, retVal);	
+		{
+		_LIT(KMsg, "Resource count %d - expected %d");
+		LOG_MESSAGE3(KMsg, retVal, resCount);	
+		}
 	}
 
 void CTCaptureKey::SetMode(TTestMode aMode)
@@ -801,8 +824,10 @@ void CTCaptureKey::RunTestCaseL(TInt /*aCurTestCase*/)
 @SYMTestStatus      Implemented
 
 @SYMTestActions     Memorizes amount of objects that the server has allocated for that client.
-					Tries to register 3 different capture keys with invalid
-					modifiers and modifirs mask pair.
+					Tries to register capture keys with invalid modifiers and
+					modifier mask pairs, using each of the RWindowGroup capture
+					functions CaptureKey(), CaptureKeyUpAndDowns() and
+					CaptureLongKey().
 
 @SYMTestExpectedResults Makes sure that the number of server-side objects for the 
 					session didn't change.

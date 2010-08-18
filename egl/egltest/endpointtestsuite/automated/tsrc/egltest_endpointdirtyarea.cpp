@@ -26,7 +26,7 @@ static const TTestCase KDirtyAreaPositiveCases[] =
 {
     {
         TESTIDS("614"),
-        CASETITLE("Functional: Postive: eglGetEndpointDirtyArea basic test."),
+        CASETITLE("Functional: Positive: eglGetEndpointDirtyArea basic test."),
         SurfaceTypes3(ESurfTypeRaw, ESurfTypeEglWindow, ESurfTypeRawSingleBuffered),
         {
         { EInitializeCase,           0,              EGL_SUCCESS },
@@ -45,7 +45,7 @@ static const TTestCase KDirtyAreaPositiveCases[] =
     },
     {
         TESTIDS("615"),
-        CASETITLE("Functional: Postive: eglGetEndpointDirtyArea simple working test - collapse area."),
+        CASETITLE("Functional: Positive: eglGetEndpointDirtyArea simple working test - collapse area."),
         SurfaceTypes3(ESurfTypeRaw, ESurfTypeEglWindow, ESurfTypeRawSingleBuffered),
         {
         { EInitializeCase,           0,                EGL_SUCCESS },
@@ -64,7 +64,7 @@ static const TTestCase KDirtyAreaPositiveCases[] =
     },
     {
         TESTIDS("617"),
-        CASETITLE("Functional: Postive: eglGetEndpointDirtyArea - check number of rects avialable"),
+        CASETITLE("Functional: Positive: eglGetEndpointDirtyArea - check number of rects avialable"),
         SurfaceTypes3(ESurfTypeRaw, ESurfTypeEglWindow, ESurfTypeRawSingleBuffered),
         {
         { EInitializeCase,           0,              EGL_SUCCESS },

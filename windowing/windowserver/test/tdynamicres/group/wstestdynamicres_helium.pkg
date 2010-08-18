@@ -36,11 +36,5 @@
 ;REM Window Server Dynamic Resolution Test Scripts [no plugins]
 
 ;//Please execute only the tests appropriate to your hardware capabilities.
-"\epoc32\data\z\wstest\dynamicres\wsdynamicresclassic.script"-"c:\wstest\dynamicres\wsdynamicresclassic.script"
-
-"\epoc32\data\z\wstest\dynamicres\wsdynamicresbasic_anisotropic_scaling.script"-"c:\wstest\dynamicres\wsdynamicresbasic_anisotropic_scaling.script"
-"\epoc32\data\z\wstest\dynamicres\wsdynamicresbasic_integer_scaling.script"-"c:\wstest\dynamicres\wsdynamicresbasic_integer_scaling.script"
-"\epoc32\data\z\wstest\dynamicres\wsdynamicresbasic_isotropic_scaling.script"-"c:\wstest\dynamicres\wsdynamicresbasic_isotropic_scaling.script"
-"\epoc32\data\z\wstest\dynamicres\wsdynamicresbasic_no_scaling.script"-"c:\wstest\dynamicres\wsdynamicresbasic_no_scaling.script"
-"\epoc32\data\z\wstest\dynamicres\wsdynamicresbasic_openvg_isotropic.script"-"c:\wstest\dynamicres\wsdynamicresbasic_openvg_isotropic.script"
+"\epoc32\data\z\wstest\dynamicres\wsdynamicresbasic_sirocco.script"-"c:\wstest\dynamicres\wsdynamicresbasic_sirocco.script"
 

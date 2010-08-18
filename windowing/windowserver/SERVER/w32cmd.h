@@ -266,6 +266,7 @@ enum TWsClientOpcodes
 	EWsClOpUnregisterAllTFXEffect,
 	EWsClOpOverrideEffectBuf,
 	EWsClOpOverrideEffectIPC,
+	EWsClOpIndicateAppOrientation,
 	EWsClOpLastEnumValue //Keep this at the end - used by test code
 	};
 	
@@ -1059,6 +1060,7 @@ union TWsClCmdUnion
 	const TWsClCmdRegisterEffect* RegisterEffect;
 	const TWsClCmdUnRegisterEffect* UnRegisterEffect; 
 	const TWsClCmdOverrideEffect* OverrideEffect;
+	const TRenderOrientation* Orientation;
 	};
 
 // Window command structures
@@ -2126,12 +2128,14 @@ enum TClientPanic
 	EWservPanicWrongScreen=82,                  // Child apps can only be constructed on the same screen as their parent. See RWindowGroup::ConstructChildApp
 	EWservPanicScreenCaptureInvalidRequest=83,  // With Screen Capture disabled, an unexpected invalid request has been received
 	EWservPanicInvalidDisplayConfiguration=84,  // Use of a display configuration without valid members
+	EWservPanicUnableToEnableAdvPointer=85,     // Use when advanced pointers are enabled after an RWindow is activated
 	};
 
 #if defined(__WINS__)
 	// Under WINS character code is passed in as HIWORD of the scan code,
 	// and will need to be removed in some situations
 	#define __REMOVE_WINS_CHARCODE &0x0000FFFF
+	#define __WINS_CHARCODE(c)	((c) & 0xFFFF0000)
 #else
 	#define __REMOVE_WINS_CHARCODE
 #endif

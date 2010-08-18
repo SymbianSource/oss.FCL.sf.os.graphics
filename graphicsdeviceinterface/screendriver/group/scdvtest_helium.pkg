@@ -37,7 +37,8 @@
 "\epoc32\data\z\scdvtest\scdvtest_t_LowLevel1.script"-"c:\scdvtest\scdvtest_t_LowLevel1.script"
 "\epoc32\data\z\scdvtest\scdvtest_t_RWindows.script"-"c:\scdvtest\scdvtest_t_RWindows.script"
 "\epoc32\data\z\scdvtest\scdvtest_t_Scaling.script"-"c:\scdvtest\scdvtest_t_Scaling.script"
-"\epoc32\data\z\scdvtest\scdvtest_t_Scdv.script"-"c:\scdvtest\scdvtest_t_Scdv.script"
+;COMMENTED OUT FOR 10T38 ZERO TOLERANCE TEST STRATEGY
+;"\epoc32\data\z\scdvtest\scdvtest_t_Scdv.script"-"c:\scdvtest\scdvtest_t_Scdv.script"
 "\epoc32\data\z\scdvtest\scdvtest_t_devorientation.script"-"c:\scdvtest\scdvtest_t_devorientation.script"
 "\epoc32\data\z\scdvtest\scdvtest_t_directscreenbitmap.script"-"c:\scdvtest\scdvtest_t_directscreenbitmap.script"
 

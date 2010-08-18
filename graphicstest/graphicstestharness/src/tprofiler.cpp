@@ -133,19 +133,12 @@ Records set current time. Can be called multiple times so an average can be take
 */
 EXPORT_C void CTProfiler::MarkResultSetL()
     {   
-    TUint32 res = (TUint32)StopTimer();
-    iResults.InsertInUnsignedKeyOrderAllowRepeatsL(res);
-    if(iStoreResultInTimingOrder)
-        {
-        iResultsTimingOrder.AppendL(res);
-        }
-    iDiff = 0;
-    PROFILER_TEST(iResultsInitalised);
+    MarkResultSetAndSuspendL();
     StartTimer();
     }
 
 /**
-Records set current time. Alike MarkResultSetL() the function doesn't 
+Records set current time. Unlike MarkResultSetL() the function doesn't 
 restart the timer at the end. The following operations will not be 
 included into benchmark mesuarment. To resume the profiling the user must 
 start the timer.
@@ -260,9 +253,9 @@ EXPORT_C void CTProfiler::ResultsAnalysis(const TDesC& aTestName, TInt aRotation
     TBuf<128> variationTrimmedMean;
     variationTrimmedMean.Format(KTrimmedMean, &variation);
     
-    SqlInsert(&aTestName, &variationTrimmedMean,    &KMicroSeconds,     GetTrimedMean());
-    SqlInsert(&aTestName, &variationMax,            &KPixelsPerSecond,  TimeMax());
-    SqlInsert(&aTestName, &variationMin,            &KPixelsPerSecond,  TimeMin());
+    SqlInsert(&aTestName, &variationTrimmedMean,    &KMicroSeconds,  GetTrimedMean());
+    SqlInsert(&aTestName, &variationMax,            &KMicroSeconds,  TimeMax());
+    SqlInsert(&aTestName, &variationMin,            &KMicroSeconds,  TimeMin());
     
     iResultsInitalised = EFalse;
     }
@@ -293,8 +286,8 @@ EXPORT_C void CTProfiler::ResultsAnalysisPixelRate(const TDesC & aTestName, TInt
     variationMin.Format(KMinTime, &variation);
     
     SqlInsert(&aTestName, &variation,       &KPixelsPerSecond,  pixelRate);
-    SqlInsert(&aTestName, &variationMax,    &KPixelsPerSecond,  TimeMax());
-    SqlInsert(&aTestName, &variationMin,    &KPixelsPerSecond,  TimeMin());
+    SqlInsert(&aTestName, &variationMax,    &KMicroSeconds,     TimeMax());
+    SqlInsert(&aTestName, &variationMin,    &KMicroSeconds,     TimeMin());
     
     iResultsInitalised = EFalse;
     }
@@ -324,8 +317,8 @@ EXPORT_C void CTProfiler::ResultsAnalysisCharacterRate(const TDesC & aTestName, 
     variationMin.Format(KMinTime, &variation);
     
     SqlInsert(&aTestName, &variation,       &KCharacterRate,  characterRate);
-    SqlInsert(&aTestName, &variationMax,    &KCharacterRate,  TimeMax());
-    SqlInsert(&aTestName, &variationMin,    &KCharacterRate,  TimeMin());
+    SqlInsert(&aTestName, &variationMax,    &KMicroSeconds,   TimeMax());
+    SqlInsert(&aTestName, &variationMin,    &KMicroSeconds,   TimeMin());
     
     iResultsInitalised = EFalse;
     }
@@ -422,8 +415,8 @@ EXPORT_C void CTProfiler::ResultsAnalysisFrameRate(const TDesC & aTestName, TInt
     
     SqlInsert(&aTestName, &variation,       &KPixelsPerSecond,  pixelRate);
     SqlInsert(&aTestName, &variation,       &KFrameRate,        frameRate);
-    SqlInsert(&aTestName, &variationMax,    &KPixelsPerSecond,  TimeMax());
-    SqlInsert(&aTestName, &variationMin,    &KPixelsPerSecond,  TimeMin());
+    SqlInsert(&aTestName, &variationMax,    &KMicroSeconds,     TimeMax());
+    SqlInsert(&aTestName, &variationMin,    &KMicroSeconds,     TimeMin());
 
     iResultsInitalised = EFalse;
     }
@@ -455,8 +448,8 @@ EXPORT_C void CTProfiler::ResultsAnalysisScreenRotationRate(const TDesC & aTestN
     
     SqlInsert(&aTestName, &variation,       &KPixelsPerSecond,  pixelRate);
     SqlInsert(&aTestName, &variation,       &KFrameRate,        frameRate);
-    SqlInsert(&aTestName, &variationMax,    &KPixelsPerSecond,  TimeMax());
-    SqlInsert(&aTestName, &variationMin,    &KPixelsPerSecond,  TimeMin());
+    SqlInsert(&aTestName, &variationMax,    &KMicroSeconds,     TimeMax());
+    SqlInsert(&aTestName, &variationMin,    &KMicroSeconds,     TimeMin());
     
     iResultsInitalised = EFalse;
     }
@@ -487,8 +480,8 @@ EXPORT_C void CTProfiler::ResultsAnalysisZorderSwitchingRate(const TDesC & aTest
     
     SqlInsert(&aTestName, &variation,       &KPixelsPerSecond,  pixelRate);
     SqlInsert(&aTestName, &variation,       &KFrameRate,        frameRate);
-    SqlInsert(&aTestName, &variationMax,    &KPixelsPerSecond,  TimeMax());
-    SqlInsert(&aTestName, &variationMin,    &KPixelsPerSecond,  TimeMin());
+    SqlInsert(&aTestName, &variationMax,    &KMicroSeconds,     TimeMax());
+    SqlInsert(&aTestName, &variationMin,    &KMicroSeconds,     TimeMin());
     
     iResultsInitalised = EFalse;
     }
@@ -530,9 +523,9 @@ EXPORT_C void CTProfiler::ResultsAnalysisAverageByNumberOfIterations(const TDesC
     TBuf<128> variationMin;   
     variationMin.Format(KMinTime, &variation);
  
-    SqlInsert(&aTestName, &variationMean, &KMicroSeconds,     Mean());
-    SqlInsert(&aTestName, &variationMax,  &KPixelsPerSecond,  TimeMax());
-    SqlInsert(&aTestName, &variationMin,  &KPixelsPerSecond,  TimeMin());
+    SqlInsert(&aTestName, &variationMean, &KMicroSeconds,  Mean());
+    SqlInsert(&aTestName, &variationMax,  &KMicroSeconds,  TimeMax());
+    SqlInsert(&aTestName, &variationMin,  &KMicroSeconds,  TimeMin());
     
     iResultsInitalised = EFalse;
     }
@@ -555,3 +548,36 @@ EXPORT_C void CTProfiler::SetStoreResultInTimingOrder(TBool aStoreResultInTiming
     {
     iStoreResultInTimingOrder = aStoreResultInTimingOrder;
     }
+
+/**
+Reports analysis results for glyph rates
+
+@param aTestName is the name of the test case
+@param aRotation is the screen rotation being used in the test
+@param aSrcScreenMode is the source screen mode being used, 
+i.e. for bitmap display conversion the source and destinations bitmaps maybe different
+@param aDstScreenMode is the destination screen mode (usually the display screen mode)
+@param aIters is the number of iterations used in the test
+@param aNumGlyphs is the number of glyphs used per iteration
+*/
+
+EXPORT_C void CTProfiler::ResultsAnalysisGlyphRate(const TDesC & aTestName, TInt aRotation, TInt aSrcScreenMode, TInt aDstScreenMode, TInt aIters, TInt aNumGlyphsPerIteration)
+    {
+    PROFILER_TEST(iResultsInitalised);
+    TReal time = (iResults.Count() > 0) ? (TReal)iResults[0] / 1000000 : 0;
+    TInt32 glyphRate = aNumGlyphsPerIteration*aIters/time;
+
+    TBuf<128> variation;
+    variation.Format(KVariationCPI, aRotation, aSrcScreenMode, aDstScreenMode, aIters, aNumGlyphsPerIteration);
+    TBuf<128> variationMax;
+    variationMax.Format(KMaxTime, &variation);
+    TBuf<128> variationMin;
+    variationMin.Format(KMinTime, &variation);
+
+    SqlInsert(&aTestName, &variation,       &KGlyphRate,  glyphRate);
+    SqlInsert(&aTestName, &variationMax,    &KMicroSeconds,  TimeMax());
+    SqlInsert(&aTestName, &variationMin,    &KMicroSeconds,  TimeMin());
+
+    iResultsInitalised = EFalse;
+    }
+

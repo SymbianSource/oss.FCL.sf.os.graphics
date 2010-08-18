@@ -74,7 +74,7 @@ enum TFbsMessage
 	EFbsMessSetHeapReset, //for memory testing only
 	EFbsMessSetHeapCheck, //for memory testing only
 	EFbsMessHeap, //for memory testing only
-	EFbsMessUnused2, //to put a character in the linked fonts cache
+	EFbsMessUnused2, //Implementation removed
 	EFbsMessBitmapClean, // replace a dirty bitmap with the clean one
 	EFbsMessBitmapLoadFast, // for loading bitmap from mbm or rsc file not opened by the client
 	EFbsMessBitmapNotifyDirty, // notify when any bitmap becomes dirty
@@ -87,6 +87,13 @@ enum TFbsMessage
 	EFbsMessReleaseFontTable,
 	EFbsMessGetGlyphOutline,
 	EFbsMessReleaseGlyphOutline,
+	EFbsMessGetGlyphs, // Retrieve rasterised glyphs from glyph atlas and closes last glyph retrieved
+	EFbsMessNoOp, // No-op call; used to ensure that the RSgImage of the last glyph retrieved from glyph atlas has been closed
+	EFbsMessGetGlyphMetrics, // Retrieve metrics of multiple glyph codes in one message
+	EFbsMessAtlasFontCount, // (Debug-only) Retrieve the number of fonts with glyphs in the H/W Glyph cache
+	EFbsMessAtlasGlyphCount, // (Debug-only) Retrieve the number of glyphs (optionally, given a specific font) stored in the H/W Glyph cache
+	EFbsMessOogmNotification, // An action requested by the GOoM framework. Reduce or re-instate graphics memory usage.
+	EFbsMessGetGlyphCacheMetrics, // Retrieve the glyph-cache size, its maximum limit and whether the maximum is the reduced value used in OoGm situations.
 	// If you are adding new messages don't forget to check that the 
 	// security permissions are set correctly (KRanges & KElementsIndex in server.cpp)
 	};

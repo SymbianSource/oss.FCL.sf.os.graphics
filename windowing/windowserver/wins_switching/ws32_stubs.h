@@ -5292,6 +5292,15 @@ void call_vector_586 ()
 	_asm jmp common_dispatch
 	}
 
+__declspec(dllexport)
+__declspec(naked)
+void call_vector_587 ()
+	{
+	// ; void RWsSession::IndicateAppOrientation(enum TRenderOrientation)
+	_asm mov eax, 587
+	_asm jmp common_dispatch
+	}
+
 }
-#define MAX_ORDINAL 587
+#define MAX_ORDINAL 588
 

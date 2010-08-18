@@ -660,6 +660,8 @@ typedef enum
   **/
   IMPORT_C void  SymbianStreamSetFlipState(SymbianStreamType aStream, SymOwfBool aFlip);
   
+  IMPORT_C TErrCode SymbianStreamGetChunkHandle(SymbianStreamType aStream, TInt* aHandle);
+  
 #	ifdef __cplusplus
 	}
 #	endif

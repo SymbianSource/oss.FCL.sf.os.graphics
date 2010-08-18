@@ -121,7 +121,7 @@ LIBRARY     libEGL.lib
 LIBRARY     libGLESv1_CM.lib
 LIBRARY	    libopenvgu.lib
 LIBRARY	    libopenvg.lib
-LIBRARY     egltesthybrid.lib
+// this shouldn't be needed LIBRARY     egltesthybrid.lib
 LIBRARY     surfacemanager.lib
 LIBRARY     tgraphicsharness.lib
 LIBRARY     tprofiler.lib

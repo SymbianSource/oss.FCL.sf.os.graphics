@@ -33,6 +33,7 @@
 #include <advancedpointerevent.h>
 #include <sizemode.h>
 #include <babitflags.h>
+#include <wspublishandsubscribedata.h>
 
 #ifndef SYMBIAN_ENABLE_SPLIT_HEADERS
 #include <graphics/windowserverconstants.h>
@@ -1380,6 +1381,7 @@ public:
 		line. */
 		ECustomTextCursorAlignBottom
 		};
+	
 //
 public:
 	IMPORT_C RWsSession();
@@ -1537,6 +1539,9 @@ public:
 	IMPORT_C void UnregisterEffect(TInt aAction, TInt aPurpose, TUint aAppUid=0);
 	IMPORT_C void UnregisterAllEffects();
 	IMPORT_C void OverrideEffects(TInt aAction, TInt aPurpose, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TBitFlags aFlags=0);
+	
+//Application tells the window server the orientation of rendering it intends to use
+	IMPORT_C void IndicateAppOrientation(TRenderOrientation aOrientation);
 	
 // functions not exported, used by CWsGraphic
 	void GraphicMessageReady(TRequestStatus *aStat);

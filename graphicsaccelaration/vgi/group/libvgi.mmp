@@ -34,6 +34,8 @@ OPTION ARMCC    --restrict
 
 OPTION_REPLACE ARMCC --cpu 5TE -O3 -Otime
 
+MACRO GRAPHICS_LIBVGI_DLL
+
 SOURCEPATH 		../src
 SOURCE			vgi.cpp
 

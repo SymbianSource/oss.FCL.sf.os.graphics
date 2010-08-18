@@ -48,5 +48,8 @@
 "\epoc32\data\z\egltest\egltest_t_image_multiprocess.script"-"c:\egltest\egltest_t_image_multiprocess.script"
 "\epoc32\data\z\egltest\egltest_t_image_negative.script"-"c:\egltest\egltest_t_image_negative.script"
 "\epoc32\data\z\egltest\egltest_t_benchmark_sgimage.script"-"c:\egltest\egltest_t_benchmark_sgimage.script"
-"\epoc32\data\z\egltest\egltest_t_benchmark_swapbuffers.script"-"c:\egltest\egltest_t_benchmark_swapbuffers.script"
+;COMMENTED OUT FOR 10T38 ZERO TOLERANCE TEST STRATEGY
+;"\epoc32\data\z\egltest\egltest_t_benchmark_swapbuffers.script"-"c:\egltest\egltest_t_benchmark_swapbuffers.script"
+"\epoc32\data\z\egltest\egltest_t_oom_sgimage.script"-"c:\egltest\egltest_t_oom_sgimage.script"
+;"\epoc32\data\z\egltest\egltest_t_stress_sgimage.script"-"c:\egltest\egltest_t_stress_sgimage.script"
 

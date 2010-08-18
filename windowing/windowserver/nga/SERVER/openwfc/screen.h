@@ -28,7 +28,7 @@
 #include "W32STD.H"
 #include "w32cmd.h"
 #include "wstypes.h"
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
 #include "panics.h"
 
 #include "wsdisplaychangeao.h"

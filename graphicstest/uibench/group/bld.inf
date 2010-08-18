@@ -29,6 +29,7 @@ PRJ_TESTEXPORTS
 
 ../scripts/te_uibench_gce.script		z:/uibench/te_uibench_gce.script
 ../scripts/te_uibench_gce.ini			z:/uibench/te_uibench_gce.ini
+
 ../scripts/mysql.pm						z:/uibench/mysql.pm
 ../scripts/uploadsqlfromtestrun.pl		z:/uibench/uploadsqlfromtestrun.pl
 ../scripts/te_uibench_legacy.bat		z:/uibench/te_uibench_legacy.bat

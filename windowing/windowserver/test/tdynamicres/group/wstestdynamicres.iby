@@ -39,6 +39,7 @@ data=DATAZ_\wstest\dynamicres\wsdynamicresbasic_integer_scaling.script	wstest\dy
 data=DATAZ_\wstest\dynamicres\wsdynamicresbasic_isotropic_scaling.script	wstest\dynamicres\wsdynamicresbasic_isotropic_scaling.script
 data=DATAZ_\wstest\dynamicres\wsdynamicresbasic_no_scaling.script	wstest\dynamicres\wsdynamicresbasic_no_scaling.script
 data=DATAZ_\wstest\dynamicres\wsdynamicresbasic_openvg_isotropic.script	wstest\dynamicres\wsdynamicresbasic_openvg_isotropic.script
+data=DATAZ_\wstest\dynamicres\wsdynamicresbasic_sirocco.script	wstest\dynamicres\wsdynamicresbasic_sirocco.script
 #endif
 
 #endif

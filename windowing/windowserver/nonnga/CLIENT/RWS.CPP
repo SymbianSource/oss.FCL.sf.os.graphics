@@ -22,6 +22,7 @@
 #include "CLIENT.H"
 #include "wstraces.h"
 #include "graphics/windowserverconstants.h"
+#include <wspublishandsubscribedata.h>
 
 const TInt KMaxWSERVMessagesSlot=-1;
 
@@ -2417,6 +2418,13 @@ EXPORT_C void RWsSession::UnregisterAllEffects()
 	}
 
 EXPORT_C void RWsSession::OverrideEffects(TInt /*aAction*/, TInt /*aPurpose*/, const TFileName& /*aResourceDir*/, const TFileName& /*aFilenameOutgoing*/, const TFileName& /*aFilenameIncoming*/, TBitFlags /*aFlags*/)
+	/** Dummy implementation in order to preserve compatibility with WSERV NGA.
+	@internalComponent */
+	{
+	ASSERT(0);
+	}
+
+EXPORT_C void RWsSession::IndicateAppOrientation(TRenderOrientation /*aOrientation*/)
 	/** Dummy implementation in order to preserve compatibility with WSERV NGA.
 	@internalComponent */
 	{

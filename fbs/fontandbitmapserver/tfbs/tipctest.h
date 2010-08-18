@@ -17,7 +17,7 @@
 #define __TIPCTest_H__
 
 #include <fbs.h>
-#include "TGraphicsHarness.h"
+#include "test/TGraphicsHarness.h"
 
 class RIPCTestFbservClient : public RSessionBase
 	{

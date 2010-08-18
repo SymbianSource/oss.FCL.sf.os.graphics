@@ -23,4 +23,4 @@ EXPORTS
 	?SetStoreResultInTimingOrder@CTProfiler@@QAEXH@Z @ 22 NONAME ; void CTProfiler::SetStoreResultInTimingOrder(int)
 	?ShowResultArrayInTimingOrder@CTProfiler@@QAEXXZ @ 23 NONAME ; void CTProfiler::ShowResultArrayInTimingOrder(void)
 	?SqlInsert@CTProfiler@@QAEXPBVTDesC16@@00J@Z @ 24 NONAME ; void CTProfiler::SqlInsert(class TDesC16 const *, class TDesC16 const *, class TDesC16 const *, long)
-
+	?ResultsAnalysisGlyphRate@CTProfiler@@QAEXABVTDesC16@@HHHHH@Z @ 25 NONAME ; void CTProfiler::ResultsAnalysisGlyphRate(class TDesC16 const &, int, int, int, int, int)

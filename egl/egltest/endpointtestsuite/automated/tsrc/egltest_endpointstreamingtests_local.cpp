@@ -222,7 +222,7 @@ TUint CEglTest_LocalTestStep_EndpointStreamingDispXTimesInStream::TicksForDispla
     User::LeaveIfError(aSurface->Notify(ENotifyWhenDispXTimes, dispXTimesRs, aNumTimes));
     
     TUint startTickCount = User::TickCount();
-    aSurface->SubmitContentL(EFalse);
+    User::LeaveIfError(aSurface->SubmitContent(EFalse));
     
     TUint32 dummyTimeStamp;
     TInt err = aSurface->WaitFor(ENotifyWhenDispXTimes, dispXTimesRs, timeout, dummyTimeStamp);
@@ -254,7 +254,7 @@ void CEglTest_LocalTestStep_EndpointStreamingDispXTimesInStream::DispXTimesInStr
     CleanupStack::PushL(TCleanupItem(CleanupRemoteTestStep, this));
     
     //Local: Submit update for the surface so that the endpoint enters the ready state.
-    surface->SubmitContentL(EFalse);
+    User::LeaveIfError(surface->SubmitContent(ETrue));
     
     //Remote: Set the EGL_DELAY_NOK value and begin streaming on the endpoint.
     static const TEngineTestCase setDelayAndBeginStreamingSteps[] = 

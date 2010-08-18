@@ -102,7 +102,12 @@ TBool CTestImage::CompareImageL(const CTestImage *aImage, TBool aExpectError) co
             break;
             }
         }
-
+    TInt err = vgGetError();
+    if (err != VG_NO_ERROR)
+        {
+        RDebug::Printf("%s:%d: Could not fetch pixels??? err=%x", __FILE__, __LINE__, err);
+        retVal = EFalse;
+        }
     CleanupStack::PopAndDestroy(&points);
     return retVal;
     }
@@ -132,7 +137,13 @@ TBool CTestImage::IsSolidColourL() const
             break;
             }
         }
-
+    TInt err = vgGetError();
+    if (err != VG_NO_ERROR)
+        {
+        RDebug::Printf("Could not fetch pixels??? err=%x", err);
+        retVal = EFalse;
+        }
+    
     CleanupStack::PopAndDestroy(&points);
     return retVal;
     }
@@ -285,7 +296,7 @@ void CTestVgImage::ConstructL(TInt aIndex)
     if (iVgImage == VG_INVALID_HANDLE)
         {
         VGint err = vgGetError();
-        RDebug::Printf("%s:%d: Could not create vgimage: error = 0x%x", err);
+        RDebug::Printf("%s:%d: Could not create vgimage: error = 0x%x", __FILE__, __LINE__, err);
         User::Leave(KErrNotSupported);
         }
     vgImageSubData(iVgImage, address, dataStride, iDataFormat, 0, 0, width, height);
@@ -310,7 +321,7 @@ TSize CTestVgImage::Size() const
 
 TRgb CTestVgImage::Pixel(TInt x, TInt y) const
     {
-    TRgb rgb;
+    TRgb rgb(0, 0, 0);
     TSize size = Size();
     if (size.iHeight <= y || size.iWidth <= x)
         {
@@ -337,12 +348,25 @@ TRgb CTestVgImage::Pixel(TInt x, TInt y) const
             rgb = TRgb::Color16MA(intPixelSample);
             }
             break;
+            
+        case VG_sABGR_8888:
+        case VG_sXBGR_8888:
+        case VG_sABGR_8888_PRE:
+            {
+            TUint32 intPixelSample;
+            vgGetImageSubData(iVgImage, &intPixelSample, sizeof(intPixelSample), iDataFormat, x, y, 1, 1);
+            rgb = TRgb::Color16MA(intPixelSample);
+            // Now swap R & B, as we have BGR in the source, not RGB!
+            TInt temp = rgb.Red();
+            rgb.SetRed(rgb.Blue());
+            rgb.SetBlue(temp);
+            }
+            break;
+            
         default:
             ASSERT(0 && "Invalid dataformat");
             break;
         }
-    VGint err = vgGetError();
-    __ASSERT_ALWAYS(err == VG_NO_ERROR, User::Panic(_L("Pixel"), __LINE__));
     return rgb;
     }
 
@@ -350,12 +374,31 @@ CTestVgEglImage::CTestVgEglImage()
     {
     }
 
-CTestVgEglImage* CTestVgEglImage::NewL(EGLImageKHR aEglImage)
+CTestVgEglImage* CTestVgEglImage::New(EGLImageKHR aEglImage)
     {
     CTestVgEglImage *self = new (ELeave) CTestVgEglImage;
-    CleanupStack::PushL(self);
-    self->ConstructL(aEglImage);
-    CleanupStack::Pop(self);
+    if (self)
+        {
+        CleanupStack::PushL(self);
+        TRAPD(err, self->ConstructL(aEglImage));
+        if (err != KErrNone)
+            {
+            CleanupStack::PopAndDestroy(self);
+            return NULL;
+            }
+        else
+            {
+            CleanupStack::Pop(self);
+            }
+        }
+    return self;
+    }
+
+
+CTestVgEglImage* CTestVgEglImage::NewL(EGLImageKHR aEglImage)
+    {
+    CTestVgEglImage *self = New(aEglImage);
+    User::LeaveIfNull(self);
     return self;
     }
 
@@ -367,7 +410,7 @@ void CTestVgEglImage::ConstructL(EGLImageKHR aEglImage)
     iVgImage = createFromEglTarget(aEglImage);
     if (iVgImage == VG_INVALID_HANDLE)
         {
-        RDebug::Printf("%s:%d: Unable to create VGImage from EGLImage: Error code=%d", __FILE__, __LINE__, vgGetError());
+        RDebug::Printf("%s:%d: Unable to create VGImage from EGLImage: Error code=0x%x", __FILE__, __LINE__, vgGetError());
         User::Leave(KErrBadHandle);
         }
     iDataFormat = static_cast<VGImageFormat>(vgGetParameteri(iVgImage, VG_IMAGE_FORMAT));

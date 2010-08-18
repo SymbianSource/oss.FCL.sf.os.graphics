@@ -34,7 +34,8 @@
 ;*Files To Copy...<src> <destination>
 
 ;//script file
-"\epoc32\data\z\pdrstoretest\pdrstoretest_T_Pdr.script"-"c:\pdrstoretest\pdrstoretest_T_Pdr.script"
+;COMMENTED OUT FOR 10T38 ZERO TOLERANCE TEST STRATEGY
+;"\epoc32\data\z\pdrstoretest\pdrstoretest_T_Pdr.script"-"c:\pdrstoretest\pdrstoretest_T_Pdr.script"
 "\epoc32\data\z\pdrstoretest\pdrstoretest_T_PdrLst.script"-"c:\pdrstoretest\pdrstoretest_T_PdrLst.script"
 "\epoc32\data\z\pdrstoretest\pdrstoretest_T_PdrMem.script"-"c:\pdrstoretest\pdrstoretest_T_PdrMem.script"
 

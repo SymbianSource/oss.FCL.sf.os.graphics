@@ -26,8 +26,8 @@ ECOM_PLUGIN_UDEB(eglendpointremotetest.dll,eglendpointremotetest.rsc)
 ECOM_PLUGIN(eglendpointremotetest.dll,eglendpointremotetest.rsc)
 #endif
 
-file=ABI_DIR\DEBUG_DIR\eglendpointtestserver.exe                        sys\bin\eglendpointtestserver.exe
-file=ABI_DIR\DEBUG_DIR\eglendpointlifetimetesthelper.exe                sys\bin\eglendpointlifetimetesthelper.exe
+file=ABI_DIR\BUILD_DIR\eglendpointtestserver.exe                        sys\bin\eglendpointtestserver.exe
+file=ABI_DIR\BUILD_DIR\eglendpointlifetimetesthelper.exe                sys\bin\eglendpointlifetimetesthelper.exe
 // tef scripts
 data=DATAZ_\egltest\egltest_t_endpoint.script                    \egltest\egltest_t_endpoint.script
 data=DATAZ_\resource\apps\egltest_endpoint\image1.mbm 			 \resource\apps\egltest_endpoint\image1.mbm

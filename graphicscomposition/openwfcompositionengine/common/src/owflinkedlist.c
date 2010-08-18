@@ -1,4 +1,5 @@
 /* Copyright (c) 2009 The Khronos Group Inc.
+ * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -164,30 +165,6 @@ OWF_List_Clear(OWF_NODE* root)
     }
     return root;
 }
-
-OWF_API_CALL void
-OWF_List_ForEach(OWF_NODE* root, NODEITERFUNC func, void* data)
-{
-    while (root) {
-        if (!func(root->data, data)) {
-            return;
-        }
-        root = root->next;
-    }
-}
-
-OWF_API_CALL OWF_NODE*
-OWF_List_Find(OWF_NODE* root, NODECMPFUNC func, void* data)
-{
-    while (root) {
-        if (func(root->data, data)) {
-            break;
-        }
-        root = root->next;
-    }
-    return root;
-}
-
 
 #ifdef __cplusplus
 }

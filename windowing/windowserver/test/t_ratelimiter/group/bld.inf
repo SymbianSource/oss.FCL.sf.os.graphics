@@ -29,6 +29,7 @@ PRJ_TESTEXPORTS
 
 ../data/wsini.ini					z:/wstest/ratelimiter/wsini.ini
 ../data/wsini_vasco_ratelimiter.ini					z:/wstest/ratelimiter/wsini_vasco_ratelimiter.ini
+../data/wsini_naviengine_ratelimiter.ini					z:/wstest/ratelimiter/wsini_naviengine_ratelimiter.ini
 
 ../data/wsini_changetracking.ini			z:/wstest/ratelimiter/wsini_changetracking.ini
 ../data/wsini_hw_singlescreen.ini			z:/wstest/ratelimiter/wsini_hw_singlescreen.ini

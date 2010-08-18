@@ -33,6 +33,7 @@ PRJ_TESTEXPORTS
 ../scripts/wsdynamicresbasic_isotropic_scaling.script	z:/wstest/dynamicres/wsdynamicresbasic_isotropic_scaling.script
 ../scripts/wsdynamicresbasic_anisotropic_scaling.script	z:/wstest/dynamicres/wsdynamicresbasic_anisotropic_scaling.script
 ../scripts/wsdynamicresbasic_openvg_isotropic.script	z:/wstest/dynamicres/wsdynamicresbasic_openvg_isotropic.script
+../scripts/wsdynamicresbasic_sirocco.script	z:/wstest/dynamicres/wsdynamicresbasic_sirocco.script
 #endif // SYMBIAN_BUILD_GCE
 wstestdynamicres.iby	/epoc32/rom/include/wstestdynamicres.iby
 ../scripts/wsdynamicresclassic.script	z:/wstest/dynamicres/wsdynamicresclassic.script

@@ -155,6 +155,8 @@ TESTEXECUTE, C:\logs\testexecute\fbstest_T_Ralc.htm,					, z:\fbstest\fbstest_T_
 TESTEXECUTE, C:\logs\testexecute\fbstest_T_Secure.htm,					, z:\fbstest\fbstest_T_Secure.script, 600
 TESTEXECUTE, C:\logs\testexecute\fbstest_T_StreamIdCache.htm,			, z:\fbstest\fbstest_T_StreamIdCache.script, 600
 TESTEXECUTE, C:\logs\testexecute\fbstest_T_FontTable.htm,			, z:\fbstest\fbstest_T_FontTable.script, 600
+TESTEXECUTE, C:\logs\testexecute\fbstest_t_glyphdata.htm,			, z:\fbstest\fbstest_t_glyphdata.script, 600, ,z\ityperast_config.cmd install, z\ityperast_config.cmd uninstall
+TESTEXECUTE, C:\logs\testexecute\fbstest_t_glyphdataoutlineshadow.htm,		, z:\fbstest\fbstest_t_glyphdataoutlineshadow.script, 600, ,z\ityperast_config.cmd install, z\ityperast_config.cmd uninstall
 
 # without extended bitmap example rasterizer
 TESTEXECUTE, C:\logs\testexecute\fbstest_t_extendedbitmap.htm,			, z:\fbstest\fbstest_t_extendedbitmap.script,		1200
@@ -267,6 +269,7 @@ TESTEXECUTE, C:\logs\testexecute\egltest_t_vgimagetosurfaces.htm,			, z:\egltest
 TESTEXECUTE, C:\logs\testexecute\egltest_t_benchmark_sgimage.htm,        	, z:\egltest\egltest_t_benchmark_sgimage.script, 			300, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\egltest_t_oom_sgimage.htm,                 	, z:\egltest\egltest_t_oom_sgimage.script, 				600, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\egltest_t_stress_sgimage.htm,			, z:\egltest\egltest_t_stress_sgimage.script, 				600, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
+TESTEXECUTE, C:\logs\testexecute\egltest_t_surfacescaling.htm,			, z:\egltest\egltest_t_surfacescaling.script, 			  600, , z\graphicstest\minigui.cmd z\graphics\t_graphics_config_inifiles.bat install csc_nga, z\graphicstest\unminigui.cmd z\graphicstest\retain_files.cmd logs\testexecute\screencomparison screencomparison z\graphics\t_graphics_config_inifiles.bat uninstall
 
 # GCE
 TESTEXECUTE, C:\logs\testexecute\functionaltest_mandatory.htm,	, z:\gcetest\functionaltest_mandatory.script,  600, , z\gcetest\gcetest_setup_emu.bat install dabs, z\gcetest\gcetest_setup_emu.bat uninstall dabs
@@ -495,6 +498,13 @@ TESTEXECUTE, C:\logs\testexecute\tfxframework_tests.htm,		, z:\tlayercomposition
 
 # UIBENCH S60
 TESTEXECUTE, C:\logs\testexecute\te_uibench_s60_techview_emulator.htm,	, c:\uibench_s60\te_uibench_s60_techview_emulator.script, 900
+
+# OpenWF Fastpath (REQ417.54885)
+TESTEXECUTE, C:\logs\testexecute\openwftest.htm,				, z:\openwftest\openwftest.script, 600, , z\gcetest\gcetest_setup_emu.bat install dabs, z\graphicstest\retain_files.cmd openwftest\img openwftest\img z\gcetest\gcetest_setup_emu.bat uninstall dabs 
+TESTEXECUTE, C:\logs\testexecute\t_screeninterface_emulator.htm,				, z:\wfctest\t_screeninterface_emulator.script, 600
+
+# GCE tests using OpenWF instead of GCE
+TESTEXECUTE, C:\logs\testexecute\owf_functionaltest_mandatory.htm,	, z:\gcetest\owf_functionaltest_mandatory.script, 600, , z\gcetest\gcetest_setup_emu.bat install dabs_owf, z\gcetest\gcetest_setup_emu.bat uninstall dabs
 
 # OpenWF Conformance Tests run under testexecute
 TESTEXECUTE, C:\logs\testexecute\ct_api.htm,	, z:\wfctest\ct_api.script,  600, , z\gcetest\gcetest_setup_emu.bat install dabs, z\gcetest\gcetest_setup_emu.bat uninstall dabs

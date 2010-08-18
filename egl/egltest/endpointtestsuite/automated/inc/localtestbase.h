@@ -31,7 +31,7 @@
 
 
 // Entry point
-GLDEF_C TInt E32Main(void);
+GLDEF_C TInt E32Main();
 
 /**
 CEglEndpointTestServer	Server encapsulates the functionality required to execute Test Execute based test cases for the EGL endpoint extension.

@@ -29,4 +29,5 @@ RUN_TEST_STEP !PanicCode=2 !PanicString=DISPLAYCONFIG 100 commonheadertestserver
 RUN_TEST_STEP 100 commonheadertestserver TEFUnit.CTestDisplayConfiguration.GRAPHICS_COMMONHEADER_0011L
 RUN_TEST_STEP !PanicCode=7 !PanicString=DISPLAYCONFIG 100 commonheadertestserver TEFUnit.CTestDisplayConfiguration.GRAPHICS_COMMONHEADER_0012L
 
-RUN_PROGRAM tclosepanicwindow.exe
+//COMMENTED OUT FOR 10T38 ZERO TOLERANCE TEST STRATEGY
+//RUN_PROGRAM tclosepanicwindow.exe

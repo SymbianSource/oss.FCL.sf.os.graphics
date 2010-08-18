@@ -33,6 +33,8 @@
 #include "EVENT.H"
 #include "backedupwindow.h"
 #include "redrawmsgwindow.h"
+#include "ANIM.H"
+
 #include "windowelementset.h"
 
 
@@ -552,7 +554,13 @@ void CWsClientWindow::SetExtentL(const TPoint *aPos,const TSize *aSize)
 		MWsWindowTreeObserver* windowTreeObserver = Screen()->WindowTreeObserver();
 		if (windowTreeObserver)
 			{
-			windowTreeObserver->NodeExtentChanged(*this, FullRect());
+			TRect rect = FullRect();
+			windowTreeObserver->NodeExtentChanged(*this, rect);
+			
+			for (CWsAnim* anim = iAnimList; anim; anim = anim->Next())
+				{
+				windowTreeObserver->NodeExtentChanged(*anim, rect);
+				}
 			}
 		}
 	}
@@ -1426,6 +1434,13 @@ TBool CWsTopClientWindow::SetScreenDeviceValidStateFlag(TBool aState)
 			iFlags&=~EFlagScreenDeviceInvalid;
 		else
 			iFlags|=EFlagScreenDeviceInvalid;
+		
+		MWsWindowTreeObserver* windowTreeObserver = iScreen->WindowTreeObserver();
+		if (windowTreeObserver)
+			{
+			windowTreeObserver->FlagChanged(*this, MWsWindowTreeObserver::EScreenDeviceValid, aState);
+			}
+		
 		return ETrue;
 		}
 	return EFalse;

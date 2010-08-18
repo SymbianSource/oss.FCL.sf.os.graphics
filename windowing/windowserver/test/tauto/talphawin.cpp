@@ -371,7 +371,8 @@ void CTAlphaWin::TestAntiAliasedTextTransparentL()
 
 	theWin.SetExtent(TPoint(0,0), winSize);
 	theWin.SetBackgroundColor(TRgb(127,0,255,127));
-	TInt mode=theWin.SetRequiredDisplayMode(EColor16MA);
+	TDisplayMode mode = EColor16MAP;
+	theWin.SetRequiredDisplayMode(mode);
 	theWin.SetVisible(ETrue);
 	theWin.SetTransparencyAlphaChannel();
 	theWin.Activate();
@@ -447,7 +448,7 @@ void CTAlphaWin::TestAntiAliasedTextTransparentL()
 	CFbsBitmap *bitmapOne;
 	bitmapOne = new (ELeave)CFbsBitmap();
 	CleanupStack::PushL(bitmapOne);
-	User::LeaveIfError(bitmapOne->Create(winSize,static_cast<TDisplayMode>(mode)));
+	User::LeaveIfError(bitmapOne->Create(winSize,mode));
 
 	CFbsBitmapDevice *deviceOne=CFbsBitmapDevice::NewL(bitmapOne);
 	CleanupStack::PushL(deviceOne);
@@ -502,7 +503,7 @@ void CTAlphaWin::TestAntiAliasedTextTransparentL()
 	User::LeaveIfError(refWin.Construct(*(BaseWin->WinTreeNode()),(TUint32)&refWin));
 
 	refWin.SetExtent(TPoint(0,0), winSize);
-	refWin.SetRequiredDisplayMode(static_cast<TDisplayMode>(mode));
+	refWin.SetRequiredDisplayMode(mode);
 	refWin.SetVisible(ETrue);
 	refWin.SetTransparencyAlphaChannel();
 	refWin.Activate();

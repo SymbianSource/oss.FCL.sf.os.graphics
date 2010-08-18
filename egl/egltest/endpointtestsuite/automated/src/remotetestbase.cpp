@@ -34,9 +34,11 @@
 #include <e32math.h>
 
 
-// Timout for remote test steps. This MUST be smaller
+// Default timout for remote test steps. This MUST be smaller
 // than any timeout passed to TEF for the local test step
-// in the script file.
+// in the script file. Remote test steps can override this 
+// value by implementing the Timeout() function in their 
+// derrived class.
 const TInt KRemoteTestStepTimeout = 10 * 1000000;
 
 
@@ -68,6 +70,7 @@ void CTimeoutTimer::ConstructL()
 
 CTimeoutTimer::~CTimeoutTimer()
     {
+    Cancel();
     }
 
 
@@ -315,7 +318,7 @@ void CRemoteTestEnv::RunL()
         }
 
     //Activate the TimoutTimer, TestCaseListener and WorkerListener.
-    iTimeoutTimer->After(KRemoteTestStepTimeout);
+    iTimeoutTimer->After(iCurTestStep->Timeout());
     iTestCaseListener->Listen();
     iWorkerListener->Listen(iCurWorker);
 
@@ -464,7 +467,7 @@ TBool CRemoteTestEnv::SetupTestStep()
 void CRemoteTestEnv::DoEglHeapMark()
     {
 #if USE_EGLHEAP_CHECKING
-    typedef void (*TEglDebugHeapMarkStartPtr)(void);
+    typedef void (*TEglDebugHeapMarkStartPtr)();
 
     TEglDebugHeapMarkStartPtr  heapMarkStart = reinterpret_cast<TEglDebugHeapMarkStartPtr>(eglGetProcAddress("egliDebugHeapMarkStart"));
     if (heapMarkStart)
@@ -562,23 +565,21 @@ void CRemoteTestEnv::RunCurrentTestStepL()
 TInt CRemoteTestEnv::TestThreadEntryPoint(TAny* aSelf)
     {
     CRemoteTestEnv* self = static_cast<CRemoteTestEnv*>(aSelf);
+    
+    //Create cleanup stack.
     CTrapCleanup* cleanup = CTrapCleanup::New();
-
-    TRAPD(err,
-        //Create active scheduler.
-        CActiveScheduler* scheduler = new (ELeave) CActiveScheduler();
-        CleanupStack::PushL(scheduler);
-        CActiveScheduler::Install(scheduler);
-
-        //Run the current test step.
-        self->RunCurrentTestStepL();
-
-        //Clean up.
-        CleanupStack::PopAndDestroy(scheduler);
-        );
-
+    ASSERT(cleanup);
+    
+    //Create active scheduler.
+    CActiveScheduler* scheduler = new CActiveScheduler();
+    ASSERT(scheduler);
+    CActiveScheduler::Install(scheduler);
+    
+    TRAPD(err, self->RunCurrentTestStepL());
     __ASSERT_ALWAYS(err == KErrNone, User::Invariant());
 
+    //Clean up.
+    delete scheduler;
     delete cleanup;
     return KErrNone;
     }
@@ -634,6 +635,12 @@ TRemoteTestVerdict CRemoteTestStepBase::DoEndRemoteTestStepL(const TRemoteTestPa
     {
     //Default implementation does nothing.
     return ERtvPass;
+    }
+
+
+TInt CRemoteTestStepBase::Timeout() const
+    {
+    return KRemoteTestStepTimeout;
     }
 
 

@@ -95,6 +95,7 @@ SOURCE        TMemLeakMode.cpp
 SOURCE        THeartBeat.CPP
 SOURCE        tgc.cpp
 SOURCE	      TGRAPHICSDRAWER.CPP
+SOURCE        tdevicerotation.cpp
 
 LIBRARY	        bitgdi.lib	efsrv.lib	euser.lib	fbscli.lib
 LIBRARY	        gdi.lib		hal.lib		tlib.lib	ws32.lib

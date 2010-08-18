@@ -38,16 +38,6 @@ NONSHARABLE_CLASS(COpenWfcStreamMap): public CBase
 		 */
 		IMPORT_C static COpenWfcStreamMap& InstanceL();
 		/**
-		 * Expands the array to accommodate a specified number of key-value pairs.
-		 * If the hash map already has enough space for the specified number of elements, no
-		 * action is taken. Any elements already in the map are retained.
-		 * 
-		 * @param	aExpand	The number of key-value pairs for which space should be allocated.
-		 * @return	KErrNone if the operation completed aInternalVersion.
-		 * @return	KErrNoMemory if sufficient memory could not be allocated.
-		 */
-		IMPORT_C TInt Reserve(TInt aExpand);
-		/**
 		 * Look up a specified TSurfaceId key in the associative array and return a pointer to the
 		 * corresponding to a native stream. The reference counter of the native stream is incremented by one.
 		 * 
@@ -106,7 +96,7 @@ NONSHARABLE_CLASS(COpenWfcStreamMap): public CBase
 		 * 
 		 * @return	A reference to the local SurfaceManager
 		 */
-		RSurfaceManager& SurfaceManager();
+        IMPORT_C RSurfaceManager& SurfaceManager();
 		
         /**
          * Returns a pointer to the main heap
@@ -155,14 +145,6 @@ NONSHARABLE_CLASS(COpenWfcStreamMap): public CBase
 				RFastLock& iLock;
 			};
 	private:
-		/**
-		 * Copy constructor
-		 */
-		COpenWfcStreamMap(const COpenWfcStreamMap&);
-		/**
-		 * Assignment operator
-		 */
-		COpenWfcStreamMap& operator= (const COpenWfcStreamMap&);
 		/**
 		 * Symbian constructor used with two stage construction pattern
 		 */

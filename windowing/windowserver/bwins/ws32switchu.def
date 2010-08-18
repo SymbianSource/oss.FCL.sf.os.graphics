@@ -427,8 +427,8 @@ EXPORTS
 	call_vector_426 @ 426 NONAME ; void RBlankWindow::SetColor(void)
 	call_vector_427 @ 427 NONAME ; int RWsSession::SetClientCursorMode(enum TPointerCursorMode)
 	call_vector_428 @ 428 NONAME ; class TRect RDrawableWindow::GetDrawRect(void) const
-	call_vector_429 @ 429 NONAME 
-	call_vector_430 @ 430 NONAME 
+	call_vector_429 @ 429 NONAME
+	call_vector_430 @ 430 NONAME
 	call_vector_431 @ 431 NONAME ; void CWindowGc::Reserved_CWindowGc_3(void)
 	call_vector_432 @ 432 NONAME ; void CWindowGc::Reserved_CWindowGc_4(void)
 	call_vector_433 @ 433 NONAME ; void CWindowGc::Reserved_CWindowGc_5(void)
@@ -512,20 +512,20 @@ EXPORTS
 	call_vector_511 @ 511 NONAME ; int RWsSession::DebugInfo(int, int) const
 	call_vector_512 @ 512 NONAME ; unsigned long RWindowTreeNode::ClientHandle(void) const
 	call_vector_513 @ 513 NONAME ; int RWindowBase::SetBackgroundSurface(class TSurfaceId const &)
-	call_vector_514 @ 514 NONAME 
+	call_vector_514 @ 514 NONAME
 	call_vector_515 @ 515 NONAME ; class TRgb RWindowBase::KeyColor(void) const
-	call_vector_516 @ 516 NONAME 
-	call_vector_517 @ 517 NONAME 
-	call_vector_518 @ 518 NONAME 
-	call_vector_519 @ 519 NONAME 
-	call_vector_520 @ 520 NONAME 
+	call_vector_516 @ 516 NONAME
+	call_vector_517 @ 517 NONAME
+	call_vector_518 @ 518 NONAME
+	call_vector_519 @ 519 NONAME
+	call_vector_520 @ 520 NONAME
 	call_vector_521 @ 521 NONAME ; int RWindowBase::GetBackgroundSurface(class TSurfaceConfiguration &) const
-	call_vector_522 @ 522 NONAME 
+	call_vector_522 @ 522 NONAME
 	call_vector_523 @ 523 NONAME ; int RWsSession::PreferredSurfaceConfigurationSize(void) const
 	call_vector_524 @ 524 NONAME ; int RWsSession::RegisterSurface(int, class TSurfaceId const &)
-	call_vector_525 @ 525 NONAME 
+	call_vector_525 @ 525 NONAME
 	call_vector_526 @ 526 NONAME ; void RWindowBase::RemoveBackgroundSurface(int)
-	call_vector_527 @ 527 NONAME 
+	call_vector_527 @ 527 NONAME
 	call_vector_528 @ 528 NONAME ; int RWindowBase::SetBackgroundSurface(class TSurfaceConfiguration const &, int)
 	call_vector_529 @ 529 NONAME ; void RWsSession::UnregisterSurface(int, class TSurfaceId const &)
 	call_vector_530 @ 530 NONAME ; void RWindow::ClearRedrawStore(void)
@@ -585,4 +585,5 @@ EXPORTS
 	call_vector_584 @ 584 NONAME ; void RWsSession::OverrideEffects(int, int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &, class TBitFlagsT<unsigned long>)
 	call_vector_585 @ 585 NONAME ; void RWsSession::UnregisterEffect(int, int, unsigned int)
 	call_vector_586 @ 586 NONAME ; void RWsSession::UnregisterAllEffects(void)
+	call_vector_587 @ 587 NONAME ; void RWsSession::IndicateAppOrientation(enum TRenderOrientation)
 

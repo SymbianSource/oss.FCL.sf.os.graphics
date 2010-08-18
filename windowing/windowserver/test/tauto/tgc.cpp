@@ -1290,7 +1290,11 @@ void CTGc::TestCRemoteGcAndMWsGraphicsContextClippingRectL()
 	 * that we use matching color depths for our off-screen bitmaps so that accuracy is
 	 * not lost since we compare bitmaps from the screen versus off-screen.
 	 */
-	const TDisplayMode displayMode = device->DisplayMode();
+	TDisplayMode displayMode = device->DisplayMode();
+	if (TDisplayModeUtils::NumDisplayModeBitsPerPixel(displayMode) == 32)
+	    {
+	    displayMode = EColor16MAP;
+	    }
 		
 	_LIT(KText,"RemoteGc & MWsGraphicsContext");
 	TFontSpec fSpec(KTestFontTypefaceName,23);

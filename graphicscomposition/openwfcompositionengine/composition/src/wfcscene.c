@@ -1,4 +1,5 @@
 /* Copyright (c) 2009-2010 The Khronos Group Inc.
+ * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -449,4 +450,18 @@ WFC_Scene_LowestElement(WFC_SCENE* scene)
         element = ELEMENT(scene->elements->data)->handle;
     }
     return element;
+}
+
+/*----------------------------------------------------------------------------*/
+OWF_API_CALL WFC_ELEMENT*
+WFC_Scene_TopMostElement(WFC_SCENE* scene)
+{
+    OWF_NODE*               node = NULL;
+
+    for (node = scene->elements; node && node->next; node = node->next)
+    {
+        /* All work done in the for statement, so no body */
+    }
+    
+    return node ? ELEMENT(node->data) : NULL;
 }

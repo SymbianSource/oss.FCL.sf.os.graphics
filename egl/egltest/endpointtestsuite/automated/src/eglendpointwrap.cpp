@@ -24,7 +24,6 @@
 #include "egltest_commscommon.h"
 
 
-
 /*
  * TEglEndpointWrap is a simple class that presents all of the EGL endpoint
  * extension functions without the user needing to perform an eglGetProcAddress()
@@ -74,7 +73,8 @@ TAnyFuncPtr TEglEndpointWrap::ProcAddressL(const char* aProcName) const
     }
 
 
-EGLEndpointNOK TEglEndpointWrap::CreateEndpoint(EGLDisplay dpy, EGLenum type, EGLenum source_type, EGLEndpointSourceNOK source, const EGLint *attrib_list) const
+EGLEndpointNOK TEglEndpointWrap::CreateEndpoint(EGLDisplay dpy, EGLenum type, EGLenum source_type, 
+                                                EGLEndpointSourceNOK source, const EGLint *attrib_list) const
     {
     ENDPOINT_ASSERT_DEBUG(iError == KErrNone, User::Invariant());
     return ipfnEglCreateEndpointNOK(dpy, type, source_type, source, attrib_list);
@@ -130,7 +130,8 @@ EGLBoolean TEglEndpointWrap::ReleaseImage(EGLDisplay dpy, EGLEndpointNOK endpoin
     }
 
 
-EGLint TEglEndpointWrap::GetEndpointDirtyArea(EGLDisplay dpy, EGLEndpointNOK endpoint, EGLint* rects, EGLint start_rect, EGLint max_rects, EGLBoolean collapse) const
+EGLint TEglEndpointWrap::GetEndpointDirtyArea(EGLDisplay dpy, EGLEndpointNOK endpoint, EGLint* rects, 
+                                              EGLint start_rect, EGLint max_rects, EGLBoolean collapse) const
     {
     ENDPOINT_ASSERT_DEBUG(iError == KErrNone, User::Invariant());
     return ipfnEglGetEndpointDirtyAreaNOK(dpy, endpoint, rects, start_rect, max_rects, collapse);

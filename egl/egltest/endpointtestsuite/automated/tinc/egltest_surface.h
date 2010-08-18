@@ -36,6 +36,7 @@ enum TSurfaceType
     ESurfTypeRaw,
     ESurfTypeEglWindow,
     ESurfTypeRawSingleBuffered,
+    ESurfTypePBuffer,
     ESurfTypeMaxTypes  // Should be the last enum.
     };
 
@@ -49,6 +50,9 @@ enum TSurfaceIndex
     EUnusualStrideSurface,
     EUnalignedPixelSizeSurface,
     ELargeSurface,
+    ELargestPossibleSurface,
+    ESmallSurface,
+    ETinySurface
     };
 
 // Notification enums - allows us to use one function to request several notifications.
@@ -86,6 +90,7 @@ struct TSurfaceParamsRemote
     };
 
 
+
 //Interface for creating, drawing to and submitting content for a surface
 //Derived classes can implement different types of surface, that can be
 //used in the same test code. Ie surface manager surface (raw), egl window
@@ -93,21 +98,31 @@ struct TSurfaceParamsRemote
 class CSurface: public CBase
     {
 public:
-    virtual void CreateL(TInt aIndex) = 0;
+    // This function is kept for compatibility - new code should use offset
+    // form of CreateL... 
+    virtual void CreateL(TInt aIndex);
+    // Allow an offset for the top left corner of the surface on screen. 
+    virtual void CreateL(TInt aIndex, const TPoint& aOffset) = 0;
     virtual void DrawContentL(TInt aImageIndex) = 0;
     virtual void DrawContentL(const TRgb& aColour) = 0;
-    virtual void SubmitContentL(TBool aShouldWaitForDisplay, TInt aRectIndex = 0) = 0;
+    virtual void DrawComplexL(const TRgb& aColour) = 0;
+    virtual TInt SubmitContent(TBool aShouldWaitForDisplay, TInt aRectIndex = 0) = 0;
     virtual TSurfaceId SurfaceId() const = 0;
     virtual void GetSurfaceParamsL(TSurfaceParamsRemote &aParams) = 0;
     virtual const TText *GetSurfaceTypeStr() const = 0;
     virtual TInt Notify(TNotification aWhen, TRequestStatus &aStatus, TUint32 aXTimes) = 0;
     virtual TInt WaitFor(TNotification aWhen, TRequestStatus &aStatus, TInt aTimeoutInMicroseconds, TUint32& aTimeStamp) = 0;
+    virtual TInt SizeInBytes() const;
+   
+    
+    TSize Size();
 
 public:
     // Factory function to create a surface of aSurfType.
     static CSurface *SurfaceFactoryL(TSurfaceType aSurfType);
 protected:
-    TInt iParamIndex;
+    TInt  iParamIndex;
+    TSize iActualSize;
     };
 
 
@@ -118,12 +133,12 @@ public:
     static CRawSurface* NewL();
     ~CRawSurface();
 
-    //From CSurface.
-    void CreateL(TInt aIndex);
-    void GetSurfAttribs(RSurfaceManager::TSurfaceCreationAttributesBuf &aSurfaceAttribs, TInt aIndex);
+    // From CSurface
+    virtual void CreateL(TInt aIndex, const TPoint& aOffset);
     void DrawContentL(TInt aIndex);
     void DrawContentL(const TRgb& aColour);
-    void SubmitContentL(TBool aShouldWaitForDisplay, TInt aRectIndex = 0);
+    void DrawComplexL(const TRgb& aColour);
+    TInt SubmitContent(TBool aShouldWaitForDisplay, TInt aRectIndex = 0);
     TSurfaceId SurfaceId() const;
     void GetSurfaceParamsL(TSurfaceParamsRemote &aParams);
     virtual const TText *GetSurfaceTypeStr() const;
@@ -134,24 +149,25 @@ protected:
     CRawSurface();
     void ConstructL();
     TUint8* MapSurfaceAndGetInfoLC(RSurfaceManager::TSurfaceInfoV01& aInfo);
+    void GetSurfAttribs(RSurfaceManager::TSurfaceCreationAttributesBuf &aSurfaceAttribs, TInt aIndex, TInt aSizeIndex);
 
 private:
     static TInt PixelSize(TUidPixelFormat aPixelFormat);
     static TRequestStatus *GetRequestPtr(TNotification aWhen);
 
 private:
-    RSurfaceUpdateSession iSurfaceUpdate;
-    TRequestStatus        iAvailable;
-    TRequestStatus        iDisplayed;
-    TRequestStatus        iDisplayedXTimes;
-    TTimeStamp            iTimeStamp;
-    TInt                  iDrawBuffer;
-    RChunk                iSurfaceChunk;
+    RSurfaceUpdateSession  iSurfaceUpdate;
+    TRequestStatus         iAvailable;
+    TRequestStatus         iDisplayed;
+    TRequestStatus         iDisplayedXTimes;
+    TTimeStamp             iTimeStamp;
+    TInt                   iDrawBuffer;
+    RChunk                 iSurfaceChunk;
 
 protected:
-    TInt                  iBuffers;
-    RSurfaceManager       iSurfaceManager;
-    TSurfaceId            iSurfaceId;
+    TInt                   iBuffers;
+    RSurfaceManager        iSurfaceManager;
+    TSurfaceId             iSurfaceId;
     };
 
 // Simple wrapper to enable a list of "singlebuffer" in the list of buffer types.
@@ -161,8 +177,7 @@ public:
     static CRawSingleBufferSurface* NewL();
     ~CRawSingleBufferSurface();
 
-    //From CSurface.
-    void CreateL(TInt aIndex);
+    virtual void CreateL(TInt aIndex, const TPoint& aOffset);
     virtual const TText *GetSurfaceTypeStr() const;
     };
 
@@ -170,34 +185,66 @@ public:
 class CWindow;
 class CTestVgImage;
 
-class CEglWindowSurface : public CSurface
+class CEglSurfaceBase : public CSurface
+    {
+public:
+    void CreateL(TInt aIndex, const TPoint& aOffset);
+    void DrawContentL(TInt aImageIndex);
+    void DrawContentL(const TRgb& aColour);
+    void DrawComplexL(const TRgb& aColour);
+    TInt SubmitContent(TBool aShouldWaitForDisplay, TInt aRectIndex = 0);
+    TInt Activate();
+    void ActivateL();
+    void GetSurfaceParamsL(TSurfaceParamsRemote &aParams);
+    virtual TInt Notify(TNotification aWhen, TRequestStatus &aStatus, TUint32 aXTimes);
+    virtual TInt WaitFor(TNotification aWhen, TRequestStatus &aStatus, TInt aTimeoutInMicroseconds, TUint32& aTimeStamp);
+
+protected:
+    void BaseCreateL(TInt aIndex, EGLint aSurfaceType);
+    virtual void DoCreateL(TInt aIndex, const TPoint& aOffset, TInt aSizeIndex) = 0;
+    void Destroy();
+
+protected:
+    EGLContext iContext;
+    EGLSurface iSurface;
+    EGLDisplay iDisplay;
+    EGLConfig  iConfig;
+    };
+
+class CEglWindowSurface : public CEglSurfaceBase
     {
 public:
     static CEglWindowSurface* NewL();
     ~CEglWindowSurface();
 
-    void CreateL(TInt aIndex);
-    void DrawContentL(TInt aImageIndex);
-    void DrawContentL(const TRgb& aColour);
-    void SubmitContentL(TBool aShouldWaitForDisplay, TInt aRectIndex = 0);
-    void ActivateL();
     TSurfaceId SurfaceId() const;
-    void GetSurfaceParamsL(TSurfaceParamsRemote &aParams);
     virtual const TText *GetSurfaceTypeStr() const;
-    virtual TInt Notify(TNotification aWhen, TRequestStatus &aStatus, TUint32 aXTimes);
-    virtual TInt WaitFor(TNotification aWhen, TRequestStatus &aStatus, TInt aTimeoutInMicroseconds, TUint32& aTimeStamp);
 
 private:
     CEglWindowSurface();
+    void DoCreateL(TInt aIndex, const TPoint& aOffset, TInt aSizeIndex);
     void ConstructL();
 
 private:
-    EGLContext iContext;
-    EGLSurface iSurface;
-    EGLDisplay iDisplay;
     CWindow*   iWindow;
     };
 
+class CEglPBufferSurface : public CEglSurfaceBase
+    {
+public:
+    static CEglPBufferSurface* NewL();
+    ~CEglPBufferSurface();
+    TSurfaceId SurfaceId() const;
+
+    virtual const TText *GetSurfaceTypeStr() const;
+
+    TInt SizeInBytes() const;
+
+private:
+    CEglPBufferSurface();
+    void ConstructL();
+    void DoCreateL(TInt aIndex, const TPoint& aOffset, TInt aSizeIndex);
+    };
 
 
 #endif

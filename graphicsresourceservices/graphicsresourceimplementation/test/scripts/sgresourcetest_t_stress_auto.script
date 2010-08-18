@@ -16,4 +16,5 @@
 PRINT Run Graphics Resource Automated Stress Tests
 //
 LOAD_SUITE tgraphicsresource2
-RUN_TEST_STEP 1000 tgraphicsresource2 TSgGenericManual z:\sgresourcetest\sgresourcetest_t_stress_auto.ini
+//COMMENTED OUT FOR 10T38 ZERO TOLERANCE TEST STRATEGY
+//RUN_TEST_STEP 1000 tgraphicsresource2 TSgGenericManual z:\sgresourcetest\sgresourcetest_t_stress_auto.ini

@@ -1,4 +1,4 @@
-// Copyright (c) 1996-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1996-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -23,7 +23,7 @@ CPriorityKey::CPriorityKey(CWsClient *aOwner) : CEventBase(aOwner)
 	__DECLARE_NAME(_S("CPriorityKey"));
 	}
 
-void CPriorityKey::PriorityKey(TInt aHandle, const TKeyData &aKey, TInt aScanCode)
+void CPriorityKey::PriorityKey(TInt aHandle, const TKeyEvent &aKeyEvent)
 //
 // Called when a priority key is pressed
 //
@@ -31,8 +31,7 @@ void CPriorityKey::PriorityKey(TInt aHandle, const TKeyData &aKey, TInt aScanCod
 	if (!iEventMsg.IsNull())
 		{
 		iPriorityKeyHandle=aHandle;
-		iPriorityKey=aKey;
-		iScanCode=aScanCode;
+		iPriorityKey = aKeyEvent;
 		SignalEvent();
 		}
 	}
@@ -43,11 +42,8 @@ void CPriorityKey::GetData()
 //
 	{
 	TWsPriorityKeyEvent event;
-	TKeyEvent *key=event.Key();
-	key->iScanCode=iScanCode;
-	key->iCode=iPriorityKey.iKeyCode;
-	key->iModifiers=iPriorityKey.iModifiers;
-	key->iRepeats=0;
+	*event.Key() = iPriorityKey;
+	event.Key()->iRepeats = 0;
 	event.SetHandle(iPriorityKeyHandle);
 	CEventBase::GetData(&event,sizeof(event));
 	iPriorityKeyHandle=0;
@@ -65,7 +61,7 @@ TInt TPriorityKey::Equals(TUint aKeycode,TUint aModifierMask,TUint aModifiers)
 	return(iKeyCode==aKeycode && iModifierMask==aModifierMask && iModifiers==aModifiers);
 	}
 
-TInt TPriorityKey::KeyMatches(const TKeyData &aKey)
+TInt TPriorityKey::KeyMatches(const TKeyEvent &aKeyEvent)
 	{
-	return(iKeyCode==aKey.iKeyCode && (iModifierMask&aKey.iModifiers)==iModifiers);
+	return(iKeyCode == aKeyEvent.iCode && (iModifierMask & aKeyEvent.iModifiers) == iModifiers);
 	}

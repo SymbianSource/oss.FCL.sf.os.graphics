@@ -1,4 +1,4 @@
-// Copyright (c) 1996-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1996-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -157,12 +157,21 @@ struct SErrorCapKey
 	TInt keyCode;
 	TUint modifier_mask;
 	TUint modifiers;
+	TInt priority;
 	};
 
 LOCAL_D SErrorCapKey errorKeys[]={
-	{'a',EModifierFunc|EModifierShift,EModifierFunc|EModifierCtrl},
-	{'1',0,EModifierFunc},
-	{3,EModifierCtrl,EModifierCtrl|EModifierShift},
+	{'a', EModifierFunc|EModifierShift,EModifierFunc|EModifierCtrl, 0},
+	{'1', 0, EModifierFunc, 0},
+	{3, EModifierCtrl,EModifierCtrl|EModifierShift, 0},
+	// @SYMPREQ 417-61800: Check that attempts to capture keys with
+	// EModifierLong in the modifier mask fail with KErrArgument.
+	{'T', EModifierLongKey, 0, 0},
+	{'u', EModifierLongKey|EModifierAlt, EModifierLongKey, 0},
+	{'V', EModifierLongKey|EModifierShift, EModifierLongKey|EModifierShift, 0},
+	// @SYMPREQ 417-61800: Check that attempts to capture keys with a priority
+	// of KMinTInt fail with KErrArgument.
+	{'W', 0, 0, KMinTInt},
 	};
 
 const TInt numCapKeys=sizeof(capKeys)/sizeof(capKeys[0]);

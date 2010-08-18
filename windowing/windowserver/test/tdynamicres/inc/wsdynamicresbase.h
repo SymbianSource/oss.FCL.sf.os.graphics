@@ -81,12 +81,7 @@ public:
 	void CommonOverlayWindowSetupL(RWindow& aWindow, const TRgb& aColor);
 	void ResizeTestCommonSetupL(RWindow& aWindow, const TRgb& aColor);
 
-	void MakeTestWindowPairL(TRect aOuterRect,TRgb aOuterColor,TRect aInnerRect,TRgb aInnerColor);
 	void LargerTestWindow(TInt aPercentOfBack=80);
-	void DestroyTestWindowPair(TBool aKillTestBack=ETrue,TBool aKillTestFront=ETrue,TBool aKillTestChildren=ETrue);
-	void MakeTestWindowTripleL(TRect aOuterRect,TRgb aOuterColor,TRect aInnerRect,TRgb aInnerColor,TRect aChildRect,TRgb aChildColor,TRect aSecondChildRect,TRgb aSecondChildColor);
-	void CreateTestWindowQuadL(TRect aOuterRect,TRgb aOuterColor,TRect aInnerRect,TRgb aInnerColor,TRect aChildRect,TRgb aChildColor,TRect aSecondChildRect,TRgb aSecondChildColor);
-	void MakeTestWindowTripleL(TRect aOuterRect,TRgb aOuterColor,TRect aInnerRect,TRgb aInnerColor,TRect aChildRect,TRgb aChildColor);
 	void MakeExtraChildWindowL(const RWindowBase& aFromParent,TRect aChildRect,TRgb aChildColor);
 	struct LoopingGcPtr;
 	LoopingGcPtr	LoopBeginActivateWithWipe(const TRegion& aRegion,RWindow& aWin,TRgb aColor);
@@ -121,7 +116,7 @@ protected:
 		void				CreateSharedUtilityL()const ;
 		};
 	static const TPostTestCleanup& PostTestCleanupInstance();
-	RWindow	iTestBack;
+	RBlankWindow	iTestBack;
 	RWindow	iTestFront;
 	RWindow	iTestChild;
 	RWindow	iTestSecondChild;

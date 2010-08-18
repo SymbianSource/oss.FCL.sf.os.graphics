@@ -263,17 +263,17 @@ EGLAPI EGLBoolean EGLAPIENTRY eglEndpointRequestNotificationNOK(EGLDisplay dpy, 
 EGLAPI EGLBoolean EGLAPIENTRY eglEndpointCancelNotificationNOK(EGLDisplay dpy, EGLEndpointNOK endpoint);
 #endif
 
-typedef EGLEndpointNOK ( *PFNEGLCREATEENDPOINTNOKPROC) (EGLDisplay dpy, EGLenum type, EGLenum source_type, EGLEndpointSourceNOK source, const EGLint* attrib_list);
-typedef EGLBoolean ( *PFNEGLDESTROYENDPOINTNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint);
-typedef EGLint ( *PFNEGLGETENDPOINTATTRIBNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint, EGLint attrib);
-typedef EGLBoolean ( *PFNEGLSETENDPOINTATTRIBNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint, EGLint attrib, EGLint value);
-typedef EGLBoolean ( *PFNEGLENDPOINTBEGINSTREAMINGNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint);
-typedef EGLBoolean ( *PFNEGLENDPOINTENDSTREAMINGNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint);
-typedef EGLImageKHR  ( *PFNEGLACQUIREIMAGENOKPROC)(EGLDisplay dpy, EGLEndpointNOK endpoint);
-typedef EGLBoolean ( *PFNEGLRELEASEIMAGENOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint, EGLImageKHR image, EGLenum api);
-typedef EGLint ( *PFNEGLGETENDPOINTDIRTYAREANOKPROC) (EGLDisplay dpy,  EGLEndpointNOK endpoint, EGLint* rects, EGLint start_rect, EGLint max_rects,  EGLBoolean collapse); 
-typedef EGLBoolean ( *PFNEGLENDPOINTREQUESTNOTIFICATIONNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint, EGLTRequestStatusNOK sync);
-typedef EGLBoolean ( *PFNEGLENDPOINTCANCELNOTIFICATIONNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint);
+typedef EGLEndpointNOK (EGLAPIENTRYP PFNEGLCREATEENDPOINTNOKPROC) (EGLDisplay dpy, EGLenum type, EGLenum source_type, EGLEndpointSourceNOK source, const EGLint* attrib_list);
+typedef EGLBoolean (EGLAPIENTRYP PFNEGLDESTROYENDPOINTNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint);
+typedef EGLint (EGLAPIENTRYP PFNEGLGETENDPOINTATTRIBNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint, EGLint attrib);
+typedef EGLBoolean (EGLAPIENTRYP PFNEGLSETENDPOINTATTRIBNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint, EGLint attrib, EGLint value);
+typedef EGLBoolean (EGLAPIENTRYP PFNEGLENDPOINTBEGINSTREAMINGNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint);
+typedef EGLBoolean (EGLAPIENTRYP PFNEGLENDPOINTENDSTREAMINGNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint);
+typedef EGLImageKHR  (EGLAPIENTRYP PFNEGLACQUIREIMAGENOKPROC)(EGLDisplay dpy, EGLEndpointNOK endpoint);
+typedef EGLBoolean (EGLAPIENTRYP PFNEGLRELEASEIMAGENOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint, EGLImageKHR image, EGLenum api);
+typedef EGLint (EGLAPIENTRYP PFNEGLGETENDPOINTDIRTYAREANOKPROC) (EGLDisplay dpy,  EGLEndpointNOK endpoint, EGLint* rects, EGLint start_rect, EGLint max_rects,  EGLBoolean collapse); 
+typedef EGLBoolean (EGLAPIENTRYP PFNEGLENDPOINTREQUESTNOTIFICATIONNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint, EGLTRequestStatusNOK sync);
+typedef EGLBoolean (EGLAPIENTRYP PFNEGLENDPOINTCANCELNOTIFICATIONNOKPROC) (EGLDisplay dpy, EGLEndpointNOK endpoint);
 #endif
 
 #ifndef EGL_SYMBIAN_COMPOSITION

@@ -141,9 +141,9 @@ enum TGdiPanic
 	EGdiPanic_OutOfText				= 2,
 	/** Internal failure. */
 	EGdiPanic_Invariant				= 3,
-	/** Reserved panic codes. Not to be used. */
-	EGdiPanic_Reserved1				= 4,
-	EGdiPanic_Reserved2				= 5,
+	/** Unused panic codes. Can be reused if needed. */
+	EGdiPanic_Unused1				= 4,
+	EGdiPanic_Unused2				= 5,
 	/** Setting a typeface name that is too long */
 	EGdiPanic_TypefaceNameOverflow	= 6,
 	};

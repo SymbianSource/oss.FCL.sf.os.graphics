@@ -1,4 +1,4 @@
-// Copyright (c) 1996-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1996-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -38,6 +38,7 @@
 
 const TInt EMaxEventQueueSize=32;
 const TInt EMinQueueSize = 2;
+const TUint KModifiersIgnore = 0xffffffff;
 
 
 class CTEventTest;
@@ -263,6 +264,11 @@ private:
 		// Add additional enum values before this line
 		EMaxCancelCaptureKeyApis
 		};
+	enum TLongkeyCapPriorityTests
+		{
+		ELongkeyCaptureSamePriority,
+		ELongkeyCaptureDiffPriority
+		};
 private:
 	void RunTestsL(TBool aNeedChildWindows=EFalse);
 	void RunTestsRestoreAreaL(TBool aNeedChildWindows);
@@ -285,13 +291,17 @@ private:
 	void Password_NextSetOfEvents();
 	void GroupListChanged_NextSetOfEventsL();
 	void VisibilityChanged_NextSetOfEventsL();
-#ifdef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS	
 #ifndef TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA  	
+	void KeyEventTranslation_NextSetOfEventsL();
+	void KeyEventBlocking_NextSetOfEventsL();
+	void KeyEventAppRestriction_NextSetOfEventsL();
+	void KeyEventAppPriority_NextSetOfEventsL();
+#ifdef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS	
 	void SurfaceVisibilityChanged1_NextSetOfEventsL();
 	void SurfaceVisibilityChanged2_NextSetOfEventsL();
 	void SurfaceVisibilityChanged3_NextSetOfEventsL();
-#endif //TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA
 #endif //SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS
+#endif //TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA
 	void CheckTimeStamp_NextSetOfEventsL();
 	void RepeatableKeysL();
 	void PointerCapture_NextSetOfEventsL();
@@ -311,8 +321,8 @@ private:
 	void EventHandlerRemoval_AddEventHandlerMultipleTimes();
 	void CheckPointerCursorInDifferentScreenMode(TSizeMode aMode,TPoint aOrigin);
 	void SimulateAndCheck(TPoint aOrigin,TSize aScale,TInt aXOffset,TInt aYOffset,TPointerEvent::TType aEventType,TRect aPointerCursorArea);
-	void AddExpectedKey(TInt aEventCode, TInt aScanCode, TInt aCode=0, TInt aRepeats=0, TUint aModifiers=0);
-	void AddExpectedKeyDownUp(TInt aScanCode, TInt aCode=0, TInt aRepeats=0, TUint aModifiers=0);
+	void AddExpectedKey(TInt aEventCode, TInt aScanCode, TInt aCode=0, TInt aRepeats=0, TUint aModifiers=KModifiersIgnore);
+	void AddExpectedKeyDownUp(TInt aScanCode, TInt aCode=0, TInt aRepeats=0, TUint aModifiers=KModifiersIgnore);
 	void AddExpectedEvent(TInt aEventCode, CTWinBase* aWin);
 	void AddExpectedEvent(TInt aEventCode);
 	void AddExpectedEvent(TInt aEventCode,RWindowGroup* aWindow);
@@ -358,6 +368,11 @@ private:
 #endif
 	void TestCaptureAndCancelCapturePair(TCaptureKeyApis aCaptureApi, TCancelCaptureKeyApis aCancelCaptureApi);
 	static TInt GenerateAnEvent(TAny* aEventTest);
+	void CheckLongkeyCaptureWithPriority(TLongkeyCapPriorityTests aTestType);
+	void DelayForRepeatEvents(TInt aNumeratorFracVal, TInt aDenominatorFracVal);
+#ifndef TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA 	
+	void SpawnCaptureAppL(RProcess& aProcess);
+#endif
 private:
 	CTBlankWindow* iBlankWin;
 	RBlankWindow iBackingWindow;
@@ -390,13 +405,17 @@ private:
 	TBool iIs3DPointer;
 	TBool iPtrPluginLoaded;
 	TInt iYOffset;
-#ifdef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS	
+	TTimeIntervalMicroSeconds32 iKeyBoardRepeatInitialDelay;
+	TTimeIntervalMicroSeconds32 iKeyBoardRepeatNextDelay;
 #ifndef TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA 	
+	RProcess iCaptureApp1;
+	RProcess iCaptureApp2;
+#ifdef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS	
 	TSurfaceId iSurfaceId;
 	RSurfaceManager iSurfaceManager;
 	CPeriodic* iTimeOutCallback;
-#endif // TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA
 #endif // SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS
+#endif // TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA
 	};
 
 class CTQueueWindowGroup : public CTWindowGroup

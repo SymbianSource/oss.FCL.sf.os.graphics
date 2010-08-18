@@ -27,6 +27,8 @@
 _LIT(KExecResultQueueName, "EGLEndpointExecTestEnvResultQueue");
 _LIT(KExecParamsQueueName, "EGLEndpointExecTestEnvParamsQueue");
 
+// For description of the work done as part of this class, see the 
+// egltest_endpoint_engine_execthread.cpp
 NONSHARABLE_CLASS(CEgltest_Local_Engine_Exec): public CBase
     {
 public:
@@ -36,7 +38,7 @@ public:
     static CEgltest_Local_Engine_Exec* NewL();
     CTestExecuteLogger &Logger() { return iLogger; }
     void SetTestStepResult(TVerdict aVerdict);
-    TVerdict TestStepResult(void) const;
+    TVerdict TestStepResult() const;
     void TidyUp();
     void SetUpL();
     
@@ -45,7 +47,6 @@ private:
     static void ThreadEntryL();
     TInt ThreadLoopL();
     void ConstructL();
-    void LogDump(const TEngineTestCase& aCase);
     void SendResult(const TExecResult &aResult);
     
 private:

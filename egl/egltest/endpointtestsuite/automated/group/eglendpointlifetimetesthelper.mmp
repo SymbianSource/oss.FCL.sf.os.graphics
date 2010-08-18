@@ -46,7 +46,8 @@ SOURCE                  egltest_endpointimagelifetime.cpp
 LIBRARY					rfileloggerclient.lib
 LIBRARY                 euser.lib
 LIBRARY                 libEGL.lib
-library         		libOpenVG.lib
+LIBRARY         		libOpenVG.lib
+LIBRARY                 libOpenVGU.lib
 LIBRARY                 testexecuteutils.lib
 LIBRARY                 testexecutelogclient.lib
 LIBRARY                 ws32.lib

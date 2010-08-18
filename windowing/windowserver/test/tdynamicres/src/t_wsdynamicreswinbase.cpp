@@ -526,7 +526,9 @@ void CWsDynamicResWinBase::RepaintTitleWindowL()
 		for (TInt index=0;index<KMaxInfoLines;index++)
 			{
 			if (iTestInfo[index].Length())
+			    {
 				iInfoGc->DrawText(iTestInfo[index],textRect,textRect.Size().iHeight*3/4,iInfoGc->ECenter);
+			    }
 			textRect.Move(0,rowHeight);
 			}
 		iInfoGc->DiscardFont();

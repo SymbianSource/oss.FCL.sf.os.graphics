@@ -1,4 +1,5 @@
 /* Copyright (c) 2009-2010 The Khronos Group Inc.
+ * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -258,17 +259,15 @@ wfcCreateOnScreenContext(WFCDevice dev,
     {
         screenNumber = OWF_Screen_GetDefaultNumber();
     }
-    else
+    
+    /* check screen number validity */
+    if (!OWF_Screen_Valid(screenNumber))
     {
-        /* check screen number validity */
-        if (!OWF_Screen_Valid(screenNumber))
-        {
-            FAIL(WFC_ERROR_UNSUPPORTED, WFC_INVALID_HANDLE);
-        }
+        FAIL(WFC_ERROR_UNSUPPORTED, WFC_INVALID_HANDLE);
     }
 
     /* check that no other context currently uses this screen */
-    if (!OWF_Screen_Valid_And_Available(screenNumber))
+    if (WFC_Device_FindScreenNumber(screenNumber))
     {
         FAIL(WFC_ERROR_IN_USE, WFC_INVALID_HANDLE);
     }
@@ -1015,6 +1014,8 @@ extwfcGetOnScreenStream(WFCDevice dev, WFCContext ctx) WFC_APIEXIT
 	/* Protect context's target stream from being destroyed by the user
 	 * WFC_CONTEXT_Dtor will reset this flag. */
 	owfNativeStreamSetProtectionFlag(context->stream, OWF_TRUE);
+	
+	OWF_DisplayContext_FlagInternalStreamAccessed(context->displayContext);
 
 	SUCCEED(context->stream);
 }

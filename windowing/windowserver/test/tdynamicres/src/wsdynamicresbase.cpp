@@ -144,70 +144,6 @@ void CWsDynamicResBase::Pause(TInt aMilliseconds)
 	User::After(TTimeIntervalMicroSeconds32(aMilliseconds * 1000));
 	}
 
-/**	Creates the normal scenario used by these tests.
- *  With a large window behind and small window in front.
- *  If the windows already exist then they are just repositioned and redrawn.
- * 	@param	aOuterRect	Position of back window
- * 	@param	aOuterColor	Background colour for back window
- * 	@param	aInnerRect	Position of front window
- * 	@param	aInnerColor	Background colour for front window
- * 
- **/
-void CWsDynamicResBase::MakeTestWindowPairL(TRect aOuterRect,TRgb aOuterColor,TRect aInnerRect,TRgb aInnerColor)
-	{
-	if (!iTestBack.WsHandle())
-		{
-		iTestBack=RWindow(iSession);
-		ASSERT_EQUALS_X(iTestBack.Construct(iGroup, ++iWindowHandle), KErrNone);
-#ifdef  FLICKER
-		iTestBack.Activate();
-#endif
-		iTestBack.SetRequiredDisplayMode(iDisplayMode);
-		iTestBack.SetBackgroundColor(aOuterColor);
-		iTestBack.SetExtent(aOuterRect.iTl,aOuterRect.Size());
-#ifndef FLICKER
-		iTestBack.Activate();
-#endif
-		}
-	else
-		{
-		iTestBack.SetRequiredDisplayMode(iDisplayMode);
-		iTestBack.SetBackgroundColor(aOuterColor);
-		iTestBack.SetExtent(aOuterRect.iTl,aOuterRect.Size());
-		}
-	iTestBack.BeginRedraw();
-	ActivateWithWipe(iGc,iTestBack,aOuterColor);
-	iGc->Deactivate();
-	iTestBack.EndRedraw();
-	iTestBack.SetVisible(ETrue);
-	
-	if (!iTestFront.WsHandle())
-		{
-		iTestFront=RWindow(iSession);
-		ASSERT_EQUALS_X(iTestFront.Construct(iGroup, ++iWindowHandle), KErrNone);
-#ifdef FLICKER
-		iTestFront.Activate();
-#endif
-		iTestFront.SetRequiredDisplayMode(iDisplayMode);
-		iTestFront.SetBackgroundColor(aInnerColor);	
-		iTestFront.SetExtent(aInnerRect.iTl,aInnerRect.Size());
-
-#ifndef FLICKER
-		iTestFront.Activate();
-#endif
-		}
-	else
-		{
-		iTestFront.SetRequiredDisplayMode(iDisplayMode);
-		iTestFront.SetBackgroundColor(aInnerColor);
-		iTestFront.SetExtent(aInnerRect.iTl,aInnerRect.Size());
-		}
-	
-	DrawPlainUI(iTestFront,EFalse,aInnerColor);
-	iTestFront.SetVisible(ETrue);
-	
-	}
-
 void CWsDynamicResBase::LargerTestWindow(TInt aPercentOfBack)
 	{
 	TRect newPos=iTestPos;
@@ -221,72 +157,6 @@ void CWsDynamicResBase::LargerTestWindow(TInt aPercentOfBack)
 	
 	}
 
-/** Destroys some or all of the test windows so the test can loop (or test the state after destruction.
- *  The windows are destroyed when the test exits normally.
- * 	Child windows are automatically killed when parent window is killed!
- * 
- **/
-void CWsDynamicResBase::DestroyTestWindowPair(TBool aKillTestBack,TBool aKillTestFront,TBool aKillTestChildren)
-	{
-	if (aKillTestBack && iTestBack.WsHandle())
-		{
-		iTestBack.Close();
-		}
-	if (aKillTestFront && iTestFront.WsHandle())
-		{
-		iTestFront.Close();
-		}
-	if (aKillTestChildren)
-		{
-		if (iTestChild.WsHandle())
-			{
-			iTestChild.Close();
-			}
-		if (iTestSecondChild.WsHandle())
-			{
-			iTestSecondChild.Close();
-			}
-		}
-	}
-/**	Creates a child window inside the front window of the usual test scenario
-*  With a large window behind and small window in front.
- *  If the windows already exist then they are just repositioned and redrawn.
- * 	@param	aOuterRect	Position of back window
- * 	@param	aOuterColor	Background colour for back window
- * 	@param	aInnerRect	Position of front window
- * 	@param	aInnerColor	Background colour for front window
- * 	@param	aChildRect	Position of child window
- * 	@param	aChildColor	Background colour for child window
- * 	@param	aSecondChildRect	Position of Second child window
- * 	@param	aSecondChildColor	Background colour for Second child window
- * 
- **/
-void CWsDynamicResBase::MakeTestWindowTripleL(TRect aOuterRect,TRgb aOuterColor,TRect aInnerRect,TRgb aInnerColor,TRect aChildRect,TRgb aChildColor,TRect aSecondChildRect,TRgb aSecondChildColor)
-	{
-	MakeTestWindowTripleL(aOuterRect,aOuterColor,aInnerRect,aInnerColor,aChildRect,aChildColor);
-
-	MakeExtraChildWindowL(iTestChild,aSecondChildRect,aSecondChildColor);
-	}
-
-/**	Creates a child window inside the front window of the usual test scenario
-*  With a large window behind and small window in front.
- *  If the windows already exist then they are just repositioned and redrawn.
- * 	@param	aOuterRect	Position of back window
- * 	@param	aOuterColor	Background colour for back window
- * 	@param	aInnerRect	Position of front window
- * 	@param	aInnerColor	Background colour for front window
- * 	@param	aChildRect	Position of child window
- * 	@param	aChildColor	Background colour for child window
- *  @param	aSecondChildRect	Position of second child window
- * 	@param	aSecondChildColor	Background colour for second child window
- * 
- **/
-void CWsDynamicResBase::CreateTestWindowQuadL(TRect aOuterRect,TRgb aOuterColor,TRect aInnerRect,TRgb aInnerColor,TRect aChildRect,TRgb aChildColor,TRect aSecondChildRect,TRgb aSecondChildColor)
-	{
-	MakeTestWindowTripleL(aOuterRect,aOuterColor,aInnerRect,aInnerColor,aChildRect,aChildColor);
-	
-	MakeExtraChildWindowL(iTestFront,aSecondChildRect,aSecondChildColor);
-	}
 
 void CWsDynamicResBase::MakeExtraChildWindowL(const RWindowBase& aFromParent,TRect aChildRect,TRgb aChildColor)
 	{
@@ -347,39 +217,6 @@ CWindowGc*	CWsDynamicResBase::BeginActivateWithWipe(const TRegion& aRegion,RWind
 	return CWsDynamicResWinBase::BeginActivateWithWipe(aRegion,aWin,aColor);
 	}
 
-/**	Creates a child window inside the front window of the usual test scenario
-*  With a large window behind and small window in front.
- *  If the windows already exist then they are just repositioned and redrawn.
- * 	@param	aOuterRect	Position of back window
- * 	@param	aOuterColor	Background colour for back window
- * 	@param	aInnerRect	Position of front window
- * 	@param	aInnerColor	Background colour for front window
- * 	@param	aChildRect	Position of child window
- * 	@param	aChildColor	Background colour for child window
- * 
- **/
-void CWsDynamicResBase::MakeTestWindowTripleL(TRect aOuterRect,TRgb aOuterColor,TRect aInnerRect,TRgb aInnerColor,TRect aChildRect,TRgb aChildColor)
-	{
-	MakeTestWindowPairL(aOuterRect,aOuterColor,aInnerRect,aInnerColor);
-	ASSERT(iTestFront.WsHandle());
-	
-	if (!iTestChild.WsHandle())
-		{
-		iTestChild=RWindow(iSession);
-		ASSERT_EQUALS_X(iTestChild.Construct(iTestFront, ++iWindowHandle), KErrNone);
-		iTestChild.SetRequiredDisplayMode(iDisplayMode);
-		}
-	iTestChild.SetBackgroundColor(aChildColor);
-	iTestChild.SetExtent(aChildRect.iTl,aChildRect.Size());
-	iTestChild.Activate();
-	iTestChild.BeginRedraw();
-	iGc->Activate(iCompare);
-	iGc->SetBrushColor(iBlue);
-	iGc->Clear();
-	iGc->Deactivate();
-	iTestChild.EndRedraw();
-	iTestChild.SetVisible(ETrue);
-	}
 /**	
  * 	Generates a valid surfaceID for the current display mode.
  * 	This is then used in negative testing.
