@@ -182,6 +182,10 @@ CWsWindowGroup *CKeyboardRepeat::iFocus=NULL;
 TBool CKeyboardRepeat::iAlternateRepeatExists=EFalse;
 CWsCaptureLongKey* CKeyboardRepeat::iLongCapture=NULL;
 
+TTimeIntervalMicroSeconds TWindowServerEvent::iPauseInterval;
+TTime TWindowServerEvent::iPauseStartTime;
+TInt TWindowServerEvent::iConfigationPauseTime = 0;
+
 
 void TWindowServerEvent::DeleteHotKeys()
 	{
@@ -241,6 +245,9 @@ void TWindowServerEvent::InitStaticsL()
 	iEventHandlers=RArray<TRawEventHandler>(2);
 	iNotificationHandlers=new(ELeave) CArrayFixFlat<SNotificationHandler>(2);
 	iDrawerHandlers = new(ELeave) RArray<TDrawerHandler>(4);
+	iPauseInterval = TTimeIntervalMicroSeconds(0);
+   _LIT(KWSERVIniFileVarEventsPauseAfterRotation,"SUPPRESSEVENTSTIMEAFTERROTATION");
+    WsIniFile->FindVar(KWSERVIniFileVarEventsPauseAfterRotation,iConfigationPauseTime);
 	}
 
 void TWindowServerEvent::LinkHotKey(CWsHotKey *aWsHotKey)
@@ -326,6 +333,9 @@ void TWindowServerEvent::AddEventHandler(MEventHandler *aEventHandler, TBool aAd
 #else
 	iEventHandlers.AppendL(TRawEventHandler(aEventHandler, aAdvancedPointersEnabled));	//Shouldn't leave
 #endif
+#ifdef LOG_WSERV_EVENTS
+	RDebug::Printf("{EVNT}TWindowServerEvent::AddEventHandler Added Handler = %d Advanced Pointers Enabled = %d", iEventHandlers.Count(),aAdvancedPointersEnabled);
+#endif
 	}
 
 void TWindowServerEvent::RemoveEventHandler(const MEventHandler *aEventHandler)
@@ -336,6 +346,9 @@ void TWindowServerEvent::RemoveEventHandler(const MEventHandler *aEventHandler)
 		{
 		if (iEventHandlers[ii].iEventHandler==aEventHandler)
 			{
+#ifdef LOG_WSERV_EVENTS
+		    RDebug::Printf("{EVNT}TWindowServerEvent::RemoveEventHandler Removed Handler = %d",ii);
+#endif
 			if (iEventHandlerCount>0)  
 				{
 				iBinaryFlags |= ERemovedEventHandlerWhileProcessingRawEvents;
@@ -937,16 +950,62 @@ LOCAL_D void SendEventToKeyClick(const TRawEvent& aRawEvent)
 		}
 	}
 
+/*
+ Pause in processing all raw pointer and key events (except processing by anim's dll plug-ins).
+ All events will be ignored except for anim's dll plug-ins.
+ Pause prevents pointer events to come to wrong windows due to screen width and size changes. 
+ @param aPauseInterval - the pause interval in microseconds.
+*/
+void TWindowServerEvent::PauseProcessRawEvents(TInt aPauseInterval)
+    {
+    iPauseInterval = TTimeIntervalMicroSeconds(aPauseInterval);
+    iPauseStartTime.UniversalTime();
+#ifdef LOG_WSERV_EVENTS
+     RDebug::Printf("{EVNT}TWindowServerEvent::PauseProcessRawEvents aPauseInterval = %d",aPauseInterval);
+#endif
+    }
+
 void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
 //
 // Event has completed.
 //
 	{
+    TBool pauseProcessEvents = EFalse;
+    //Check if the pause in processing all raw pointer and key events was set.
+    if(iPauseInterval.Int64() > 0)
+        {
+        TTime current;
+        current.UniversalTime();
+        TTimeIntervalMicroSeconds interval = current.MicroSecondsFrom(
+                iPauseStartTime);
+        if ((interval.Int64() > iPauseInterval.Int64()) || (interval.Int64() < 0))
+            {
+            iPauseInterval = TTimeIntervalMicroSeconds(0);
+            }
+        else
+            {
+            // Set flag ignore of processing all raw events (except processing by anim's dll plug-ins)
+            // All events will be ignored except for anim's dll plug-ins.
+            pauseProcessEvents = ETrue;
+            }
+        }
+
+#ifdef LOG_WSERV_EVENTS
+    if(pauseProcessEvents)
+        RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Processing of Raw Event - DISABLED");
+    else
+        RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Processing of Raw Event - ENABLED");
+#endif
+    
 	TRawEvent::TType eventType = aRawEvent.Type();
 	TBool isPointerEvent = TWsPointer::IsPointerEventType(eventType);
 	if (isPointerEvent)
 		{
-		TWsPointer::UpdatePrimaryPointer(aRawEvent);
+#ifdef LOG_WSERV_EVENTS
+        RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent EventType = 0x0%X PointerNumber = %d PrimaryPointerNumber = %d XY(%d,%d)", 
+                aRawEvent.Type(),aRawEvent.PointerNumber(),TWsPointer::PrimaryPointer(),aRawEvent.Pos().iX,aRawEvent.Pos().iY); 
+#endif
+        TWsPointer::UpdatePrimaryPointer(aRawEvent);
 		}
 	TInt count=iEventHandlers.Count();
 	TInt ii;
@@ -966,6 +1025,9 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
 				SendEventToKeyClick(aRawEvent);
 				}
 			eventHandled = ETrue;
+#ifdef LOG_WSERV_EVENTS
+            RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Event Consumed by Handler No = %d Advanced Pointers Enabled = %d",ii,handler.iAdvancedPointersEnabled);
+#endif
 			break;
 			}
 		}
@@ -980,14 +1042,44 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
 				}
 			}
 		}
-	if (eventHandled)
+	if ((eventHandled)||(pauseProcessEvents))
 		{
 		if (isPointerEvent)
-			{
-			TWsPointer::RollbackPrimaryPointer();
+			{ 
+              //Prevention of the phone pointer event "dead lock". 
+              TPointerEvent::TType type;
+              TBool handled = ETrue;
+              GetPointerEvent(type, aRawEvent, handled);
+              switch(type)
+                  {
+                  case TPointerEvent::EButton1Down:
+                  case TPointerEvent::EButton2Down:
+                  case TPointerEvent::EButton3Down:
+                      TWsPointer::iPointers[aRawEvent.PointerNumber()].iState = TWsPointer::EPointerStateDown;
+                      break;
+                  case TPointerEvent::EButton1Up:
+                  case TPointerEvent::EButton2Up:
+                  case TPointerEvent::EButton3Up:
+                      TWsPointer::iPointers[aRawEvent.PointerNumber()].iState = TWsPointer::EPointerStateUp;
+                      break;
+                  case TPointerEvent::EOutOfRange:
+                      TWsPointer::iPointers[aRawEvent.PointerNumber()].iState = TWsPointer::EPointerStateOutOfRange;
+                      break;
+                      default:
+                      break;
+                  }
+#ifdef LOG_WSERV_EVENTS
+            RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Pointer Number= %d  State = %x XY(%d,%d)",TWsPointer::iPointers[0].iNumber,TWsPointer::iPointers[0].iState,TWsPointer::iPointers[0].iPos.iX,TWsPointer::iPointers[0].iPos.iY);
+            RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Pointer Number= %d  State = %x XY(%d,%d)",TWsPointer::iPointers[1].iNumber,TWsPointer::iPointers[1].iState,TWsPointer::iPointers[1].iPos.iX,TWsPointer::iPointers[1].iPos.iY);
+#endif
 			}
+#ifdef LOG_WSERV_EVENTS
+		if(pauseProcessEvents)
+		    RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Further Processing of Raw Event - IGNORED");
+#endif
 		return;
 		}
+	
 	switch(eventType)
 		{
 		case TRawEvent::ERedraw:
@@ -1112,6 +1204,10 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
 		default:
 			break;
 		}
+#ifdef LOG_WSERV_EVENTS
+    RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Pointer Number= %d  State = %x XY(%d,%d)",TWsPointer::iPointers[0].iNumber,TWsPointer::iPointers[0].iState,TWsPointer::iPointers[0].iPos.iX,TWsPointer::iPointers[0].iPos.iY);
+    RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Pointer Number= %d  State = %x XY(%d,%d)",TWsPointer::iPointers[1].iNumber,TWsPointer::iPointers[1].iState,TWsPointer::iPointers[1].iPos.iX,TWsPointer::iPointers[1].iPos.iY);
+#endif
 	}
 
 void TWindowServerEvent::ProcessKeyEvent(const TKeyEvent &aKeyEvent,TInt aRepeats)

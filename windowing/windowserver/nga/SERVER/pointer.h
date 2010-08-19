@@ -42,6 +42,7 @@ private:
 
 class TWsPointer : public CWsPointerTimer::MPointerTimerCallback
 	{
+friend class TWindowServerEvent;
 	enum {EPointerUpdateGapInMicroSeconds=50000};
 	enum TPointerState
 		{
