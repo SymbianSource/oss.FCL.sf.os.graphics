@@ -36,9 +36,11 @@ PRJ_EXPORTS
 ../ldd/inc/virtualvideohwdeviceinterface.h	OS_LAYER_PLATFORM_EXPORT_PATH(graphics/virtualvideohwdeviceinterface.h)
 ../ldd/inc/virtualvideohwinterface.h		OS_LAYER_PLATFORM_EXPORT_PATH(graphics/virtualvideohwinterface.h)
 ../ldd/inc/virtualvideotracing.h			OS_LAYER_PLATFORM_EXPORT_PATH(graphics/virtualvideotracing.h)
+../eabi/guestvideohwapiu.def				/epoc32/include/def/eabi/guestvideohwapiu.def
 ../eabi/guestvideodriveru.def				/epoc32/include/def/eabi/guestvideodriveru.def
 ../eabi/guestvideohwu.def					/epoc32/include/def/eabi/guestvideohwu.def
 
 PRJ_MMPFILES
 guestvideodriverlib.mmp
 guestvideohwlib.mmp
+guestvideohwapilib.mmp
