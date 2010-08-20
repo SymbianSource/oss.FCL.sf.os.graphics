@@ -1,10 +1,10 @@
 EXPORTS
-	_ZN19RGuestVideoDriver5FlushEv @ 1 NONAME
-	_ZN19RGuestVideoDriver14ExecuteCommandER22RemoteFunctionCallData @ 2 NONAME
-	_ZN19RGuestVideoDriver14MapToHWAddressEiRm @ 3 NONAME
-	_ZN19RGuestVideoDriver4OpenEv @ 4 NONAME
-	_ZN19RGuestVideoDriverC1Ev @ 5 NONAME
-	_ZN19RGuestVideoDriverC2Ev @ 6 NONAME
-	_ZN19RGuestVideoDriverD1Ev @ 7 NONAME
-	_ZN19RGuestVideoDriverD2Ev @ 8 NONAME
-	_ZN19RGuestVideoDriver15EglGetSgHandlesEyPy @ 9 NONAME
+        _ZN17RGuestVideoDriver14ExecuteCommandER22RemoteFunctionCallData @ 1 NONAME
+        _ZN17RGuestVideoDriver14MapToHWAddressEiRm @ 2 NONAME
+        _ZN17RGuestVideoDriver15EglGetSgHandlesEyPy @ 3 NONAME
+        _ZN17RGuestVideoDriver4OpenEv @ 4 NONAME
+        _ZN17RGuestVideoDriver5FlushEv @ 5 NONAME
+        _ZN17RGuestVideoDriverC1Ev @ 6 NONAME
+        _ZN17RGuestVideoDriverC2Ev @ 7 NONAME
+        _ZN17RGuestVideoDriverD1Ev @ 8 NONAME
+        _ZN17RGuestVideoDriverD2Ev @ 9 NONAME

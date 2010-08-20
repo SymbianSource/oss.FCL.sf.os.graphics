@@ -27,4 +27,7 @@ PRJ_EXPORTS
 ../eabi/reqhandlerextensionu.def		/epoc32/include/def/eabi/reqhandlerextensionu.def
 
 PRJ_MMPFILES
+
+#ifdef FAISALMEMON_S4_SGIMAGE
 reqhandlerextensionlib.mmp
+#endif
