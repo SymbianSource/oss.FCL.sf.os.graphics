@@ -14,9 +14,11 @@
 // Guest side Virtual Video Driver Interface for adaptation layer software use
 //
 // This interface component provides an interface for adapt layer callers
-// only so one adapt layer package can call another adapy layer package.
+// only so one adapt layer package can call another adapt layer package.
 // The graphics package, nor any other app, mw, or os layer package may
 // call this interface.
+
+#include "../ldd/group/bld.inf"
 
 PRJ_PLATFORMS
 ARMV5
@@ -34,6 +36,8 @@ PRJ_EXPORTS
 ../ldd/inc/virtualvideohwdeviceinterface.h	OS_LAYER_PLATFORM_EXPORT_PATH(graphics/virtualvideohwdeviceinterface.h)
 ../ldd/inc/virtualvideohwinterface.h		OS_LAYER_PLATFORM_EXPORT_PATH(graphics/virtualvideohwinterface.h)
 ../ldd/inc/virtualvideotracing.h			OS_LAYER_PLATFORM_EXPORT_PATH(graphics/virtualvideotracing.h)
+../eabi/guestvideodriveru.def				/epoc32/include/def/eabi/guestvideodriveru.def
+../eabi/guestvideohwu.def					/epoc32/include/def/eabi/guestvideohwu.def
 
 PRJ_MMPFILES
 guestvideodriverlib.mmp

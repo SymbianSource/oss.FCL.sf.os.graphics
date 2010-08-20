@@ -1,0 +1,6 @@
+EXPORTS
+	_ZN19ReqHandlerExtension20CreateSgImagePbufferERK16TSgImageMetaData @ 1 NONAME
+	_ZN19ReqHandlerExtension20CreateSgImageVGImageERK16TSgImageMetaData @ 2 NONAME
+	_ZN19ReqHandlerExtension13SetReqHandlerEP19MReqHandlerCallback @ 3 NONAME
+	_ZN19ReqHandlerExtension14DestroySgImageEy @ 4 NONAME
+

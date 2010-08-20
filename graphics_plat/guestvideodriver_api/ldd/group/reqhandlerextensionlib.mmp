@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -11,14 +11,13 @@
 // Contributors:
 //
 // Description:
-// surfacemanager_ref.iby
-//
+// Provide a library interface for the request handler extension.
+// The implementation is expected to be provided by the graphics.simulator
+// package.
 
-#ifndef __SURFACEMANAGER_IBY__
-#define __SURFACEMANAGER_IBY__
+#include <platform_paths.hrh>
 
-#include <graphics_adaptation.hby>
-#include SURFACEMANAGER_DRV
+TARGET          reqhandlerextension.lib
+TARGETTYPE      IMPLIB
+DEFFILE         ../eabi/reqhandlerextension.def
 
-
-#endif

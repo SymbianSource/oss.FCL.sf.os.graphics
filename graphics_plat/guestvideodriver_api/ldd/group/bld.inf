@@ -11,17 +11,20 @@
 // Contributors:
 //
 // Description:
-// User side interface for the surface manager
+// Request Handler Extension Interface
+//
+// This interface component provides an interface for adapt layer callers
+// only so one adapt layer package can call another adapt layer package.
+// The graphics package, nor any other app, mw, or os layer package may
+// call this interface.
+
 
 PRJ_PLATFORMS
-BASEDEFAULT
+ARMV5
 
 PRJ_EXPORTS
-../inc/surfacemanager.h			OS_LAYER_PLATFORM_EXPORT_PATH(graphics/surfacemanager.h)
-../inc/surface_hints.h			OS_LAYER_PLATFORM_EXPORT_PATH(graphics/surface_hints.h)
-surfacemanager.iby				/epoc32/rom/include/surfacemanager.iby
-../bwins/surfacemanageru.def	/epoc32/include/def/win32/surfacemanageru.def
-../eabi/surfacemanageru.def		/epoc32/include/def/eabi/surfacemanageru.def
+
+../eabi/reqhandlerextensionu.def		/epoc32/include/def/eabi/reqhandlerextensionu.def
 
 PRJ_MMPFILES
-surfacemanagerlib.mmp
+reqhandlerextensionlib.mmp
