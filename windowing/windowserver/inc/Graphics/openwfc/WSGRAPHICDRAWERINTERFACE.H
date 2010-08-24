@@ -849,7 +849,11 @@ public:
 		EAlphaChannelTransparencyEnabled,
 		/** True if a clipping rect should be applied when drawing a standard text cursor, false otherwise.
 		The default value is false. */
-		ECursorClipRectSet
+		ECursorClipRectSet,
+		/** Implicitly defaults to true. Will remain true as long as the application's primary screendevice 
+		is in the same orientation as the device. This information is only given for top-windows, 
+		i.e. children of group-windows, and only when wsini.ini is configured with SIZE_MODE > 0. */
+		EScreenDeviceValid
 		};
 	/**
 	 This enum encapsulates the set of non-boolean attribute changes that can be observed

@@ -1,4 +1,4 @@
-rem Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+rem Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 rem All rights reserved.
 rem This component and the accompanying materials are made available
 rem under the terms of "Eclipse Public License v1.0"
@@ -22,6 +22,7 @@ call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/h4hrp_graphics2_armv5
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/h4hrp_graphics3_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/h4hrp_graphics3a_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 3600 --sendFiles "stress_tests,stress_tests;functional_tests,functional_tests" --retrieveFiles "functional_results_copy/test_results,functional_results/test_results;functional_tests,functional_results/functional_tests;stress_results_copy/test_results,stress_results/test_results"
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/h4hrp_graphics4_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400
+call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/h4hrp_graphics4yshifting_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/h4hrp_graphics4ct_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/h4hrp_graphics5a_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/h4hrp_graphics5b_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400

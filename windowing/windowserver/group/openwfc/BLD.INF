@@ -382,6 +382,7 @@ PRJ_TESTEXPORTS
 ../../test/scripts/wspointershifttest_run.bat				z:/wstest/wspointershifttest_run.bat
 ../../test/scripts/epoc_pointershift.ini					z:/wstest/epoc_pointershift.ini
 ../../group/wsini_pointershift_wins.ini					z:/wstest/wsini_pointershift_wins.ini
+../../group/wsini_pointershift.ini				/epoc32/data/z/system/data/wsini_pointershift.ini
 
 #endif // SYMBIAN_BUILD_GCE
 

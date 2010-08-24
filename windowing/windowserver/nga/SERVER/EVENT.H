@@ -38,7 +38,7 @@ class CWsCaptureLongKey;
 class CScreen;
 class DWsScreenDevice;
 
-const TInt KRetryInitialDelay = 100000; //0.01 second
+const TInt KRetryInitialDelay = 100000; //0.1 second
 
 struct TEventRequestItem
 	{
@@ -222,6 +222,9 @@ public:
 	static void NotifyScreenDrawingEvent(const TRegion* aRegion);
 	static void NotifyScreenDrawingEvent(const TRect& aRect);
 	static inline const CRawEventReceiver* EventReceiver() {return iEventReceiver;}
+	static void PauseProcessRawEvents(TInt aPauseInterval);
+	static inline TInt GetConfigationPauseTime();
+	
 private:
 	class TRawEventHandler
 		{
@@ -260,6 +263,14 @@ private:
 	static RArray<TWsEventHandler> iWsEventHandlers;
 	static TUint32 iBinaryFlags;
 	static TInt iEventHandlerCount;
+
+	// For supporting a pause in processing raw events after rotation.
+	// Pause in processing all raw pointer and key events (except processing by anim's dll plug-ins).
+	// All events will be ignored except for anim's dll plug-ins.
+	static TTimeIntervalMicroSeconds iPauseInterval;
+	static TTime iPauseStartTime;
+	 // Filled from wsini.ini  , example:  SUPPRESSEVENTSTIMEAFTERROTATION   700000 //(0.7sec) 
+	static TInt iConfigationPauseTime;
 	};
 
 
@@ -307,5 +318,7 @@ inline void TWindowServerEvent::RemoveFromScreenDeviceChangeEventList(const CWsW
 	{iScreenDeviceChangedQueue.RemoveFromEventRequestListL(aWindow);}
 inline TInt TWindowServerEvent::GetStoredModifierState()
 	{return(iModifierState);}
+inline TInt TWindowServerEvent::GetConfigationPauseTime()
+    {return(iConfigationPauseTime);}
 
 #endif

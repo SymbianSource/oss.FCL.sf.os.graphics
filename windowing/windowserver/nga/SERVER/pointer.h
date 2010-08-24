@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -42,6 +42,7 @@ private:
 
 class TWsPointer : public CWsPointerTimer::MPointerTimerCallback
 	{
+friend class TWindowServerEvent;
 	enum {EPointerUpdateGapInMicroSeconds=50000};
 	enum TPointerState
 		{
@@ -229,7 +230,10 @@ private:
 	static TInt iExitHighPressureThreshold;
 	
 	/** Used to offset the y pointer */
-	static TInt iYOffset;
+	/** upgraded to use dynamic value */
+	static TInt iYOffsetTop;
+	static TInt iYOffsetBottom;
+	static TInt iYOffsetMax;
 	
 #if defined(__WINS__)
 	/** Tell whether to rotate pointer coords in _WINS_ builds */

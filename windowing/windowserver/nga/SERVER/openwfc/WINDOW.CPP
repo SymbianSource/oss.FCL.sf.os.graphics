@@ -674,6 +674,11 @@ void CWsWindow::SendState(MWsWindowTreeObserver& aWindowTreeObserver) const
 		aWindowTreeObserver.FlagChanged(*this, MWsWindowTreeObserver::ENonFading, ETrue); 
 		}
 	
+	if(IsTopClientWindow() && (iFlags&EFlagScreenDeviceInvalid) )
+		{
+		aWindowTreeObserver.FlagChanged(*this, MWsWindowTreeObserver::EScreenDeviceValid, EFalse);
+		}
+	
 	if(iAnimList)
 		iAnimList->SendState(aWindowTreeObserver);
 	

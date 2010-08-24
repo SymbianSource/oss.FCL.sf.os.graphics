@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1998-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -22,7 +22,7 @@
 // Default stack size(8K) is too small and causes stack overflow
 // in the hardware test udeb
 EPOCSTACKSIZE   16384
-EPOCHEAPSIZE    0x10000 0x200000		
+EPOCHEAPSIZE    0x10000 0x400000		
 					
 target          fbserv.exe
 
@@ -35,6 +35,7 @@ VENDORID        0x70000001
 
 userinclude     ../inc
 userinclude     ../sfbs
+userinclude     ../traces_FBSERV
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 OS_LAYER_ESTLIB_SYSTEMINCLUDE

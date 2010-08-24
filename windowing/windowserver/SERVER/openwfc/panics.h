@@ -160,7 +160,7 @@ enum TWservPanic
 	EWsPanicUnexpectedBitmapHandleInArray = 125,     //Bitmap handle in array with no matching bitmap object in bitmap ref array
 	EWsPanicBitmapNotFound = 126,           //Failed to find a bitmap in the bitmap ref array
 	EWsPanicInvalidRotation = 127,			//Invalid rotation used
-	EWsPanicInvalidPointerOffset = 128,      //The pointer offset value in wsini.ini is invalid.
+	EWsPanicInvalidPointerOffset = 128,//NOT USED	//The pointer offset value in wsini.ini is invalid.
 	EWsPanicArrayInsertFailed = 129,	//Array insert failed.           
 	EWsPanicCompleteNullMessage = 130,		//RMessage2 is NULL prior to calling Complete().
 	};

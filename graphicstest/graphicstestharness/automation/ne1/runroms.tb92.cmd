@@ -1,4 +1,4 @@
-rem Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+rem Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 rem All rights reserved.
 rem This component and the accompanying materials are made available
 rem under the terms of "Eclipse Public License v1.0"
@@ -20,6 +20,7 @@ call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/naviengine_graphics1a
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/naviengine_graphics2_armv5_auto" --nandLoader %1 --resource %2 --jobId %3 --timeout 120 --listenTimeout 2400 --transferMode serial
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/naviengine_graphics3_armv5_auto" --nandLoader %1 --resource %2 --jobId %3 --timeout 60 --listenTimeout 2400 --transferMode serial
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/naviengine_graphics4_armv5_auto" --nandLoader %1 --resource %2 --jobId %3 --timeout 120 --listenTimeout 2400 --transferMode serial
+call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/naviengine_graphics4yshifting_auto" --nandLoader %1 --resource %2 --jobId %3 --timeout 120 --listenTimeout 2400 --transferMode serial
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/naviengine_graphics4ct_armv5_auto" --nandLoader %1 --resource %2 --jobId %3 --timeout 120 --listenTimeout 2400 --transferMode serial
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/naviengine_graphics5a_armv5_auto" --nandLoader %1 --resource %2 --jobId %3 --timeout 240 --listenTimeout 2400 --transferMode serial
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/naviengine_graphics5b_armv5_auto" --nandLoader %1 --resource %2 --jobId %3 --timeout 60 --listenTimeout 2400 --transferMode serial

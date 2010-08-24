@@ -225,6 +225,9 @@ TESTEXECUTE, C:\logs\testexecute\graphics-wserv-screenconstruct-screenconstruct.
 TESTEXECUTE, C:\logs\testexecute\graphics-wserv-screenconstruct-scrmodes.htm,			, z:\wstest\screenconstruct\graphics-wserv-screenconstruct-scrmodes.script, 300,  , z\wstest\screenconstruct\tscreenconstruct.bat install scrmodes, z\wstest\screenconstruct\tscreenconstruct.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\wservstresstest.htm,		, z:\wstest\wservstresstest.script, 4200
 
+# DevCR SIMR-7TBHYR tests and defect fix ou1cimx1#435306 Gradual reduction of Yoffset in wserv for better UI experinece
+TESTEXECUTE, C:\logs\testexecute\wstest_t_pointershifttest_nga.htm, , z:\wstest\wstest_t_pointershifttest_nga.script, 8000, ,z\wstest\wspointershifttest_run.bat install, z\wstest\wspointershifttest_run.bat uninstall
+
 # PREQ2102 tests
 TESTEXECUTE, C:\logs\testexecute\tdisplayconfiguration.htm, 	, z:\commonheadertest\tdisplayconfiguration.script, 600
 
