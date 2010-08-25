@@ -1,2 +1,13 @@
 EXPORTS
-_ZN24DVirtualVideoHwInterface12GetFrameBaseEv @ 1 NONAME
+ _Z19CreateLogicalDevicev @ 1 NONAME
+ _ZN24DVirtualVideoHwInterface12GetFrameBaseEv @ 2 NONAME
+ _ZTI17DDeviceReqHandler @ 3 NONAME DATA 40
+ _ZTI21DVirtualVideoHwDevice @ 4 NONAME DATA 32
+ _ZTI22DVirtualVideoHwChannel @ 5 NONAME DATA 12
+ _ZTI24DVirtualVideoHwInterface @ 6 NONAME DATA 12
+ _ZTI9DriverRFC @ 7 NONAME DATA 12
+ _ZTV17DDeviceReqHandler @ 8 NONAME DATA 96
+ _ZTV21DVirtualVideoHwDevice @ 9 NONAME DATA 60
+ _ZTV22DVirtualVideoHwChannel @ 10 NONAME DATA 64
+ _ZTV24DVirtualVideoHwInterface @ 11 NONAME DATA 16
+ _ZTV9DriverRFC @ 12 NONAME DATA 20
