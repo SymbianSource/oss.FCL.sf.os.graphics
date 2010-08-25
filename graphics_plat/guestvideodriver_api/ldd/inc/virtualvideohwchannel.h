@@ -19,7 +19,10 @@
 
 #include <kernel/kernel.h>
 #include <kernel/kern_priv.h>
+
+#ifdef FAISALMEMON_S4_SGIMAGE
 #include "sgextension.h"//For SgExtension
+#endif
 
 #include "virtualvideohwinterface.h"
 
@@ -141,7 +144,9 @@ private:
     /// Interface to the hardware
     DVirtualVideoHwInterface& iHwInterface;
 
+#ifdef FAISALMEMON_S4_SGIMAGE
     TInt GetSgImageMetaData(TSgImageMetaData& aSgInfo, const TUint64 aId);
+#endif
 
     TInt iValue;
     

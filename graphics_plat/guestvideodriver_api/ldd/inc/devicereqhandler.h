@@ -21,8 +21,12 @@
 #include <kernel/kern_priv.h>
 #include <e32cmn.h>
 
+#include <VG/openvg.h>
+
+#ifdef FAISALMEMON_S4_SGIMAGE
 #include <sgresource/sgcommon.h>//TSgImageMetaData
 #include "sgextension.h"//For SgExtension
+#endif
 
 #include "guestvideodriverprotocol.h"
 #include "virtualvideohwinterface.h"
@@ -499,9 +503,11 @@ protected: //Command Scheduling functions
     void getVGSyncInOp( TAsyncRequest* aReq, TInt aSgHandleIndexInReq, TBool aSetBufferDirty = EFalse );
     
 public:
+#ifdef FAISALMEMON_S4_SGIMAGE
     HBuf8* OpenSgImageMetaData( const TUint64 aId, DSgResource*& aResource );
 	void CreateSgImagePbuffer( const TSgImageMetaData& aInfo, TRequestStatus* aStatus, DThread* aThread );
 	void CreateSgImageVGImage( const TSgImageMetaData& aInfo, TRequestStatus* aStatus, DThread* aThread );
+#endif
 	TInt DestroySgImage( const TUint64 aId );
     void ContinueInit( TAsyncRequest* aReq );
 
