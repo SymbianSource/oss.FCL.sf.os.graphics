@@ -32,12 +32,13 @@ namespace GuestVideoDriver
      * Enumeration of different requests
      */
     enum TRequestId
-        {
-        ERequestExecuteCommand = 0x1001, // Asynchronous (DoRequest)
-        ERequestMapAddress = 0x1002, // Synchronous (DoControl)
-        ERequestLoadCommands = 0x1004, // Synchronous (DoRequest)
-        ERequestSgHandles = 0x1005, //Synchronous (DoControl)
-        };
+	{
+	ERequestExecuteCommand = 0x1001, 	// Asynchronous (DoRequest)
+	ERequestMapAddress = 0x1002, 		// Synchronous  (DoControl)
+	ERequestLoadCommands = 0x1004, 		// Synchronous  (DoRequest)
+	ERequestSgHandles = 0x1005, 		// Synchronous  (DoControl)
+	ERequestFrameBaseAddress = 0x1006, 	// Synchronous  (DoControl)
+	};
 
     }
 
