@@ -28,6 +28,7 @@ SYSTEMINCLUDE  OS_LAYER_PUBLIC_EXPORT_PATH(vg) // OpenGL ES include files
 SYSTEMINCLUDE  OS_LAYER_PUBLIC_EXPORT_PATH(egl) // EGL include files
 
 macro __OPENVGHEADERS_USE_VG_1_1
+macro MACRO GRAPHICS_LIBVGI_DLL
 
 sourcepath      ..\vgi		// Relative path to source files
 
