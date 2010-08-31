@@ -40,6 +40,7 @@ define ROMDATE	##TODAY##
 #define SYMBIAN_GRAPHICS_USE_OPENWF
 #define OPENWFCLIB_DRV <openwfc_ref.iby>
 #define EGL_DRV <egl_ref.iby>
+#include <sgresource.iby>
  
 #include <gdi.iby>
 #include <bitgdi.iby>
