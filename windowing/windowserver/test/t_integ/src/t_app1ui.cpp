@@ -21,7 +21,7 @@
 
 #include <apgtask.h>
 #include <eikenv.h>
-#include <techview/eikmenup.h>
+#include <eikmenup.h>
 #include <e32math.h>
 #include "t_app1ui.h"
 #include "t_app1view.h"

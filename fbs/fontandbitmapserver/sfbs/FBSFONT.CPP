@@ -19,7 +19,7 @@
 #include <graphics/shapeimpl.h>
 #include "UTILS.H"
 #include <graphics/shaperparams.h>
-#include "fbsmessage.h"
+#include "FbsMessage.H"
 #include <graphics/gdi/gdiconsts.h>
 #include <graphics/gdi/gdistructs.h>
 
@@ -85,7 +85,9 @@ EXPORT_C CFbsFont::~CFbsFont()
 EXPORT_C void CFbsFont::Reset()
 	{
 	if (iHandle)
+	    {
 		iFbs->SendCommand(EFbsMessClose,iHandle);
+	    }
 	iHandle = 0;
 	}
 	
@@ -115,7 +117,7 @@ EXPORT_C TInt CFbsFont::Duplicate(TInt aFontHandle)
 	if (!aFontHandle)
 		return KErrUnknown;
 	// close any existing handle
-	Reset();
+	Reset();	
 	// ask server to create the duplicate handle
 	TPckgBuf<TFontInfo> tfpckg;
 	TIpcArgs args(aFontHandle,&tfpckg);
@@ -137,7 +139,9 @@ EXPORT_C TInt CFbsFont::Duplicate(TInt aFontHandle)
 EXPORT_C TInt CFbsFont::Handle() const
 	{
 	if (!iHandle)
+		{
 		return 0;
+		}
 	return iServerHandle;
 	}
 
@@ -636,6 +640,88 @@ TInt CFbsFont::DoFontDeleteShaping(TFontShapeDeleteFunctionParameters* aParam) c
 	}
 
 
+TInt CFbsFont::DoGetFontTable(TGetFontTableParam* aParam) const
+    {
+    TInt ret = KErrGeneral;
+
+    TPckgBuf<TOffsetLen> retBuf;
+    ret = iFbs->SendCommand(EFbsMessGetFontTable, 
+            TIpcArgs(iHandle, aParam->iTag, &retBuf));
+    
+    if (KErrNone == ret)
+        {
+        aParam->iLength = retBuf().iLen;
+        aParam->iContent = OffsetToPointer(retBuf().iOffset, iFbs->HeapBase());
+        }
+    return ret;
+    }
+
+
+TInt CFbsFont::DoGetGlyphOutline(TGetGlyphOutlineParam* aParam) const
+    {
+    TInt ret = KErrGeneral;
+    
+    TPckgBuf<TFBSGlyphOutlineParam> paramsBuf;
+    TInt count = aParam->iCount;
+    paramsBuf().iCount = aParam->iCount;
+    paramsBuf().iHinted = aParam->iHinted;
+    paramsBuf().iHandle = iHandle;
+
+    TOffsetLen* offsetLen = (TOffsetLen *)User::Alloc(count * sizeof(TOffsetLen));
+    if (NULL == offsetLen)
+        {
+        return KErrNoMemory;
+        }
+    TPtr8 retBuf((TUint8 *)offsetLen, count * sizeof(TOffsetLen),
+            count * sizeof(TOffsetLen));
+    TPtr8 codes((TUint8 *)(aParam->iCodes), count * sizeof(TUint), 
+            count * sizeof(TUint));
+    
+    ret = iFbs->SendCommand( EFbsMessGetGlyphOutline, 
+            TIpcArgs(&paramsBuf, &codes, &retBuf));
+    
+    if (KErrNone == ret)
+        {
+        // server writes the offsets back to client, convert them
+        // to local pointers.
+        for (TInt i = 0; i < aParam->iCount; ++i)
+            {
+            aParam->iOutlines[i] = OffsetToPointer(offsetLen[i].iOffset, 
+                    iFbs->HeapBase());
+            aParam->iLengths[i] = offsetLen[i].iLen;
+            }
+        }
+    User::Free(offsetLen);
+    return ret;
+    }
+
+TInt CFbsFont::DoReleaseGlyphOutline(TReleaseGlyphOutlineParam* aParam) const 
+    {
+    TInt ret = KErrGeneral;
+    
+    TPckgBuf<TFBSGlyphOutlineParam> params;
+    TInt count = aParam->iCount;
+    params().iCount = count;
+    params().iHinted = aParam->iHinted;
+    params().iHandle = iHandle;
+
+    TPtr8 codes((unsigned char *)aParam->iCodes, count * sizeof(TUint), count * sizeof(TUint));
+    
+    ret = iFbs->SendCommand(EFbsMessReleaseGlyphOutline, 
+            TIpcArgs(&params, &codes));
+        
+    return ret;
+    }   
+
+TInt CFbsFont::DoReleaseFontTable(TUint32* aParam) const 
+    {
+    TInt ret = KErrGeneral;
+    
+    ret = iFbs->SendCommand(EFbsMessReleaseFontTable, 
+            TIpcArgs(iHandle, *aParam));
+        
+    return ret;
+    }   
 /** API extension system that enables the caller to access a particular API
 extension function. As an overload of this function in a derived class
 it calls its immediate parent implementation for any extension function Uid
@@ -645,6 +731,9 @@ that it does not recognize and handle.
 provide and/or return information to/from the particular extension function,
 defaults to NULL.
 @return Integer return value from extension function, a system wide error code.
+@panic FBSCLI 31, in debug builds only, if iExtra is NULL when it must not be.
+@panic FBSCLI 38, in debug builds only, if a reserved error code is returned 
+	from an extended function.
 @internalTechnology
 @released
 */
@@ -674,6 +763,22 @@ EXPORT_C TInt CFbsFont::DoExtendedFunction(TUid aFunctionId, TAny* aParam) const
 			TTextWidthInternal* contextParam = (TTextWidthInternal*)aParam;
 			return DoTextWidthInPixels(contextParam->iText,&contextParam->iParam);
 			}
+		else if (aFunctionId == KFontGetFontTable) 
+		    {
+            return DoGetFontTable(reinterpret_cast<TGetFontTableParam *>(aParam));
+		    }
+		else if (aFunctionId == KFontGetGlyphOutline)
+		    {
+		    return DoGetGlyphOutline(reinterpret_cast<TGetGlyphOutlineParam *>(aParam));
+		    }
+		else if (aFunctionId == KFontReleaseGlyphOutline)
+		    {
+		    return DoReleaseGlyphOutline(reinterpret_cast<TReleaseGlyphOutlineParam *>(aParam));
+		    }
+		else if (aFunctionId == KFontReleaseFontTable)
+            {
+            return DoReleaseFontTable(reinterpret_cast<TUint32 *>(aParam));
+            }
 		}
 	return CFont::DoExtendedFunction(aFunctionId, aParam);
 	}

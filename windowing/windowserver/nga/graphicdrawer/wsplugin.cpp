@@ -17,7 +17,7 @@
 // 
 //
 
-#include "Graphics/WSPLUGIN.H"
+#include "graphics/WSPLUGIN.H"
 #include <s32mem.h>
 
 _LIT(KPluginName, "unnamed");

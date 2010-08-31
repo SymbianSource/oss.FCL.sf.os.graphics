@@ -43,6 +43,3 @@ TESTEXECUTE, \logs\testexecute\wsgcesurfwintest_hw_color64k_screen0.htm,        
 
 # WServ
 TESTEXECUTE, \logs\testexecute\wsgcetests_hw_color64k_screen1.htm,			, z:\wstest\wsgcetests_hw_color64k_screen1.script, 800
-
-# WServ
-TESTEXECUTE, \logs\testexecute\graphics-wserv-nativeorientation-test.htm, , z:\wstest\tnativeorientation\graphics-wserv-nativeorientation-test.script, 800

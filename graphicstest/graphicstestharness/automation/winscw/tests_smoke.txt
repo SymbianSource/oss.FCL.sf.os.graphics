@@ -71,7 +71,7 @@ TESTEXECUTE, C:\logs\testexecute\fepbasetest_t_fepgen.htm,      , z:\fepbasetest
 
 # FEP TESTS
 TESTEXECUTE, C:\logs\testexecute\fepbasetest_t_defocusingedwin.htm, , z:\fepbasetest\fepbasetest_t_defocusingedwin.script,    600
-TESTEXECUTE, C:\logs\testexecute\fepbasetest_t_fep1testtarget.htm,  , z:\fepbasetest\fepbasetest_t_fep1testtarget.script,     600
+TESTEXECUTE, C:\logs\testexecute\fepbasetest_t_fep1testtarget.htm,  , z:\fepbasetest\fepbasetest_t_fep1testtarget.script,     600, , z\graphicstest\minigui.cmd, z\graphicstest\unminigui.cmd
 TESTEXECUTE, C:\logs\testexecute\fepbasetest_t_keyboardlogger.htm,  , z:\fepbasetest\fepbasetest_t_keyboardlogger.script,     600
 
 # GFXTRANSEFFECT TESTS
@@ -247,7 +247,7 @@ TESTEXECUTE, C:\logs\testexecute\egltest_t_internalapi.htm,					, z:\egltest\egl
 TESTEXECUTE, C:\logs\testexecute\egltest_t_lowmemory.htm,					, z:\egltest\egltest_t_lowmemory.script, 					600, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\egltest_t_windowresize.htm,				, z:\egltest\egltest_t_windowresize.script, 			    600, , z\graphicstest\minigui.cmd z\graphics\t_graphics_config_inifiles.bat install csc_nga, z\graphicstest\unminigui.cmd z\graphicstest\retain_files.cmd logs\testexecute\screencomparison screencomparison z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\egltest_t_swapbehavior.htm,                , z:\egltest\egltest_t_swapbehavior.script, 				300, , z\graphicstest\minigui.cmd z\graphics\t_graphics_config_inifiles.bat install csc_nga, z\graphicstest\unminigui.cmd z\graphicstest\retain_files.cmd logs\testexecute\screencomparison screencomparison z\graphics\t_graphics_config_inifiles.bat uninstall
-TESTEXECUTE, C:\logs\testexecute\egltest_t_swapbuffers.htm,				, z:\egltest\egltest_t_swapbuffers.script, 						120, , z\graphicstest\minigui.cmd z\graphics\t_graphics_config_inifiles.bat install csc_nga, z\graphicstest\unminigui.cmd z\graphics\t_graphics_config_inifiles.bat uninstall
+TESTEXECUTE, C:\logs\testexecute\egltest_t_benchmark_swapbuffers.htm,		, z:\egltest\egltest_t_benchmark_swapbuffers.script,		120, , z\graphicstest\minigui.cmd z\graphics\t_graphics_config_inifiles.bat install csc_nga, z\graphicstest\unminigui.cmd z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\egltest_t_unittest.htm,                    , z:\egltest\egltest_t_unittest.script, 					300, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\egltest_t_texturing.htm,                   , z:\egltest\egltest_t_texturing.script, 					300, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 # EGL - Hybrid Graphics Implementation (Common tests)
@@ -264,6 +264,8 @@ TESTEXECUTE, C:\logs\testexecute\egltest_t_image_multiprocess.htm,			, z:\egltes
 TESTEXECUTE, C:\logs\testexecute\egltest_t_sibling.htm,						, z:\egltest\egltest_t_sibling.script, 						600, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\egltest_t_vgimagetosurfaces.htm,			, z:\egltest\egltest_t_vgimagetosurfaces.script, 			600, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\egltest_t_benchmark_sgimage.htm,        	, z:\egltest\egltest_t_benchmark_sgimage.script, 			300, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
+TESTEXECUTE, C:\logs\testexecute\egltest_t_oom_sgimage.htm,                 	, z:\egltest\egltest_t_oom_sgimage.script, 				600, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
+TESTEXECUTE, C:\logs\testexecute\egltest_t_stress_sgimage.htm,			, z:\egltest\egltest_t_stress_sgimage.script, 				600, , z\graphics\t_graphics_config_inifiles.bat install, z\graphics\t_graphics_config_inifiles.bat uninstall
 
 # GCE
 TESTEXECUTE, C:\logs\testexecute\functionaltest_mandatory.htm,	, z:\gcetest\functionaltest_mandatory.script,  600, , z\gcetest\gcetest_setup_emu.bat install dabs, z\gcetest\gcetest_setup_emu.bat uninstall dabs
@@ -490,4 +492,3 @@ TESTEXECUTE, C:\logs\testexecute\uilayerdrawing_tests_noautoclear.htm,	, z:\tlay
 
 # UIBENCH S60
 #TESTEXECUTE, C:\logs\testexecute\te_uibench_s60_techview_emulator.htm,	, c:\uibench_s60\te_uibench_s60_techview_emulator.script, 900
-#TESTEXECUTE, C:\logs\testexecute\te_uibench_s60_teglswapbuffer.htm,		, c:\uibench_s60\te_uibench_s60_teglswapbuffer.script, 900

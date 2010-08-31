@@ -54,7 +54,6 @@ public:
         EUpdate_ALL_ATTRIBS                 = 0x000fffff,
         EUpdate_AttributesIllegal           = 0x00100000,   //If set then the owf scene will not be updated because it would be illegal.
         EUpdate_SettingValid                = 0x00200000,
-        EUpdate_DontLockSource              = 0x00400000,
 
         EUpdate_Insert                      = 0x01000000,
         EUpdate_Remove                      = 0x02000000,

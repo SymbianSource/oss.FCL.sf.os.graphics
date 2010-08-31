@@ -21,11 +21,11 @@ TARGETTYPE		EXE
 UID		0x00000000 0x10003a3e
 VENDORID 0x70000001
 
-SOURCEPATH		../twsgraphic
+SOURCEPATH		../test/twsgraphic
 SOURCE			TWsGraphicTest.CPP
 
-USERINCLUDE		../inc ../tlib  ../tauto
-MW_LAYER_SYSTEMINCLUDE_SYMBIAN
+USERINCLUDE		../inc ../test/tlib  ../test/tauto
+OS_LAYER_SYSTEMINCLUDE
 
 
 LIBRARY			euser.lib ws32.lib gdi.lib efsrv.lib

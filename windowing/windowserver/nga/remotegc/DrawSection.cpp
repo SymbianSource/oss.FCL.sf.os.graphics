@@ -13,7 +13,7 @@
 // Description:
 //
 
-#include "Graphics/WSGRAPHICMSGBUF.H"
+#include "graphics/WSGRAPHICMSGBUF.H"
 #include "DrawSection.h"
 
 const TInt KBufferSize = 1000;

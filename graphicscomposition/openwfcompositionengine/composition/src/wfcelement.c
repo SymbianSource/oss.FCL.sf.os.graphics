@@ -1,4 +1,5 @@
-/* Copyright (c) 2009 The Khronos Group Inc.
+/* Copyright (c) 2009-2010 The Khronos Group Inc.
+ * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -141,6 +142,8 @@ WFC_Element_Create(WFC_CONTEXT* context)
 {
     static WFCint           nextElementHandle = FIRST_ELEMENT_HANDLE;
     WFC_ELEMENT*            element;
+	
+	OWF_ASSERT(context);
 
     element = (WFC_ELEMENT*)OWF_Pool_GetObject(context->elementPool);
 
@@ -390,10 +393,7 @@ WFC_Element_ValidateScalarAttributei(WFC_ELEMENT* element,
 
         case WFC_ELEMENT_SOURCE_FLIP:
         {
-            WFCboolean  flip = (WFCboolean) value;
-
-            result = BOOLEAN_TO_ERROR((WFC_TRUE == flip ||
-                                       WFC_FALSE == flip));
+            result = WFC_ERROR_NONE;
             break;
         }
 

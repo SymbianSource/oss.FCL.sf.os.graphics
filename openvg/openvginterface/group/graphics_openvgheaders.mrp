@@ -1,7 +1,4 @@
 #graphics_openvgheaders.mrp
-#
-#Copyright (c) 2006 Symbian Ltd.  All rights reserved.
-#
 
 component	graphics_openvgheaders
 

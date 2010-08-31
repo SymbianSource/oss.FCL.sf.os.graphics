@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,7 +16,6 @@
 #include <random.h>
 #include <s32file.h>
 #include <e32math.h>
-#include <hal.h>
 #include <s32mem.h>
 #include <graphics/gdi/gdiconsts.h>
 #include <e32cmn.h>
@@ -111,7 +110,6 @@ void CTDefect2::RunTestCaseL(TInt aCurTestCase)
 	_LIT(KTest4,"SubTest %d: CFbsBitmap::GetPixel() performance");
 	_LIT(KTest5,"SubTest %d: Rotate/Move text");
 	_LIT(KTest6,"SubTest %d: SwapWidthAndHeight");
-	_LIT(KTest7,"SubTest %d: Create multiple screens");
 	_LIT(KTest8,"SubTest %d: Clear with non-zero origin");
 	_LIT(KTest9,"SubTest %d: DEF115395: DrawBitmap & DrawBitmapMasked with a sourceRect out of the Bitmap bounds");
 	_LIT(KTest10,"SubTest %d: INC119063: General test CopyRect rewrite for low color depth (8,4,2, pixels per byte)");
@@ -155,9 +153,7 @@ void CTDefect2::RunTestCaseL(TInt aCurTestCase)
 		SwapWidthAndHeightL();
 		break;
 	case 7:
-		((CTDefect2Step*)iStep)->SetTestStepID(_L("GRAPHICS-BITGDI-0072"));
-		INFO_PRINTF2(KTest7,aCurTestCase);
-		CreateScreenDeviceL();
+		// Test case moved to tmultiscreens.cpp
 		break;
 	case 8:
 		((CTDefect2Step*)iStep)->SetTestStepID(_L("GRAPHICS-BITGDI-0073"));
@@ -2070,40 +2066,6 @@ void CTDefect2::SwapWidthAndHeightL()
 		}//end of - for(TInt ii=0;ii<TInt(sizeof(testMode)/sizeof(testMode[0]));ii++)
 	}
 
-/**
-  @SYMTestCaseID GRAPHICS-BITGDI-0072
- 
-  @SYMDEF             
-
-  @SYMTestCaseDesc Multiple screen test
-   
-  @SYMTestPriority High
-
-  @SYMTestStatus Implemented
-
-  @SYMTestActions creates some screens in different modes then writes some rotated text to them and test.
- 
-  @SYMTestExpectedResults Test should perform graphics operations succesfully. 
-*/	
-void CTDefect2::CreateScreenDeviceL()
-	{
-	TDisplayMode testMode[] =  {EColor4K, EColor64K, EColor16M, EColor16MU, EColor256, EColor16MA, EColor16MAP};//tested display modes
-	for(TInt ii=0;ii<TInt(sizeof(testMode)/sizeof(testMode[0]));ii++)
-		{
-		TInt screenCnt = 0;
-		TEST(HAL::Get(0, HALData::EDisplayNumberOfScreens, screenCnt) == KErrNone);
-		for(TInt screenNo=0;screenNo<screenCnt;++screenNo)
-			{
-			TInt err = CreateScrDevAndContext(screenNo, testMode[ii]);
-			if(err == KErrNone)
-				{
-				DoRotateMoveTextL();
-				}
-			DeleteGraphicsContext();
-			DeleteScreenDevice();
-			}
-		}
-	}
 
 void CTDefect2::CreateScrDevAndContextL()
 	{
@@ -2125,13 +2087,18 @@ TInt CTDefect2::CreateScrDevAndContext(TInt aScreenNo, TDisplayMode aDisplayMode
 	DeleteGraphicsContext();
 	DeleteScreenDevice();
 	TRAPD(err, iScrDev = CFbsScreenDevice::NewL(aScreenNo, aDisplayMode));
-	if(err == KErrNotSupported)
+	if ( !iScrDev )
 		{
+		TESTE( err == KErrNotSupported, err );
 		return err;
 		}
 	TEST(err == KErrNone);
 	TEST(iScrDev->ScreenNo() == aScreenNo);
 	err = iScrDev->CreateContext((CGraphicsContext*&)iGc);
+	if ( !iGc )
+		{
+		return err;
+		}
 	TEST(err == KErrNone);
 	iGc->SetUserDisplayMode(aDisplayMode);
 	iScrDev->ChangeScreenDevice(NULL);
@@ -2408,6 +2375,7 @@ void CTDefect2::PixelsToTwipsConversionCheck()
 	TInt cWsScreenDeviceResult = 1;
 	TReal32 percentDifference = 0.0;
 	CreateScrDevAndContextL();
+	TBool testResult = EFalse;
 
 	RWsSession wsSession;
 	if (KErrNone == wsSession.Connect())
@@ -2420,28 +2388,54 @@ void CTDefect2::PixelsToTwipsConversionCheck()
 		cFbsScreenDeviceResult = iScrDev->HorizontalPixelsToTwips(KHorizontalTestPixels);
 		cWsScreenDeviceResult = wsScrDev->HorizontalPixelsToTwips(KHorizontalTestPixels);
 		percentDifference = Abs((TReal32)(cFbsScreenDeviceResult - cWsScreenDeviceResult)/cFbsScreenDeviceResult*100.0);
-		TEST(percentDifference < KTolerance);
+		testResult = (percentDifference < KTolerance);
+		if ( !testResult )
+			{
+			_LIT(KHorizPixelsToTwipsDesc, "%d horizontal pixels converted to twips by screen device: FBS=%d, WS=%d");
+			WARN_PRINTF4(KHorizPixelsToTwipsDesc, KHorizontalTestPixels, cFbsScreenDeviceResult, cWsScreenDeviceResult);
+			}
+		TEST( testResult );
 		
 		// convert the CWsScreenDevice result back again using each class's HorizontalTwipsToPixels
 		// and pass the test if these results are within tolerance
-		cFbsScreenDeviceResult = iScrDev->HorizontalTwipsToPixels(cWsScreenDeviceResult);
-		cWsScreenDeviceResult = wsScrDev->HorizontalTwipsToPixels(cWsScreenDeviceResult);
+		TInt numTwipsToTest = cWsScreenDeviceResult;
+		cFbsScreenDeviceResult = iScrDev->HorizontalTwipsToPixels(numTwipsToTest);
+		cWsScreenDeviceResult = wsScrDev->HorizontalTwipsToPixels(numTwipsToTest);
 		percentDifference = Abs((TReal32)(cFbsScreenDeviceResult - cWsScreenDeviceResult)/cFbsScreenDeviceResult*100.0);
-		TEST(percentDifference < KTolerance);
+        testResult = (percentDifference < KTolerance);
+        if ( !testResult )
+			{
+			_LIT(KHorizTwipsToPixelsDesc, "%d horizontal twips converted to pixels by screen device: FBS=%d, WS=%d");
+			WARN_PRINTF4(KHorizTwipsToPixelsDesc, numTwipsToTest, cFbsScreenDeviceResult, cWsScreenDeviceResult);
+            }
+        TEST( testResult );
 
 		// next compare results of the two class's VerticalPixelsToTwips and pass the test
 		// if they are within tolerance
 		cFbsScreenDeviceResult = iScrDev->VerticalPixelsToTwips(KVerticalTestPixels);
 		cWsScreenDeviceResult= wsScrDev->VerticalPixelsToTwips(KVerticalTestPixels);
 		percentDifference = Abs((TReal32)(cFbsScreenDeviceResult - cWsScreenDeviceResult)/cFbsScreenDeviceResult*100.0);
-		TEST(percentDifference < KTolerance);
+        testResult = (percentDifference < KTolerance);
+        if ( !testResult )
+            {
+            _LIT(KVertPixelsToTwipsDesc, "%d vertical pixels converted to twips by screen device: FBS=%d, WS=%d");
+            WARN_PRINTF4(KVertPixelsToTwipsDesc, KVerticalTestPixels, cFbsScreenDeviceResult, cWsScreenDeviceResult);
+            }
+        TEST( testResult );
 		
 		// convert the CWsScreenDevice result back again using each class's VerticalTwipsToPixels
 		// and pass the test if these results are within tolerance
-		cFbsScreenDeviceResult = iScrDev->VerticalTwipsToPixels(cWsScreenDeviceResult);
-		cWsScreenDeviceResult = wsScrDev->VerticalTwipsToPixels(cWsScreenDeviceResult);
+		numTwipsToTest = cWsScreenDeviceResult;
+		cFbsScreenDeviceResult = iScrDev->VerticalTwipsToPixels(numTwipsToTest);
+		cWsScreenDeviceResult = wsScrDev->VerticalTwipsToPixels(numTwipsToTest);
 		percentDifference = Abs((TReal32)(cFbsScreenDeviceResult - cWsScreenDeviceResult)/cFbsScreenDeviceResult*100.0);
-		TEST(percentDifference < KTolerance);
+        testResult = (percentDifference < KTolerance);
+        if ( !testResult )
+            {
+            _LIT(KVertTwipsToPixelsDesc, "%d vertical twips converted to pixels by screen device: FBS=%d, WS=%d");
+            WARN_PRINTF4(KVertTwipsToPixelsDesc, numTwipsToTest, cFbsScreenDeviceResult, cWsScreenDeviceResult);
+            }
+        TEST( testResult );
 		
 		delete wsScrDev;
 		wsSession.Close();

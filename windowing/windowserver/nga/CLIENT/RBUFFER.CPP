@@ -1,4 +1,4 @@
-// Copyright (c) 1994-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1994-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -43,10 +43,10 @@ RWsBuffer::RWsBuffer(RWsSession *aSession) : iSession(aSession), iManager(NULL),
 		iAutoFlush(EFalse),
 	#endif
 	iBuf(NULL,0,0), iNext(NULL), iPreviousHandle(0), iBufSize(0), iMaxBufSize(EMinBufferSize),
+	#if defined(_DEBUG)
+	iAppendDataLength(0),
+	#endif
 	iDirectAcessCount(0), iInvalidBitmapArray(EFalse), iWindowSizeCache(NULL)
-#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
-, iWindowNativeSizeCache(NULL)
-#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 	{
 	}
 
@@ -103,14 +103,6 @@ void RWsBuffer::Close()
 	    delete iWindowSizeCache;
 	    iWindowSizeCache = NULL;
 	    }
-#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
-	if (iWindowNativeSizeCache)
-	    {
-	    iWindowNativeSizeCache->Close();
-	    delete iWindowNativeSizeCache;
-	    iWindowNativeSizeCache = NULL;
-	    }
-#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 	}
 
 void RWsBuffer::Destroy()
@@ -281,14 +273,8 @@ TInt RWsBuffer::DoWrite(TInt aHandle, TUint aOpcode, TBool aFlush, const TIpcArg
 	__ASSERT_DEBUG(((TUint32) aOpcode) < 0x8000, Assert(EW32AssertIllegalOpcode));
 	__ASSERT_DEBUG((aLength&0x3) == 0, Assert(EW32AssertOddLengthData));
 	TInt xtra(0);
-	if (aLength2 > 0)
-		{
-		xtra = 4 - (aLength2&0x3);		// Round data upto a multiple of 4
-		if (xtra==4)
-			{
-			xtra=0;
-			}
-		}
+	if (aLength2>0)
+		xtra = PadValue(aLength2);		// Round data upto a multiple of 4
 
 	const TInt msgSize = aLength + aLength2 + xtra + static_cast<TInt>(sizeof(TWsCmdHeader));
 	TInt available = iBuf.MaxLength() - iBuf.Length();
@@ -336,12 +322,17 @@ TInt RWsBuffer::DoWrite(TInt aHandle, TUint aOpcode, TBool aFlush, const TIpcArg
 		{
 		iBuf.Append((TUint8 *)aData, aLength);
 		}
-	if (aLength2 > 0)
+	if (aLength2>0 && aData2!=NULL)
 		{
 		iBuf.Append((TUint8 *)aData2, aLength2);
 		iBuf.AppendFill(0,xtra);
 		}
-
+#if defined(_DEBUG)
+	else if (aLength2>0 && aData2==NULL)
+		{
+		iAppendDataLength = aLength2;
+		}
+#endif
 	if (aFlush)
 		{
 		return Flush(aIpcArgs);
@@ -354,14 +345,86 @@ void RWsBuffer::Write(TInt handle,TUint opcode)
 	DoWrite(handle, opcode, iAutoFlush, NULL);
 	}
 
-void RWsBuffer::Write(TInt handle,TUint opcode,const TAny *pData, TInt length)
+/**
+Writes data sent in aData of length aLength1 for the specifed aOpcode
+into wserv buffer. It also takes an TIpcArgs by which you can send additional 
+data. But one thing needs to be noted that if aIpcArgs has some content then 
+this function flushes the wserv buffer.
+
+@param aHandle aHandle of class derived from MWsClientClass
+@param aOpcode Opcode for the current command
+@param aData Data to be added to the buffer
+@param aLength Length of the data to be added to buffer
+@param aIpcArgs Additional data sent from client to server. It has default argument NULL.
+				And if some data is sent in aIpcArgs, it flushes wserv buffer
+*/
+void RWsBuffer::Write(TInt aHandle, TUint aOpcode, const TAny *aData, TInt aLength, const TIpcArgs* aIpcArgs/*=NULL*/)
 	{
-	DoWrite(handle, opcode, iAutoFlush, NULL, pData, length);
+	TBool flush = (aIpcArgs != NULL ? ETrue : iAutoFlush);	// If aIpcArgs contains data then we do explicit flush
+	DoWrite(aHandle, aOpcode, flush, aIpcArgs, aData, aLength);
 	}
 
-void RWsBuffer::Write(TInt handle,TUint opcode,const TAny *pData, TInt length,const TAny *pData2, TInt length2)
+/**
+Writes data sent in aData and aData2 of lengths aLength1 and aLength2 
+for the specifed aOpcode into wserv buffer. It also takes an TIpcArgs by which 
+you can send additional data. But one thing needs to be noted that if aIpcArgs 
+has some content then this function flushes the wserv buffer.
+
+@param aHandle Handle of class derived from MWsClientClass
+@param aOpcode Opcode for the current command
+@param aData Data to be added to the buffer
+@param aLength Length of the data to be added to buffer
+@param aData2 second Data to be added to the buffer
+@param aLength2 Length of the second data to be added to buffer
+@param aIpcArgs Additional data sent from client to server. It has default argument NULL.
+				And if some data is sent in aIpcArgs, it flushes wserv buffer
+*/
+void RWsBuffer::Write(TInt aHandle, TUint aOpcode, const TAny *aData, TInt aLength, const TAny *aData2, TInt aLength2, const TIpcArgs* aIpcArgs/*=NULL*/)
 	{
-	DoWrite(handle, opcode, iAutoFlush, NULL, pData, length, pData2, length2);
+	__ASSERT_DEBUG(!((aIpcArgs != NULL) &&  (aLength2 > 0 && aData2 == NULL)), Assert(EW32AssertBufferLogic));
+	TBool flush = iAutoFlush;
+	if (aLength2 > 0 && aData2 == NULL)
+		{
+		flush = EFalse;		// if just length2 is sent then we should not flush
+		}
+	else if (aIpcArgs != NULL)
+		{
+		flush = ETrue;		// If aIpcArgs contains data then we do explicit flush
+		}
+	DoWrite(aHandle, aOpcode, flush, aIpcArgs, aData, aLength, aData2, aLength2);
+	}
+
+/**
+Appends data directly to wserv buffer for the current command. So this function 
+should be used after adding the current command. 
+
+@param aData Data to be added to the buffer
+@param aLength Length of the data to be added to buffer. Make sure that its length
+		is less than availabe buffer.
+@param aFinished EFalse, adds data to buffer and disables flushing even if auto flush is on, 
+				 basically this notfies that more data is pending to be added.
+				 ETrue, adds data to buffer and resume normal service for flushing
+				 ie. Signals that this is the last bit of data to be added
+
+Note: When data is added using this API, it pads out buffer to multiple of 4 bytes  
+*/
+void RWsBuffer::AppendData(const TAny *aData,TInt aLength,TBool aFinished)
+	{
+	__ASSERT_ALWAYS(iBuf.MaxLength()-iBuf.Length()>=PaddedValue(aLength),Assert(EW32AssertBufferLogic));
+#if defined(_DEBUG)
+	// Check if this function is called only after setting iAppendDataLength
+	__ASSERT_DEBUG(iAppendDataLength > 0, Assert(EW32AssertBufferLogic));
+	// Check if length passed in is less then iAppendDataLength
+	__ASSERT_DEBUG(iAppendDataLength >= aLength, Assert(EW32AssertBufferLogic));
+	if (aFinished)
+		iAppendDataLength = 0; 
+	else
+		iAppendDataLength -= aLength;
+#endif
+	iBuf.Append((TUint8*)(aData),aLength);
+	iBuf.AppendFill(0,PadValue(iBuf.Length()));		// Padout out buffer to multiple of 4 bytes
+	if (aFinished && iAutoFlush)
+		Flush(NULL);
 	}
 
 TInt RWsBuffer::WriteReply(TInt handle,TUint opcode,const TIpcArgs* aIpcArgs)
@@ -474,14 +537,3 @@ void RWsBuffer::EnableWindowSizeCacheL()
         iWindowSizeCache = new (ELeave) RHashMap<TInt, TWindowSizeCacheEntry>();        
         }
     }
-
-#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
-void RWsBuffer::EnableWindowNativeSizeCacheL()
-    {
-    if (iWindowNativeSizeCache == NULL)
-        {
-        iWindowNativeSizeCache = new (ELeave) RHashMap<TInt, TWindowSizeCacheEntry>();        
-        }
-    }
-#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
-

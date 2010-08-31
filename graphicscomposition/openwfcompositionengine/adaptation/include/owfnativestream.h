@@ -1,4 +1,5 @@
 /* Copyright (c) 2009 The Khronos Group Inc.
+ * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -201,48 +202,6 @@ owfNativeStreamReleaseWriteBuffer(OWFNativeStreamType stream,
                                   EGLDisplay dpy,
                                   EGLSyncKHR sync);
 
-/*!---------------------------------------------------------------------------
- *  Register stream content observer (append to chain). The observer will
- *  receive buffer modification event from the stream whenever a buffer is
- *  committed.
- *
- *  \param stream           Stream handle
- *  \param observer         Stream observer
- *  \param data             Optional data to pass to observer callback
- *                          function when event is dispatched.
- *----------------------------------------------------------------------------*/
- OWF_PUBLIC OWF_STREAM_ERROR
-owfNativeStreamAddObserver(OWFNativeStreamType stream,
-                           OWFStreamCallback observer,
-                           void* data);
-
-/*!---------------------------------------------------------------------------
- *  Remove stream content observer.
- *
- *  \param stream           Stream handle
- *  \param observer         Observer to remove
- *
- *  \param Zero if the observer was removed successfully, otherwise non-zero
- *  (OWF_STREAM_ERROR_INVALID_STREAM if the stream is invalid;
- *   OWF_STREAM_ERROR_INVALID_OBSERVER if the observer is invalid.)
- *
- *   NOTE (khronos bugzilla #5188): "Because the parameter is the observer
- *   function, it is likely that the wrong context could be removed if
- *   two contexts sharing the same implementation code are observing the
- *   same stream, and then one removes its observer. Ideally, both the
- *   function and the client void* should be passed as parameters
- *   to uniquely identify the observer."
- *
- *   The issue can be fixed by adding sync object handle into the interface
- *   of this function. Sync object must be passed to the static comparison
- *   function (ObserversEqual). Implementator must take into account that
- *   when the stream is destroyed, all observers of that stream must be destroyed.
- *
- *----------------------------------------------------------------------------*/
- OWF_API_CALL OWF_STREAM_ERROR
-owfNativeStreamRemoveObserver(OWFNativeStreamType stream,
-                              OWFStreamCallback observer,
-                              void* data);
 
 /*!---------------------------------------------------------------------------
  *  Enable/disable stream content notifications.

@@ -6,3 +6,4 @@ exports	\sf\os\graphics\graphicscomposition\openwfcompositionengine\group
 notes_source	\component_defs\release.src
 
 ipr O
+ipr T \sf\os\graphics\graphicscomposition\openwfcompositionengine\test

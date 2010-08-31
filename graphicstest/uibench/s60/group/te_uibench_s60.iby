@@ -67,6 +67,5 @@ data=DATAC_\uibench_s60\te_uibench_s60_tuiandvideo.script					uibench_s60\te_uib
 data=DATAC_\uibench_s60\te_uibench_s60_tzorder.script						uibench_s60\te_uibench_s60_tzorder.script
 data=DATAC_\uibench_s60\te_uibench_s60_dphone79.script						uibench_s60\te_uibench_s60_dphone79.script
 data=DATAC_\uibench_s60\te_uibench_s60_techview_emulator.script				uibench_s60\te_uibench_s60_techview_emulator.script
-data=DATAC_\uibench_s60\te_uibench_s60_teglswapbuffer.script				uibench_s60\te_uibench_s60_teglswapbuffer.script
 
 #endif

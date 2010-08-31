@@ -30,12 +30,13 @@
 #include <hal.h>
 #include "advancedpointereventhelper.h"
 #include "graphics/pointereventdata.h"
+#include "debughelper.h"
 
 TTimeIntervalMicroSeconds32 TWsPointer::iDoubleClickMaxInterval;
 TInt 			   TWsPointer::iDoubleClickMaxDistance;
 CWsPointerCursor*  TWsPointer::iCursorSprite;
 TPointerCursorMode TWsPointer::iPointerCursorMode=EPointerCursorNormal;
-TXYInputType 	   TWsPointer::iXyInputType;
+TXYInputType       TWsPointer::iXyInputType;
 TBool 			   TWsPointer::iTimerQueued;
 TBool 			   TWsPointer::iUpdateRequired;
 CPeriodic* 		   TWsPointer::iPeriodicTimer;
@@ -53,9 +54,7 @@ TBool			   CWsPointerBuffer::iSignalled=EFalse;
 CWsPointerBuffer*  CWsPointerBuffer::iCurrentBuffer=NULL;
 CCirBuf<TPoint>*   CWsPointerBuffer::iPointerBuffer=NULL;
 TSglQue<CWsPointerBuffer> CWsPointerBuffer::iList(_FOFF(CWsPointerBuffer,iQue));
-TInt                TWsPointer::iYOffsetTop;
-TInt                TWsPointer::iYOffsetBottom;
-TInt                TWsPointer::iYOffsetMax;
+TInt                TWsPointer::iYOffset;
 #if defined(__WINS__)
 TBool               TWsPointer::iEmulatorRotatePointerCoords;
 #endif
@@ -64,20 +63,17 @@ static _LIT_SECURITY_POLICY_C1(KSecurityPolicy_SwEvent,ECapabilitySwEvent);
 
 void TWsPointer::InitStaticsL()
 	{
-	//This iYOffsetTop setting is specific for capacitive touch screens, where user's finger is the pointer device.
+	//This iYOffset setting is specific for capacitive touch screens, where user's finger is the pointer device.
 	//This is typically used so that the pointer event location is more inline with where the user perceives their 
 	//finger to be on the screen (for example, due to refraction and the relatively large touch area of a finger).
-	//The logic used here is to use Yoffset value such that it is max the finger is at the top and keeps on reducing
-	//when the finger input is moved towards bottom of the screen
-	iYOffsetTop = 0;
-	iYOffsetBottom = 0;
-	iYOffsetMax = 0;
-    _LIT( KWSERVIniFileVarYShiftingTop, "YSHIFTINGTOP");
-    _LIT( KWSERVIniFileVarYShiftingBottom, "YSHIFTINGBOTTOM");
-    _LIT( KWSERVIniFileVarYShiftingMax, "YSHIFTINGMAX");
-    WsIniFile->FindVar(KWSERVIniFileVarYShiftingTop, iYOffsetTop);
-    WsIniFile->FindVar(KWSERVIniFileVarYShiftingBottom, iYOffsetBottom);
-    WsIniFile->FindVar(KWSERVIniFileVarYShiftingMax, iYOffsetMax);
+	iYOffset = 0;
+    _LIT( KWSERVIniFileVarYShifting, "YSHIFTING");
+    TBool fetchingSucceeded = WsIniFile->FindVar(KWSERVIniFileVarYShifting, iYOffset);
+    WS_ASSERT_ALWAYS(iYOffset>=0, EWsPanicInvalidPointerOffset);
+    if ( !fetchingSucceeded )
+       {
+       iYOffset = 0;
+       }
 
 #if defined(__WINS__)    
 	//An emulator may or may not deploy a renderchain or displaydriver that supports rotated drawing.
@@ -115,12 +111,21 @@ void TWsPointer::InitStaticsL()
 			}
 		}
 	
+	//** Log the number of pointers here i,e iMaxPointers
+#ifdef LOG_WSERV_EVENTS
+	RDebug::Printf("_WSEVENT_POINTER: Number of pointers system supports %d", iMaxPointers);
+#endif
+	
 	// Does device support Z coordinate of the pointers?
 	if(HAL::Get(HALData::EPointer3D,iIs3DPointer)!=KErrNone)
 		{
 		iIs3DPointer=EFalse; // No API, then no 3D pointers
 		}
 	WS_ASSERT_ALWAYS(!iIs3DPointer || XyInput(), EWsPanicPointer3DInconsistent);
+	
+#ifdef LOG_WSERV_EVENTS
+	RDebug::Printf("_WSEVENT_POINTER: Z coordinate supported %d", iIs3DPointer);
+#endif	
 	
 	// Initialize thresholds for EEnterCloseProximity, EExitCloseProximity,
 	// EEnterHighPressure and EExitHightPressure events.
@@ -490,6 +495,9 @@ TBool TWsPointer::QueuePointerEvent(const CWsWindow* aWindow, TWsEvent &aEvent)
 		{
 		CEventQueue* queue=aWindow->EventQueue();
 		aEvent.SetHandle(aWindow->ClientHandle());
+#ifdef LOG_WSERV_EVENTS
+		RDebug::Printf("_WSEVENT_POINTER: TWsPointer::QueuePointerEvent with AdvancedPointerEnabled");
+#endif
 		if (aEvent.Handle()!=0)
 			{
  			if(!aWindow->AdvancedPointersEnabled())
@@ -513,12 +521,18 @@ TBool TWsPointer::QueuePointerEvent(const CWsWindow* aWindow, TWsEvent &aEvent)
 				case TPointerEvent::EExitHighPressure:
 					if (CheckMatchingEventPurged(aEvent.Pointer()->iType))
 						{
+						#ifdef LOG_WSERV_EVENTS
+						RDebug::Printf("_WSEVENT_POINTER: Check matching event has been purged so no addition of event 01");
+						#endif
 						return ETrue;
 						}
 					if (queue->CheckRoom())
 						{
 						if (CheckMatchingEventPurged(aEvent.Pointer()->iType))
 							{
+							#ifdef LOG_WSERV_EVENTS
+							RDebug::Printf("_WSEVENT_POINTER: Check matching event has been purged so no addition of event 02");
+							#endif
 							return ETrue;
 							}
 						}
@@ -533,7 +547,7 @@ TBool TWsPointer::QueuePointerEvent(const CWsWindow* aWindow, TWsEvent &aEvent)
 				default:;
 				}
 #ifdef LOG_WSERV_EVENTS
-			RDebug::Printf("{EVNT}TWsPointer::QueuePointerEvent After adding event to clientqueue Event State %d ", iState);
+			RDebug::Printf("_WSEVENT_POINTER: TWsPointer::QueuePointerEvent After adding event to clientqueue Event State %d ", iState);
 #endif
 			queue->QueueEvent(aEvent,priority);
 			}
@@ -665,6 +679,12 @@ TBool TWsPointer::PreProcessDriverEvent(TRawEvent &aRawEvent)
 		return EFalse;
 		}
 	
+	//** Log the type, pointer number, and its coordinates
+#ifdef LOG_WSERV_EVENTS
+	RDebug::Printf("_WSEVENT_POINTER: Pointer number = %d RawEvent Type = %d Coordinates [%d, %d]", 
+					aRawEvent.PointerNumber(), type, aRawEvent.Pos().iX, aRawEvent.Pos().iY);
+#endif
+	
 	// check correctness of aRawEvent.PointerNumber()
 	if (iMaxPointers > 1)
 		{
@@ -718,6 +738,11 @@ TBool TWsPointer::PreProcessDriverEvent(TRawEvent &aRawEvent)
 		aRawEvent.Set(type, xy.iX, xy.iY, 
 					  iIs3DPointer ? aRawEvent.Pos3D().iZ : 0);
 		}
+	
+#ifdef LOG_WSERV_EVENTS
+	RDebug::Printf("_WSEVENT_POINTER: Coordinates after Rotation and shift [%d, %d]", 
+							aRawEvent.Pos().iX, aRawEvent.Pos().iY);
+#endif
 	return ETrue;
 	}
 
@@ -866,8 +891,8 @@ void TWsPointer::ProcessEvent(TWsEvent& aEvent,const CWsWindowGroup* aForceInGro
 	
 	
 #ifdef LOG_WSERV_EVENTS
-	RDebug::Printf("{EVNT}TWsPointer::ProcessEvent Event send to this window %U", reinterpret_cast<TUint32>(iCurrentWindow));
-	RDebug::Printf("{EVNT}TWsPointer::ProcessEvent EventType %d and Event State %d ", eventType, iState);
+	RDebug::Printf("_WSEVENT_POINTER: TWsPointer::ProcessEvent Event to be sent to this window %U", reinterpret_cast<TUint32>(iCurrentWindow));
+	RDebug::Print(_L("_WSEVENT_POINTER: TWsPointer::ProcessEvent EventName %S and Event State %d "), &WsEventName(aEvent), iState);
 #endif
 	// update state
 	switch(eventType)
@@ -1021,7 +1046,7 @@ void TWsPointer::ProcessOutOfRangeEvent(TWsEvent& aEvent,const CWsWindowGroup* a
 	if (iState != EPointerStateOutOfRange)
 		{
 #ifdef LOG_WSERV_EVENTS
-       RDebug::Printf("{EVNT}TWsPointer::ProcessOutOfRangeEvent Pointer Number = %d, iState =%d ", iNumber, iState); 
+       RDebug::Printf("_WSEVENT_POINTER: TWsPointer::ProcessOutOfRangeEvent Pointer Number = %d, iState =%d ", iNumber, iState); 
 #endif
 
 		// OutOfRange event generated by driver doesn't contain correct coordinates,
@@ -1095,11 +1120,17 @@ void TWsPointer::ProcessEvent(TWsEvent& aEvent, TBool aNatural)
 				}
 			else if (!WsKeyboardEmulator::PointerEvent(type,pos,iCurrentWindow->PointerKeyList()))
 				{
+#ifdef LOG_WSERV_EVENTS
+				RDebug::Printf("_WSEVENT_POINTER: Calling ProcessPointerEvent for primary pointer");
+#endif
 				ProcessPointerEvent(aEvent);
 				}
 			}
 		else if (!iCurrentWindow->UsingPointerBuffer() || (type != TPointerEvent::EMove && type != TPointerEvent::EDrag))
 			{
+#ifdef LOG_WSERV_EVENTS
+			RDebug::Printf("_WSEVENT_POINTER: Calling ProcessPointerEvent for non primary pointer");
+#endif
 			ProcessPointerEvent(aEvent);
 			}
 		}
@@ -1413,9 +1444,11 @@ void TWsPointer::UpdatePrimaryPointer(const TRawEvent& aRawEvent)
 	TInt pointerNumber = aRawEvent.PointerNumber();
     
 #ifdef LOG_WSERV_EVENTS
-	RDebug::Printf("{EVNT}TWsPointer::UpdatePrimaryPointer Current Primary pointer = %d",iPrimaryPointer);
-	RDebug::Printf("{EVNT}TWsPointer::UpdatePrimaryPointer Pointer Number= %d  State = %x XY(%d,%d)",iPointers[0].iNumber,iPointers[0].iState,iPointers[0].iPos.iX,iPointers[0].iPos.iY);
-    RDebug::Printf("{EVNT}TWsPointer::UpdatePrimaryPointer Pointer Number= %d  State = %x XY(%d,%d)",iPointers[1].iNumber,iPointers[1].iState,iPointers[1].iPos.iX,iPointers[1].iPos.iY);
+	RDebug::Printf("_WSEVENT_POINTER: TWsPointer::UpdatePrimaryPointer Current Primary pointer = %d",iPrimaryPointer);
+	for(TInt i=0; i< iMaxPointers; i++)
+		{
+		RDebug::Printf("_WSEVENT_POINTER: TWsPointer::UpdatePrimaryPointer Pointer Number= %d  State = %x XY(%d,%d)",iPointers[i].iNumber,iPointers[i].iState,iPointers[i].iPos.iX,iPointers[i].iPos.iY);
+		}
 #endif
 	
 	// If primary pointer is out of range, then the first pointer that will 
@@ -1426,7 +1459,7 @@ void TWsPointer::UpdatePrimaryPointer(const TRawEvent& aRawEvent)
 			{
 			iPrimaryPointer = pointerNumber;
 #ifdef LOG_WSERV_EVENTS
-	        RDebug::Printf("{EVNT}TWsPointer::UpdatePrimaryPointer New Primary pointer(case OutRange) = %d",iPrimaryPointer);
+	        RDebug::Printf("_WSEVENT_POINTER: TWsPointer::UpdatePrimaryPointer New Primary pointer(OutRange) = %d",iPrimaryPointer);
 #endif
 			}
 		return;
@@ -1436,10 +1469,10 @@ void TWsPointer::UpdatePrimaryPointer(const TRawEvent& aRawEvent)
 	// is not down, then the pointer which has sent EButton1Down becomes primary.
 	if (type == TRawEvent::EButton1Down && 
 		iPointers[iPrimaryPointer].iState != EPointerStateDown)
-		{ 
+		{
 		iPrimaryPointer = pointerNumber;
 #ifdef LOG_WSERV_EVENTS
-        RDebug::Printf("{EVNT}TWsPointer::UpdatePrimaryPointer New Primary pointer(case ButtonDown) = %d",iPrimaryPointer);
+        RDebug::Printf("_WSEVENT_POINTER: TWsPointer::UpdatePrimaryPointer New Primary pointer(ButtonDown) = %d",iPrimaryPointer);
 #endif
 		return;
 		}
@@ -1555,40 +1588,19 @@ away from few pixels north of the actual hit centre as detected by the digitizer
 will shift all pointer events by a specified Y displacement.
 
 @param aY Current y coordinate pointer position.
-*/
+ 
+ */
 void TWsPointer::ShiftYCoordinate(TInt& aY)
     {
-	// If iYOffsetMax is zero or both topOffset and bottomOffset is zero then return without doing anything
-	if (!iYOffsetMax || !(iYOffsetTop || iYOffsetBottom))
-		return;
-	
-	if (aY >= iYOffsetMax )	
-		{
-		CScreen* screen=iRootWindow->Screen();
-		TInt displayHeight = screen->SizeInPixels().iHeight;
-
-		// Gradual reduction of Yoffset depending upon the aY value
-		TInt offset = iYOffsetTop + iYOffsetBottom - ( iYOffsetTop * 
-				aY / displayHeight );
-		
-		if ( offset > iYOffsetMax )
-			{
-			offset = iYOffsetMax;
-			}
-		aY -=offset;
-		
-		// As the pixels are zero counted, digitiser would send a pointer with co-ordinates 
-		// from 0 to 239 or 0 to 639, if hieght of the screen was 240 or 640.
-		// And here we are calulating the Yvalue so it cannot be more than 239 or 639 
-		if ( aY > (displayHeight-1) )
-			{
-			aY = displayHeight-1;
-			}
-		}
-	else
-		{
-		aY = 0;
-		}
+    WS_ASSERT_DEBUG(iYOffset>=0, EWsPanicInvalidPointerOffset);
+    if (aY >= iYOffset)
+        {
+        aY -=iYOffset;
+        }
+    else
+        {
+        aY=0;
+        }
     }
 //
 CWsPointerTimer::CWsPointerTimer(MPointerTimerCallback& aPointerTimerCallback)

@@ -1,7 +1,5 @@
 #graphics_openglesheaders.mrp
-#
-#Copyright (c) 2004 Symbian Ltd.  All rights reserved.
-#
+
 
 component	graphics_openglesheaders
 

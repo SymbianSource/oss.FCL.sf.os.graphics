@@ -16,6 +16,9 @@
 #ifndef __T_RATELIMITER_IBY__
 #define __T_RATELIMITER_IBY__
 
+#include <graphics_sirocco_wsini.hby>
+#define WSERV_TEST_WSINI WSERV_TEST_WSINI_RATELIMITER
+
 #include <testexecute.iby>
 
 // wserv testexecute server

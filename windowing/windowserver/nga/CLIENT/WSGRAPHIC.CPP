@@ -20,7 +20,7 @@
 #include "w32comm.h"
 #include "CLIENT.H"
 #include <s32mem.h>
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
 
 NONSHARABLE_STRUCT(CWsGraphic::CPimpl): public CBase, public MWsClientClass
 /** @internalComponent @released */
@@ -232,6 +232,7 @@ void CWsGraphic::CManager::ConstructL()
 	User::LeaveIfError(Connect());
 	iBuffer->SetWsGraphicManager(this);
 	CActiveScheduler::Add(this);
+	// coverity[negative_returns]
 	iFlusher = CIdle::NewL(CActive::EPriorityIdle);
 	}
 

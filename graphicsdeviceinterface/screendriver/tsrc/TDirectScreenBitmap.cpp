@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -126,7 +126,6 @@ TBool CCommonInterfaces::ScreenClear()
     	{
         TRequestStatus requestStatus;
         iDSBitmap->EndUpdate(requestStatus);	
-        User::WaitForRequest(requestStatus);
     	}
     return ret;
 	}
@@ -139,7 +138,6 @@ TBool CCommonInterfaces::ScreenClearPartial()
     	{
         TRequestStatus requestStatus;
         iDSBitmap->EndUpdate(iRect,requestStatus);	
-        User::WaitForRequest(requestStatus);
     	}
     return ret;
 	}
@@ -288,7 +286,7 @@ void CRendering::ProcessFrame()
 
 //A largely visual test to demonstrate regional refreshing of DirectScreenBitmaps and the correct display function
 //of the Emulator.
-class CTDirectScreenBitmap : public CTGraphicsBase, public MDirectScreenAccess
+class CTDirectScreenBitmap : public CTGraphicsBase
 	{
 	public:	
 		~CTDirectScreenBitmap();
@@ -302,9 +300,6 @@ class CTDirectScreenBitmap : public CTGraphicsBase, public MDirectScreenAccess
  		void LogColourEvent(TInt aPreMulDestPixColor,TInt aNonPreMulDestPixColor,TInt aPreMulSrcPixelColor,TInt aNonPreMulSrcPixelColor,TReal aVal1,TReal aVal2,TReal aVal3,TRefByValue<const TDesC> aMsg,TBool aErr);
  		void TestContinuousRefreshingL();
  		void TestRefreshingTimeL();
- 	
- 	    void Restart(RDirectScreenAccess::TTerminationReasons aReason);
- 	    void AbortNow(RDirectScreenAccess::TTerminationReasons aReason);
 	private:
 	    void TestRefreshingWindowsPerDisplayModeL(TDisplayMode aDisplayMode);
 		void TestContinuousRefreshingPerDisplayModeL(const TDisplayMode& aDisplayMode);
@@ -335,12 +330,6 @@ class CTDirectScreenBitmap : public CTGraphicsBase, public MDirectScreenAccess
 	    TReal iMeasure ;
 	    TUint32 iTimeBefore;
 	    TUint32 iTimeAfter;
-	    RWsSession iSession;
-	    CWsScreenDevice* iScreenDevice;
-	    RWindow* iWin;
-	    RWindowGroup* iWinGroup;
-	    CDirectScreenAccess* iDSA;
-	    TInt iWindowHandle;
 
 	};
 
@@ -363,7 +352,7 @@ class TIgnoreSpecialCases
 	}; 
 
 CTDirectScreenBitmap::CTDirectScreenBitmap(CTestStep* aStep) :
-	CTGraphicsBase(aStep),iMeasure(0), iSession()
+	CTGraphicsBase(aStep),iMeasure(0)
 	{
 	}
 	
@@ -371,18 +360,6 @@ CTDirectScreenBitmap::~CTDirectScreenBitmap()
 	{
 	Close();
 	}
-
-void CTDirectScreenBitmap::Restart(RDirectScreenAccess::TTerminationReasons /*aReason*/)
-    {
-    iDSA->StartL();
-    CFbsBitGc* gc = iDSA->Gc();
-    RRegion* region = iDSA->DrawingRegion();
-    gc->SetClippingRegion(region);
-    }
-
-void CTDirectScreenBitmap::AbortNow(RDirectScreenAccess::TTerminationReasons /*aReason*/)
-    {
-    }
 	
 //Construct the DirectScreenBitmap and sub-rects for test of the refresh.	
 //Constructs a DirectScreenBitmap for EDoubleBuffer and EIncrementalUpdate
@@ -400,27 +377,6 @@ void CTDirectScreenBitmap::ConstructL(const TRect &aScreenRect, const CDirectScr
 		{
 		iDirectScreenBitmap = CDirectScreenBitmap::NewL();
 		}
-	iSession.Connect();
-	iScreenDevice = new (ELeave) CWsScreenDevice(iSession);
-	iScreenDevice->Construct();
-	
-	iWinGroup = new (ELeave) RWindowGroup(iSession);
-	iWinGroup->Construct(++iWindowHandle, iScreenDevice);
-	iWin = new (ELeave) RWindow(iSession);
-	iWin->Construct(*iWinGroup, ++iWindowHandle);
-	iWin->SetExtent(TPoint(0,0), aScreenRect.Size());
-	iWin->SetPosition(aScreenRect.iTl);
-	iWin->Activate();
-	iWin->BeginRedraw();
-	iWin->EndRedraw();
-	iDSA = CDirectScreenAccess::NewL(iSession, *iScreenDevice, *iWin, *this);
-	iSession.Flush();
-	iDSA->StartL();
-	
-	CFbsBitGc* gc = iDSA->Gc();
-	RRegion* region = iDSA->DrawingRegion();
-	gc->SetClippingRegion(region);
-	
 	iSettings = aSettings;
 	TInt create=iDirectScreenBitmap->Create(aScreenRect, aSettings);
 	if (create==KErrNone)
@@ -456,19 +412,6 @@ void CTDirectScreenBitmap::Close()
 	iInterface = NULL;
 	delete iRendering;
 	iRendering = NULL;
-	if (iDSA)
-	    {
-        iDSA->Cancel();
-        delete iDSA;
-        iDSA = NULL;
-	    }
-    delete iWin;
-    iWin = NULL;
-    delete iScreenDevice;
-    iScreenDevice = NULL;
-    delete iWinGroup;
-    iWinGroup = NULL;
-    iSession.Close();
 	}
 
 
@@ -495,26 +438,26 @@ void CTDirectScreenBitmap::DoRefreshCycle(void)
 		if (!(iSettings & CDirectScreenBitmap::EIncrementalUpdate))
 			{		
 			iInterface->EndDraw(iRequestStatus);	
-			User::WaitForRequest(iRequestStatus);
+			User::After(WAIT_TIME);
 			}
 		else
 			{		
-			iInterface->EndDraw(iTopLeft, iRequestStatus);
-            User::WaitForRequest(iRequestStatus);
+			iInterface->EndDraw(iTopLeft, iRequestStatus);	
+			User::After(WAIT_TIME);
 			iInterface->BeginDraw();
 			iInterface->EndDraw(iTopRight, iRequestStatus);	
-            User::WaitForRequest(iRequestStatus);
+			User::After(WAIT_TIME);
 			iInterface->BeginDraw();
-			iInterface->EndDraw(iBotLeft, iRequestStatus);
-            User::WaitForRequest(iRequestStatus);
+			iInterface->EndDraw(iBotLeft, iRequestStatus);	
+			User::After(WAIT_TIME);
 			iInterface->BeginDraw();
-			iInterface->EndDraw(iBotRight, iRequestStatus);
-            User::WaitForRequest(iRequestStatus);
+			iInterface->EndDraw(iBotRight, iRequestStatus);	
+			User::After(WAIT_TIME);
 			
 			iInterface->DrawColor(iMiddle,KRgbCyan);
 			iInterface->BeginDraw();
 			iInterface->EndDraw(iMiddle, iRequestStatus);
-            User::WaitForRequest(iRequestStatus);
+			User::After(WAIT_TIME);
 
 			}
 		__ASSERT_DEBUG(iInterface->ScreenClear(), User::Invariant());

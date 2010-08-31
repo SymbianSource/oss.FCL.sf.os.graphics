@@ -21,4 +21,10 @@ EXPORTS
 	_ZTI10CTProfiler @ 20 NONAME
 	_ZTV10CTProfiler @ 21 NONAME
 	_ZN10CTProfiler17FreeResultsMemoryEv @ 22 NONAME
-
+	_ZN10CTProfiler7TimeMaxEv @ 23 NONAME
+	_ZN10CTProfiler7TimeMinEv @ 24 NONAME
+	_ZN10CTProfiler24MarkResultSetAndSuspendLEv @ 25 NONAME
+	_ZN10CTProfiler27SetStoreResultInTimingOrderEi @ 26 NONAME
+	_ZN10CTProfiler28ShowResultArrayInTimingOrderEv @ 27 NONAME
+	_ZN10CTProfiler9SqlInsertEPK7TDesC16S2_S2_l @ 28 NONAME
+	_ZN10CTProfiler24ResultsAnalysisGlyphRateERK7TDesC16iiiii @ 29 NONAME

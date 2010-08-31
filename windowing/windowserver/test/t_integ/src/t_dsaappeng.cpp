@@ -22,7 +22,7 @@
 #include <eikenv.h>
 #include <s32file.h>
 #include <f32file.h>
-#include <cinidata.h>
+#include <iniparser.h>
 #include "t_inidata.h"
 #include "t_wservconsts.h"
 #include "t_dsaappeng.h"

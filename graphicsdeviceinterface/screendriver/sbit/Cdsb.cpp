@@ -157,7 +157,7 @@ TInt CGenericDirectScreenBitmap::Create(const TRect& aScreenRect, TSettingsFlags
 		{
 		return r;
 		}
-	
+
 	__ASSERT_ALWAYS(aScreenRect.iTl.iX >= 0 &&
 	                aScreenRect.iTl.iY >= 0 &&
 	                ((aScreenRect.Width() <= screenWidth &&
@@ -166,7 +166,7 @@ TInt CGenericDirectScreenBitmap::Create(const TRect& aScreenRect, TSettingsFlags
 	                (aScreenRect.Width() <= screenHeight &&
 	                aScreenRect.Height() <= screenWidth)),
 	                Panic(EPanicOutOfBounds));
-	
+
 	__ASSERT_ALWAYS(aScreenRect.Width() > 0 &&
 					aScreenRect.Height() > 0, Panic(EPanicInvalidRect));
 

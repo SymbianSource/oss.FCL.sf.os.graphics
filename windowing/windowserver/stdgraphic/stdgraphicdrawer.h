@@ -16,8 +16,8 @@
 #ifndef __STDGRAPHICDRAWER_H__
 #define __STDGRAPHICDRAWER_H__
 
-#include "Graphics/WSGRAPHICDRAWER.H"
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "graphics/WSGRAPHICDRAWER.H"
+#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
 #include <icl/imagedata.h>
 #include "stdgraphictestdrawer.h"
 

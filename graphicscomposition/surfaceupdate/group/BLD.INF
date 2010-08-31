@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -26,12 +26,13 @@ DEFAULT
 
 
 PRJ_EXPORTS
-../inc/surfaceupdateclient.h 	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/surfaceupdateclient.h)
-../inc/updateserverprovider.h 	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/updateserverprovider.h)
-../inc/suerror.h 		SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/suerror.h)
-../inc/compositionsurfaceupdate.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/compositionsurfaceupdate.h)
-../group/surfaceupdate.iby	/epoc32/rom/include/surfaceupdate.iby
-../group/surfaceupdate_ref.iby	/epoc32/rom/include/surfaceupdate_ref.iby
+../inc/surfaceupdateclient.h        SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/surfaceupdateclient.h)
+../inc/updateserverprovider.h       SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/updateserverprovider.h)
+../inc/suerror.h                    SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/suerror.h)
+../inc/compositionsurfaceupdate.h   SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/compositionsurfaceupdate.h)
+../inc/contentreadyforcomposition.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/contentreadyforcomposition.h)
+../group/surfaceupdate.iby	        /epoc32/rom/include/surfaceupdate.iby
+../group/surfaceupdate_ref.iby	    /epoc32/rom/include/surfaceupdate_ref.iby
 
 
 PRJ_MMPFILES
@@ -47,8 +48,8 @@ PRJ_TESTEXPORTS
 
 
 PRJ_TESTMMPFILES
-../group/tcompositionbackend.mmp //to emulate composition behaviour
+../group/tcompositionbackend.mmp support //to emulate composition behaviour
 ../group/tsurfaceupdatetestserver.mmp
-../group/tsurfaceupdateserver.mmp
-../group/tsurfaceupdateclient.mmp
+../group/tsurfaceupdateserver.mmp support
+../group/tsurfaceupdateclient.mmp support
 ../group/tsurfaceupdateserverinteg.mmp

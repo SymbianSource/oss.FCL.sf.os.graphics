@@ -74,6 +74,7 @@ SOURCE            advancedpointereventhelper.cpp
 SOURCE            drawresource.cpp
 SOURCE            devicemap.cpp
 SOURCE            wsdisplaychangeao.cpp
+SOURCE            renderorientationtracker.cpp
 
 SOURCEPATH        ../../nga/SERVER/openwfc
 

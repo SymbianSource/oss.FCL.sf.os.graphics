@@ -367,7 +367,7 @@ enum
 	KMWsWindowTree = 35,				// Object Extension to be used by render stages for recovery of MWsWindowTree
 	KMWsScene = 36,                     // CWsRenderStage Object Extension will yield an MWsScene
 	                                    //      MWsScene::CreateSceneElement will yield a MWsElement
-
+	KMWsContentReadyForComposition = 37,// CWsRenderStage Object Extension will optionally yield an MWsContentReadyForComposition
 	};
 
 class TSurfaceConfiguration;

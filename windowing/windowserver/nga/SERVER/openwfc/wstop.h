@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -56,6 +56,7 @@ private:
 #endif
 	};
 
+class CWsRenderOrienationTracker;
 class CWsTop
 	{
 	enum {EShellBootModeReboot=0,EShellBootModeNoReboot=1,EShellBootModeExit=2};
@@ -122,6 +123,7 @@ public:
 	static TBool MultiFocusPolicy();
 	
 	static inline CWsPluginManager *PluginManager();
+	static void CheckRenderOrientation();
 	
 private:
 	static void InitLogging();
@@ -152,6 +154,7 @@ private:
 	static TInt iCheckHeapResult;
 	static TBool iDoHeapCheckAndRestart;
 	static CWsPluginManager *iPluginManager;
+    static CWsRenderOrienationTracker* iRenderOrientationTracker;	
 	};
 	
 NONSHARABLE_CLASS(CWsActiveScheduler): public CActiveScheduler, public MWsActiveSchedulerDebug

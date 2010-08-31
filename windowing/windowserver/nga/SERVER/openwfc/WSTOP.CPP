@@ -32,7 +32,7 @@
 #include "pointer.h"
 #include "WSGRAPHICDRAWERFACTORY.H"
 #include "redrawmsgwindow.h"
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
 #include "WsMemMgr.h"
 #include "backedupwindow.h"
 #include "wsfont.h"
@@ -46,6 +46,7 @@
 #include "registeredsurfacemap.h"
 #include "windowelementset.h"
 #include "wspluginmanager.h"
+#include "renderorientationtracker.h"
 
 // IDs of p&s properties that optionally contain callbacks that may be used
 // to release singletons owned by libraries at shutdown in order to make 
@@ -209,6 +210,7 @@ TWsCheckHeapOnDisconnectMode CWsTop::iHeapCheckMode=EWsCheckHeapOnDisconnectMode
 TInt CWsTop::iCheckHeapResult=KErrNotReady;
 TBool CWsTop::iDoHeapCheckAndRestart=EFalse;
 #define RFbsSession_SendCommand_ShutDownMessage 1	// A FBS message that is not published yet and probably never will be.
+CWsRenderOrienationTracker* CWsTop::iRenderOrientationTracker=NULL;
 
 static void DefineSingletonKey(const TUid& aSingletonKey)
 /**
@@ -281,6 +283,8 @@ static void DeleteSingleton( const TUid& aSingletonKey )
 void CWsTop::DeleteStaticsL()
 	{
 	iShuttingDown=ETrue;
+	delete iRenderOrientationTracker;	
+	
 	CClick::DeleteStatics();
 	TWsPointer::Stop();
 	CWsClient::DeleteStatics();
@@ -553,6 +557,8 @@ void CWsTop::InitStaticsL()
 		StartShell();
 		}
 	UserSvr::WsRegisterSwitchOnScreenHandling(ETrue);
+	
+	iRenderOrientationTracker = CWsRenderOrienationTracker::NewL();	
 	}
 
 
@@ -897,31 +903,6 @@ void CWsTop::SetCheckHeapOnDisconnectMode(TWsCheckHeapOnDisconnectMode aCheckHea
 	iHeapCheckMode=aCheckHeapOnDisconnectMode;
 	}
 
-static void ReportAllCurrentLevelLeaks()
-    {
-    class RHeapWalk: public RHeap
-        {
-    public:
-         static void WalkCheckCell(TAny* aPtr, TCellType aType, TAny* aCell, TInt aLen)
-             {
-             RHeapWalk* heap=(RHeapWalk*)aPtr;
-             (void)aCell;
-             switch(aType)
-                 {
-                 case EGoodAllocatedCell:
-                     if ( ((SDebugCell*)aCell)->nestingLevel == heap->iNestingLevel )
-                         {
-                         RDebug::Printf("Leaked heap cell: level %i, serial %i @ %08x : len=%d", 
-                                            heap->iNestingLevel, ((SDebugCell*)aCell)->allocCount, aCell, aLen);
-                         }
-                    break;
-                 }
-             }
-        };
-    
-    User::Heap().DebugFunction(RHeap::EWalk, (TAny*)RHeapWalk::WalkCheckCell, &User::Heap());
-    }
-
 TBool CWsTop::NeedsHeapCheckAndRestart(TInt aStartHeapCount)
 	{
 	if (!iDoHeapCheckAndRestart)
@@ -932,7 +913,6 @@ TBool CWsTop::NeedsHeapCheckAndRestart(TInt aStartHeapCount)
 	    {
 	    const TUint32 orphanedCell = User::Heap().__DbgMarkEnd(aStartHeapCount);
 	    RDebug::Printf("Memory leak detected in wserv. First orphaned cell: 0x%8x", orphanedCell);
-	    ReportAllCurrentLevelLeaks();
 	    }
 	return(ETrue);
 	}
@@ -983,6 +963,18 @@ TBool CWsTop::SearchDuplicateSurfaceId(const TSurfaceId& aSurfaceId)
 		}
 	return EFalse;
 	}
+
+/**
+Checks to see if the render orientation has changed, and publishes any new orientaion
+via publish and subscribe
+
+@see KRenderOrientationCategory
+@see KRenderOrientationKey 
+*/
+void CWsTop::CheckRenderOrientation()
+    {
+    iRenderOrientationTracker->CheckRenderOrientation();
+    }
 
 typedef TInt (*ShellEntryPoint)(TAny *);
 

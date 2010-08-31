@@ -651,4 +651,13 @@ EXPORTS
 	_ZN11RWindowBase22SetSurfaceTransparencyEi @ 650 NONAME
 	_ZN11RWindowBase20FixNativeOrientationEv @ 651 NONAME
 	_ZNK11RWindowBase10SizeForEglEv @ 652 NONAME
+	_ZN10RWsSession17SendEffectCommandEiRK6TDesC8 @ 653 NONAME
+	_ZN11RWindowBase10SetPurposeEi @ 654 NONAME
+	_ZN11RWindowBase17SendEffectCommandEiRK6TDesC8 @ 655 NONAME
+	_ZN10RWsSession14RegisterEffectEiiRK4TBufILi256EES3_S3_j10TBitFlagsTImE @ 656 NONAME
+	_ZN10RWsSession15OverrideEffectsEiiRK4TBufILi256EES3_S3_10TBitFlagsTImE @ 657 NONAME
+	_ZN10RWsSession16UnregisterEffectEiij @ 658 NONAME
+	_ZN10RWsSession20UnregisterAllEffectsEv @ 659 NONAME
+	_ZN11RWindowBase15OverrideEffectsEiRK4TBufILi256EES3_S3_10TBitFlagsTImE @ 660 NONAME
+	_ZN10RWsSession22IndicateAppOrientationE18TRenderOrientation @ 661 NONAME
 

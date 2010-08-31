@@ -31,7 +31,7 @@ deffile			wslisten.def
 userinclude		../inc .
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
-sourcepath		../tlisten
+sourcepath		../test/tlisten
 source			wslisten.cpp
 
 library			euser.lib ws32.lib

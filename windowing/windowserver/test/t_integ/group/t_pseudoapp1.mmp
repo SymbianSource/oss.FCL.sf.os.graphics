@@ -65,7 +65,7 @@ LIBRARY         eikcore.lib
 LIBRARY         gdi.lib
 LIBRARY         ws32.lib
 LIBRARY 		estor.lib
-LIBRARY         cinidata.lib
+LIBRARY			iniparser.lib
 LIBRARY         t_winutils.lib   
 LIBRARY         efsrv.lib
 LIBRARY			t_pseudoappengine.lib

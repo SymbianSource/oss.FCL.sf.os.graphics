@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -72,6 +72,7 @@
 #include "TMULSCREENS.h"
 #include "TBUFFERSECURITY.H"
 #include "TFLICKERFREE.H"
+#include "tdevicerotation.h"
 #ifdef TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA
 #include "TFADINGBITMAP.H"
 #endif
@@ -85,7 +86,7 @@
 #include "tmultiptrevent.h"
 #include "tdrawresource.h"
 #include "twindowsizecache.h"
-#include "tptroffset.h"
+
 
 /* Path to the script
 z:\GraphicsTest\gditest.script
@@ -310,6 +311,8 @@ CTestStep* CTAutoServer::CreateTestStep(const TDesC& aStepName)
   		testStep = new CTBufferSecurityStep();
    	else if(aStepName == KTFlickerFreeStep)
   		testStep = new CTFlickerFreeStep();
+    else if(aStepName == KTDeviceRotationStep)
+     testStep = new CTDeviceRotationStep();
 #ifdef TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA
 	else if(aStepName == KTFadingBitmapStep)
   		testStep = new CTFadingBitmapStep();
@@ -337,8 +340,6 @@ CTestStep* CTAutoServer::CreateTestStep(const TDesC& aStepName)
 		testStep = new CTDrawResourceStep();
     else if(aStepName == KTWindowSizeCacheTestStep)
         testStep = new CTWindowSizeCacheTestStep();
-    else if(aStepName == KTPointerOffsetTestStep)
-        testStep = new CTPointerOffsetTestStep();
 #endif
 	return testStep;
 	}

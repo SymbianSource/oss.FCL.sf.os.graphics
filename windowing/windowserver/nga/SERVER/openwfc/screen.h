@@ -28,7 +28,7 @@
 #include "W32STD.H"
 #include "w32cmd.h"
 #include "wstypes.h"
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
 #include "panics.h"
 
 #include "wsdisplaychangeao.h"
@@ -75,13 +75,12 @@ class CScreen : public CBase, public MWsScreen, public MWsScreenConfigList, publ
 	{
 public:
 	enum {EGetScanLineBufLen=0x100};	// Buffer of for returning result of GetScanLine
-	enum TDisplayScreenFlags
+	enum TDisplayScreen
 		{
 		EBlankScreenOnRotation = 0x1,
  		EAutoClear = 0x2,
  		EHasDynamicSizeModes = 0x04,
 		EChangeTracking = 0x8,
-		ERepeatSettingHalOrientation = 0x20
 		};
 	
 	/**

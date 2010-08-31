@@ -25,9 +25,10 @@
 #endif
 
 
-
 const TUint KDefaultHeapSize=0x10000;
 
+void *gProvider = NULL;
+RFastLock gProviderFastLock;
 
 /**
 The server maintains session with the clients. 
@@ -351,12 +352,14 @@ CUpdateReceiverNotificationBatch* CSurfaceUpdateSession::UpdateReceiverNotificat
 	{
 	TInt numElement = iUpdateReceiverNotificationBatches.Count();
 	CUpdateReceiverNotificationBatch* notifier = NULL;
+	CSurfaceUpdateServer* server = (CSurfaceUpdateServer*) Server();
 	for(TInt index = 0; index < numElement; index++)
 		{
 		notifier = iUpdateReceiverNotificationBatches[index];
 		if(notifier->iType == EUpdateSrvReusable)
 			{
 			__ASSERT_ALWAYS(notifier->iMsg.IsNull(), CSurfaceUpdateServer::PanicServer(EUpdateServPanicDataIntegrity));
+            notifier->SetNumUpdateReceivers(server->NumUpdateReceivers());
 			if(numElement > index + 1)
 				{
 			//to improve a search, append the element to the end of the array
@@ -367,7 +370,6 @@ CUpdateReceiverNotificationBatch* CSurfaceUpdateSession::UpdateReceiverNotificat
 			}
 		}
 	
-	CSurfaceUpdateServer* server = (CSurfaceUpdateServer*) Server();
 	notifier = new (ELeave) CUpdateReceiverNotificationBatch(this, server->NumUpdateReceivers());
 	CleanupStack::PushL(notifier);
 	iUpdateReceiverNotificationBatches.AppendL(notifier);
@@ -883,6 +885,20 @@ void CUpdateReceiverNotificationBatch::IncNumberPendingNotifications()
 	}
 #endif
 
+
+/**
+Set number of UpdateReceivers - called when update receivers are added/removed.
+
+@param aNumUpdateReceivers - new number of update receivers for the batch.
+ */
+void CUpdateReceiverNotificationBatch::SetNumUpdateReceivers(TInt aNumUpdateReceivers)
+    {
+    __ASSERT_DEBUG(aNumUpdateReceivers >= 0 && aNumUpdateReceivers < 1000 /* arbitrary "large" limit */,
+            CSurfaceUpdateServer::PanicServer(EUpdateServPanicDataIntegrity));
+    __ASSERT_DEBUG(iType == EUpdateSrvReusable, 
+            CSurfaceUpdateServer::PanicServer(EUpdateServPanicDataIntegrity));
+    iNumUpdateReceivers = aNumUpdateReceivers;
+    }
 /**
 
 The class will be used by composition receiver
@@ -955,6 +971,11 @@ EXPORT_C void CSurfaceUpdateServerProvider::Terminate()
 
 	if(thread.Open(iThreadId) == KErrNone)
 		{
+	    TInt err = gProviderFastLock.CreateLocal();
+	    __ASSERT_ALWAYS(err == KErrNone || err == KErrAlreadyExists, CSurfaceUpdateServer::PanicServer(EUpdateServPanicGlobalFastLock));
+	    
+	    gProviderFastLock.Wait();
+	    gProvider = NULL;
 		if (iServer)
 			{
 			while((static_cast<CSurfaceUpdateServer*> (iServer))-> iNumberPendingNotification)
@@ -969,7 +990,7 @@ EXPORT_C void CSurfaceUpdateServerProvider::Terminate()
 		User::WaitForRequest(status1);
 		thread.Close();
 		
-		Dll::SetTls(NULL);
+     	gProviderFastLock.Close();
 		}
 #endif
 	}
@@ -1019,14 +1040,25 @@ Spawn a thread within WSERV process. This will lead to starting the surface upda
 EXPORT_C TInt StartSurfaceUpdateServer(MSurfaceUpdateServerProvider*& aSurfaceUpdateServerProvider)
 	{
 #ifndef TEST_SURFACE_UPDATE
-    TPtrC serverName(KSurfaceUpdateServerName);
+	TPtrC serverName(KSurfaceUpdateServerName);
 #else
-    TPtrC serverName(KTestSurfaceUpdateServerName);
-#endif    
-	TAny *provider = Dll::Tls();
+	TPtrC serverName(KTestSurfaceUpdateServerName);
+#endif
+	//locking
+	TInt err = gProviderFastLock.CreateLocal();
+	
+	if (err != KErrNone && err != KErrAlreadyExists)
+	    {
+        return err;
+	    }
+	
+	gProviderFastLock.Wait();
+
+	TAny *provider = gProvider;
 	if(provider)
 		{
 		aSurfaceUpdateServerProvider = static_cast <MSurfaceUpdateServerProvider*> (provider);
+		gProviderFastLock.Signal();
 		return KErrNone;
 		}
 	TFullName   name;
@@ -1043,6 +1075,7 @@ EXPORT_C TInt StartSurfaceUpdateServer(MSurfaceUpdateServerProvider*& aSurfaceUp
 		TRAP(res, tm.FormatL(buf, _L("_%H%T%S%C")));
 		if(res != KErrNone)	
 			{
+			gProviderFastLock.Signal();
 			return res;
 			}
 		TBuf<128> threadName(serverName);
@@ -1066,7 +1099,7 @@ EXPORT_C TInt StartSurfaceUpdateServer(MSurfaceUpdateServerProvider*& aSurfaceUp
 			serverThread.Resume();
 			User::WaitForRequest(rendezvousStatus);
 			res = rendezvousStatus.Int();
-			Dll::SetTls(aSurfaceUpdateServerProvider);
+			gProvider = aSurfaceUpdateServerProvider;
 			}
     // The thread has not been created - clearly there's been a problem.
 		else
@@ -1074,5 +1107,6 @@ EXPORT_C TInt StartSurfaceUpdateServer(MSurfaceUpdateServerProvider*& aSurfaceUp
 			serverThread.Close();
 			}
 		}
+       gProviderFastLock.Signal();
 		return res;
 	}

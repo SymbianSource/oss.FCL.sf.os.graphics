@@ -1,4 +1,5 @@
-/* Copyright (c) 2009 The Khronos Group Inc.
+/* Copyright (c) 2009-2010 The Khronos Group Inc.
+ * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -102,10 +103,6 @@ WFC_Pipeline_BlendInfo(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state)
     state->blendInfo.source.rectangle      = &state->scaledSrcRect;
     state->blendInfo.mask                  = state->originalMaskImage ? state->maskImage : NULL;
     state->blendInfo.globalAlpha           = state->globalAlpha;
-    
-    /* composition does not use these values ever */
-    state->blendInfo.tsColor                = NULL;
-    state->blendInfo.destinationFullyOpaque = OWF_FALSE;    
     
     DPRINT(("  globalAplha = %f", state->globalAlpha));
     /* no need to check with OWF_ALPHA_MIN_VALUE as it is zero */
@@ -337,7 +334,6 @@ WFC_Pipeline_BeginComposition(WFC_CONTEXT* context, WFC_ELEMENT* element)
         return NULL;
     }
 
-    
     /* setup temporary images used in composition. since the original
        source data must not be altered, we must copy it to scratch buffer
        and work it there. another scratch buffer is needed for scaling
@@ -352,7 +348,22 @@ WFC_Pipeline_BeginComposition(WFC_CONTEXT* context, WFC_ELEMENT* element)
     state->globalAlpha = element->globalAlpha;
     state->sourceScaleFilter = element->sourceScaleFilter;
     state->transparencyTypes = element->transparencyTypes;
-    /* replicate the source viewport rectangle and target extent rectangle */
+
+    if (state->transparencyTypes & WFC_TRANSPARENCY_ELEMENT_GLOBAL_ALPHA)
+        {
+        if (state->globalAlpha == OWF_FULLY_TRANSPARENT)
+            {
+            /* Fully transparent element - no contribution. */
+            return NULL;
+            }
+        if (state->globalAlpha == OWF_FULLY_OPAQUE)
+            {
+            /* Fully opaque global alpha - global alpha can be ignored */
+            state->transparencyTypes &= ~WFC_TRANSPARENCY_ELEMENT_GLOBAL_ALPHA;
+            }
+        }
+    
+/* replicate the source viewport rectangle and target extent rectangle */
     for (x = 0; x < 4; x++)
     {
         state->sourceRect[x] = element->srcRect[x];
@@ -591,7 +602,6 @@ WFC_Pipeline_ExecuteCropStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state)
     }
     else
     {
-
         /* Source rectangle */
         OWF_Rect_Set(&sourceRect,
                      state->oversizedCropRect.x, state->oversizedCropRect.y,
@@ -617,7 +627,7 @@ OWF_API_CALL void
 WFC_Pipeline_ExecuteFlipStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state)
 {
     OWF_FLIP_DIRECTION      flipping;
-    
+	
     if (NULL == context || NULL == state)
     {
         DPRINT(("WFC_Context_ExecuteFlipStage: context = %p, state = %p",
@@ -625,7 +635,6 @@ WFC_Pipeline_ExecuteFlipStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state)
     }
     else
     {
-        OWF_ASSERT(state);
         flipping = state->sourceFlip > 0.0f ? OWF_FLIP_VERTICALLY
                                           : OWF_FLIP_NONE;
         
@@ -646,14 +655,12 @@ WFC_Pipeline_ExecuteRotationStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state
     OWF_RECTANGLE           rect;    
     WFCRotation             rotation;
 
-
     if (NULL == context || NULL == state)
     {
         DPRINT(("WFC_Context_ExecuteRotationStage: context = %p, state = %p",
                context, state));
         return;
     }
-    OWF_ASSERT(state);
 
     rotation = state->rotation;
     DPRINT(("  Element rotation = %d", rotation));
@@ -723,7 +730,7 @@ WFC_Pipeline_ExecuteScalingStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state)
                             cropRect;
     OWF_FILTERING           filteringMode = OWF_FILTER_POINT_SAMPLING;
     WFCScaleFilter          filter;
-
+	
     DPRINT(("WFC_Context_ExecuteScalingStage(%p,%p)", context, state));
 
     if (NULL == context || NULL == state)
@@ -732,8 +739,6 @@ WFC_Pipeline_ExecuteScalingStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state)
                context, state));
         return;
     }
-
-    OWF_ASSERT(state);
 
     filter = state->sourceScaleFilter;
 
@@ -800,7 +805,7 @@ WFC_Pipeline_ExecuteBlendingStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state
 {
     OWF_TRANSPARENCY        blendMode = OWF_TRANSPARENCY_NONE;
     WFCbitfield             transparency = 0;
-
+	
     DPRINT(("WFC_Pipeline_ExecuteBlendingStage"));
 
     if (NULL == context || NULL == state)
@@ -810,8 +815,6 @@ WFC_Pipeline_ExecuteBlendingStage(WFC_CONTEXT* context, WFC_ELEMENT_STATE* state
 
     DPRINT(("  context = %d, state = %d",
            context->handle, state));
-
-    OWF_ASSERT(state);
 
     transparency = state->transparencyTypes;
     blendMode = OWF_TRANSPARENCY_NONE;

@@ -17,7 +17,7 @@
 
 # EGL
 TESTEXECUTE, \logs\testexecute\egltest_t_basicegl.htm,                          , z:\egltest\egltest_t_basicegl.script, 600
-TESTEXECUTE, \logs\testexecute\egltest_t_hybrid.htm,                           	, z:\egltest\egltest_t_hybrid.script, 600
+TESTEXECUTE, \logs\testexecute\egltest_t_hybrid.htm,                            , z:\egltest\egltest_t_hybrid.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_nativepixmaptype_hg.htm,               , z:\egltest\egltest_t_nativepixmaptype_hg.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_createpixmapsurface_hg.htm,            , z:\egltest\egltest_t_createpixmapsurface_hg.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_image_hg.htm,                          , z:\egltest\egltest_t_image_hg.script, 600
@@ -26,7 +26,7 @@ TESTEXECUTE, \logs\testexecute\egltest_t_internalapi.htm,                       
 TESTEXECUTE, \logs\testexecute\egltest_t_lowmemory.htm,                         , z:\egltest\egltest_t_lowmemory.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_windowresize.htm,                      , z:\egltest\egltest_t_windowresize.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_swapbehavior.htm,                      , z:\egltest\egltest_t_swapbehavior.script, 600
-TESTEXECUTE, \logs\testexecute\egltest_t_swapbuffers.htm,                       , z:\egltest\egltest_t_swapbuffers.script, 600
+TESTEXECUTE, \logs\testexecute\egltest_t_benchmark_swapbuffers.htm,             , z:\egltest\egltest_t_benchmark_swapbuffers.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_unittest.htm,                          , z:\egltest\egltest_t_unittest.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_texturing.htm,                         , z:\egltest\egltest_t_texturing.script, 600
 
@@ -44,3 +44,6 @@ TESTEXECUTE, \logs\testexecute\egltest_t_image_negative.htm,                    
 TESTEXECUTE, \logs\testexecute\egltest_t_sibling.htm,                           , z:\egltest\egltest_t_sibling.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_vgimagetosurfaces.htm,                 , z:\egltest\egltest_t_vgimagetosurfaces.script, 600
 TESTEXECUTE, \logs\testexecute\egltest_t_benchmark_sgimage.htm,                 , z:\egltest\egltest_t_benchmark_sgimage.script, 600
+TESTEXECUTE, \logs\testexecute\egltest_t_oom_sgimage.htm,                       , z:\egltest\egltest_t_oom_sgimage.script, 600
+TESTEXECUTE, \logs\testexecute\egltest_t_stress_sgimage.htm,                    , z:\egltest\egltest_t_stress_sgimage.script, 1200
+TESTEXECUTE, \logs\testexecute\egltest_t_surfacescaling.htm,                    , z:\egltest\egltest_t_surfacescaling.script, 600

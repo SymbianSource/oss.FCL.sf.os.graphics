@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1758,6 +1758,7 @@ void CTSurfaceUpdate::TestCase11()
 	session.Close();
 	}
 
+
 /**
   @SYMTestCaseID GRAPHICS-SURFACEUPDATE-0019
 
@@ -1773,48 +1774,54 @@ void CTSurfaceUpdate::TestCase11()
   @SYMTestStatus Implemented
 
   @SYMTestActions Start the surface update server in two different threads.
-  	
+    
   @SYMTestExpectedResults Thread 1: KErrNone
-     Thread 2: KErrAlreadyExists.
+     Thread 2: KErrNone
+     The "provider" returned to both threads should also be the same value!
 */
 void CTSurfaceUpdate::TestCase12L()
-	{
-	MSurfaceUpdateServerProvider *surfaceUpdateProvider = NULL;
-	TInt res = StartSurfaceUpdateServer(surfaceUpdateProvider);
-	TEST(res == KErrNone);
-	User::LeaveIfError(res);
+    {
+    MSurfaceUpdateServerProvider *surfaceUpdateProvider = NULL;
+    TInt res = StartSurfaceUpdateServer(surfaceUpdateProvider);
+    TEST(res == KErrNone);
+    User::LeaveIfError(res);
 
-	_LIT(KThreadName, "TestServerStartupTwoThreads");
-	TTime tm;
-	TBuf<32> buf;
-	tm.UniversalTime();
-	TRAP(res, tm.FormatL(buf, _L("_%H%T%S%C")));
-	TEST(res == KErrNone);
-	User::LeaveIfError(res);
-	TBuf<128> threadName(KThreadName);
-	threadName.Append(buf); //guarantee uniqueness  of the thread name
-	RThread thread;
-	res = thread.Create(threadName,
-			TestServerStartupTwoThreads,
-			KDefaultStackSize,
-			&User::Heap(),
-			NULL);
-	TEST(res == KErrNone);
-	User::LeaveIfError(res);
-	TRequestStatus rendezvousStatus;
-	thread.Rendezvous(rendezvousStatus);
-	thread.Resume();
-	User::WaitForRequest(rendezvousStatus);
-	TEST(KErrAlreadyExists == rendezvousStatus.Int());
-	}
-	
+    _LIT(KThreadName, "TestServerStartupTwoThreads");
+    TTime tm;
+    TBuf<32> buf;
+    tm.UniversalTime();
+    TRAP(res, tm.FormatL(buf, _L("_%H%T%S%C")));
+    TEST(res == KErrNone);
+    User::LeaveIfError(res);
+    TBuf<128> threadName(KThreadName);
+    threadName.Append(buf); //guarantee uniqueness  of the thread name
+    RThread thread;
+    MSurfaceUpdateServerProvider *surfaceUpdateProvider2 = NULL;
+    res = thread.Create(threadName,
+            TestServerStartupTwoThreads,
+            KDefaultStackSize,
+            &User::Heap(),
+            &surfaceUpdateProvider2);
+    TEST(res == KErrNone);
+    User::LeaveIfError(res);
+    TRequestStatus rendezvousStatus;
+    thread.Rendezvous(rendezvousStatus);
+    thread.Resume();
+    User::WaitForRequest(rendezvousStatus);
+    TEST(KErrNone == rendezvousStatus.Int());
+    // Check that we get the same provider for both threads!
+    TEST(surfaceUpdateProvider2 == surfaceUpdateProvider);
+    }
+
+
 /**
 Starting the update server in another thread - called from TestCase12
 */
-TInt CTSurfaceUpdate::TestServerStartupTwoThreads(TAny*)
+TInt CTSurfaceUpdate::TestServerStartupTwoThreads(TAny *aArgPtr)
 	{
-	MSurfaceUpdateServerProvider *surfaceUpdateProvider = NULL;
-	TInt res = StartSurfaceUpdateServer(surfaceUpdateProvider);
+	MSurfaceUpdateServerProvider **surfaceUpdateProviderPtr = 
+	        reinterpret_cast<MSurfaceUpdateServerProvider **>(aArgPtr);
+	TInt res = StartSurfaceUpdateServer(*surfaceUpdateProviderPtr);
 	return res;
 	}
 
@@ -2250,14 +2257,14 @@ void CTSurfaceUpdate::RunTestCaseL(TInt aCurTestCase)
  		TEST(ret == KErrNone);
  		break;
 		}
-	case 12:
- 		{
- 		((CTSurfaceUpdateStep*)iStep)->SetTestStepID(_L("GRAPHICS-SURFACEUPDATE-0019"));
- 		INFO_PRINTF1(_L("TestCase12"));
- 		TRAPD(ret, TestCase12L());
- 		TEST(ret == KErrNone);
- 		break;
-		}
+    case 12:
+        {
+        ((CTSurfaceUpdateStep*)iStep)->SetTestStepID(_L("GRAPHICS-SURFACEUPDATE-0019"));
+        INFO_PRINTF1(_L("TestCase12L"));
+        TRAPD(ret, TestCase12L());
+        TEST(ret == KErrNone);
+        break;
+        }
 	case 13:
  		{
  		((CTSurfaceUpdateStep*)iStep)->SetTestStepID(_L("GRAPHICS-SURFACEUPDATE-0020"));

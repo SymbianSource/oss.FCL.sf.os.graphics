@@ -33,7 +33,7 @@
 #include <graphics/wsdisplaycontrol.h>
 #include "wsdisplaychangeao.h"
 #include <graphics/wstestscreencapture.h>
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
 
 const TInt KEikSrvsSid=0x10003a4a;
 
@@ -46,7 +46,6 @@ DWsScreenDevice::DWsScreenDevice(CWsClient* aOwner, TInt aDefaultScreenNumber, T
 		,iClientScreenDevicePointer(aClientScreenDevicePointer)
 	{
 	MWsScreen* pOI=Screen();
-	WS_ASSERT_ALWAYS(pOI, EWsPanicNoScreen);
 	iDispCont=pOI->ObjectInterface<MWsDisplayControl>();
 	iDispMap =pOI->ObjectInterface<MWsDisplayMapping>();
 	iTestScreenCapture = pOI->ObjectInterface<MWsTestScreenCapture>();

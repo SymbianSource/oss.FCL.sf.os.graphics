@@ -160,9 +160,12 @@ enum TWservPanic
 	EWsPanicUnexpectedBitmapHandleInArray = 125,     //Bitmap handle in array with no matching bitmap object in bitmap ref array
 	EWsPanicBitmapNotFound = 126,           //Failed to find a bitmap in the bitmap ref array
 	EWsPanicInvalidRotation = 127,			//Invalid rotation used
-	EWsPanicInvalidPointerOffset = 128,//NOT USED	//The pointer offset value in wsini.ini is invalid.
+	EWsPanicInvalidPointerOffset = 128,      //The pointer offset value in wsini.ini is invalid.
 	EWsPanicArrayInsertFailed = 129,	//Array insert failed.           
-	EWsPanicCompleteNullMessage = 130,		//RMessage2 is NULL prior to calling Complete().
+	EWsPanicAccessBeyondCommandBuf = 130,	//Access beyond wserv command buffer
+	EWsPanicKeyEventRouterBadResult = 131,		// Invalid result code from key event routing plug-in
+	EWsPanicKeyEventRouterBadWindowGroup = 132,	// Invalid destination window group from key event routing plug-in
+	EWsPanicKeyEventRouterLeave = 133,			// Invalid leave from Key event routing plug-in
 	};
 
 void Panic(TWservPanic aPanic);

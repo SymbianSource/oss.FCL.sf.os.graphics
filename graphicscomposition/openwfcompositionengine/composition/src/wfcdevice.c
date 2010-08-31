@@ -1,4 +1,5 @@
-/* Copyright (c) 2009 The Khronos Group Inc.
+/* Copyright (c) 2009-2010 The Khronos Group Inc.
+ * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -824,6 +825,7 @@ WFC_Device_DestroyImageProvider(WFC_DEVICE* device,
         WFC_IMAGE_PROVIDER* object;
 
         object = (WFC_IMAGE_PROVIDER*)OWF_Array_GetItemAt(&device->providers, i);
+		OWF_ASSERT(object);
         if (object->handle == handle)
         {
         
@@ -1134,6 +1136,38 @@ WFC_Device_DestroyContextImageProviders(WFC_DEVICE* device,
             WFC_Device_DestroyImageProvider(device, provider->handle);
         }
     }
+}
+
+OWF_API_CALL WFCboolean
+WFC_Device_FindScreenNumber(WFCint screenNumber)
+{
+    WFCint i, j, deviceArrayLength, contextArrayLength;
+    WFC_DEVICE* pDevice = NULL;
+    ENTER(WFC_Device_DestroyContext);
+
+    DPRINT(("WFC_Device_CheckScreenNumber(screenNumber = %d)", screenNumber));
+
+    deviceArrayLength = gPhyDevice.iDeviceInstanceArray.length;
+    for (i = 0; i < deviceArrayLength; ++i)
+    {
+        pDevice = DEVICE(OWF_Array_GetItemAt(&(gPhyDevice.iDeviceInstanceArray), i));
+        OWF_ASSERT(pDevice);
+        if (pDevice)
+        {
+            contextArrayLength = pDevice->contexts.length;
+            for (j = 0; j < contextArrayLength; j++)
+            {
+                WFC_CONTEXT*    pContext;
+                pContext = CONTEXT(OWF_Array_GetItemAt(&pDevice->contexts, j));
+                OWF_ASSERT(pContext);
+                if (pContext && (pContext->screenNumber == screenNumber))
+                {
+                    return WFC_TRUE;
+                }
+            }
+        }
+    }
+    return WFC_FALSE;
 }
 
 #ifdef __cplusplus

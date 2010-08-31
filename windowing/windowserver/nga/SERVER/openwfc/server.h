@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -27,8 +27,9 @@
 #include "OBJECT.H"
 #include "CLIENT.H"
 #include "ScrDev.H"
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
-#include "Graphics/wsgraphicdrawerinternal.h"
+#include <graphics/wskeyrouter.h>
+#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "graphics/wsgraphicdrawerinternal.h"
 #include "WSGRAPHICDRAWERARRAY.H"
 #include "panics.h"
 
@@ -151,7 +152,7 @@ public:
 	inline CWsWindowGroup *WindowGroup();
 	inline const CWsWindowGroup *WindowGroup() const;
 private:
-	void CmdToParams(const TWsWinCmdCaptureKey &aCaptureKey, TCaptureKey &aParams);
+	void CmdToRequest(const TWsWinCmdCaptureKey &aCaptureKey, TKeyCaptureRequest &aParams);
 private:
 	CWsWindowGroup *iWindowGroup;
 	};
@@ -182,21 +183,16 @@ public:
 	~CWsCaptureKeyUpsAndDowns();
 	void ConstructL(const TWsWinCmdCaptureKey &aCaptureKey);
 	void CommandL(TInt aOpcode, const TAny *aCmdData);
-	static CWsWindowGroup *CheckForCapture(TUint aScanCode, TUint aModifiers);
 	inline CWsWindowGroup *WindowGroup();
 	inline const CWsWindowGroup *WindowGroup() const;
 private:
-	TUint iModifierValue;
-	TUint iModifierMask;
-	TUint iScanCode;
-	static TPriQue<CWsCaptureKeyUpsAndDowns> iCaptureKeysUpsAndDowns;
-	TPriQueLink iLink;
 	CWsWindowGroup *iWindowGroup;
 	};
 
 class CWsCaptureLongKey : public CWsObject
 	{
 	friend class CKeyboardRepeat;
+	friend class TWindowServerEvent;
 public:
 	CWsCaptureLongKey(CWsWindowGroup *owner);
 	~CWsCaptureLongKey();
@@ -204,13 +200,10 @@ public:
 	void CommandL(TInt aOpcode, const TAny *aCmdData);
 	inline CWsWindowGroup *WindowGroup();
 	inline const CWsWindowGroup *WindowGroup() const;
-	static CWsCaptureLongKey* CheckForCapture(TUint aKeyCode, TInt aModifiers);
-public:
-	static TPriQue<CWsCaptureLongKey> iCaptureLongKeys;
 private:
-	TPriQueLink iLink;
+	TTimeIntervalMicroSeconds32 iDelay;
+	TUint iFlags;
 	CWsWindowGroup *iWindowGroup;
-	TWsWinCmdCaptureLongKey iData;
 	};
 
 //--------------------------------

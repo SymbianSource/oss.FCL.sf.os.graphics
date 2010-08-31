@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -27,7 +27,8 @@
 #include "w32cmd.h"
 #include "EVQUEUE.H"
 #include <w32adll.h>
-#include "Graphics/WSGRAPHICDRAWER.H"
+#include "graphics/WSGRAPHICDRAWER.H"
+#include <graphics/wskeyrouter.h>
 
 class CWsClient;
 class CWsWindowBase;
@@ -38,7 +39,7 @@ class CWsCaptureLongKey;
 class CScreen;
 class DWsScreenDevice;
 
-const TInt KRetryInitialDelay = 100000; //0.1 second
+const TInt KRetryInitialDelay = 100000; //0.01 second
 
 struct TEventRequestItem
 	{
@@ -78,8 +79,8 @@ private:
 class TRepeatKey
 	{
 public:
-	TKeyData iKey;
-	TInt iScanCode;
+	TKeyEventRouterOutput iOutput;
+	TInt iInputScanCode;
 	};
 
 class CKeyboardRepeat : public CTimer
@@ -90,9 +91,9 @@ public:
 	static void Destroy();
 	static void KeyDown();
 	static void KeyUp(TInt aScanCode);
-	static TBool StartRepeat(const TKeyData &aKey, TInt aScanCode, CWsWindowGroup *aRepeatFocus, CWsCaptureLongKey* longCapture);
+	static void StartRepeat(TInt aInputScanCode, const TKeyEventRouterOutput& aShortEvent, const TKeyEventRouterOutput* aLongEvent);
 	static void CancelRepeat(CWsWindowGroup *aRepeatFocus);
-	static void CancelRepeat(CWsWindowGroup *aRepeatFocus,TUint aScanCode,TBool aLongCaptureFlag,TUint aModifiers=0);
+	static void CancelRepeat(const TAny* aCaptureHandle, TBool aLongCaptureFlag);
 	static void SetRepeatTime(const TTimeIntervalMicroSeconds32 &aInitialTime, const TTimeIntervalMicroSeconds32 &aTime);
 	static void GetRepeatTime(TTimeIntervalMicroSeconds32 &aInitialTime, TTimeIntervalMicroSeconds32 &aTime);
 	static inline TBool IsAreadyActive();
@@ -108,13 +109,13 @@ private:
 	static void doCancelRepeat();
 	void RunL();
 private:
-	static CWsWindowGroup *iFocus;
 	static CKeyboardRepeat *iThis; // Needed as CTimer derived parts can't be static
 	static TTimeIntervalMicroSeconds32 iInitialTime;
 	static TTimeIntervalMicroSeconds32 iTime;
-	static TRepeatKey iCurrentRepeat;
 	static TRepeatType iRepeating;
+	static TRepeatKey iCurrentRepeat;
 	static TRepeatKey iAlternateRepeat;
+	static TRepeatKey iLongRepeat;
 	static TBool iAlternateRepeatExists;
 	static CWsCaptureLongKey* iLongCapture;
 	static TInt iRepeatRollover;
@@ -174,9 +175,9 @@ public:
 	static CWsHotKey* ClearHotKeysL(TInt aHotKey);
 	static void ResetDefaultHotKeyL(TInt aHotKey);
 	static void SetHotKeyL(const TWsClCmdSetHotKey &aHotKey);
-	static void AddCaptureKeyL(const TCaptureKey &aCaptureKey);
-	static void SetCaptureKey(TUint32 aHandle, const TCaptureKey &aCaptureKey);
-	static void CancelCaptureKey(TUint32 aHandle);
+	static void AddCaptureKeyL(const TKeyCaptureRequest& aRequest);
+	static void UpdateCaptureKeyL(const TKeyCaptureRequest& aRequest);
+	static void CancelCaptureKey(TKeyCaptureType aType, TAny* aHandle);
 	static void ClientDestroyed(CWsClient *aClient);
 	static inline void AddToSwitchOnEventListL(const CWsWindowBase &aWindow, TEventControl aCircumstances);
 	static inline void RemoveFromSwitchOnEventList(const CWsWindowBase &aWindow);
@@ -207,7 +208,8 @@ public:
 	static void SendScreenDeviceChangedEvent(const CWsWindowBase *aWindow);
 	static TBool ProcessErrorMessages(TWsErrorMessage::TErrorCategory aCategory, TInt aError);
 	static void NotifyOom();
-	static void QueueKeyPress(const TKeyData& aKey, TInt aScanCode, CWsWindowGroup* aRepeatFocus, TBool aCheckRepeat,TInt aRepeats);
+	static void ProcessKeyPress(const TKeyEvent& aKeyEvent, TBool aCheckRepeat,TInt aRepeats);
+	static void QueueKeyPress(const TKeyEventRouterOutput& aOutput, TBool aIsRepeat, TInt aRepeats);
 	static void AddEventHandler(MEventHandler *aEventHandler, TBool aAdvancedPointersEnabled);
 	static void RemoveEventHandler(const MEventHandler *aEventHandler);
 	static void PotentialEventHandlerL(TInt aNum);
@@ -222,9 +224,6 @@ public:
 	static void NotifyScreenDrawingEvent(const TRegion* aRegion);
 	static void NotifyScreenDrawingEvent(const TRect& aRect);
 	static inline const CRawEventReceiver* EventReceiver() {return iEventReceiver;}
-	static void PauseProcessRawEvents(TInt aPauseInterval);
-	static inline TInt GetConfigationPauseTime();
-	
 private:
 	class TRawEventHandler
 		{
@@ -253,6 +252,8 @@ private:
 	static TEventRequestQueue iScreenDeviceChangedQueue;
 	static TTime iPrevOomMessageTime;
 	static CCaptureKeys *iCaptureKeys;
+	static CKeyEventRouter *iKeyEventRouter;
+	static RLibrary iKeyEventRouterLibrary;
 	static CWsHotKey *iHotKeys;
 	static TInt iModifierState;
 	static CRawEventReceiver *iEventReceiver;
@@ -263,14 +264,6 @@ private:
 	static RArray<TWsEventHandler> iWsEventHandlers;
 	static TUint32 iBinaryFlags;
 	static TInt iEventHandlerCount;
-
-	// For supporting a pause in processing raw events after rotation.
-	// Pause in processing all raw pointer and key events (except processing by anim's dll plug-ins).
-	// All events will be ignored except for anim's dll plug-ins.
-	static TTimeIntervalMicroSeconds iPauseInterval;
-	static TTime iPauseStartTime;
-	 // Filled from wsini.ini  , example:  SUPPRESSEVENTSTIMEAFTERROTATION   700000 //(0.7sec) 
-	static TInt iConfigationPauseTime;
 	};
 
 
@@ -318,7 +311,5 @@ inline void TWindowServerEvent::RemoveFromScreenDeviceChangeEventList(const CWsW
 	{iScreenDeviceChangedQueue.RemoveFromEventRequestListL(aWindow);}
 inline TInt TWindowServerEvent::GetStoredModifierState()
 	{return(iModifierState);}
-inline TInt TWindowServerEvent::GetConfigationPauseTime()
-    {return(iConfigationPauseTime);}
 
 #endif

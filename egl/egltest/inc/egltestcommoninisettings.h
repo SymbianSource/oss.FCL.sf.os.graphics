@@ -21,9 +21,7 @@
 #ifndef __EGLTEST_INI_SETTINGS_H__
 #define __EGLTEST_INI_SETTINGS_H__
 
-#ifndef __INIPARSER_H__
-#include <cinidata.h>
-#endif // __INIPARSER_H__
+#include <iniparser.h>
 #include <e32base.h>
 #include <pixelformats.h>
 #include <VG/openvg.h>

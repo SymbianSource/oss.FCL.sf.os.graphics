@@ -25,6 +25,10 @@ testexecute.exe  z:\fbstest\fbstest_t_file.script
 testexecute.exe  z:\fbstest\fbstest_t_clean.script
 testexecute.exe  z:\fbstest\fbstest_t_ipctest.script
 testexecute.exe  z:\fbstest\fbstest_t_extendedbitmap.script
+testexecute.exe  z:\fbstest\fbstest_t_fonttable.script
+testexecute.exe  z:\fbstest\fbstest_t_glyphdata.script		
+testexecute.exe  z:\fbstest\fbstest_t_glyphdataoutlineshadow.script	
+testexecute.exe  z:\fbstest\fbstest_t_oogm.script
 
 @echo off
 md e:\logs

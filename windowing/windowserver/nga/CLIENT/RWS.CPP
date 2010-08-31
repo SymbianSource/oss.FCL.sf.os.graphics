@@ -21,6 +21,8 @@
 #include <w32std.h>
 #include "CLIENT.H"
 #include "graphics/windowserverconstants.h"
+#include "rtfxeffect.h"
+#include <wspublishandsubscribedata.h>
 
 const TInt KMaxWSERVMessagesSlot=-1;
 
@@ -2478,6 +2480,121 @@ Enables client side cache of window size to reduce client-server
 activity triggered by calls to RWindowBase::Size()
 @leave KErrNoMemory Could not allocate the required memory.
 @internalAll */
-    {
-    iBuffer->EnableWindowSizeCacheL();
-    }
+	{
+	iBuffer->EnableWindowSizeCacheL();
+	}
+
+EXPORT_C void RWsSession::SendEffectCommand(TInt aTfxCmd,const TDesC8& aTfxCmdData)
+/**
+ Set the WServ session specific effect data or execute commands 
+ to TFX Render Stage. The data or command passed by the client 
+ API will be directed to MWsTfxApplication::SendEffectCommand.
+ TFX Render Stage will accept only TFX application specific commands and data.
+@param aTfxCmd TFX Render Stage command.
+@param aTfxCmdData Structure related to the specified value of aTfxCmd, the default value is KNullDesC8.
+
+@capability WriteDeviceData Only if aTfxCmd has value ETfxCmdEnableAllTransitions or ETfxCmdDisableAllTransitions
+
+@publishedPartner
+*/
+	{
+	__ASSERT_ALWAYS(aTfxCmdData.Length()<=KMaxWservStringSize, Panic(EW32PanicStringTooLong));
+	TWsClCmdSendEffectCommand params(aTfxCmd,aTfxCmdData.Size(), NULL);
+	Write(&params,sizeof(params),aTfxCmdData.Ptr(),aTfxCmdData.Size(),EWsClOpSendEffectCommand);
+	}
+
+EXPORT_C void RWsSession::RegisterEffect(TInt aAction, TInt aPurpose, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TUint aAppUid, TBitFlags aFlags)
+/**
+Sets a specific animation for a particular transition effect.
+
+Transition effect is represented by one of the values of enum TTfxTransitionActions.
+
+An animation is specified by a filename and directory; the file will contain a description of the animation 
+for that transition.  In fact each transition can have two animations associated with it, for example 
+an App shut down could have one animation with the old application disappearing and then another animation 
+for the App Launcher (or home screen) appearing.
+
+Animation can be applied to all App's Transition effect or to a specfic App by providing its AppUid.
+
+@param aAction Particular transition to register the animation for.
+@param aPurpose The purpose of the window.
+@param aResourceDir The name of the directory that contains the animation description files.
+@param aFilenameOutgoing The file containing the description of the animation for the outgoing phase of the transition. 
+						 Specify KNullDesC for no outgoing phase effect.
+@param aFilenameIncoming The file containing the description of the animation for the incoming phase of the transition. 
+						 Specify KNullDesC for no incoming phase effect.
+@param aAppUid The Application UID this effect applies to. Set to zero to specify that all apps will use default effect.
+@param aFlags Flag for the effect. Please see TTfxFlags for values this flag parameter can use.
+
+@capability WriteDeviceData This API does nothing if the client does not possess required Capability
+
+@publishedPartner
+*/
+	{
+	RTFXEffect tfxEffect(iWsHandle, iBuffer);
+	tfxEffect.RegisterTFXEffect(aAction, aPurpose, aResourceDir, aFilenameOutgoing, aFilenameIncoming, aAppUid, aFlags);
+	}
+
+EXPORT_C void RWsSession::UnregisterEffect(TInt aAction, TInt aPurpose, TUint aAppUid)
+/**
+Unregister already set animation for a particular transition effect
+
+@param aAction Particular transition to unregister the animation for.
+@param aPurpose The purpose of the window.
+@param aAppUid The Application UID this effect applies to. Set to 0 to specify the default effect will be unregistered.
+
+@capability WriteDeviceData This API does nothing if the client does not possess required Capability
+
+@publishedPartner
+*/
+	{
+	TWsClCmdUnRegisterEffect unregisterEffect(aAction, aPurpose, aAppUid);
+	Write(&unregisterEffect, sizeof(unregisterEffect), EWsClOpUnregisterTFXEffect);
+	}
+
+EXPORT_C void RWsSession::UnregisterAllEffects()
+/**
+Unregister animation for all transition effects.
+
+@capability WriteDeviceData This API does nothing if the client does not possess required Capability
+
+@publishedPartner
+*/
+	{
+	Write(EWsClOpUnregisterAllTFXEffect);
+	}
+	
+EXPORT_C void RWsSession::OverrideEffects(TInt aAction, TInt aPurpose, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TBitFlags aFlags)
+/**
+Overides the default animation for given app's transition effect by sent animation description.
+Please refer RWsSession::RegisterEffect() comments for more information on animation description.
+
+@param aAction The particular transition to set the animation for.
+@param aPurpose This override only effects the window/layers owned by the application that have the specified purpose.
+@param aResourceDir The name of the directory that contains the animation description files.
+@param aFilenameOutgoing The file containing the description of the animation for the outgoing phase of the transition. 
+						 Specify KNullDesC for no outgoing phase effect.
+@param aFilenameIncoming The file containing the description of the animation for the incoming phase of the transition. 
+						 Specify KNullDesC for no incoming phase effect.
+@param aFlags Flag for the effect. Please see TTfxFlags for values this flag parameter can use.
+
+@capability WriteDeviceData This API does nothing if the client does not possess required Capability
+
+@publishedPartner
+*/
+	{
+	RTFXEffect tfxEffect(iWsHandle, iBuffer);
+	tfxEffect.OverrideTFXEffect(RTFXEffect::ETFXSession, aAction, aPurpose, aResourceDir, aFilenameOutgoing, aFilenameIncoming, aFlags);
+	}
+
+EXPORT_C void RWsSession::IndicateAppOrientation(TRenderOrientation aOrientation)
+/**
+Application informs window server the orientation of rendering it intends to use
+
+@param aOrientation The orientation the application intends to use
+
+@publishedPartner
+*/
+	{
+	return(WriteInt(aOrientation,EWsClOpIndicateAppOrientation));
+	}

@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -23,9 +23,14 @@
 #include <test/extendtef.h>
 #include <dispchannel.h>
 #include <hal.h>
+#include <test/singletontestexithelper.inl>
 #include "tnativestream.h"
 #include "surfaceutility.h"
-#include "owftestexithelper.inl"
+
+#ifdef EGLSYNCHELPER_INCLUDED
+    #include <EGL/egl.h>
+    #include "eglsynchelper.h"
+#endif
 
 #define BUFFER_READ_HANDLE_BASE  0x100
 #define BUFFER_WRITE_HANDLE_BASE 0x200
@@ -243,6 +248,7 @@ SymbianStreamType CTestNativeStream::helperCreateImageStream(khronos_int32_t wid
 	}
 
 RSemaphore      gSemaphore;
+RSemaphore      gSemaphore2;
 
 TGlobalNativeStreamVar	gVarInstance={0};
 const TGlobalNativeStreamVar& TGlobalNativeStreamVar::Instance()
@@ -462,6 +468,8 @@ CTestSuite* CTestNativeStream::CreateSuiteL(const TDesC& aName)
 		ADD_TEST_STEP_PARAM_RANGE(GRAPHICS_OPENWFC_NATIVESTREAM_0140L,1,4);
 		ADD_TEST_STEP_PARAM_RANGE(GRAPHICS_OPENWFC_NATIVESTREAM_0141L,1,4);
 		ADD_THIS_TEST_STEP(GRAPHICS_OPENWFC_NATIVESTREAM_0142L);
+        ADD_THIS_TEST_STEP(GRAPHICS_OPENWFC_NATIVESTREAM_0143L);
+        ADD_THIS_TEST_STEP(GRAPHICS_OPENWFC_NATIVESTREAM_0144L);
 
 	END_SUITE;	
 	
@@ -541,6 +549,8 @@ void CTestNativeStream::CreateSharedNativeStreamL(TInt aBuffers)
 	gVarInstance.SetSurfaceID(*checkId);
     gSemaphore.CreateLocal(1);
     gSemaphore.Wait(); 
+    gSemaphore2.CreateLocal(1);
+    gSemaphore2.Wait(); 
     CleanupStack::PopAndDestroy(); // switch the heap back to current thread's one
 	}
 
@@ -550,6 +560,7 @@ void CTestNativeStream::DestroySharedNativeStreamL()
 	
 	CleanupStack::PushL(TCleanupItem(PopHeap, User::SwitchHeap(COpenWfcStreamMap::InstanceL().GetMainHeap())));
 	
+    gSemaphore2.Close();
 	gSemaphore.Close();
 	TSurfaceId id = gVarInstance.SurfaceID();
 	SymbianStreamType ns;
@@ -656,8 +667,11 @@ void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0100L()
     const TSurfaceId* getId = NULL;
     err = SymbianStreamGetBufferId(ns,bufferHandle,&bufferIndex,&getId);
     ASSERT_TRUE(err == KErrNone);
+    TInt ChunkHandle = 100;
+    err = SymbianStreamGetChunkHandle(ns, &ChunkHandle);
+    ASSERT_TRUE(err == KErrNone);    
     err = SymbianStreamReleaseReadBuffer(ns,bufferHandle);
-    ASSERT_TRUE(err == KErrNone);
+    ASSERT_TRUE(err == KErrNone);    
 	ASSERT_EQUALS(*getId,surface);
 	CleanupStack::PopAndDestroy(); // switch the heap back to current thread's one
 	
@@ -669,7 +683,7 @@ void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0100L()
 	err = SymbianStreamAcquire(&surface2,&ns2);
 	ASSERT_TRUE(err == KErrNone);
 	ASSERT_TRUE(ns2);
-	ASSERT_NOT_EQUALS(ns,ns2);
+	ASSERT_FALSE(SymbianStreamSame(ns, ns2));
 	ASSERT_EQUALS((COpenWfcStreamMap::InstanceL().Count()), count + 2);
 	err = SymbianStreamAcquireReadBuffer(ns2,&bufferHandle);
 	ASSERT_TRUE(err == KErrNone);
@@ -947,14 +961,14 @@ void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0103L()
         TInt32 attWidth = 0;
         TInt32 attHeight = 0;
         TInt32 attStreamStride = 0;
-        TUidPixelFormat attStreamFormat = EUidPixelFormatUnknown;
+        TInt32 attStreamFormat = EUidPixelFormatUnknown;
         TInt32 attStreamPixelSize = 0;
         
         SymbianStreamGetHeader(ns, &attWidth, &attHeight, &attStreamStride, &attStreamFormat, &attStreamPixelSize);		
             
         ASSERT_EQUALS(attWidth, width);
         ASSERT_EQUALS(attHeight, height);
-        ASSERT_EQUALS(attStreamFormat, supportedFormats[x].symbianPixelFormat);
+        ASSERT_EQUALS((TInt32)attStreamFormat, (TInt32)supportedFormats[x].symbianPixelFormat);
         if (BytesPerPixel(supportedFormats[x].symbianPixelFormat) > 0)
             {
             ASSERT_EQUALS(attStreamStride, (streamPixelSize * width));
@@ -1343,7 +1357,8 @@ void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0107_1L()
 	
 	gSemaphore.Signal(2); // Thread 2 and 3 ready to run
 	
-	gSemaphore.Wait();
+	gSemaphore2.Wait();
+    gSemaphore2.Wait();     // Wait for both threads to signal
 	err = SymbianStreamReleaseWriteBuffer(ns,writeBuffer1);
 	ASSERT_TRUE(err == KErrNone);
 	SymbianStreamRemoveReference(ns);
@@ -1375,7 +1390,7 @@ void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0107_2L()
 	ASSERT_FALSE(writeBuffer1);
 	INFO_PRINTF1(_L("Thread 2 - Write buffer already in use by Thread 1!"));
     
-	gSemaphore.Signal();
+	gSemaphore2.Signal();
 	
 	gSemaphore.Wait();
 	
@@ -1417,6 +1432,8 @@ void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0107_3L()
  	INFO_PRINTF1(_L("Thread 3 - Attempt to acquire the write buffer"));
 	ASSERT_FALSE(writeBuffer1);
 	INFO_PRINTF1(_L("Thread 3 - Write buffer already in use by Thread 1!"));
+
+    gSemaphore2.Signal();
 
     SymbianStreamRemoveReference(ns);
     CleanupStack::PopAndDestroy(); // switch the heap back to current thread's one    
@@ -4660,7 +4677,10 @@ void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0142L()
 
     err = User::LoadLogicalDevice(KDisplayChannelLdd);
     RDisplayChannel testChannel;
-    User::LeaveIfError(testChannel.Open(0));
+    if (err == KErrNone || err == KErrAlreadyExists)
+        {
+        User::LeaveIfError(testChannel.Open(0));
+        }
     
     TSurfaceId testId;
     SymbianStreamType ns;
@@ -4678,14 +4698,14 @@ void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0142L()
     TInt32 preFlipWidth = 0;
     TInt32 preFlipHeight = 0;
     TInt32 preFlipStreamStride = 0;
-    TUidPixelFormat preFlipStreamFormat = EUidPixelFormatUnknown;
+    TInt32 preFlipStreamFormat = EUidPixelFormatUnknown;
     TInt32 preFlipStreamPixelSize = 0;
     
     // For header variables after flipping
     TInt32 width = 0;
     TInt32 height = 0;
     TInt32 streamStride = 0;
-    TUidPixelFormat streamFormat = EUidPixelFormatUnknown;
+    TInt32 streamFormat = EUidPixelFormatUnknown;
     TInt32 streamPixelSize = 0;
     
     for (TInt ii = 0; ii < size; ii++)
@@ -4746,7 +4766,7 @@ void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0142L()
         
         ASSERT_EQUALS(preFlipWidth, height);
         ASSERT_EQUALS(preFlipHeight, width);
-        ASSERT_EQUALS(preFlipStreamFormat, streamFormat);
+        ASSERT_EQUALS((TInt32)preFlipStreamFormat,(TInt32)streamFormat);
         ASSERT_TRUE(streamStride == halStride);
         ASSERT_EQUALS(preFlipStreamPixelSize, streamPixelSize); 
             
@@ -4764,4 +4784,79 @@ void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0142L()
     
     testChannel.Close();
     CleanupStack::PopAndDestroy(); // switch the heap back to current thread's one
+    }
+
+/*
+@SYMTestCaseID          GFX_OPENWFC_NATIVESTREAM_0143
+@SYMTestCaseDesc        Call eglsync helper functions
+@SYMREQ                 
+@SYMPREQ                
+@SYMTestType            
+@SYMTestPriority        Low
+@SYMTestPurpose         Make calls of eglsync helper functions for coverage results                     
+@SYMTestActions 
+        Make calls of eglsync helper functions 
+@SYMTestExpectedResults
+        Test should pass without errors
+ */
+void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0143L()
+    {
+    // This test is commented out because it won't build for Bullseye.
+#ifdef EGLSYNCHELPER_INCLUDED
+    INFO_PRINTF1(_L("Test of egl sync helper functions"));
+
+    RHeap* mainHeap = COpenWfcStreamMap::InstanceL().GetMainHeap();
+    TRAPD(err, GrowCleanupStackL());
+    ASSERT_TRUE(err == KErrNone);
+    
+    CleanupStack::PushL(TCleanupItem(PopHeap, User::SwitchHeap(mainHeap)));
+
+    EGLDisplay eglDisplay;
+    eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    ASSERT_FALSE(eglDisplay == EGL_NO_DISPLAY);
+    ASSERT_FALSE(eglDisplay == EGL_BAD_ALLOC);
+    ASSERT_EQUALS(eglGetError(),EGL_SUCCESS);
+    eglInitialize(eglDisplay, NULL, NULL);
+    ASSERT_EQUALS(eglGetError(),EGL_SUCCESS);
+
+    EGLint attrib_list[1] = {EGL_NONE};
+    EGLSyncKHR sync;
+    sync = eglCreateSyncKHR(eglDisplay,EGL_SYNC_REUSABLE_KHR, attrib_list);
+    ASSERT_NOT_EQUALS(sync,EGL_NO_SYNC_KHR);
+    ASSERT_EQUALS(eglGetError(),EGL_SUCCESS);
+
+    eglSignalSyncKHR(eglDisplay, sync, EGL_SIGNALED_KHR);
+    eglGetSyncAttribKHR(eglDisplay, sync, NULL, NULL);
+    eglClientWaitSyncKHR(eglDisplay, sync, 0, 0);
+    
+    EGLBoolean eglSyncError = eglDestroySyncKHR(eglDisplay, sync);
+    sync = EGL_NO_SYNC_KHR;
+    if (eglSyncError != EGL_TRUE)
+        {
+        INFO_PRINTF2(_L("TearDown: eglSyncError line %d"),__LINE__);
+        }
+    CleanupStack::PopAndDestroy(); // switch the heap back to current thread's one
+#endif
+    }
+
+/*
+@SYMTestCaseID          GFX_OPENWFC_NATIVESTREAM_0144
+@SYMTestCaseDesc        Panic test
+@SYMREQ                 
+@SYMPREQ                
+@SYMTestType            
+@SYMTestPriority        Low
+@SYMTestPurpose         Test that will cause a panic.               
+@SYMTestActions 
+        Aquire a symbian stream by passing in a NULL ns
+@SYMTestExpectedResults
+        Test should panic with the expected panic code 1000008
+*/
+void CTestNativeStream::GRAPHICS_OPENWFC_NATIVESTREAM_0144L()
+    {
+    INFO_PRINTF1(_L("Panic test. The expected panic code is 1000008"));
+    
+    SymbianStreamBuffer bufferHandle;
+    // Pass in a NULL ns will cause panic EOwfSymbianStreamBadArgument (1000008)
+    SymbianStreamAcquireReadBuffer(NULL, &bufferHandle);
     }

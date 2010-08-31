@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,6 +21,7 @@
 // batch file that runs all automatic bitgdi tests
 data=DATAZ_\bitgdiTest\bitgdiTest_run.bat			\bitgdiTest_run.bat
 data=DATAZ_\bitgdiTest\bitgditest.bat				\bitgditest.bat
+data=DATAZ_\bitgdiTest\bitgditest_outlineandshadow_run.bat		\bitgditest_out.bat
 
 //script files
 data=DATAZ_\bitgdiTest\bitgdiTest_T_All.script				\bitgdiTest\bitgdiTest_T_All.script
@@ -39,6 +40,11 @@ data=DATAZ_\bitgdiTest\bitgdiTest_T_BitBlt.script		\bitgdiTest\bitgdiTest_T_BitB
 data=DATAZ_\bitgdiTest\bitgdiTest_T_Scaling.script			\bitgdiTest\bitgdiTest_T_Scaling.script
 data=DATAZ_\bitgdiTest\bitgdiTest_T_Switch.script			\bitgdiTest\bitgdiTest_T_Switch.script
 data=DATAZ_\bitgdiTest\bitgditest_t_extendedbitmap.script	\bitgditest\bitgditest_t_extendedbitmap.script
+data=DATAZ_\bitgdiTest\bitgditest_t_outlineandshadowfonts.script	\bitgdiTest\bitgditest_t_outlineandshadowfonts.script
+data=DATAZ_\bitgdiTest\bitgditest_t_multiplescreens.script	\bitgdiTest\bitgditest_t_multiplescreens.script
+
+data=DATAZ_\bitgdiTest\toutlineandshadow.ini	\bitgdiTest\toutlineandshadow.ini
+
 
 REM BITGDI test programs
 

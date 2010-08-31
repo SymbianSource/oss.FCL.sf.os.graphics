@@ -18,8 +18,8 @@
 #include "panic.h"
 #include <graphics/wsdisplaycontrol.h>
 #include "displaypolicy.h"
-#include "utils.h"
 #include <graphics/sgutils.h>
+#include "utils.h"
 
 #if defined(__WINS__) && defined(_DEBUG)
 #define DEBUGOSB iRenderTarget->UpdateDebugWin();
@@ -155,18 +155,18 @@ void CFbRenderStage::ConstructL(MWsGraphicDrawerEnvironment * aEnv,MWsScreen * a
 	if (iniFile->FindVar(iNextScreenDevice->ScreenNumber(), KFlickerBufferMode, flickerBufferModeName))
 		displayMode = ParseDisplayMode(flickerBufferModeName);
 	if (displayMode == ENone)
-	    {
-        // Display render stage MWsScreenDevice::DisplayMode now reports the supported screendriver display mode in 32bpp. 
-        // It is necessary in order to maintain BC with 3rd party apps and DSA framework.
-        // The reported display mode may be different from the actual UI surface pixel format, so flicker buffer
-        // must not rely on DisplayMode() to determine pixel format for its rendering target.
-        //
-        MWsUiBuffer* uiBuf = aNextStage->ObjectInterface<MWsUiBuffer>();
-        if (uiBuf)
-            {
-            displayMode = SgUtils::PixelFormatToDisplayMode(uiBuf->PixelFormat());
-            }
-	    }
+		{
+		// Display render stage MWsScreenDevice::DisplayMode now reports the supported screendriver display mode in 32bpp. 
+		// It is necessary in order to maintain BC with 3rd party apps and DSA framework.
+		// The reported display mode may be different from the actual UI surface pixel format, so flicker buffer
+	    // must not rely on DisplayMode() to determine pixel format for its rendering target.
+		//
+		MWsUiBuffer* uiBuf = aNextStage->ObjectInterface<MWsUiBuffer>();
+		if (uiBuf)
+			{
+			displayMode = SgUtils::PixelFormatToDisplayMode(uiBuf->PixelFormat());
+			}
+		}
 	STD_ASSERT_DEBUG(displayMode!=ENone, EPluginPanicNoDisplayModeFound);
 	
 	const TUint32 usage = ESgUsageDirectGdiTarget | ESgUsageWindowGcSource;

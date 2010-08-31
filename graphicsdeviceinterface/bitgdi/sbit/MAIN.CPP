@@ -23,7 +23,6 @@
 #include <shapeinfo.h>
 #include "bitgcextradata.h"
 
-
 #define KDefaultShadowColor KRgbGray
 
 //CFbsBitGc streams - version numbers.

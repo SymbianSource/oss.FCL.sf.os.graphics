@@ -577,4 +577,13 @@ EXPORTS
 	?SetSurfaceTransparency@RWindowBase@@QAEXH@Z @ 576 NONAME ; void RWindowBase::SetSurfaceTransparency(int)
 	?SizeForEgl@RWindowBase@@QBE?AVTSize@@XZ @ 577 NONAME ; class TSize RWindowBase::SizeForEgl(void) const
 	?FixNativeOrientation@RWindowBase@@QAEHXZ @ 578 NONAME ; int RWindowBase::FixNativeOrientation(void)
+	?SetPurpose@RWindowBase@@QAEXH@Z @ 579 NONAME ; void RWindowBase::SetPurpose(int)
+	?SendEffectCommand@RWindowBase@@QAEXHABVTDesC8@@@Z @ 580 NONAME ; void RWindowBase::SendEffectCommand(int, class TDesC8 const &)
+	?SendEffectCommand@RWsSession@@QAEXHABVTDesC8@@@Z @ 581 NONAME ; void RWsSession::SendEffectCommand(int, class TDesC8 const &)
+	?RegisterEffect@RWsSession@@QAEXHHABV?$TBuf@$0BAA@@@00IV?$TBitFlagsT@K@@@Z @ 582 NONAME ; void RWsSession::RegisterEffect(int, int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &, unsigned int, class TBitFlagsT<unsigned long>)
+	?OverrideEffects@RWindowBase@@QAEXHABV?$TBuf@$0BAA@@@00V?$TBitFlagsT@K@@@Z @ 583 NONAME ; void RWindowBase::OverrideEffects(int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &, class TBitFlagsT<unsigned long>)
+	?OverrideEffects@RWsSession@@QAEXHHABV?$TBuf@$0BAA@@@00V?$TBitFlagsT@K@@@Z @ 584 NONAME ; void RWsSession::OverrideEffects(int, int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &, class TBitFlagsT<unsigned long>)
+	?UnregisterEffect@RWsSession@@QAEXHHI@Z @ 585 NONAME ; void RWsSession::UnregisterEffect(int, int, unsigned int)
+	?UnregisterAllEffects@RWsSession@@QAEXXZ @ 586 NONAME ; void RWsSession::UnregisterAllEffects(void)
+	?IndicateAppOrientation@RWsSession@@QAEXW4TRenderOrientation@@@Z @ 587 NONAME ; void RWsSession::IndicateAppOrientation(enum TRenderOrientation)
 

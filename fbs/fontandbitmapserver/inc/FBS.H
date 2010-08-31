@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -40,6 +40,15 @@ Indicates version of the font and bitmap server without heap locking.
 */
 #define SYMBIAN_FBSERV_V2
 
+/**
+Indicates version of FBS that provides the CFbsFont extension 
+interfaces RFbsGlyphDataIterator for using hardware glyphs, and
+RFbsGlyphMetricsArray.
+@publishedAll
+@prototype
+*/
+//#define SYMBIAN_FBSERV_GLYPHDATA
+
 /** 
 Character width and adjustment information. 
 @publishedAll
@@ -61,6 +70,8 @@ public:
 class CFbsRalCache;
 class CFbsSessionHelper;
 class CFbsRasterizer;
+class TGlyphCacheMetrics;
+class TFbsOogmMessage;
 
 /** 
 A session with the font and bitmap server. 
@@ -101,6 +112,9 @@ public:
 	HBufC8* GetDecompressionBuffer(TInt aSize);
 	HBufC8* GetExtraBuffer(TInt aSize);
     TInt ServerSessionHandle() const;
+    IMPORT_C TInt GetGlyphCacheMetrics(TGlyphCacheMetrics& aGlyphCacheMetrics);
+    IMPORT_C TInt ConveyOogmMessage( TFbsOogmMessage& aOogmMessage );
+
 public:
 	/** WARNING: For internal use ONLY.  Compatibility is not guaranteed in future releases.	 
 	Used for testing server side out of memory failures.	
@@ -129,6 +143,12 @@ private:
 	TUint32* iSpare;
 	};
 
+/** forward declaration of some private classes. */
+class TGetFontTableParam;
+class TReleaseGlyphOutlineParam;
+class TGetGlyphOutlineParam;
+
+
 /** 
 Font managed by the font and bitmap server.
 CFbsFont objects are used for screen and off-screen bitmap fonts. They are 
@@ -143,6 +163,8 @@ The class implements a number of functions inherited from CFont.
 class CFbsFont: public CFont
 	{
 	friend class CFbsTypefaceStore;
+	friend class RFbsGlyphDataIterator;
+	friend class RFbsGlyphMetricsArray;
 
 private:
 	// From CFont
@@ -193,12 +215,16 @@ private:
 	TInt DoFontGetShaping(TFontShapeFunctionParameters* aParam) const;
 	TInt DoFontDeleteShaping(TFontShapeDeleteFunctionParameters* aParam) const;
 	TInt DoTextWidthInPixels(const TDesC& aText,const TMeasureTextInput* aParam) const;
+	TInt DoGetFontTable(TGetFontTableParam * aParam) const;
+	TInt DoGetGlyphOutline(TGetGlyphOutlineParam *aParam) const;
+	TInt DoReleaseGlyphOutline(TReleaseGlyphOutlineParam *aParam) const;
+	TInt DoReleaseFontTable(TUint32 *aParam) const;
 
 protected:
 	RFbsSession* iFbs;
 	CBitmapFont* iAddressPointer;
 	TInt iHandle;
-	TInt iServerHandle;
+    TInt iServerHandle;
 	};
 
 /**
@@ -497,4 +523,22 @@ private:
 	CDitherColor256* iDither;
 	};
 
-#endif
+
+/**
+ A class encapsulating the current state of the glyph cache.
+
+ @publishedAll
+ @released
+*/
+class TGlyphCacheMetrics
+    {
+public:
+    TInt iMaxCacheSizeInBytes;
+    TInt iMaxCacheSizeHigh;
+    TInt iMaxCacheSizeLow;
+    TInt iCacheSizeInBytes;
+    TBool iGpuCacheSizeLimitIsMax;
+    };
+
+#endif // __FBS_H__
+

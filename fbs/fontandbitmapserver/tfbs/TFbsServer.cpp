@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -37,8 +37,13 @@
 #include "textendedbitmaplegacy.h"
 #include "textendedbitmappanic.h"
 #include "twdp.h"
+#include "tfonttableandglyph.h"
+#include "tfbsglyphdata.h"
+#include "tfbsglyphdatapanic.h"
+#include "tfbsglyphdataoutlineshadow.h"
+#include "tglyphatlas.h"
+#include "tfbsoogm.h"
 
- 
 /* Path to the script
 
 z:\GraphicsTest\fbstest.script
@@ -194,6 +199,30 @@ CTestStep* CTFbsServer::CreateTestStep(const TDesC& aStepName)
 		{
 		testStep = new CTWDPStep();
 		}
-	
+   	else if(aStepName == KTFontTableAndGlyphStep)
+        {
+        testStep = new CTFontAndGlyphStep();
+        }
+	else if(aStepName == KTFbsGlyphDataStep)
+		{
+		testStep = new CTFbsGlyphDataStep();
+		}
+    else if(aStepName == KTFbsGlyphDataPanicStep)
+        {
+        testStep = new CTFbsGlyphDataPanicStep();
+        }
+    else if(aStepName == KTFbsGlyphDataOutlineAndShadowStep)
+        {
+        testStep = new CTFbsGlyphDataOutlineAndShadowStep();
+        }
+    else if(aStepName == KTGlyphAtlasStep)
+    	{
+		testStep = new CTGlyphAtlasStep();
+    	}
+    else if(aStepName == KTFbsOogmStep)
+        {
+        testStep = new CTFbsOogmStep();
+        }
+
 	return testStep;
 	}

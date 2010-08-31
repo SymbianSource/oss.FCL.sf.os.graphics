@@ -19,34 +19,45 @@
 #define __FBSERVTEST_IBY__
 
 #include <graphics_testharness.iby>
+#include <graphics_testfontutils.iby>
+#include <internaltestfonts.iby>
+#include <egl.iby>
+#include <openvg.iby>
 
 // batch file that runs all automatic fbserv tests
 data=DATAZ_\fbstest\fbstest_run.bat		\fbstest_run.bat
 data=DATAZ_\fbstest\fbstest.bat			\fbstest.bat
 
 //script files
-data=DATAZ_\fbstest\fbstest_T_All.script						\fbstest\fbstest_T_All.script
-data=DATAZ_\fbstest\fbstest_T_Alloc.script						\fbstest\fbstest_T_Alloc.script
+data=DATAZ_\fbstest\fbstest_T_All.script					\fbstest\fbstest_T_All.script
+data=DATAZ_\fbstest\fbstest_T_Alloc.script					\fbstest\fbstest_T_Alloc.script
 data=DATAZ_\fbstest\fbstest_T_Alloc.ini						\fbstest\fbstest_T_Alloc.ini
-data=DATAZ_\fbstest\fbstest_T_Bitmap.script						\fbstest\fbstest_T_Bitmap.script
-data=DATAZ_\fbstest\fbstest_T_Fbs.script						\fbstest\fbstest_T_Fbs.script
+data=DATAZ_\fbstest\fbstest_T_Bitmap.script					\fbstest\fbstest_T_Bitmap.script
+data=DATAZ_\fbstest\fbstest_T_Fbs.script					\fbstest\fbstest_T_Fbs.script
 data=DATAZ_\fbstest\fbstest_T_Compressed.script					\fbstest\fbstest_T_Compressed.script
-data=DATAZ_\fbstest\fbstest_T_Ralc.script						\fbstest\fbstest_T_Ralc.script
-data=DATAZ_\fbstest\fbstest_T_Defect.script						\fbstest\fbstest_T_Defect.script
+data=DATAZ_\fbstest\fbstest_T_Ralc.script					\fbstest\fbstest_T_Ralc.script
+data=DATAZ_\fbstest\fbstest_T_Defect.script					\fbstest\fbstest_T_Defect.script
 data=DATAZ_\fbstest\fbstest_T_StreamIdCache.script				\fbstest\fbstest_T_StreamIdCache.script
-data=DATAZ_\fbstest\fbstest_T_Secure.script						\fbstest\fbstest_T_Secure.script
-data=DATAZ_\fbstest\fbstest_T_File.script						\fbstest\fbstest_T_File.script
-data=DATAZ_\fbstest\fbstest_t_getallbitmapscapability.script	\fbstest\fbstest_t_getallbitmapscapability.script
-data=DATAZ_\fbstest\fbstest_T_Clean.script						\fbstest\fbstest_T_Clean.script
+data=DATAZ_\fbstest\fbstest_T_Secure.script					\fbstest\fbstest_T_Secure.script
+data=DATAZ_\fbstest\fbstest_T_File.script					\fbstest\fbstest_T_File.script
+data=DATAZ_\fbstest\fbstest_t_getallbitmapscapability.script			\fbstest\fbstest_t_getallbitmapscapability.script
+data=DATAZ_\fbstest\fbstest_T_Clean.script					\fbstest\fbstest_T_Clean.script
+data=DATAZ_\fbstest\fbstest_t_fonttable.script					\fbstest\fbstest_t_fonttable.script
 data=DATAZ_\fbstest\fbstest_T_IPCTest.script					\fbstest\fbstest_T_IPCTest.script
-data=DATAZ_\fbstest\ipctest_config.ini							\fbstest\ipctest_config.ini
+data=DATAZ_\fbstest\ipctest_config.ini						\fbstest\ipctest_config.ini
 data=DATAZ_\fbstest\fbstest_t_extendedbitmap.script				\fbstest\fbstest_t_extendedbitmap.script
 data=DATAZ_\fbstest\extendedbitmap_config.ini					\fbstest\extendedbitmap_config.ini
 data=DATAZ_\fbstest\fbstest_T_WDP_pagedata.script				\fbstest\fbstest_T_WDP_pagedata.script
 data=DATAZ_\fbstest\fbstest_T_WDP_unpagedata.script				\fbstest\fbstest_T_WDP_unpagedata.script
-data=DATAZ_\fbstest\fbstest_T_WDP_page_bitmap_data_only.script	\fbstest\fbstest_T_WDP_page_bitmap_data_only.script
-data=DATAZ_\fbstest\fbstest_T_WDP_page_bitmap_data_and_shared_heap_only.script		\fbstest\fbstest_T_WDP_page_bitmap_data_and_shared_heap_only.script
-data=DATAZ_\fbstest\wdptest_config.ini						    \fbstest\wdptest_config.ini
+data=DATAZ_\fbstest\fbstest_T_WDP_page_bitmap_data_only.script			\fbstest\fbstest_T_WDP_page_bitmap_data_only.script
+data=DATAZ_\fbstest\fbstest_t_oogm.script					\fbstest\fbstest_t_oogm.script
+data=DATAZ_\fbstest\fbstest_T_WDP_page_bitmap_data_and_shared_heap_only.script	\fbstest\fbstest_T_WDP_page_bitmap_data_and_shared_heap_only.script
+data=DATAZ_\fbstest\wdptest_config.ini						\fbstest\wdptest_config.ini
+
+REM GPU Glyph caching tests
+data=DATAZ_\fbstest\fbstest_t_glyphdata.script		\fbstest\fbstest_t_glyphdata.script
+data=DATAZ_\fbstest\glyphdata_config.ini					\fbstest\glyphdata_config.ini
+data=DATAZ_\fbstest\fbstest_t_glyphdataoutlineshadow.script		\fbstest\fbstest_t_glyphdataoutlineshadow.script
 
 // Fbserv WDP Alloc stress test
 data=DATAZ_\fbstest\fbstest_T_WDP_Alloc_Stress.script				\fbstest\fbstest_T_WDP_Alloc_Stress.script

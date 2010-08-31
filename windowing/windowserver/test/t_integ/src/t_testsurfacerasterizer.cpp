@@ -168,7 +168,7 @@ EXPORT_C void CTestSurfaceRasterizer::DrawRect(TUint32* aBuffer, SurfaceDetails&
 	 	User::Exit(0);
 		}
 
-	TInt ret = aSurfaceUpdateSession.SubmitUpdate(iSurfaceScreenNumber, iSurfaceId, iSurfaceCurrentBuffer, &region);
+	TInt ret = aSurfaceUpdateSession.SubmitUpdate(KAllScreens, iSurfaceId, iSurfaceCurrentBuffer, &region);
 
 	RDebug::Print(_L("Frame %d done\n"), aFrameNumber);
 

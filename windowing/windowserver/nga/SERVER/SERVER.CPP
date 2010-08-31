@@ -360,7 +360,7 @@ void CWindowServer::CDefaultAnimationScheduler::CScreenState::ReleaseClientsWait
 	for(TInt i = count-1; i >= 0; i--)
 		{
 		TWaitingClient& client = iWaitingClients[i];
-		if(aCurrentFrame >= client.iTargetFrame)
+		if(aCurrentFrame == client.iTargetFrame)
 			{
 			client.iObserver.ScreenUpdateComplete(KErrNone);
 			iWaitingClients.Remove(i);
@@ -369,7 +369,7 @@ void CWindowServer::CDefaultAnimationScheduler::CScreenState::ReleaseClientsWait
 	}
 
 /** 
-Invoked when the rendering pipline signals that it is ready to recieve updates.
+Invoked when the rendering pipline signals that it is ready to receive updates.
 */
 void CWindowServer::CDefaultAnimationScheduler::CScreenState::RunL() 
 	{
@@ -492,7 +492,7 @@ TInt CWindowServer::CDefaultAnimationScheduler::ScreenNumber(MWsScreen& aScreen)
 /**
 Perform redraw and return only when completed.
 NOTE: This method uses CActiveSchedulerWait to run a "modal wait loop" while the
-		redraw complete signal is pending. When the signal is recieved, AsyncStop() is
+		redraw complete signal is pending. When the signal is received, AsyncStop() is
 		invoked on all active wait loops for the signalling screen. 
 */
 void CWindowServer::CDefaultAnimationScheduler::DoRedrawNow(MWsScreen& aScreen)

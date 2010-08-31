@@ -20,10 +20,10 @@ TARGETTYPE		ani
 
 CAPABILITY PowerMgmt ReadDeviceData WriteDeviceData ProtServ
 
-SOURCEPATH		../tanim
+SOURCEPATH		../test/tanim
 SOURCE			TANIMDLL.CPP
 
-USERINCLUDE 	../inc
+USERINCLUDE 	../test/inc
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 LIBRARY			euser.lib fbscli.lib gdi.lib

@@ -16,7 +16,6 @@
 /**
  @file
  @test
- @internalComponent
 */
 
 #ifndef __T_WSERV_INTEG_STEP_SURFACE_H__
@@ -26,7 +25,7 @@
 
 _LIT(KWServPseudoApp,           "z:\\sys\\bin\\t_pseudoapp.exe");
 _LIT(KWServPseudoApp1,          "z:\\sys\\bin\\t_pseudoapp1.exe");
-_LIT(KWServSimLoadApp,          "z:\\sys\\bin\\t_simloadapp%d.exe");
+
 _LIT(KWServTApp1,               "z:\\sys\\bin\\t_app1.exe");
 
 _LIT(KPseudoAppData,			"pseudoapp_data%d");
@@ -51,7 +50,6 @@ _LIT(KT_WServIntegStepSurface, "WServIntegSurface");
 
 _LIT(KCreatePseudoApp1,"create_pseudoapp1");
 
-const TInt KNumSimLoadApps = 3;
 
 class CT_WServIntegStepSurface : public CT_WServIntegStep
 	{

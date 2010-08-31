@@ -88,16 +88,11 @@ public:
 	inline TDisplayMode DefaultDisplayMode();
 	TUint ClientDevicePointer();
 	void TestScreenCaptureL(const TAny* aMessage);
-#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
-	TSize AppScreenSizeInPixels()const;
-#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 private:
 	void CopyScreenToBitmapL(const TRect &aRect, TInt aHandle);
 	void SetScreenDeviceValidStates(const DWsScreenDevice *aDevice);
 	void PanicCurrentClient(TClientPanic aPanic);
-#ifndef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 	TSize AppScreenSizeInPixels()const;
-#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 	TSize AppScreenSizeInTwips()const;
 
 	// Implementing MWsTestScreenCaptureUtils

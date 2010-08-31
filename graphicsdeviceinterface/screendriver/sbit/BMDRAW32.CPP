@@ -32,11 +32,6 @@ FORCEINLINE void BlendFromRBandG(TUint32 *aPixelPtr, TUint32 aSrcRB, TUint32 aSr
 
 /**Initializes iSize, iDrawRect, iLongWidth, iScanLineBytes, iScanlineWords data members.
  It should be called every time when iSize is going to be changed - from Construct().
- If you are calling SetSize for an offscreen bitmap then this function operates correctly 
- but for hardware bitmaps the calculated values for iScanLineWords and iLongWidth members 
- may not be compatible. For hardware bitmaps you should explicitly set iScanLineWords to 
- a correct value as shown in CGuidScreenDevice<T,guidMode,pixelsPerWord>::SetDeviceOrientation.
-
 
  @param aSize Physical screen size in pixels.
  @panic EScreenDriverPanicInvalidSize - Invalid aSize parameter. This might happen if the

@@ -21,7 +21,7 @@
 
 #include <e32debug.h>
 #include <w32std.h>
-#include <cinidata.h>
+#include <iniparser.h>
 
 #include "t_pseudoapppopupwindow.h"
 #include "t_pseudoapputils.h"

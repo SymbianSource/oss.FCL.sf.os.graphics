@@ -53,7 +53,11 @@ typedef enum {
    VGI_COPY_TRANSPARENT_PIXELS,
 } VGICopyToTargetHint;
 
-#define VGI_API_CALL		__declspec(dllexport)
+#ifdef GRAPHICS_LIBVGI_DLL
+	#define VGI_API_CALL		__declspec(dllexport)
+#else
+	#define VGI_API_CALL		__declspec(dllimport)
+#endif
 
 #ifdef __cplusplus
 extern "C" {

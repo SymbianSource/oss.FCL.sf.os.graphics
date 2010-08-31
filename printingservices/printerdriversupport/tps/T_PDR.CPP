@@ -373,10 +373,8 @@ void CTPdr::testPdrStore()
 	RFs fs;
 	ret=fs.Connect();
 	TEST(ret==KErrNone);
-#if defined(__X86GCC__)
 	_LIT(KPath,"C:\\system\\data\\");
 	fs.MkDirAll(KPath);
-#endif	//__X86GCC__
 	ret=file.Replace(fs,_L("C:\\system\\data\\WIDTHS.TMP"),EFileStream|EFileWrite);
 	if (ret!=KErrNone)
 		{

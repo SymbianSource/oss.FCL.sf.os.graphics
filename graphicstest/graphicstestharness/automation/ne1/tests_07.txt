@@ -30,6 +30,3 @@ TESTEXECUTE, \logs\testexecute\surfacemgtest_T_multithread.htm,		, z:\surfacemgt
 
 # Surface Update
 TESTEXECUTE, \logs\testexecute\surfaceupdate.htm,			, z:\surfaceupdate\surfaceupdate.script, 800
-
-# WServ
-TESTEXECUTE, \logs\testexecute\graphics-wserv-nativeorientation-test.htm, , z:\wstest\tnativeorientation\graphics-wserv-nativeorientation-test.script, 800

@@ -229,19 +229,19 @@ EXPORTS
 	?CreateExtendedBitmap@CFbsBitmap@@QAEHABVTSize@@W4TDisplayMode@@VTUid@@PBXH@Z @ 228 NONAME ; int CFbsBitmap::CreateExtendedBitmap(class TSize const &, enum TDisplayMode, class TUid, void const *, int)
 	?UpdateLinkedTypeface@CFbsTypefaceStore@@QAEHABVCLinkedTypefaceSpecification@@@Z @ 229 NONAME ; int CFbsTypefaceStore::UpdateLinkedTypeface(class CLinkedTypefaceSpecification const &)
 	?GetExtraBuffer@CFbsBitmap@@SAPAVHBufC8@@H@Z @ 230 NONAME ; class HBufC8 * CFbsBitmap::GetExtraBuffer(int)
-	?Rect@RFbsGlyphDataIterator@@QBEABVTRect@@XZ @ 231 NONAME ABSENT ; class TRect const & RFbsGlyphDataIterator::Rect(void) const
-	?Image@RFbsGlyphDataIterator@@QBEABVRSgImage@@XZ @ 232 NONAME ABSENT ; class RSgImage const & RFbsGlyphDataIterator::Image(void) const
-	??0RFbsGlyphMetricsArray@@QAE@XZ @ 233 NONAME ABSENT ; RFbsGlyphMetricsArray::RFbsGlyphMetricsArray(void)
-	?Count@RFbsGlyphMetricsArray@@QBEHXZ @ 234 NONAME ABSENT ; int RFbsGlyphMetricsArray::Count(void) const
-	?Next@RFbsGlyphDataIterator@@QAEHXZ @ 235 NONAME ABSENT ; int RFbsGlyphDataIterator::Next(void)
-	?Metrics@RFbsGlyphDataIterator@@QBEABVTOpenFontCharMetrics@@XZ @ 236 NONAME ABSENT ; class TOpenFontCharMetrics const & RFbsGlyphDataIterator::Metrics(void) const
-	?Close@RFbsGlyphMetricsArray@@QAEXXZ @ 237 NONAME ABSENT ; void RFbsGlyphMetricsArray::Close(void)
-	??0RFbsGlyphDataIterator@@QAE@XZ @ 238 NONAME ABSENT ; RFbsGlyphDataIterator::RFbsGlyphDataIterator(void)
-	??ARFbsGlyphMetricsArray@@QBEABVTOpenFontCharMetrics@@H@Z @ 239 NONAME ABSENT ; class TOpenFontCharMetrics const & RFbsGlyphMetricsArray::operator[](int) const
-	?GlyphCode@RFbsGlyphDataIterator@@QBEIXZ @ 240 NONAME ABSENT ; unsigned int RFbsGlyphDataIterator::GlyphCode(void) const
-	?Close@RFbsGlyphDataIterator@@QAEXXZ @ 241 NONAME ABSENT ; void RFbsGlyphDataIterator::Close(void)
-	?Get@RFbsGlyphMetricsArray@@QAEHAAVCFbsFont@@PBIH@Z @ 242 NONAME ABSENT ; int RFbsGlyphMetricsArray::Get(class CFbsFont &, unsigned int const *, int)
-	?Open@RFbsGlyphDataIterator@@QAEHAAVCFbsFont@@PBIH@Z @ 243 NONAME ABSENT ; int RFbsGlyphDataIterator::Open(class CFbsFont &, unsigned int const *, int)
-	?GetGlyphCacheMetrics@RFbsSession@@QAEHAAVTGlyphCacheMetrics@@@Z @ 244 NONAME ABSENT ; int RFbsSession::GetGlyphCacheMetrics(class TGlyphCacheMetrics &)
-
+	?Rect@RFbsGlyphDataIterator@@QBEABVTRect@@XZ @ 231 NONAME ; class TRect const & RFbsGlyphDataIterator::Rect(void) const
+	?Image@RFbsGlyphDataIterator@@QBEABVRSgImage@@XZ @ 232 NONAME ; class RSgImage const & RFbsGlyphDataIterator::Image(void) const
+	??0RFbsGlyphMetricsArray@@QAE@XZ @ 233 NONAME ; RFbsGlyphMetricsArray::RFbsGlyphMetricsArray(void)
+	?Count@RFbsGlyphMetricsArray@@QBEHXZ @ 234 NONAME ; int RFbsGlyphMetricsArray::Count(void) const
+	?Next@RFbsGlyphDataIterator@@QAEHXZ @ 235 NONAME ; int RFbsGlyphDataIterator::Next(void)
+	?Metrics@RFbsGlyphDataIterator@@QBEABVTOpenFontCharMetrics@@XZ @ 236 NONAME ; class TOpenFontCharMetrics const & RFbsGlyphDataIterator::Metrics(void) const
+	?Close@RFbsGlyphMetricsArray@@QAEXXZ @ 237 NONAME ; void RFbsGlyphMetricsArray::Close(void)
+	??0RFbsGlyphDataIterator@@QAE@XZ @ 238 NONAME ; RFbsGlyphDataIterator::RFbsGlyphDataIterator(void)
+	??ARFbsGlyphMetricsArray@@QBEABVTOpenFontCharMetrics@@H@Z @ 239 NONAME ; class TOpenFontCharMetrics const & RFbsGlyphMetricsArray::operator[](int) const
+	?GlyphCode@RFbsGlyphDataIterator@@QBEIXZ @ 240 NONAME ; unsigned int RFbsGlyphDataIterator::GlyphCode(void) const
+	?Close@RFbsGlyphDataIterator@@QAEXXZ @ 241 NONAME ; void RFbsGlyphDataIterator::Close(void)
+	?Get@RFbsGlyphMetricsArray@@QAEHAAVCFbsFont@@PBIH@Z @ 242 NONAME ; int RFbsGlyphMetricsArray::Get(class CFbsFont &, unsigned int const *, int)
+	?Open@RFbsGlyphDataIterator@@QAEHAAVCFbsFont@@PBIH@Z @ 243 NONAME ; int RFbsGlyphDataIterator::Open(class CFbsFont &, unsigned int const *, int)
+	?GetGlyphCacheMetrics@RFbsSession@@QAEHAAVTGlyphCacheMetrics@@@Z @ 244 NONAME ; int RFbsSession::GetGlyphCacheMetrics(class TGlyphCacheMetrics &)
+	?ConveyOogmMessage@RFbsSession@@QAEHAAVTFbsOogmMessage@@@Z @ 245 NONAME ; int RFbsSession::ConveyOogmMessage(class TFbsOogmMessage &)
 

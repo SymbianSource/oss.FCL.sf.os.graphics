@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,20 +13,23 @@
 // Description:
 //
 
-#ifndef __FBSERV_H__
-#define __FBSERV_H__
+#ifndef SERVER_H
+#define SERVER_H
 
 #include <e32base.h>
 #include <f32file.h>
 #include <fbs.h>
+#include <sgresource/sgimage.h>
 #include "UTILS.H"
 #include "FBSMBMC.H"
-#include "fbsmessage.h"
+#include "FbsMessage.H"
+#include "glyphatlas.h"
 
 class CFbTop;
 class CFbsBackgroundCompression;
 class CFbsBackgroundCompressionQueueElement;
 class TOpenFontGlyphData;
+
 
 NONSHARABLE_CLASS(CFontObject): public CObject
 /**
@@ -34,12 +37,13 @@ NONSHARABLE_CLASS(CFontObject): public CObject
 */
 	{
 public:
-	CFontObject(CFontStore* aFontStore);
+	CFontObject(CFontStore* aFontStore, CGlyphAtlas* aGlyphAtlas);
 	~CFontObject();
 public:
 	CBitmapFont* iAddressPointer;
 	CFontStore* iFontStore;
 	TInt iHeightInTwips;
+	CGlyphAtlas* iGlyphAtlas;
 	};
 
 NONSHARABLE_CLASS(CBitmapObject): public CObject
@@ -113,6 +117,7 @@ public:
 	CFbTop* TopLevelStore();
 
 private:
+	void ConstructL();
 	void GetHeapSizesL(const RMessage2& aMessage);
 	TInt HandleMesgTypefaceSupport(const RMessage2& aMessage, TBool& aClientPanicRequired);
 	TInt HandleMesgFontHeight(const RMessage2& aMessage, TBool aInTwips);
@@ -171,8 +176,10 @@ public:
 	void Disconnect(const RMessage2 &aMessage);
 #ifdef _DEBUG
 	void ProcMemMessage (const RMessage2& aMessage);
+	void ProcAtlasMessage (const RMessage2& aMessage);
 #endif	
 private:
+	void ConstructL();
 	CFbClient(RHeap* aHeap);
 	TInt HandleMesgFontDuplicate(const RMessage2& aMessage, TBool& aPanicRequired);
 	TInt HandleMesgGetNearestFont(const RMessage2& aMessage, TBool& aPanicRequired);
@@ -185,6 +192,14 @@ private:
 	TInt HandleMesgHasCharacter(const RMessage2& aMessage, TBool& aPanicRequired);
 	TInt HandleMesgShapeText(const RMessage2& aMessage, TBool& aPanicRequired);
 	TInt HandleMesgShapeDelete(const RMessage2& aMessage, TBool& aPanicRequired);
+	TInt HandleMesgGetFontTable(const RMessage2& aMessage, TBool& aPanicRequired);
+	TInt HandleMesgGetGlyphOutline(const RMessage2& aMessage, TBool& aPanicRequired);
+	TInt HandleMesgReleaseGlyphOutline(const RMessage2& aMessage, TBool& aPanicRequired);
+	TInt HandleMesgReleaseFontTable(const RMessage2& aMessage, TBool& aPanicRequired);
+	TInt HandleMesgGetGlyphs(const RMessage2& aMessage, TBool& aPanicRequired);
+	TInt HandleMesgGetGlyphMetrics(const RMessage2& aMessage, TBool& aPanicRequired);
+	TInt HandleMesgOogmStatus(const RMessage2& aMessage);
+	void HandleMesgGlyphCacheMetrics(const RMessage2& aMessage);
 
 protected:
 	TUint iConnectionHandle;
@@ -198,6 +213,7 @@ protected:
 
 private:
 	RBuf16 iTextToShape;						// buffer used to hold incoming text that needs shaping
+	RArray<RSgImage> iGlyphImagesInTransit;	// last glyph images retrieved from glyph atlas
 #ifdef _DEBUG	
 	TBool iOwnHeapCheck; //for the process heap - current state
 	TBool iHeapCheck;	//for iHeap - current state
@@ -246,6 +262,7 @@ private:
 
 
 IMPORT_C extern const TInt KFbServSharedHeapMaxSize;
+IMPORT_C extern const TInt KFbServGlyphAtlasCacheLimit;
 
 
 NONSHARABLE_CLASS(CFbTop): public CBase
@@ -267,7 +284,6 @@ public:
 	TInt GetCleanBitmap(CBitmapObject*& aBmpObjPtr);
 	CBitmapObject* FindBitmap(TInt aHandle);
 	TBool ValidFontHandle(TInt aHandle);
-	TBool ValidBitmapFont(TInt aHandle);
 	CFontStore* FontStore() const;
 	RHeap* Heap() const;
 	CChunkPile* Pile() const;
@@ -283,6 +299,7 @@ public:
 	void NotifyDirtyBitmap(CBitmapObject& aBmpObj, CFbClient* aClient);
 	TInt BitmapConUniqueID() const;
 	TInt FontConUniqueID() const;
+	CGlyphAtlas* GlyphAtlas() const;
 private:
 	CFbTop();
 	void ConstructL();
@@ -292,7 +309,7 @@ private:
 	TInt FindFontNameAlias(const TDesC& aAlias);
 	void LoadShaperFactories();
 	void SafeInstallOfShaperFactoryL(TUid aInterfaceImplUid);
-	TInt CreateFontObjectFromFont(CFontObject*& aFontObjPtr, CFont* aFont);
+	TInt GetFontObjectFromFont(CFontObject*& aFontObjPtr, CFont* aFont);
 	TInt GetNearestNonAliasedFont(CFont*& aFont, TFbsMessage aMessage, const TFontSpec&	aFontSpec, TInt	aMaxHeight);
 private:
 	RFs iFilesys;
@@ -314,6 +331,7 @@ private:
 	TBuf<KMaxTypefaceNameLength> iSystemDefaultFontTypefaceName;
 	TDblQue<TFbClientHelper> iClientHelpers;
 	TInt64 iNextAvailableSerialNumber;
+	CGlyphAtlas* iGlyphAtlas;
 	};
 
 inline CBitwiseBitmap* CBitmapObject::Address() const
@@ -356,5 +374,5 @@ inline RFs& CFbTop::FileSession()
 	return iFilesys;
 	}
 
-#endif
+#endif // SERVER_H
 

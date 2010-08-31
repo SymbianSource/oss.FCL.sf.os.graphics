@@ -26,7 +26,6 @@ class RSurfaceManager;
 typedef struct struct_TSurfaceId TSurfaceId;
 #endif
 #include <KHR/khrplatform.h>
-#include <pixelformats.h>
 typedef khronos_int32_t khronos_bool;
 typedef khronos_int32_t TErrCode;
 
@@ -89,7 +88,7 @@ typedef khronos_int32_t SymOwfNativeStreamBuffer;
 typedef khronos_int32_t	MultipleSymbianStreamEventBits;
 typedef khronos_int32_t	SymNativeStreamEvent;
 typedef khronos_int32_t SymbianStreamBuffer;
-typedef TUidPixelFormat	SymOwfPixelFormat;
+typedef khronos_int32_t	SymOwfPixelFormat;
 typedef	khronos_int32_t SymOwfBool;
 
 typedef enum
@@ -388,7 +387,7 @@ typedef enum
 @panic NativeStream 1000002 Null return value pointer
 @panic NativeStream 1000003 Null Native Stream
 **/
-  IMPORT_C void SymbianStreamGetHeader( SymbianStreamType aStream, khronos_int32_t* aWidth, khronos_int32_t* aHeight, khronos_int32_t* aStride, TUidPixelFormat* aFormat, khronos_int32_t* aPixelSize);
+  IMPORT_C void SymbianStreamGetHeader( SymbianStreamType aStream, khronos_int32_t* aWidth, khronos_int32_t* aHeight, khronos_int32_t* aStride, khronos_int32_t* aFormat, khronos_int32_t* aPixelSize);
 
 /** Returns extra details of the format of the image data stored in the Native Stream.
  This method is intended to allow compositors to access the SurfaceManager hints associated with the 
@@ -660,6 +659,8 @@ typedef enum
 
   **/
   IMPORT_C void  SymbianStreamSetFlipState(SymbianStreamType aStream, SymOwfBool aFlip);
+  
+  IMPORT_C TErrCode SymbianStreamGetChunkHandle(SymbianStreamType aStream, TInt* aHandle);
   
 #	ifdef __cplusplus
 	}

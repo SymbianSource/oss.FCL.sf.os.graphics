@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -54,9 +54,10 @@ public:
 	void SetMaxBufferSizeL(TInt aMaxBufSize);
 	TInt Flush(const TIpcArgs* aIpcArgs=NULL,TBool aRequestFinish=EFalse);
 	TBool SetAutoFlush(TBool aState);
-	void Write(TInt handle,TUint opcode,const TAny *pData, TInt length,const TAny *pData2, TInt length2);
-	void Write(TInt handle,TUint opcode,const TAny *buf, TInt bufLen);
+	void Write(TInt aHandle, TUint aOpcode, const TAny *aData, TInt aLength, const TAny *aData2, TInt aLength2, const TIpcArgs* aIpcArgs=NULL);
+	void Write(TInt aHandle, TUint aOpcode, const TAny *aData, TInt aLength, const TIpcArgs* aIpcArgs=NULL);
 	void Write(TInt handle,TUint opcode);
+	void AppendData(const TAny *aData, TInt aLength, TBool aFinished);
 	TInt WriteReply(TInt handle,TUint opcode, const TIpcArgs* aIpcArgs=NULL);
 	TInt WriteReply(TInt handle,TUint opcode,const TAny *buf, TInt bufLen, const TIpcArgs* aIpcArgs=NULL);
 	TInt WriteReply(TInt handle,TUint opcode,const TAny *buf, TInt bufLen,const TAny *buf2, TInt buflen2, const TIpcArgs* aIpcArgs=NULL);
@@ -84,13 +85,6 @@ public:
 	inline void RefreshWindowSizeCache(TInt aHandle, const TSize& aNewSize);
 	inline TInt CachedWindowSize(TInt aHandle, TSize& aSize);
 	inline void DestroyWindowSizeCacheEntry(TInt aHandle);	
-#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
-	void EnableWindowNativeSizeCacheL();
-	inline TBool WindowNativeSizeCacheEnabled() const;
-	inline TInt SetWindowNativeSize(TInt aHandle, const TSize& aNativeSize);
-	inline TInt WindowNativeSize(TInt aHandle, TSize& aSize);
-	inline void DestroyWindowNativeSizeCacheEntry(TInt aHandle);
-#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
     
 private:
 	TInt DoWrite(TInt aHandle, TUint aOpcode, TBool aFlush, const TIpcArgs* aIpcArgs, const TAny* aData1=NULL, TInt aLength1=0, const TAny* aData2=NULL, TInt aLength2=0);
@@ -108,6 +102,9 @@ private:
 	TInt iPreviousHandle;
 	TInt iBufSize;				// current buffer size, DoWrite can expand this up to iMaxBufize
 	TInt iMaxBufSize;			// maximum buffer size, set by SetBufferSizeL or SetMaxBufferSizeL
+#if defined(_DEBUG)
+	TInt iAppendDataLength;
+#endif
 private:		//Added here as adding it to RWsSession breaks BC.
 	TInt iDirectAcessCount;
 	RArray<TInt> iBitmapArray;
@@ -123,9 +120,6 @@ private:		//Added here as adding it to RWsSession breaks BC.
 	    };
 	
 	RHashMap<TInt, TWindowSizeCacheEntry>* iWindowSizeCache;
-#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
-	RHashMap<TInt, TWindowSizeCacheEntry>* iWindowNativeSizeCache;
-#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 	};
 
 
@@ -194,46 +188,6 @@ inline void RWsBuffer::DestroyWindowSizeCacheEntry(TInt aHandle)
     // Otherwise, there isn't a size cache entry, and err == KErrNotFound.
     __ASSERT_DEBUG(err == KErrNone || err == KErrNotFound, Assert(EW32AssertWindowSizeCacheFailure));
     }
-
-#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
-inline TBool RWsBuffer::WindowNativeSizeCacheEnabled() const
-    {
-    return iWindowNativeSizeCache ? ETrue : EFalse;
-    }
-
-inline TInt RWsBuffer::SetWindowNativeSize(TInt aHandle, const TSize& aNativeSize)
-    {
-    __ASSERT_ALWAYS(iWindowNativeSizeCache != NULL, Assert(EW32AssertWindowNativeSizeCacheFailure));
-    RWsBuffer::TWindowSizeCacheEntry* entry = iWindowNativeSizeCache->Find(aHandle);
-	__ASSERT_ALWAYS(!entry, Assert(EW32AssertWindowNativeSizeCacheFailure));
-    return iWindowNativeSizeCache->Insert(aHandle, RWsBuffer::TWindowSizeCacheEntry(aNativeSize));
-    }
-
-inline TInt RWsBuffer::WindowNativeSize(TInt aHandle, TSize& aSize)
-    {
-    __ASSERT_ALWAYS(iWindowNativeSizeCache != NULL, Assert(EW32AssertWindowNativeSizeCacheFailure));
-    RWsBuffer::TWindowSizeCacheEntry* entry = iWindowNativeSizeCache->Find(aHandle);
-    if (entry)
-        {
-        aSize = entry->iSize;
-        return KErrNone;
-        }
-    else
-        {
-        return KErrNotFound;
-        }
-    }
-
-inline void RWsBuffer::DestroyWindowNativeSizeCacheEntry(TInt aHandle)
-    {
-    __ASSERT_ALWAYS(iWindowNativeSizeCache != NULL, Assert(EW32AssertWindowNativeSizeCacheFailure));
-    TInt err = iWindowNativeSizeCache->Remove(aHandle);
-    // If there is a window size cache entry, then err == KErrNone.
-    // Otherwise, there isn't a size cache entry, and err == KErrNotFound.
-    __ASSERT_DEBUG(err == KErrNone || err == KErrNotFound, Assert(EW32AssertWindowNativeSizeCacheFailure));
-    }
-
-#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 
 
 #endif

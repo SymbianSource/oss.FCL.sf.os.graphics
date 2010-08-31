@@ -1,4 +1,5 @@
 /* Copyright (c) 2009 The Khronos Group Inc.
+ * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -22,8 +23,8 @@
 #ifndef OWFDISPLAYCONTEXTGENERAL_H_
 #define OWFDISPLAYCONTEXTGENERAL_H_
 
-#include <e32def.h>
 #include <WF/wfc.h>
+#include <e32def.h>
 #include <KHR/khrplatform.h>
 
 #ifdef __cplusplus
@@ -62,6 +63,86 @@ Sets the composition ongoing flag
 @param val      The boolean value
 */
 void OWF_DisplayContext_SetCompositionOngoing(OWF_DISPCTX dc, WFCboolean val);
+
+/**
+Creates posts the rendezvous semaphore
+@param  dc      The display context
+*/
+void OWF_ComposerThread_Rendezvous(OWF_DISPCTX dc);
+
+/**
+Waits on rendezvous semaphore
+@param  dc      The display context who's composition ongoing flag is to be set
+*/
+void OWF_ComposerThread_RendezvousWait(OWF_DISPCTX dc);
+
+/**
+Destroys on rendezvous semaphore
+@param  dc      The display context
+*/
+void OWF_ComposerThread_RendezvousDestroy(OWF_DISPCTX dc);
+
+/**
+Activates fastpath mechanism and associates the stream output
+@param  dc      The display context
+@param  fastpathStream      Sets the fastpath stream
+*/
+void OWF_DisplayContext_EnableFastpath(OWF_DISPCTX dc, OWFNativeStreamType fastpathStream);
+
+/**
+Disable fastpath stream
+@param  dc      The display context
+*/
+void OWF_DisplayContext_DisableFastpath(OWF_DISPCTX dc);
+
+/**
+Returns fastpath state
+@param  dc      The display context
+@return OWF_TRUE if the current stream is fastpathable, OWF_FALSE otherwise 
+*/
+WFCboolean OWF_DisplayContext_FastpathEnabled(OWF_DISPCTX dc);
+
+/**
+Returns fastpathed stream
+@param  dc      The display context
+@return handle of the fastpathed stream 
+*/
+OWFNativeStreamType OWF_DisplayContext_FastpathStream(OWF_DISPCTX dc);
+
+/**
+Retrieves state of the fastpath
+@param  dc      The display context
+@return OWF_TRUE if the fastpath has been checked, OWF_FALSE otherwise 
+*/
+WFCboolean OWF_DisplayContext_FastpathChecked(OWF_DISPCTX dc);
+/**
+Resets fatpath check
+@param  dc      The display context
+*/
+void OWF_DisplayContext_ResetFastpathCheck(OWF_DISPCTX dc);
+/**
+Sets fatpath check
+@param  dc      The display context
+*/
+void OWF_DisplayContext_SetFastpathChecked(OWF_DISPCTX dc);
+
+/**
+Flags that the internal stream has been made accessible for outside world
+The fast path mechanism is using it in order to fill the internal stream with
+the content of the fastpathed stream
+@param  dc      The display context
+*/
+void OWF_DisplayContext_FlagInternalStreamAccessed(OWF_DISPCTX dc);
+
+/**
+Returns the internal stream accessibilty flag
+@param  dc      The display context
+@return OWF_TRUE if the fastpat has been checked, OWF_FALSE otherwise 
+*/
+WFCboolean OWF_DisplayContext_InternalStreamAccessed(OWF_DISPCTX dc);
+
+OWFboolean OWF_DisplayContext_CopyFastpathedStreamToTargetStream(void* context);
+
 
 #ifdef __cplusplus
 }

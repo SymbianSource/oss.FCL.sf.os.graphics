@@ -1,4 +1,5 @@
 /* Copyright (c) 2009 The Khronos Group Inc.
+ * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -308,6 +309,9 @@ WFC_Device_DestroyContextElements(WFC_DEVICE* device,
 OWF_API_CALL void
 WFC_Device_DestroyContextImageProviders(WFC_DEVICE* device,
                                         WFC_CONTEXT* context);
+
+OWF_API_CALL WFCboolean
+WFC_Device_FindScreenNumber(WFCint screenNumber);
 
 #ifdef __cplusplus
 }

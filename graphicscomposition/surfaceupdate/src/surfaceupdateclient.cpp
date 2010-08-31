@@ -18,13 +18,14 @@
 */
 
 #include <graphics/surfaceupdateclient.h>
+#include <e32debug.h>
 #include "surfaceupdate.h"
 
 inline void SurfaceUpdateAssert(TInt aCond)	{__ASSERT_ALWAYS(aCond, User::Panic(_L("surfaceupdateclient.cpp; assertion failed"), __LINE__));}
 
 EXPORT_C RSurfaceUpdateSession::RSurfaceUpdateSession() :
 	RSessionBase(), 
-	iStatusAvailable(NULL), iStatusDisplayed(NULL), iStatusDisplayedXTimes(NULL)
+	iStatusAvailable(NULL), iStatusDisplayed(NULL), iStatusDisplayedXTimes(NULL), iTimeStamp(NULL), iCount(0)
 	{
 	}
 
@@ -61,7 +62,12 @@ EXPORT_C TInt RSurfaceUpdateSession::SubmitUpdate(TInt aScreen, const TSurfaceId
 									TInt aBuffer, const TRegion* aDirtyRegion)
 	{
 	SurfaceUpdateAssert(Handle() != KNullHandle);
-	
+
+#if defined _DEBUG
+	if (aScreen != KAllScreens)
+		RDebug::Printf("You should use KAllScreens as the argument for the screen: (other values OK for test)");
+#endif
+
 	if(aScreen < 0 || aBuffer < 0 || aSurfaceId.IsNull())
 		{
 		IssueRequestComplete(KErrArgument);

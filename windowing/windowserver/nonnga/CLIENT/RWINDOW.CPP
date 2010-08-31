@@ -1,4 +1,4 @@
-// Copyright (c) 1994-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1994-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -813,13 +813,14 @@ This function always causes a flush of the window server buffer.
 	return(sizePkg());
 	}
 
+/**
+@internalAll
+Disclaimer - this API is internal and is subject to change
+@deprecated */
 EXPORT_C TSize RWindowBase::SizeForEgl() const
-/** Dummy implementation in order to preserve compatibility with WSERV NGA.
-    @internalComponent */ 
-	{
-	ASSERT(0);
-	return TSize();
-	}
+    {
+    return Size();
+    }
 
 EXPORT_C void RWindowBase::SetPosition(const TPoint &aPos)
 /** Sets the position of a window relative to its parent. 
@@ -1245,13 +1246,14 @@ EXPORT_C void RWindowBase::EnableAdvancedPointers()
 	ASSERT(0);	
 	}
 
+/**
+@internalAll
+Disclaimer - this API is internal and is subject to change
+@deprecated */
 EXPORT_C TInt RWindowBase::FixNativeOrientation()
-/** Dummy implementation in order to preserve compatibility with WSERV NGA.
-    @internalComponent */ 
-	{
-	ASSERT(0);
-	return KErrNotSupported;	
-	}
+    {
+    return KErrNotSupported;
+    }
 
 EXPORT_C TInt RWindowBase::AllocPointerMoveBuffer(TInt aMaxNumPoints, TUint aFlags)
 /** Allocates a buffer for storing pointer movements. 
@@ -1698,8 +1700,28 @@ EXPORT_C TRgb RWindowBase::KeyColor() const
 	return KRgbBlack;
 	}
 
+/**	Dummy implementation in order to preserve compatibility with WSERV NGA.
+	@internalComponent*/
+EXPORT_C void RWindowBase::SetPurpose(TInt /*aPurpose*/)
+	{
+	ASSERT(0);
+	}
 
-// RDrawableWindow //
+/** Dummy implementation in order to preserve compatibility with WSERV NGA.
+    @internalComponent */
+EXPORT_C void RWindowBase::SendEffectCommand(TInt /*aTfxCmd*/,const TDesC8& /*aTfxCmdData*/)
+    {
+	ASSERT(0);
+    }
+
+/** Dummy implementation in order to preserve compatibility with WSERV NGA.
+    @internalComponent */
+EXPORT_C void RWindowBase::OverrideEffects(TInt /*aAction*/, const TFileName& /*aResourceDir*/, const TFileName& /*aFilenameOutgoing*/, const TFileName& /*aFilenameIncoming*/, TBitFlags /*aFlags*/)
+    {
+	ASSERT(0);
+    }
+
+//////////////////////////// RDrawableWindow ////////////////////////////////
 
 void RDrawableWindow::doScroll(const TRect &aClipRect, const TPoint &aOffset, const TRect &aRect, TInt aOpcode)
 	{

@@ -643,18 +643,12 @@ M3G_API M3GVertexArray m3gCreateVertexArray(M3GInterface interface,
 
         switch (type) {
         case M3G_BYTE:
-        case M3G_UBYTE:
             /* always padded to 4 bytes */
             array->stride = 4;
             break;
         case M3G_SHORT:
-        case M3G_USHORT:
             array->stride = size * sizeof(M3Gshort);
             break;
-        default:
-            m3gFree(m3g, array);
-            m3gRaiseError(m3g, M3G_INVALID_ENUM);
-            return NULL;
         }
 
         /* Alloc and initialize all values to zero */

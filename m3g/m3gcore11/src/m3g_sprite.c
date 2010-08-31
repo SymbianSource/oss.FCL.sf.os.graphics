@@ -280,7 +280,9 @@ static M3Gbool m3gGetSpriteCoordinates(Sprite *sprite,
     }
 #ifndef M3G_USE_NGL_API
     /* Store w after projection */
-    eyeSpace->w = ot.w;
+    if (eyeSpace != NULL) {
+        eyeSpace->w = ot.w;
+    }
 #endif
     m3gScaleVec4(&ot, m3gRcp(ot.w));
     m3gScaleVec4(&x, m3gRcp(x.w));

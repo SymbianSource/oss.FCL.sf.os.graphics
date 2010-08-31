@@ -57,4 +57,45 @@ struct TTextWidthInternal
 	TPtrC iText;
 	};
 
+
+/*
+Structure used to pass input/output parameters between RFontTable and CFbsFont.
+@internalTechnology
+*/
+class TGetFontTableParam 
+    {
+public:
+    TUint32 iTag;
+    TAny *iContent;
+    TInt iLength;
+    };
+
+/*
+Structure used to pass input/output parameters between RGlyphOutlineIterator and CFbsFont.
+Used when opening an outline iterator.
+@internalTechnology
+*/
+class TGetGlyphOutlineParam 
+    {
+public:
+    TInt iCount;
+    const TUint *iCodes; 
+    TBool iHinted;
+    TAny **iOutlines;
+    TInt *iLengths; 
+    };
+
+/*
+Structure used to pass input/output parameters between RGlyphOutlineIterator and CFbsFont.
+Used when closing an outline iterator.
+@internalTechnology
+*/
+class TReleaseGlyphOutlineParam 
+    {
+public:
+    TInt iCount;
+    const TUint *iCodes;
+    TBool iHinted;
+    };
+
 #endif /* GDISTRUCTS_H */

@@ -68,26 +68,7 @@ LOCAL_C inline TDeviceOrientation GcToDevice(CFbsBitGc::TGraphicsOrientation aGc
 	return (TDeviceOrientation)(1 << aGcOrientation);
 	}
 
-/** Convert a TGraphicsOrientation value into a TDigitiserOrientation.
-Note: The algorithm used makes use of the ordering of the values of the respective enums, 
-thus this is checked for (at compile time) at the start of the function.
-@param aGcOrientation A value from the TGraphicsOrientation enums.
-@return The equivalent value from the TDigitiserOrientation enums.
-*/
-inline HALData::TDigitiserOrientation GcToDigitiser(CFbsBitGc::TGraphicsOrientation aGcOrientation)
-	{
-	__ASSERT_COMPILE(CFbsBitGc::EGraphicsOrientationNormal+1==CFbsBitGc::EGraphicsOrientationRotated90);
-    __ASSERT_COMPILE(CFbsBitGc::EGraphicsOrientationNormal+2==CFbsBitGc::EGraphicsOrientationRotated180);
-    __ASSERT_COMPILE(CFbsBitGc::EGraphicsOrientationNormal+3==CFbsBitGc::EGraphicsOrientationRotated270);
-    __ASSERT_COMPILE(HALData::EDigitiserOrientation_000+1==HALData::EDigitiserOrientation_090);
-    __ASSERT_COMPILE(HALData::EDigitiserOrientation_000+2==HALData::EDigitiserOrientation_180);
-    __ASSERT_COMPILE(HALData::EDigitiserOrientation_000+3==HALData::EDigitiserOrientation_270);
-    HALData::TDigitiserOrientation ret = static_cast<HALData::TDigitiserOrientation> 
-            (HALData::EDigitiserOrientation_000 + (aGcOrientation - CFbsBitGc::EGraphicsOrientationNormal));
-    return ret;
-	}
-
-LOCAL_C TBool FindNextValue(TLex& aLex, TInt& aValue) // assumes the list cannot contain *negative* integers
+LOCAL_D TBool FindNextValue(TLex& aLex, TInt& aValue) // assumes the list cannot contain *negative* integers
 	{
 	while (!aLex.Eos())
 		{
@@ -1141,7 +1122,7 @@ TBool CScreen::UpdateOrientation(MWsScene::TSceneRotation* aOldRotation)
 			}
 		
 		//updaterotation should not fail after this point (no cleanup)
-		
+			
         //update the last set config with the new rotation change so we don't incorrectly
         //change the layer extents
         if (iDisplayControl)
@@ -1149,8 +1130,8 @@ TBool CScreen::UpdateOrientation(MWsScene::TSceneRotation* aOldRotation)
             TDisplayConfiguration config;
             config.SetRotation(static_cast<TDisplayConfiguration::TRotation>(newRotation));           
             iConfigChangeNotifier->UpdateLastSetConfiguration(config);
-            }   		
-			
+            }		
+		
 		TWservCrEvent crEvent(TWservCrEvent::EDeviceOrientationChanged,iScreenNumber,&gcOrientation);
 		TWindowServerEvent::NotifyDrawer(crEvent);
 		
@@ -1162,29 +1143,17 @@ TBool CScreen::UpdateOrientation(MWsScene::TSceneRotation* aOldRotation)
 		}
 	
 	iRootWindow->AdjustCoordsDueToRotation();
-    if (rotating || (iFlags & ERepeatSettingHalOrientation))
-        {
-        if (HAL::Set(iScreenNumber, HALData::EDigitiserOrientation, GcToDigitiser(gcOrientation)) != KErrNone)
-            {
-            iFlags |= ERepeatSettingHalOrientation;
-            }
-        else
-            {
-            iFlags &= ~ERepeatSettingHalOrientation;
-            }
-        }
-    
-    if (rotating)
-        {
-        if (BlankScreenOnRotation())
-            {
-            iRootWindow->ClearDisplay();
-            }
-        CWsTop::ClearAllRedrawStores();
-        DiscardAllSchedules();
-        iRootWindow->InvalidateWholeScreen();
-        }
-    
+	if (rotating)
+		{
+		if(BlankScreenOnRotation())
+			{
+			iRootWindow->ClearDisplay();
+			}
+		
+		CWsTop::ClearAllRedrawStores();	
+		DiscardAllSchedules();
+		iRootWindow->InvalidateWholeScreen();
+		}
 	return ETrue;
 	}
 
@@ -2082,6 +2051,12 @@ TInt CScreen::SetConfiguration(const TDisplayConfiguration& aConfigInput)
 	return reply;
 	}
 
+/**
+ * Updates the screen device display properties. This is to ensure the screen device is 
+ * consistent with any configuration changes not made using CScreen::SetConfiguration.
+ * 
+ * @param aConfigInput a fully populated display configuration
+ **/
 TInt CScreen::UpdateConfiguration(const TDisplayConfiguration& aConfigInput)
     {
     TInt reply = KErrNone;
@@ -2123,7 +2098,7 @@ TInt CScreen::UpdateConfiguration(const TDisplayConfiguration& aConfigInput)
             }
 
         RecalculateModeTwips(&config);   //needs res and twips information
-        UpdateDynamicScreenModes();               
+        UpdateDynamicScreenModes();        
         
         TWindowServerEvent::NotifyDrawer(TWservCrEvent(TWservCrEvent::EScreenSizeModeAboutToChange, iScreenSizeMode));
         // This will remove all the DSA elements from the scene
@@ -2161,7 +2136,7 @@ TInt CScreen::UpdateConfiguration(const TDisplayConfiguration& aConfigInput)
         {
         reply = KErrNotSupported;
         }
-    return reply;   
+    return reply;  
     }
 
 void CScreen::UpdateDynamicScreenModes()

@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,9 +19,7 @@
 */
 
 #include <test/tefunit.h> // for ASSERT macros
-#ifndef __INIPARSER_H__
-#include <cinidata.h>
-#endif // __INIPARSER_H__
+#include <iniparser.h>
 #include <e32msgqueue.h>
 
 #include "egltest_image_multiprocess.h"
@@ -518,7 +516,10 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_Source::doProcessFunctionL(TInt aI
         ASSERT_EQUALS(rSgImageLocal.Open(sgImageId), KErrNone);
         }
 
-	INFO_PRINTF2(_L("Process %d, Creating an EGLImage from the shared RSgImage"),aIdx);
+	// Wait for both processes to reach this point
+    Rendezvous(aIdx);
+    
+    INFO_PRINTF2(_L("Process %d, Creating an EGLImage from the shared RSgImage"),aIdx);
 	CleanupClosePushL(rSgImageLocal);
 	EGLImageKHR eglImageLocal = iEglSess->eglCreateImageKhrL(iDisplay, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, &rSgImageLocal, KEglImageAttribsPreservedTrue);
 	ASSERT_EGL_TRUE(eglImageLocal != EGL_NO_IMAGE_KHR);
@@ -694,6 +695,9 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_DrawAfterTerminate::doProcessFunct
         messageQueue.ReceiveBlocking(sgImageId);
         ASSERT_EQUALS(rSgImageLocal.Open(sgImageId),KErrNone);
         }
+
+	// Wait for both processes to reach this point
+    Rendezvous(aIdx);
 
 	INFO_PRINTF2(_L("Process %d, Creating an EGLImage from the shared RSgImage"),aIdx);
 	CleanupClosePushL(rSgImageLocal);
@@ -1462,6 +1466,7 @@ TVerdict CEglTest_EGL_Image_Multi_Process_ThemeServer::doTestPartialStepL()
     	TInt stride = bitmap->DataStride();
     	address += (bitmapSize.iHeight - 1) * stride;
     	vgWritePixels(address, -stride, iSurfaceFormat, 0,0, bitmapSize.iWidth, bitmapSize.iHeight);
+   	    eglWaitClient();   // wait for writing to finish
 		delete bitmap;
 		bitmap = NULL;
 		ASSERT_TRUE(vgGetError()==VG_NO_ERROR);
@@ -2106,6 +2111,9 @@ void CEglTest_EGL_Image_Multi_Process_VgImage_ReadWrite::doProcessFunctionL(TInt
     	ASSERT_EQUALS(rSgImageLocal.Open(sgImageId),KErrNone);
         }
 
+	// Wait for both processes to reach this point
+    Rendezvous(aIdx);
+    
     INFO_PRINTF2(_L("Process %d, Creating an EGLImage from the shared RSgImage"),aIdx);
 	CleanupClosePushL(rSgImageLocal);
 	EGLImageKHR eglImageLocal = iEglSess->eglCreateImageKhrL(iDisplay, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, &rSgImageLocal, KEglImageAttribsPreservedTrue);

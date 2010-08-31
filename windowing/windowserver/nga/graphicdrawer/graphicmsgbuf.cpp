@@ -13,7 +13,7 @@
 // Description:
 //
 
-#include "Graphics/WSGRAPHICMSGBUF.H"
+#include "graphics/WSGRAPHICMSGBUF.H"
 #include "W32STDGRAPHIC.H"
 
 //so sue us; fixing a very nasty-to-track-down unsigned/signed conversion defect in code below

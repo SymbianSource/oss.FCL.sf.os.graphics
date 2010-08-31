@@ -16,8 +16,8 @@
 //
 
 #include "WSGRAPHICDRAWERFACTORY.H"
-#include "Graphics/WSGRAPHICDRAWER.H"
-#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "graphics/WSGRAPHICDRAWER.H"
+#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
 #include "panics.h"
 #include <bitstd.h>
 

@@ -1,5 +1,5 @@
 @echo off
-rem Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+rem Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 rem All rights reserved.
 rem This component and the accompanying materials are made available
 rem under the terms of "Eclipse Public License v1.0"
@@ -16,7 +16,7 @@ rem @internalComponent - Internal Symbian
 rem 
 rem
 set nonnga=false
-if not defined EPOC_INI set EPOC_INI=\epoc32\data\epoc.ini
+if not defined EPOC_INI set EPOC_INI=%EPOCROOT%epoc32\data\epoc.ini
 if /i "%2"=="nonnga" set nonnga=true
 if /i "%3"=="nonnga" set nonnga=true
 if "%nonnga%"=="true" echo Configuring for Non-NGA
@@ -33,7 +33,7 @@ if "%EMULATOR_DATA_DIR%"=="" (
 	call :doinstall %EMULATOR_DATA_DIR% multiscreen %2 %3
 )
 
-echo If EPOC.INI isn't already backuped then backup EPOC.INI to EPOC.INI.bak
+rem If EPOC.INI isn't already backed up then backup EPOC.INI to EPOC.INI.bak
 if not exist %EPOC_INI%.bak copy /y %EPOC_INI% %EPOC_INI%.bak
 
 echo Editing EPOC.INI to use multiscreen.
@@ -46,7 +46,7 @@ goto :EOF
 
 
 :doinstall
-rem If WSINI.INI(s) aren't already backuped then backup WSINI.INI(s)
+rem If WSINI.INI(s) aren't already backed up then backup WSINI.INI(s)
 if not exist %1\z\system\data\wsini.bak   if exist %1\z\system\data\wsini.ini   copy /y %1\z\system\data\wsini.ini   %1\z\system\data\wsini.bak >nul
 if not exist %1\z\resource\data\wsini.bak if exist %1\z\resource\data\wsini.ini copy /y %1\z\resource\data\wsini.ini %1\z\resource\data\wsini.bak >nul
 
@@ -84,7 +84,7 @@ if "%EMULATOR_DATA_DIR%"=="" (
 	call :doinstall_changetracking %EMULATOR_DATA_DIR% multiscreen %2 %3
 )
 
-echo If EPOC.INI isn't already backuped then backup EPOC.INI to EPOC.INI.bak
+rem If EPOC.INI isn't already backed up then backup EPOC.INI to EPOC.INI.bak
 if not exist %EPOC_INI%.bak copy /y %EPOC_INI% %EPOC_INI%.bak >nul
 
 echo Editing EPOC.INI to use multiscreen.
@@ -128,9 +128,9 @@ if "%EMULATOR_DATA_DIR%"=="" (
 	call :douninstall %EMULATOR_DATA_DIR%
 )
 
-echo If EPOC.INI was already backuped then restore EPOC.INI from EPOC.INI.bak
+rem If EPOC.INI was already backed up then restore EPOC.INI from EPOC.INI.bak
 if exist %EPOC_INI%.bak (
-	echo Restore EPOC.INI from backup
+	echo Restoring EPOC.INI from backup
 	copy /y %EPOC_INI%.bak %EPOC_INI% >nul
 	del /f /q %EPOC_INI%.bak >nul
 )
@@ -139,7 +139,7 @@ goto :EOF
 
 :douninstall
 
-rem If WSINI.INI(s) were already backuped then restore WSINI.INI
+rem If WSINI.INI(s) were already backed up then restore WSINI.INI
 if exist %1\z\system\data\wsini.bak (
 copy /y %1\z\system\data\wsini.bak   %1\z\system\data\wsini.ini >nul
 del  /f /q %1\z\system\data\wsini.bak >nul

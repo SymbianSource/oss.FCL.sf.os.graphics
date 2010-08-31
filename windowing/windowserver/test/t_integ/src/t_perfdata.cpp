@@ -19,7 +19,7 @@
  @internalComponent
 */
 
-#include <cinidata.h>
+#include <iniparser.h>
 #include <s32file.h>
 #include <hal.h>
 #include <e32math.h>

@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -49,7 +49,7 @@ template <class T> TInt  CGenericScreenDevice<T>::ConstructScreen(TInt , TAny *,
 		{	//Note: This will cause WServ startup to fail. WServ only accepts KErrNotSupported
 		return KErrHardwareNotAvailable;
 		}
-	TInt ret = CDrawXxxBppBitmap::Construct(aSize, CDrawXxxBppBitmap::iScanLineWords << 2);
+	TInt ret = CDrawXxxBppBitmap::Construct(aSize, iHelper.BytesPerScanline());
 	if (ret == KErrNone)
 		{
 		CDrawXxxBppBitmap::iBits = (TUint32*)iHelper.AddressFirstPixel();
@@ -98,13 +98,30 @@ template <class T> void CGenericScreenDevice<T>::Update()
 
 template <class T> void CGenericScreenDevice<T>::Update(const TRegion& aRegion)
 	{
-	iHelper.Update(aRegion);
+    if(!aRegion.IsEmpty() && !aRegion.CheckError())
+        {
+        if (aRegion.Count()>KMaxUpdateRegionRectangles)
+            {
+            UpdateRegion(aRegion.BoundingRect());
+            }
+        else
+            {
+            TInt rcCnt = aRegion.Count();
+            for (TInt ii=0; ii < rcCnt; ++ii)
+                {  
+                UpdateRegion(aRegion[ii]);  //Applies deorientate (offset, scale, rotate)
+                }
+            }
+        }
+    Update();
 	}
 
 template <class T> void CGenericScreenDevice<T>::UpdateRegion(const TRect& aRect)
-	{
-	iHelper.UpdateRegion(aRect);
-	}
+    {
+    const TRect rect = CDrawXxxBppBitmap::DeOrientate(aRect);//rect - physical coordinates
+    
+    iHelper.UpdateRegion(rect);
+    }
 
 template <class T> TInt CGenericScreenDevice<T>::GetInterface(TInt aInterfaceId, TAny*& aInterface)
 	{
@@ -175,15 +192,10 @@ TBool  CPalettizedScreenDevice<T,displayMode,pixelsPerWord>::SetDeviceOrientatio
 		}
 
 	// Need to update size, scan line size, etc.
-	CGenericScreenDevice::SetSize(newSize);
-	
-	// Setting iScanLineWords MUST occur after the call to SetSize because SetSize itself
-	// sets iScanLineBytes to support offscreen bitmaps and may do so incorrectly for hardware devices
-	// as it just uses the width, whereas BytesPerScanline takes into account any extra bytes needed
-	// as defined by the hardware.
 	CGenericScreenDevice::iScanLineWords = CGenericScreenDevice::iHelper.BytesPerScanline() / 4;	 //presumption here that BPS is always mod4.
 	CGenericScreenDevice::iBits = (TUint32*)CGenericScreenDevice::iHelper.AddressFirstPixel();
 	__ASSERT_ALWAYS(CGenericScreenDevice::iScanLineWords && CGenericScreenDevice::iBits,Panic(EScreenDriverPanicInvalidHalValue));
+	CGenericScreenDevice::SetSize(newSize);
 
 	return ETrue;
 	}
@@ -221,15 +233,10 @@ TBool  CGuidScreenDevice<T,guidMode,pixelsPerWord>::SetDeviceOrientation(TDevice
 		}
 
 	// Need to update size, scan line size, etc.
-	CGenericScreenDevice::SetSize(newSize);
-	
-	// Setting iScanLineWords MUST occur after the call to SetSize because SetSize itself
-	// sets iScanLineBytes to support offscreen bitmaps and may do so incorrectly for hardware devices
-	// as it just uses the width, whereas BytesPerScanline takes into account any extra bytes needed
-	// as defined by the hardware.
 	CGenericScreenDevice::iScanLineWords = CGenericScreenDevice::iHelper.BytesPerScanline() / 4;	 //presumption here that BPS is always mod4.
 	CGenericScreenDevice::iBits = (TUint32*)CGenericScreenDevice::iHelper.AddressFirstPixel();
 	__ASSERT_ALWAYS(CGenericScreenDevice::iScanLineWords && CGenericScreenDevice::iBits,Panic(EScreenDriverPanicInvalidHalValue));
+	CGenericScreenDevice::SetSize(newSize);
 
 	return ETrue;
 	}

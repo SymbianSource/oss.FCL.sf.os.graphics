@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -670,15 +670,18 @@ void* CSurfaceStream::GetBufferPtrL(SymbianStreamBuffer aBuffer)
              if (iBufferChunk.Handle() == 0)
                  {
                  RChunk threadChunk;
-                 User::LeaveIfError(GetSingletonL().SurfaceManager().MapSurface(iSurfaceId, threadChunk));
-				 CleanupClosePushL(threadChunk);
-
+                 RSurfaceManager sm;
+                 sm.Open();
+                 TInt err = sm.MapSurface(iSurfaceId, threadChunk);
+                 sm.Close();
+                 CleanupClosePushL(threadChunk);
+                 				 			
 				 RChunk duplicateChunk;
 				 duplicateChunk.SetHandle(threadChunk.Handle());
-				 User::LeaveIfError(duplicateChunk.Duplicate(RThread(), EOwnerProcess));
-
+                 User::LeaveIfError(duplicateChunk.Duplicate(RThread(), EOwnerProcess));
+ 
                  iBufferChunk.SetHandle(duplicateChunk.Handle());
-				 CleanupStack::PopAndDestroy(&threadChunk);
+                 CleanupStack::PopAndDestroy(&threadChunk);
                  }
              break;
              }
@@ -1094,7 +1097,7 @@ int CSurfaceStream::RemoveObserver(TInt32 aEvents, void* aData)
                     if (callBackData && (!aData || (iCallBacks[count].iScreenNumber == susScreenNumber)))
                         {
                         Displayed(ESOWF_ObserverCancel, iCallBacks[count].iScreenNumber, NULL, callBackData, NULL);
-                        delete callBackData;
+                        delete (TNotificationDisplayed*) callBackData;
                         iCallBacks[count].Reset();
                         if (iNumberOfScreenAttachedDisplayedNotif > 0)
                             {
@@ -1108,7 +1111,7 @@ int CSurfaceStream::RemoveObserver(TInt32 aEvents, void* aData)
                     if (callBackData && (!aData || (iCallBacks[count].iScreenNumber == susScreenNumber)))
                         {
                         Available(ESOWF_ObserverCancel, iCallBacks[count].iScreenNumber, NULL, callBackData, NULL);
-                        delete callBackData;
+                        delete (TNotificationAvailable*) callBackData;
                         iCallBacks[count].Reset();
                         if (iNumberOfScreenAttachedAvailableNotif > 0)
                             {
@@ -1122,7 +1125,7 @@ int CSurfaceStream::RemoveObserver(TInt32 aEvents, void* aData)
                     if (callBackData && (!aData || (iCallBacks[count].iScreenNumber == susScreenNumber)))
                         {
                         DisplayedXTimes(ESOWF_ObserverCancel, iCallBacks[count].iScreenNumber, NULL, callBackData, NULL);
-                        delete callBackData;
+                        delete (TNotificationDisplayedX*) callBackData;
                         iCallBacks[count].Reset();
                         if (iNumberOfScreenAttachedDisplayedXNotif)
                             {
@@ -1225,6 +1228,8 @@ TBool CSurfaceStream::NotifyComposerContext(TInt32 aScreenNumber, TInt aOp, SYMO
             NFLOG(("###CSurfaceStream::NotifyComposerContext() ESOWF_EventUpdated aParam(%d)", aParam? aParam->id: -1));
             entry.iCallBackFunction(ToHandle(), ESOWF_EventUpdated, entry.iCallBackClientParam, aParam);
             ret = ETrue;
+			// We are meant to hold this lock when we leave this function so coverity warning is false
+			//coverity[lock]
             iRefCountMutex.Wait();
             }
         }
@@ -1365,10 +1370,10 @@ void CSurfaceStream::SetNotifications(TInt            aBuffer,
     serialNumber = param.serialNumber;
     
     
-    // we take, initially in consideration "availble" even if we might not have received a consumed request status
+    // we take, initially in consideration "available" even if we might not have received a consumed request status
     eventsToProcess = 0;
     
-    // we try to figure out which are the vents we have to process and to get hold of their position
+    // we try to figure out which are the events we have to process and to get hold of their position
     // in the observers array, in order to avoid traversing it again
     TInt idx = iCallBacks.Count();
     //we will intend to mark the visited events, as an optimisation
@@ -2131,4 +2136,9 @@ void CSurfaceStream::SetFlipState(TBool aFlip)
         {
         iNewFlip = EFlippedTargetNormal;
         }
+    }
+
+TInt CSurfaceStream::GetChunkHandle()
+    {
+    return iBufferChunk.Handle();
     }

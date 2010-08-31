@@ -18,6 +18,7 @@
 #include "EVENT.H"
 
 #include "W32STD.H"
+#include <e32uid.h>
 #include <hal.h>
 #include <w32adll.h>
 #include "W32CLICK.H"
@@ -32,12 +33,16 @@
 #include "pointer.h"
 #include "debugbar.h"
 #include "advancedpointereventhelper.h"
-#include "Graphics/wsgraphicdrawerinternal.h"
+#include "graphics/wsgraphicdrawerinternal.h"
+#include "debughelper.h"
 
 GLREF_D CDebugLogBase *wsDebugLog;
 
 GLREF_C void StateDump();
 GLREF_C void HeapDump();
+
+_LIT(KDefaultKeyRouterPluginName, "keyrouter.dll");
+_LIT(KWSERVIniFileVarKeyRouterPlugin, "KEYROUTERPLUGIN");
 
 #define IMPOSSIBLE 0xFFFFFFFF
 
@@ -161,6 +166,8 @@ TEventRequestQueue TWindowServerEvent::iGroupListChangedQueue;
 TEventRequestQueue TWindowServerEvent::iScreenDeviceChangedQueue;
 TTime TWindowServerEvent::iPrevOomMessageTime;
 CCaptureKeys *TWindowServerEvent::iCaptureKeys;
+CKeyEventRouter* TWindowServerEvent::iKeyEventRouter;
+RLibrary TWindowServerEvent::iKeyEventRouterLibrary;
 CWsHotKey *TWindowServerEvent::iHotKeys;
 TInt TWindowServerEvent::iModifierState;
 CRawEventReceiver *TWindowServerEvent::iEventReceiver;
@@ -173,18 +180,14 @@ RArray<TWsEventHandler> TWindowServerEvent::iWsEventHandlers;
 TInt TWindowServerEvent::iEventHandlerCount=0;
 TRepeatKey CKeyboardRepeat::iCurrentRepeat;
 TRepeatKey CKeyboardRepeat::iAlternateRepeat;
+TRepeatKey CKeyboardRepeat::iLongRepeat;
 TInt CKeyboardRepeat::iRepeatRollover=1;
 CKeyboardRepeat::TRepeatType CKeyboardRepeat::iRepeating=ERepeatNone;
 CKeyboardRepeat *CKeyboardRepeat::iThis=NULL;
 TTimeIntervalMicroSeconds32 CKeyboardRepeat::iInitialTime;
 TTimeIntervalMicroSeconds32 CKeyboardRepeat::iTime;
-CWsWindowGroup *CKeyboardRepeat::iFocus=NULL;
 TBool CKeyboardRepeat::iAlternateRepeatExists=EFalse;
 CWsCaptureLongKey* CKeyboardRepeat::iLongCapture=NULL;
-
-TTimeIntervalMicroSeconds TWindowServerEvent::iPauseInterval;
-TTime TWindowServerEvent::iPauseStartTime;
-TInt TWindowServerEvent::iConfigationPauseTime = 0;
 
 
 void TWindowServerEvent::DeleteHotKeys()
@@ -203,6 +206,8 @@ void TWindowServerEvent::DeleteStatics()
 	{
 	DeleteHotKeys();
 	delete iCaptureKeys;
+	delete iKeyEventRouter;
+	iKeyEventRouterLibrary.Close();
 	CKeyboardRepeat::Destroy();
 	delete iKeyTranslator;
 	delete iEventReceiver;
@@ -236,8 +241,57 @@ void TWindowServerEvent::InitStaticsL()
 		iKeyTranslator->ChangeKeyData(keyDataDllName);
 		}
 
+	// CCaptureKeys is no longer used but a dummy object is required for
+	// calls to CKeyTranslator::TranslateKey() until capture functionality
+	// has been removed from ektran.dll.
 	iCaptureKeys=new(ELeave) CCaptureKeys;
 	iCaptureKeys->Construct();
+
+	// Load the key event routing plug-in. The DLL name may be overridden
+	// by setting the keyword KEYROUTERPLUGIN in wsini.ini.
+	TPtrC pluginName(KDefaultKeyRouterPluginName);
+	WsIniFile->FindVar(KWSERVIniFileVarKeyRouterPlugin, pluginName);
+	const TUidType uidType(KDynamicLibraryUid, KKeyRouterPluginUid);
+	TInt err = iKeyEventRouterLibrary.Load(pluginName, uidType);
+
+	if (wsDebugLog)
+		{
+		TLogMessageText buf;
+
+		if (err == KErrNone)
+			{
+			_LIT(KLogLoadOk, "Loaded plugin '%S' UID3 0x%x");
+			const TFileName& pluginPathname = iKeyEventRouterLibrary.FileName();
+			const TUid uid3 = iKeyEventRouterLibrary.Type()[2];
+			buf.Format(KLogLoadOk, &pluginPathname, uid3.iUid);
+			}
+		else
+			{
+			_LIT(KLogLoadError, "Failed to load plugin '%S' (error %d)");
+			buf.Format(KLogLoadError, &pluginName, err);
+			}
+
+		wsDebugLog->MiscMessage(CDebugLogBase::ELogImportant, buf);
+		}
+
+	if (err != KErrNone)
+		{
+#ifdef _DEBUG
+		_LIT(KLoadError, "WServ: failed to load plugin '%S' (error %d)");
+		RDebug::Print(KLoadError, &pluginName, err);
+#endif
+		User::Leave(err);
+		}
+
+	// Create the key event router
+	typedef CKeyEventRouter* (*TCreateFunc)();
+	TCreateFunc newL = reinterpret_cast<TCreateFunc>(iKeyEventRouterLibrary.Lookup(1));
+	if (newL == NULL)
+		{
+		User::Leave(KErrNotFound);
+		}
+	iKeyEventRouter = (*newL)();
+
 	for (TInt index=0;index<TWindowServerEvent::ENumHotKeys;index++)
 		ConstructDefaultHotKeyL(index,DefaultHotKeys[index]);
 	CKeyboardRepeat::NewL();
@@ -245,9 +299,6 @@ void TWindowServerEvent::InitStaticsL()
 	iEventHandlers=RArray<TRawEventHandler>(2);
 	iNotificationHandlers=new(ELeave) CArrayFixFlat<SNotificationHandler>(2);
 	iDrawerHandlers = new(ELeave) RArray<TDrawerHandler>(4);
-	iPauseInterval = TTimeIntervalMicroSeconds(0);
-   _LIT(KWSERVIniFileVarEventsPauseAfterRotation,"SUPPRESSEVENTSTIMEAFTERROTATION");
-    WsIniFile->FindVar(KWSERVIniFileVarEventsPauseAfterRotation,iConfigationPauseTime);
 	}
 
 void TWindowServerEvent::LinkHotKey(CWsHotKey *aWsHotKey)
@@ -320,6 +371,7 @@ void TWindowServerEvent::SetHotKeyL(const TWsClCmdSetHotKey &aHotKey)
 	captureKey.modifiers=aHotKey.modifiers;
 	captureKey.modifierMask=aHotKey.modifierMask;
 	captureKey.key=aHotKey.keycode;
+	captureKey.priority = 0;
 	hotKey->ConstructLD(captureKey);
 //
 	LinkHotKey(hotKey);
@@ -334,7 +386,7 @@ void TWindowServerEvent::AddEventHandler(MEventHandler *aEventHandler, TBool aAd
 	iEventHandlers.AppendL(TRawEventHandler(aEventHandler, aAdvancedPointersEnabled));	//Shouldn't leave
 #endif
 #ifdef LOG_WSERV_EVENTS
-	RDebug::Printf("{EVNT}TWindowServerEvent::AddEventHandler Added Handler = %d Advanced Pointers Enabled = %d", iEventHandlers.Count(),aAdvancedPointersEnabled);
+	RDebug::Printf("_WSEVENT_POINTER: TWindowServerEvent::AddEventHandler Added handler = %d AdvancedPointerEnabled = %d", iEventHandlers.Count(),aAdvancedPointersEnabled);
 #endif
 	}
 
@@ -347,7 +399,7 @@ void TWindowServerEvent::RemoveEventHandler(const MEventHandler *aEventHandler)
 		if (iEventHandlers[ii].iEventHandler==aEventHandler)
 			{
 #ifdef LOG_WSERV_EVENTS
-		    RDebug::Printf("{EVNT}TWindowServerEvent::RemoveEventHandler Removed Handler = %d",ii);
+		    RDebug::Printf("_WSEVENT_POINTER: TWindowServerEvent::RemoveEventHandler Removed handler = %d",ii);
 #endif
 			if (iEventHandlerCount>0)  
 				{
@@ -637,7 +689,7 @@ TBool TWindowServerEvent::SendDisplayChangedEvents(CWsClient* aWsClient, TInt aD
 	event.SetType(EEventDisplayChanged);
 	event.SetTimeNow();
 	
-	// fill in the handle otherwise CONE will discard the notification
+    // fill in the handle otherwise CONE will discard the notification
     CWsObjectIx* clientObjList = aWsClient->ObjectIndex();
     const TWsObject* ptr=clientObjList->FirstObject();
     const TWsObject* end=ptr+clientObjList->Length();
@@ -666,27 +718,75 @@ TBool TWindowServerEvent::SendDisplayChangedEvents(CWsClient* aWsClient, TInt aD
 
 void TWindowServerEvent::QueueKeyEvent(CWsWindowGroup *aWin, TWsEvent &aEvent, TWservEventPriorities aPriority)
 	{
+#ifdef LOG_WSERV_EVENTS
+    RDebug::Print(_L("_WSEVENT_KEY: TWindowServerEvent::QueueKeyEvent, Queuing event name %S for application read, window handle: %d"), &WsEventName(aEvent), CWsTop::FocusWindowGroup()->ClientHandle());
+#endif
 	aEvent.SetTimeNow();
 	aWin->EventQueue()->QueueEvent(aEvent, aPriority);
 	}
 
-void TWindowServerEvent::QueueKeyPress(const TKeyData& aKey, TInt aScanCode, CWsWindowGroup* aRepeatFocus, TBool aCheckRepeat,TInt aRepeats)
+/**
+Process a key press event.
+
+This function is called for every input key event and uses the Key Event
+Routing plug-in to check for short and long key capture and determine the
+destination window group for the queued event(s).
+Window server hotkeys are also processed.
+Note that the key repeat timer is started here but the key repeat events
+generated by the timer go directly to QueueKeyPress().
+
+@param	aKeyEvent		Input key event
+@param	aCheckRepeat	Check for key repeat and long key capture
+@param	aRepeats		Repeat count
+*/
+void TWindowServerEvent::ProcessKeyPress(const TKeyEvent& aKeyEvent, TBool aCheckRepeat, TInt aRepeats)
  	{
-	CWsWindowGroup* focusWin=CWsTop::FocusWindowGroup();
-	TWsEvent event;
-	TKeyEvent& keyEvent=*event.Key();
-	keyEvent.iCode=aKey.iKeyCode;
-	keyEvent.iScanCode=aScanCode;
-	keyEvent.iModifiers=aKey.iModifiers;
-	keyEvent.iRepeats=aRepeats;
-	if (!aRepeatFocus && CClick::IsHandler())
-		CClick::KeyEvent(EEventKey,keyEvent);
-	CWsCaptureLongKey* longCapture=NULL;
-	if (aCheckRepeat)
-		longCapture=CWsCaptureLongKey::CheckForCapture(aKey.iKeyCode, aKey.iModifiers);
-	if (aKey.iIsCaptureKey)
+	CWsWindowGroup* focusWin = CWsTop::FocusWindowGroup();
+	TUid focusAppUid = focusWin ? TUid::Uid(focusWin->Client()->SecureId().iId) : KNullUid;
+
+	// Route the key event and check for short key capture.
+	// Note that the Key Routing plugin may translate or block key events.
+	TKeyEventRouterInput input(ECaptureTypeKey, aKeyEvent, focusWin, focusAppUid);
+	TKeyEventRouterOutput output;
+
+#ifdef _DEBUG
+	// RouteKey() must not fail. Check for leaves in case the plug-in
+	// is badly behaved.
+	TRAPD(err, iKeyEventRouter->RouteKey(input, output));
+	WS_ASSERT_DEBUG(err == KErrNone, EWsPanicKeyEventRouterLeave);
+#else
+	iKeyEventRouter->RouteKey(input, output);
+#endif
+
+	WS_ASSERT_DEBUG(output.iResult == ERouted || output.iResult == ECaptured || output.iResult == EConsumed, EWsPanicKeyEventRouterBadResult);
+
+	if (output.iResult == EConsumed)
 		{
-		if (aKey.iApp==NULL)	// Captured by Wserv itself
+		focusWin = NULL;
+		}
+	else
+		{
+		focusWin = static_cast<CWsWindowGroup*>(output.iWindowGroup);
+		}
+	WS_ASSERT_DEBUG((focusWin == NULL || focusWin->Type() == WS_HANDLE_GROUP_WINDOW) && (output.iResult != ERouted || focusWin == CWsTop::FocusWindowGroup()), EWsPanicKeyEventRouterBadWindowGroup);
+
+	// Ensure that short event is not marked with EModifierLongKey
+	output.iKeyEvent.iModifiers &= ~EModifierLongKey;
+
+	// Generate key click unless the event is consumed. This is consistent
+	// with the behaviour when CKeyTranslator::TranslateKey() yields no
+	// translation for a particular scan code. (Click events for key up/down
+	// will still be generated by QueueKeyUpDown()). Note however that a long
+	// key press may still be captured even if the short event is consumed.
+	if (CClick::IsHandler() && output.iResult != EConsumed)
+		{
+		output.iKeyEvent.iRepeats = aRepeats;
+		CClick::KeyEvent(EEventKey, output.iKeyEvent);
+		}
+
+	if (output.iResult == ECaptured)
+		{
+		if (output.iWindowGroup == NULL)	// Captured by Wserv itself
 			{
 			_LIT(KWSERVDebugLogCapturedKey,"WSERV Captured Key");
 			CScreen* focusScreen=CWsTop::CurrentFocusScreen();
@@ -697,7 +797,7 @@ void TWindowServerEvent::QueueKeyPress(const TKeyData& aKey, TInt aScanCode, CWs
 			CWsHotKey *hotKey=iHotKeys;
 			while(hotKey)
 				{
-				if (hotKey->KeyHandle()==aKey.iHandle)
+				if (hotKey->KeyHandle() == reinterpret_cast<TInt>(output.iCaptureHandle))
 					{
 					switch(hotKey->HotKeyType())
 						{
@@ -782,22 +882,85 @@ void TWindowServerEvent::QueueKeyPress(const TKeyData& aKey, TInt aScanCode, CWs
 			WS_PANIC_ALWAYS(EWsPanicUnknownCaptureKey);
 			return;
 			}
-		focusWin=((CWsWindowGroup *)aKey.iApp);
+
 		_LIT(KWSERVDebugLogKeyCapturedByApp,"Key captured by app %d");
 		if (wsDebugLog)
 			wsDebugLog->MiscMessage(CDebugLogBase::ELogEverything,KWSERVDebugLogKeyCapturedByApp,focusWin->Identifier());
 		if (CWsPassword::PasswordModeActive() && focusWin!=CWsPassword::PasswordWindow()->WinGroup())
 			return;
 		}
-	if (aRepeatFocus && aRepeatFocus!=focusWin)
-		CKeyboardRepeat::CancelRepeat(NULL);		// Repeat is going to different window so cancel it and don't deliver this key
-	else if (focusWin!=NULL && focusWin->CheckForPriorityKey(aKey,aScanCode)==EFalse)
+
+	CWsCaptureLongKey* longCapture = NULL;
+	TKeyEventRouterOutput longOutput;
+	if (aCheckRepeat)
 		{
-		if (longCapture || (aCheckRepeat && !aRepeatFocus && aKey.iModifiers&EModifierAutorepeatable))
+		// Check for long key capture.
+		// Note that a long key event can only result from capture, there is
+		// no default detection or routing of long events.
+		input.iType = ECaptureTypeLongKey;
+#ifdef _DEBUG
+		TRAPD(err, iKeyEventRouter->RouteKey(input, longOutput));
+		WS_ASSERT_DEBUG(err == KErrNone, EWsPanicKeyEventRouterLeave);
+#else
+		iKeyEventRouter->RouteKey(input, longOutput);
+#endif
+
+		if (longOutput.iResult == ECaptured)
 			{
-			if (CKeyboardRepeat::StartRepeat(aKey,aScanCode,focusWin,longCapture))
-				return;
+			longCapture = static_cast<CWsCaptureLongKey*>(longOutput.iCaptureHandle);
+
+			// Mark long key events with EModifierLongKey so that applications
+			// can easily distinguish short and long events.
+			longOutput.iKeyEvent.iModifiers |= EModifierLongKey;
+
+			// Start timer to detect long key press
+			CKeyboardRepeat::StartRepeat(aKeyEvent.iScanCode, output, &longOutput);
 			}
+		else if (output.iResult != EConsumed && output.iKeyEvent.iModifiers & EModifierAutorepeatable)
+			{
+			// Start timer for key repeat
+			CKeyboardRepeat::StartRepeat(aKeyEvent.iScanCode, output, NULL);
+			}
+		}
+
+	// Queue the short event
+	if (!longCapture || longCapture->iFlags & ELongCaptureShortEventImmediately)
+		{
+		QueueKeyPress(output, EFalse, aRepeats);
+		}
+	}
+
+/**
+Queue a key press event.
+
+This function is called for each key event produced by ProcessKeyPress(),
+for every key repeat and long key event generated by the timer and also for
+delayed short key events from KeyUp().
+
+@param	aOutput			Output key event from routing plug-in
+@param	aIsRepeat		Event is due to key repeat
+@param	aRepeats		Repeat count
+*/
+void TWindowServerEvent::QueueKeyPress(const TKeyEventRouterOutput& aOutput, TBool aIsRepeat, TInt aRepeats)
+ 	{
+	if (aOutput.iResult == EConsumed)
+		{
+		// Don't deliver this key
+		return;
+		}
+
+	TWsEvent event;
+	TKeyEvent& keyEvent = *event.Key();
+	keyEvent = aOutput.iKeyEvent;
+	keyEvent.iRepeats = aRepeats;
+
+	CWsWindowGroup* focusWin = static_cast<CWsWindowGroup*>(aOutput.iWindowGroup);
+	WS_ASSERT_DEBUG(focusWin == NULL || focusWin->Type() == WS_HANDLE_GROUP_WINDOW, EWsPanicKeyEventRouterBadWindowGroup);
+
+	if (aIsRepeat && aOutput.iResult != ECaptured && focusWin != CWsTop::FocusWindowGroup())
+		CKeyboardRepeat::CancelRepeat(NULL);		// Repeat is going to different window so cancel it and don't deliver this key
+	else if (focusWin != NULL && focusWin->CheckForPriorityKey(keyEvent) == EFalse)
+		{
 		event.SetType(EEventKey);
 		event.SetHandle(focusWin->ClientHandle());
 		if (aRepeats!=0)
@@ -805,18 +968,15 @@ void TWindowServerEvent::QueueKeyPress(const TKeyData& aKey, TInt aScanCode, CWs
 			CEventQueue* queue=focusWin->EventQueue();
 			queue->Wait();
 			const TWsEvent* prev=queue->PeekLastEvent();
-			if (prev!=NULL && prev->Type()==EEventKey && prev->Key()->iRepeats>0)
+			if (prev != NULL && prev->Type() == EEventKey && prev->Key()->iRepeats > 0 && prev->Key()->iCode == keyEvent.iCode)
 				{
-				event= *prev;
-				event.Key()->iRepeats+=aRepeats;
-				queue->UpdateLastEvent(event);
+				prev->Key()->iRepeats += aRepeats;
 				queue->Signal();
 				if (CClick::IsHandler())
-					CClick::KeyEvent(EEventKeyRepeat,*event.Key());
+					CClick::KeyEvent(EEventKeyRepeat, *prev->Key());
 				return;
 				}
 			queue->Signal();
-			event.Key()->iRepeats=aRepeats;
 			if (CClick::IsHandler())
 				CClick::KeyEvent(EEventKeyRepeat,keyEvent);
 			}
@@ -824,24 +984,72 @@ void TWindowServerEvent::QueueKeyPress(const TKeyData& aKey, TInt aScanCode, CWs
 		}
 	}
 
+/**
+Queue a key up/down event.
+
+@param	aRawEvent		Raw event
+*/
 void TWindowServerEvent::QueueKeyUpDown(const TRawEvent &aRawEvent)
  	{
-	CWsWindowGroup *focusWin=CWsCaptureKeyUpsAndDowns::CheckForCapture(aRawEvent.ScanCode() __REMOVE_WINS_CHARCODE, iModifierState);
-	if (!focusWin)	// If not captured
-		focusWin=CWsTop::FocusWindowGroup();
-	TWsEvent event;
-	TEventCode type=aRawEvent.Type()==TRawEvent::EKeyUp ? EEventKeyUp : EEventKeyDown;
-	event.Key()->iCode=0;
+#ifdef LOG_WSERV_EVENTS
+    RDebug::Print(_L("_WSEVENT_KEY: TWindowServerEvent::QueueKeyUpDown, Event Name: %S, Scan code: %d"), &RawEventName(aRawEvent), aRawEvent.ScanCode());
+#endif
+	TEventCode type = aRawEvent.Type() == TRawEvent::EKeyUp ? EEventKeyUp : EEventKeyDown;
+
+	// Check for key up/down capture
+	TKeyEvent keyEvent;
+	keyEvent.iScanCode = aRawEvent.ScanCode() __REMOVE_WINS_CHARCODE;
+#if defined(__WINS__)
+	keyEvent.iCode = __WINS_CHARCODE(aRawEvent.ScanCode());
+#else
+	keyEvent.iCode = 0;
+#endif
+	keyEvent.iModifiers = iModifierState;
+	keyEvent.iRepeats = 0;
+
+	CWsWindowGroup* focusWin = CWsTop::FocusWindowGroup();
+	TUid focusAppUid = focusWin ? TUid::Uid(focusWin->Client()->SecureId().iId) : KNullUid;
+
+	TKeyEventRouterInput input(ECaptureTypeKeyUpDown, keyEvent, focusWin, focusAppUid);
+	TKeyEventRouterOutput output;
+#ifdef _DEBUG
+	TRAPD(err, iKeyEventRouter->RouteKey(input, output));
+	WS_ASSERT_DEBUG(err == KErrNone, EWsPanicKeyEventRouterLeave);
+#else
+	iKeyEventRouter->RouteKey(input, output);
+#endif
+
+	if (output.iResult == EConsumed)
+		{
+		// Don't deliver this key. A key click is still generated for the
+		// input event.
+		if (CClick::IsHandler())
+			{
+			CClick::KeyEvent(type, keyEvent);
+			}
+		return;
+		}
+	WS_ASSERT_DEBUG(output.iResult == ERouted || output.iResult == ECaptured, EWsPanicKeyEventRouterBadResult);
+
+	focusWin = static_cast<CWsWindowGroup*>(output.iWindowGroup);
+	WS_ASSERT_DEBUG((focusWin == NULL || focusWin->Type() == WS_HANDLE_GROUP_WINDOW) && (output.iResult != ERouted || focusWin == CWsTop::FocusWindowGroup()), EWsPanicKeyEventRouterBadWindowGroup);
 #if defined(__WINS__)
 	if (focusWin && !focusWin->WsOwner()->RemoveKeyCode())
-		event.Key()->iScanCode=aRawEvent.ScanCode();
-	else
+		{
+		// Restore WINS character code
+		output.iKeyEvent.iScanCode |= output.iKeyEvent.iCode;
+		}
+	output.iKeyEvent.iCode = 0;
 #endif
-	event.Key()->iScanCode=aRawEvent.ScanCode() __REMOVE_WINS_CHARCODE;
-	event.Key()->iModifiers=iModifierState;
-	event.Key()->iRepeats=0;
+
+	output.iKeyEvent.iRepeats = 0;
 	if (CClick::IsHandler())
-		CClick::KeyEvent(type,*event.Key());
+		{
+		CClick::KeyEvent(type, output.iKeyEvent);
+		}
+
+	TWsEvent event;
+	*event.Key() = output.iKeyEvent;
 	if (focusWin!=NULL)
 		{
 		event.SetType(type);
@@ -951,59 +1159,22 @@ LOCAL_D void SendEventToKeyClick(const TRawEvent& aRawEvent)
 	}
 
 /*
- Pause in processing all raw pointer and key events (except processing by anim's dll plug-ins).
- All events will be ignored except for anim's dll plug-ins.
- Pause prevents pointer events to come to wrong windows due to screen width and size changes. 
- @param aPauseInterval - the pause interval in microseconds.
-*/
-void TWindowServerEvent::PauseProcessRawEvents(TInt aPauseInterval)
-    {
-    iPauseInterval = TTimeIntervalMicroSeconds(aPauseInterval);
-    iPauseStartTime.UniversalTime();
-#ifdef LOG_WSERV_EVENTS
-     RDebug::Printf("{EVNT}TWindowServerEvent::PauseProcessRawEvents aPauseInterval = %d",aPauseInterval);
-#endif
-    }
+Process a raw event
 
+@param	aRawEvent	Raw event
+*/
 void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
 //
 // Event has completed.
 //
 	{
-    TBool pauseProcessEvents = EFalse;
-    //Check if the pause in processing all raw pointer and key events was set.
-    if(iPauseInterval.Int64() > 0)
-        {
-        TTime current;
-        current.UniversalTime();
-        TTimeIntervalMicroSeconds interval = current.MicroSecondsFrom(
-                iPauseStartTime);
-        if ((interval.Int64() > iPauseInterval.Int64()) || (interval.Int64() < 0))
-            {
-            iPauseInterval = TTimeIntervalMicroSeconds(0);
-            }
-        else
-            {
-            // Set flag ignore of processing all raw events (except processing by anim's dll plug-ins)
-            // All events will be ignored except for anim's dll plug-ins.
-            pauseProcessEvents = ETrue;
-            }
-        }
-
-#ifdef LOG_WSERV_EVENTS
-    if(pauseProcessEvents)
-        RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Processing of Raw Event - DISABLED");
-    else
-        RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Processing of Raw Event - ENABLED");
-#endif
-    
 	TRawEvent::TType eventType = aRawEvent.Type();
 	TBool isPointerEvent = TWsPointer::IsPointerEventType(eventType);
 	if (isPointerEvent)
 		{
 #ifdef LOG_WSERV_EVENTS
-        RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent EventType = 0x0%X PointerNumber = %d PrimaryPointerNumber = %d XY(%d,%d)", 
-                aRawEvent.Type(),aRawEvent.PointerNumber(),TWsPointer::PrimaryPointer(),aRawEvent.Pos().iX,aRawEvent.Pos().iY); 
+        RDebug::Print(_L("_WSEVENT_POINTER: TWindowServerEvent::ProcessRawEvent EventName = %S PointerNumber = %d PrimaryPointerNumber = %d Coordinates = ( %d, %d )"), 
+                &RawEventName(aRawEvent),aRawEvent.PointerNumber(),TWsPointer::PrimaryPointer(),aRawEvent.Pos().iX,aRawEvent.Pos().iY); 
 #endif
         TWsPointer::UpdatePrimaryPointer(aRawEvent);
 		}
@@ -1022,11 +1193,14 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
 			{
 			if (CClick::IsHandler())
 				{
+#ifdef LOG_WSERV_EVENTS
+				RDebug::Print(_L("_WSEVENT_KEY: Send event %S for Key Click"), &RawEventName(aRawEvent));
+#endif
 				SendEventToKeyClick(aRawEvent);
 				}
 			eventHandled = ETrue;
 #ifdef LOG_WSERV_EVENTS
-            RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Event Consumed by Handler No = %d Advanced Pointers Enabled = %d",ii,handler.iAdvancedPointersEnabled);
+            RDebug::Printf("_WSEVENT_POINTER: TWindowServerEvent::ProcessRawEvent Event Consumed by ANIM.dll Handler No = %d Advanced Pointer Enabled = %d",ii,handler.iAdvancedPointersEnabled);
 #endif
 			break;
 			}
@@ -1042,10 +1216,21 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
 				}
 			}
 		}
-	if ((eventHandled)||(pauseProcessEvents))
+	if (eventHandled)
 		{
+#ifdef LOG_WSERV_EVENTS
+		RDebug::Printf("_WSEVENT: Event is already handled by anim dll not by window server");
+		// This is to determine when we press the power button which bring power dialog
+		// whether it is a pointer event or key event
+		// Also when we plugin the charging cable this is to determine whether it is a pointer event or key event
+		RDebug::Print(_L("_WSEVENT: RawEvent Name = %S"), &RawEventName(aRawEvent));
+#endif
 		if (isPointerEvent)
-			{ 
+			{
+#ifdef LOG_WSERV_EVENTS
+			RDebug::Printf("_WSEVENT_POINTER: TWindowServerEvent::ProcessRawEvent Pointer Number= %d  State = %x XY(%d,%d)",TWsPointer::iPointers[0].iNumber,TWsPointer::iPointers[0].iState,TWsPointer::iPointers[0].iPos.iX,TWsPointer::iPointers[0].iPos.iY);
+		    RDebug::Printf("_WSEVENT_POINTER: TWindowServerEvent::ProcessRawEvent Pointer Number= %d  State = %x XY(%d,%d)",TWsPointer::iPointers[1].iNumber,TWsPointer::iPointers[1].iState,TWsPointer::iPointers[1].iPos.iX,TWsPointer::iPointers[1].iPos.iY);
+#endif
               //Prevention of the phone pointer event "dead lock". 
               TPointerEvent::TType type;
               TBool handled = ETrue;
@@ -1068,15 +1253,7 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
                       default:
                       break;
                   }
-#ifdef LOG_WSERV_EVENTS
-            RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Pointer Number= %d  State = %x XY(%d,%d)",TWsPointer::iPointers[0].iNumber,TWsPointer::iPointers[0].iState,TWsPointer::iPointers[0].iPos.iX,TWsPointer::iPointers[0].iPos.iY);
-            RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Pointer Number= %d  State = %x XY(%d,%d)",TWsPointer::iPointers[1].iNumber,TWsPointer::iPointers[1].iState,TWsPointer::iPointers[1].iPos.iX,TWsPointer::iPointers[1].iPos.iY);
-#endif
 			}
-#ifdef LOG_WSERV_EVENTS
-		if(pauseProcessEvents)
-		    RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Further Processing of Raw Event - IGNORED");
-#endif
 		return;
 		}
 	
@@ -1127,6 +1304,9 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
 			break;
 		case TRawEvent::EKeyDown:
 			{
+#ifdef LOG_WSERV_EVENTS
+			RDebug::Printf("_WSEVENT_KEY: TRawEvent::EKeyDown");
+#endif
 			_LIT(KWSERVDebugLogKeyDownArrival,"Key down arrives %d");
 			CScreen* screen = CWsTop::Screen();
 			WS_ASSERT_ALWAYS(screen, EWsPanicNoScreen);
@@ -1136,15 +1316,26 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
 				wsDebugLog->MiscMessage(CDebugLogBase::ELogEverything,KWSERVDebugLogKeyDownArrival,aRawEvent.ScanCode());
 			CKeyboardRepeat::KeyDown();
 			TKeyData keyData;
+			// Note iCaptureKeys is needed as dummy arg only. Key capture is
+			// now handled in ProcessKeyPress().
 			TBool translated=iKeyTranslator->TranslateKey(aRawEvent.ScanCode(), EFalse,*iCaptureKeys,keyData);
 			ProcessModifierChanges();
 			QueueKeyUpDown(aRawEvent);
 			if (translated)
-				QueueKeyPress(keyData,aRawEvent.ScanCode() __REMOVE_WINS_CHARCODE,NULL,ETrue,0);
+				{
+				TKeyEvent keyEvent;
+				keyEvent.iScanCode = aRawEvent.ScanCode() __REMOVE_WINS_CHARCODE;
+				keyEvent.iCode = keyData.iKeyCode;
+				keyEvent.iModifiers = keyData.iModifiers;
+				ProcessKeyPress(keyEvent, ETrue, 0);
+				}
 			}
 			break;
 		case TRawEvent::EKeyUp:
 			{
+#ifdef LOG_WSERV_EVENTS
+			RDebug::Printf("_WSEVENT_KEY: TRawEvent::EKeyUp");
+#endif
 			_LIT(KWSERVDebugLogKeyUpArrival,"Key up arrives %d");
 			CScreen* screen = CWsTop::Screen();
 			WS_ASSERT_ALWAYS(screen, EWsPanicNoScreen);
@@ -1160,7 +1351,11 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
 			if (translated)
 				{
 				CKeyboardRepeat::CancelRepeat(NULL);
-				QueueKeyPress(keyData,aRawEvent.ScanCode() __REMOVE_WINS_CHARCODE,NULL,EFalse,0);
+				TKeyEvent keyEvent;
+				keyEvent.iScanCode = aRawEvent.ScanCode() __REMOVE_WINS_CHARCODE;
+				keyEvent.iCode = keyData.iKeyCode;
+				keyEvent.iModifiers = keyData.iModifiers;
+				ProcessKeyPress(keyEvent, EFalse, 0);
 				}
 			}
 			break;
@@ -1191,27 +1386,27 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
  			_LIT(KWSERVDebugLogRepeatingKeyArrival,"Repeating key arrives %d");
  			if (wsDebugLog)
  				wsDebugLog->MiscMessage(CDebugLogBase::ELogEverything,KWSERVDebugLogRepeatingKeyArrival,aRawEvent.ScanCode());
- 			TKeyData keyData;
- 			keyData.iModifiers=iKeyTranslator->GetModifierState();
-			keyData.iApp=0;
-			keyData.iHandle=0;
-			keyData.iIsCaptureKey=EFalse;
-			keyData.iKeyCode=aRawEvent.ScanCode(); 
-			iCaptureKeys->ProcessCaptureKeys(keyData);
-			QueueKeyPress(keyData, aRawEvent.ScanCode() __REMOVE_WINS_CHARCODE,NULL,EFalse,aRawEvent.Repeats());
+			TKeyEvent keyEvent;
+			keyEvent.iScanCode = aRawEvent.ScanCode() __REMOVE_WINS_CHARCODE;
+			keyEvent.iCode = aRawEvent.ScanCode();
+ 			keyEvent.iModifiers = iKeyTranslator->GetModifierState();
+			ProcessKeyPress(keyEvent, EFalse, aRawEvent.Repeats());
  			}
  			break;
 		default:
 			break;
 		}
 #ifdef LOG_WSERV_EVENTS
-    RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Pointer Number= %d  State = %x XY(%d,%d)",TWsPointer::iPointers[0].iNumber,TWsPointer::iPointers[0].iState,TWsPointer::iPointers[0].iPos.iX,TWsPointer::iPointers[0].iPos.iY);
-    RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Pointer Number= %d  State = %x XY(%d,%d)",TWsPointer::iPointers[1].iNumber,TWsPointer::iPointers[1].iState,TWsPointer::iPointers[1].iPos.iX,TWsPointer::iPointers[1].iPos.iY);
+    RDebug::Printf("_WSEVENT_POINTER: TWindowServerEvent::ProcessRawEvent Number= %d  State = %x XY(%d,%d)",TWsPointer::iPointers[0].iNumber,TWsPointer::iPointers[0].iState,TWsPointer::iPointers[0].iPos.iX,TWsPointer::iPointers[0].iPos.iY);
+    RDebug::Printf("_WSEVENT_POINTER: TWindowServerEvent::ProcessRawEvent Number= %d  State = %x XY(%d,%d)",TWsPointer::iPointers[1].iNumber,TWsPointer::iPointers[1].iState,TWsPointer::iPointers[1].iPos.iX,TWsPointer::iPointers[1].iPos.iY);
 #endif
 	}
 
 void TWindowServerEvent::ProcessKeyEvent(const TKeyEvent &aKeyEvent,TInt aRepeats)
 	{
+#ifdef LOG_WSERV_EVENTS
+    RDebug::Printf("_WSEVENT_KEY: TWindowServerEvent::ProcessKeyEvent, key code: %d, repeat: %d", aKeyEvent.iCode, aRepeats);
+#endif
 	TKeyData keyData;
 	keyData.iModifiers=aKeyEvent.iModifiers;
 	keyData.iApp=0;
@@ -1222,23 +1417,22 @@ void TWindowServerEvent::ProcessKeyEvent(const TKeyEvent &aKeyEvent,TInt aRepeat
 		{
 		CKeyboardRepeat::CancelRepeat(NULL);
 		}
-	iCaptureKeys->ProcessCaptureKeys(keyData);
-	QueueKeyPress(keyData,aKeyEvent.iScanCode,NULL,aRepeats==0,aRepeats);
+	ProcessKeyPress(aKeyEvent, aRepeats == 0, aRepeats);
 	}
 
-void TWindowServerEvent::AddCaptureKeyL(const TCaptureKey &aCaptureKey)
+void TWindowServerEvent::AddCaptureKeyL(const TKeyCaptureRequest& aRequest)
 	{
-	iCaptureKeys->AddCaptureKeyL(aCaptureKey,aCaptureKey.iKeyCodePattern.iFiller);
+	iKeyEventRouter->AddCaptureKeyL(aRequest);
 	}
 
-void TWindowServerEvent::SetCaptureKey(TUint32 aHandle, const TCaptureKey &aCaptureKey)
+void TWindowServerEvent::UpdateCaptureKeyL(const TKeyCaptureRequest& aRequest)
 	{
-	iCaptureKeys->SetCaptureKey(aHandle, aCaptureKey,aCaptureKey.iKeyCodePattern.iFiller);
+	iKeyEventRouter->UpdateCaptureKeyL(aRequest);
 	}
 
-void TWindowServerEvent::CancelCaptureKey(TUint32 aHandle)
+void TWindowServerEvent::CancelCaptureKey(TKeyCaptureType aType, TAny* aHandle)
 	{
-	iCaptureKeys->CancelCaptureKey(aHandle);
+	iKeyEventRouter->CancelCaptureKey(aType, aHandle);
 	}
 
 TInt TWindowServerEvent::GetModifierState()
@@ -1481,6 +1675,9 @@ void CRawEventReceiver::DoCancel()
 
 void CRawEventReceiver::RunL()
 	{
+#ifdef LOG_WSERV_EVENTS
+    RDebug::Printf("_WSEVENT_KEY: CRawEventReceiver::RunL Entry point for event receiver");
+#endif
 //__PROFILE_START(11);
 	if (TWsPointer::PreProcessDriverEvent(iEventBuf.Event()
 #if defined(__WINS__)
@@ -1579,21 +1776,27 @@ void CKeyboardRepeat::SetRepeatTime(const TTimeIntervalMicroSeconds32 &aInitialT
 	iTime=aTime;
 	}
 
+/**
+Process timer events.
+
+Called when the key repeat timer expires, this function generates the
+appropriate long key or repeated key event. If the timer was started for
+normal key repeat or if the long key event was captured with the automatic
+repeat option specified then the timer is restarted.
+*/
 void CKeyboardRepeat::RunL()
 	{
 	User::ResetInactivityTime();
-	//WS_ASSERT_DEBUG(iRepeating!=ERepeatNone, EWsPanicTemp);
+	WS_ASSERT_DEBUG(iRepeating != ERepeatNone, EWsPanicKeyRepeat);
 	TBool timer=ETrue;
 	if (iRepeating>=ERepeatLong)
 		{
 		// Defensive programming - iLongCapture should never be NULL if iRepeating >= ERepeatLong
+		WS_ASSERT_DEBUG(iLongCapture != NULL, EWsPanicKeyRepeat);
 		if (iLongCapture)
 			{
-			iCurrentRepeat.iKey.iApp=REINTERPRET_CAST(TUint32,iLongCapture->iWindowGroup);
-			iCurrentRepeat.iKey.iHandle=0;
-			iCurrentRepeat.iKey.iIsCaptureKey=ETrue;
-			iCurrentRepeat.iKey.iKeyCode=iLongCapture->iData.outputKey;
-			timer=iLongCapture->iData.flags&ELongCaptureRepeatEvents;
+			iCurrentRepeat = iLongRepeat;
+			timer = iLongCapture->iFlags & ELongCaptureRepeatEvents;
 			iRepeating=ERepeatLongRepeated;
 			}
 		else
@@ -1607,53 +1810,67 @@ void CKeyboardRepeat::RunL()
 		After(iTime);
 	else
 		iRepeating=ERepeatNone;
-	TWindowServerEvent::QueueKeyPress(iCurrentRepeat.iKey,iCurrentRepeat.iScanCode,iFocus,EFalse,1);
+
+	TWindowServerEvent::QueueKeyPress(iCurrentRepeat.iOutput, ETrue, 1);
 	}
 
-TBool CKeyboardRepeat::StartRepeat(const TKeyData &aKey, TInt aScanCode, CWsWindowGroup *aRepeatFocus, CWsCaptureLongKey* aLongCapture)
+/**
+Start key repeat and long key press timer
+
+@param	aInputScanCode	Original scan code (before routing)
+@param	aShortEvent		Short key event (routing plug-in output)
+@param	aLongEvent		Pointer to long key event (routing plug-in output)
+						or NULL if none.
+
+Note: When aLongEvent != NULL, iCurrentRepeat reflects the short key event
+until the timer has expired. This is necessary to allow a delayed short key
+event to be delivered by KeyUp(). CancelRepeat() must therefore examine
+iCurrentRepeat or iLongRepeat according to the repeat type in iRepeat.
+*/
+void CKeyboardRepeat::StartRepeat(TInt aInputScanCode, const TKeyEventRouterOutput& aShortEvent, const TKeyEventRouterOutput* aLongEvent)
 	{
 	TTimeIntervalMicroSeconds32 time;
-	TBool ret=EFalse;
-	iCurrentRepeat.iScanCode=aScanCode;
-	iCurrentRepeat.iKey=aKey;
+	iCurrentRepeat.iInputScanCode = aInputScanCode;
+	iCurrentRepeat.iOutput = aShortEvent;
 
-	if (aLongCapture)
+	if (aLongEvent)
 		{
-		iLongCapture=aLongCapture;
-		iRepeating=ERepeatLong;
-		time=aLongCapture->iData.delay;
-		ret=!(aLongCapture->iData.flags&ELongCaptureShortEventImmediately);
-		//need window group from long capture key or even better delete it altogether.
-		iFocus=aLongCapture->WindowGroup();
+		iRepeating = ERepeatLong;
+		iLongRepeat.iInputScanCode = aInputScanCode;
+		iLongRepeat.iOutput = *aLongEvent;
+		iLongCapture = static_cast<CWsCaptureLongKey*>(aLongEvent->iCaptureHandle);
+		time = iLongCapture->iDelay;
 		}
 	else
 		{
-		iFocus=aRepeatFocus;
+		iLongCapture = NULL;
 		iRepeating=ERepeatNormal;
 		time=iInitialTime;
 		}
 	iThis->After(time);
-	return ret;
 	}
 
+/**
+Cancel key repeat processing
+*/
 void CKeyboardRepeat::doCancelRepeat()
 	{
 	iRepeating=ERepeatNone;
 	iThis->Cancel();
 	}
 
+/**
+Cancel any key repeat associated with the specified window group
+
+@param	aRepeatFocus	Destination window group or NULL for all
+*/
 void CKeyboardRepeat::CancelRepeat(CWsWindowGroup *aRepeatFocus)
 	{
-	if (aRepeatFocus==NULL || aRepeatFocus==iFocus)
+	if (iRepeating != ERepeatNone)
 		{
-		if (iRepeating)
-			doCancelRepeat();
-		iAlternateRepeatExists=EFalse;
-		}
-	else if (iRepeating >= ERepeatLong)
-		{
-		// Defensive programming - iLongCapture should never be NULL if iRepeating >= ERepeatLong
-		if (iLongCapture && iLongCapture->iWindowGroup == aRepeatFocus)
+		if (aRepeatFocus == NULL ||
+			(iRepeating == ERepeatNormal) && (aRepeatFocus == iCurrentRepeat.iOutput.iWindowGroup) ||
+			(iRepeating >= ERepeatLong) && (aRepeatFocus == iLongRepeat.iOutput.iWindowGroup))
 			{
 			doCancelRepeat();
 			iAlternateRepeatExists=EFalse;
@@ -1661,36 +1878,38 @@ void CKeyboardRepeat::CancelRepeat(CWsWindowGroup *aRepeatFocus)
 		}
 	}
 
-void CKeyboardRepeat::CancelRepeat(CWsWindowGroup *aRepeatFocus,TUint aScanCode,TBool aLongCaptureFlag,TUint aModifiers)
+/**
+Cancel any key repeat associated with the specified capture handle
+
+@param	aCaptureHandle		Handle to capture request
+@param	aLongCaptureFlag	ETrue for long key capture, EFalse for normal key
+*/
+void CKeyboardRepeat::CancelRepeat(const TAny* aCaptureHandle, TBool aLongCaptureFlag)
 	{
 	if (aLongCaptureFlag)
 		{
-		// long capture key is cancelled
-		if (iRepeating >= ERepeatLong && iCurrentRepeat.iScanCode==aScanCode)			
-				{
-				// Defensive programming - iLongCapture should never be NULL if iRepeating >= ERepeatLong
-				if (iLongCapture && aRepeatFocus == iLongCapture->iWindowGroup &&
-					(aModifiers & iLongCapture->iData.modifierMask) == iLongCapture->iData.modifiers)
-					{
-					doCancelRepeat();
-					iAlternateRepeatExists=EFalse;
-					}
-				}
+		// Cancel repeat for long capture key
+		if (iRepeating >= ERepeatLong && aCaptureHandle == iLongRepeat.iOutput.iCaptureHandle)
+			{
+			doCancelRepeat();
+			iAlternateRepeatExists=EFalse;
+			}
 		}
 	else
 		{
-		// normal capture key is cancelled
-		if (aRepeatFocus==iFocus)
+		// Cancel repeat for normal capture key
+		if (iRepeating == ERepeatNormal && aCaptureHandle == iCurrentRepeat.iOutput.iCaptureHandle)
 			{
-			if (iRepeating>=ERepeatNormal && iCurrentRepeat.iScanCode==aScanCode)
-				{
-				doCancelRepeat();
-				}
+			doCancelRepeat();
 			iAlternateRepeatExists=EFalse;
 			}
 		}
 	}
 	
+/**
+Process a key down event during key repeat.
+The current repeat data is saved for possible restoration after rollover.
+*/
 void CKeyboardRepeat::KeyDown()
 	{
 	if (iRepeating!=ERepeatNone)
@@ -1704,18 +1923,26 @@ void CKeyboardRepeat::KeyDown()
 		}
 	}
 
+/**
+Process a key up event during key repeat.
+Send delayed short key event if necessary for long key event processing.
+Switch to alternate repeat if rollover key was released.
+
+@param	aScanCode	Scan code
+*/
 void CKeyboardRepeat::KeyUp(TInt aScanCode)
 	{
-	if (iAlternateRepeatExists && iAlternateRepeat.iScanCode==aScanCode)
+	if (iAlternateRepeatExists && iAlternateRepeat.iInputScanCode == aScanCode)
 		iAlternateRepeatExists=EFalse;
-	if (iRepeating!=ERepeatNone && iCurrentRepeat.iScanCode==aScanCode)
+	if (iRepeating != ERepeatNone && iCurrentRepeat.iInputScanCode == aScanCode)
 		{
 		if (iRepeating==ERepeatLong)
 			{
 			// Defensive programming - iLongCapture should never be NULL if iRepeating >= ERepeatLong			
-			if (iLongCapture && !(iLongCapture->iData.flags&ELongCaptureShortEventImmediately))
+			WS_ASSERT_DEBUG(iLongCapture != NULL, EWsPanicKeyRepeat);
+			if (iLongCapture && !(iLongCapture->iFlags & ELongCaptureShortEventImmediately))
 				{
-				TWindowServerEvent::QueueKeyPress(iCurrentRepeat.iKey,iCurrentRepeat.iScanCode,NULL,EFalse,0);	
+				TWindowServerEvent::QueueKeyPress(iCurrentRepeat.iOutput, EFalse, 0);
 				}
 			}			
 		if (iAlternateRepeatExists)

@@ -24,22 +24,19 @@ CAPABILITY PowerMgmt WriteDeviceData SwEvent ProtServ
 MACRO TEST_GRAPHICS_WSERV_TAUTOSERVER_NGA
 MACRO SYMBIAN_GRAPHICS_GCE
 
-USERINCLUDE		../../../../../graphicstest/graphicstestharness/inc ../../../inc ../../../tauto ../../../tauto/openwfc
-USERINCLUDE		../../../tredir ../../../tlisten ../../../tframerate ../../../tcontaindrawer ../../t_gdcoverage ../../../tbufferdrawer
-USERINCLUDE		../../../tlib ../../
+USERINCLUDE		../../../../../graphicstest/graphicstestharness/inc ../../../inc ../../tauto ../../tauto/openwfc
+USERINCLUDE		../../tredir ../../tlisten ../../tframerate ../../tcontaindrawer ../../t_gdcoverage ../../tbufferdrawer
+USERINCLUDE		../../tlib ../../
 
-APP_LAYER_SYSTEMINCLUDE_SYMBIAN
-MW_LAYER_SYSTEMINCLUDE_SYMBIAN
-OS_LAYER_SYSTEMINCLUDE_SYMBIAN
-OS_LAYER_LIBC_SYSTEMINCLUDE 
-
+OS_LAYER_SYSTEMINCLUDE
+OS_LAYER_LIBC_SYSTEMINCLUDE
 
 SOURCEPATH    ../
 SOURCE        TAutoServer.cpp
 SOURCEPATH    ../../
 SOURCE        PARSEINIDATA.CPP
 
-SOURCEPATH    ../../../tauto
+SOURCEPATH    ../../tauto
 SOURCE        AUTO.CPP
 SOURCE        TAUTODLL.CPP
 SOURCE        TEvent.CPP
@@ -102,8 +99,7 @@ SOURCE        tadvancedpointerevent.cpp
 SOURCE	      tmultiptrevent.cpp
 SOURCE	      tdrawresource.cpp
 SOURCE	      twindowsizecache.cpp
-SOURCE	      tptroffset.cpp
-
+SOURCE        tdevicerotation.cpp
 
 //Required to test CommamdBuffer::Play using MWsGraphicsContext in tgc
 SOURCE        directgdigcwrapper.cpp

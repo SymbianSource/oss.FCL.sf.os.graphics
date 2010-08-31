@@ -24,6 +24,7 @@
 #include "gdiinline.inl"
 #include "gdistructs.h"
 #include "gdiconsts.h"
+#include "gdiplatapi.h"
 
 /**
  Names holds the types & data associated with the glyph selection
@@ -1615,3 +1616,195 @@ EXPORT_C const TPtrC GlyphSample::TScript2GlyphSample(TInt aScript)
 	// being the first three elements in TScript.
 	return TPtrC(KTScript2GlyphSample[aScript - 3]);
 	}
+
+
+EXPORT_C RFontTable::RFontTable():iTableContent(0), iLength(0),
+        iFont(NULL), iTag(0)
+    {
+    // a null constructor.
+    }
+
+EXPORT_C TInt
+RFontTable::Open(CFont& aFont, TUint32 aTag) 
+    {
+    TGetFontTableParam param;
+    param.iTag = aTag;
+    
+    // remember the parameters, to be used when releasing the font table.
+    iFont = &aFont;
+    iTag = aTag;
+    
+    TInt ret = aFont.ExtendedFunction(KFontGetFontTable, (TAny *)&param);
+    if (KErrNone == ret)
+        {
+        iTableContent = (TAny *)param.iContent;
+        iLength = param.iLength;
+        }
+    return ret;
+    }
+
+EXPORT_C TInt 
+RFontTable::TableLength() const
+    {
+    return iLength;
+    }
+
+EXPORT_C const TUint8*
+RFontTable::TableContent() const 
+    {
+    return (TUint8*)iTableContent;
+    }
+
+EXPORT_C void
+RFontTable::Close()
+    {
+    if (NULL != iFont)
+        {
+        (void)iFont->ExtendedFunction(KFontReleaseFontTable, (TAny *)&iTag);
+        }
+    iTableContent = 0;
+    iLength = 0;
+    iFont = NULL;
+    iTag = 0;
+    }
+
+EXPORT_C 
+RGlyphOutlineIterator::RGlyphOutlineIterator():iOutlines(0), iLengths(0), 
+    iCursor(-1), iCount(0), iFont(NULL), iCodes(NULL), iHinted(EFalse)
+    {
+    // a null constructor.
+    }
+
+EXPORT_C TInt
+RGlyphOutlineIterator::Open(CFont& aFont, const TUint* aCodes, TInt aCount, TBool aHinted) 
+    {
+    if (NULL == aCodes || 0 == aCount)
+        {
+        return KErrArgument;
+        }
+    TGetGlyphOutlineParam param;
+    iLengths = (TInt *)User::Alloc(sizeof(TInt) * aCount);
+    if (NULL == iLengths) 
+        {
+        return KErrNoMemory;
+        }
+    iOutlines = (TAny **)User::Alloc(sizeof(TAny *) * aCount);
+    if (NULL == iOutlines)
+        {
+        User::Free(iLengths);
+        iLengths = NULL;
+        return KErrNoMemory;
+        }
+    
+    param.iLengths = iLengths; 
+    param.iCount = aCount;
+    param.iCodes = aCodes; 
+    param.iHinted = aHinted;
+    param.iOutlines = iOutlines; 
+        
+    /* information needed in Close() */
+    iCodes = (TUint *)User::Alloc(sizeof(TUint) * aCount);
+    if (NULL == iCodes) 
+        {
+        User::Free(iLengths);
+        User::Free(iOutlines);
+        iLengths = NULL;
+        iOutlines = NULL;
+        return KErrNoMemory;
+        }
+    Mem::Copy(iCodes, aCodes, aCount*sizeof(TUint));
+    iFont = &aFont;
+    iHinted = aHinted;
+    iCount = aCount;
+    
+    TInt ret = aFont.ExtendedFunction(KFontGetGlyphOutline, (TAny *)&param);
+    if (KErrNone != ret)
+        {
+        User::Free(iLengths);
+        User::Free(iOutlines);
+        User::Free(iCodes);
+        iLengths = NULL;
+        iOutlines = NULL;
+        iCodes = NULL;
+        iFont = NULL;
+        }
+    else 
+        {
+        iCursor = 0;
+        }
+
+    return ret;
+    }
+
+EXPORT_C const TUint8*
+RGlyphOutlineIterator::Outline() const
+    {
+    GDI_ASSERT_ALWAYS(iCursor >= 0, EGdiPanic_Unknown);
+    
+    if (iLengths[iCursor] < 0) 
+        {
+        return NULL;
+        }
+    else 
+        {
+        return (const TUint8*)iOutlines[iCursor];
+        }
+    }
+
+EXPORT_C TInt 
+RGlyphOutlineIterator::OutlineLength() const 
+    {
+    GDI_ASSERT_ALWAYS(iCursor >= 0, EGdiPanic_Unknown);
+    
+    if (iLengths[iCursor] < 0) 
+        {
+        return KErrGeneral;
+        }
+    else 
+        {
+        return iLengths[iCursor];
+        }
+    }
+
+EXPORT_C TInt
+RGlyphOutlineIterator::Next()
+    {
+    if (iCursor >= 0 && iCursor < iCount-1) 
+        {
+        ++iCursor;
+        return KErrNone;
+        }
+    else
+        {
+        iCursor = -1; 
+        // if the iterator goes beyond the last element [when
+        // Next() returns KErrNotFound], the next call
+        // to Outline() or OutlineLength() will panic.
+        
+        return KErrNotFound;
+        }
+    }
+
+EXPORT_C void
+RGlyphOutlineIterator::Close()
+    {
+    TReleaseGlyphOutlineParam param;
+    param.iCount = iCount;
+    param.iHinted = iHinted;
+    param.iCodes = iCodes;
+    
+    if (NULL != iFont)
+        {
+        iFont->ExtendedFunction(KFontReleaseGlyphOutline, (TAny *)&param);
+        }
+    
+    iFont = NULL;
+    iCount = 0;
+    User::Free(iLengths);
+    iLengths = NULL;
+    iCursor = -1;
+    User::Free(iCodes);
+    iCodes = NULL;
+    User::Free(iOutlines);
+    iOutlines = NULL;
+    }

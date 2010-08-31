@@ -211,7 +211,7 @@ void CTFlipFramerate::TestFramerateOrientationL(   const TFlipped aIsFlipped,
     TInt framesDone=0;
     
     iUpdateSession.NotifyWhenAvailable(availabilityStatus);
-    TESTL(KErrNone==iUpdateSession.SubmitUpdate(KSgScreenIdMain, iImgCol.SurfaceId(), 0));      
+    TESTL(KErrNone==iUpdateSession.SubmitUpdate(KAllScreens, iImgCol.SurfaceId(), 0));      
     
     // uibench, needs more than 50 results for the trimmed mean, so repeat as required.
     while(framesDone < KMinFrames)
@@ -231,7 +231,7 @@ void CTFlipFramerate::TestFramerateOrientationL(   const TFlipped aIsFlipped,
     
             // Start Timer & Submit Update
             iProfiler->StartTimer();        
-            TESTL(KErrNone==iUpdateSession.SubmitUpdate(KSgScreenIdMain, iImgCol.SurfaceId(), 0));
+            TESTL(KErrNone==iUpdateSession.SubmitUpdate(KAllScreens, iImgCol.SurfaceId(), 0));
             
             // Wait for the update to have been displayed and stop the timer
             User::WaitForRequest(displayedStatus);        

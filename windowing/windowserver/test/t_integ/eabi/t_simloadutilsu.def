@@ -1,7 +1,0 @@
-EXPORTS
-	_ZN17CTSimLoadAppUtils11SpikedLoadLEv @ 1 NONAME
-	_ZN17CTSimLoadAppUtils11StaticLoadLEv @ 2 NONAME
-	_ZN17CTSimLoadAppUtils18SimulateSpikedLoadEv @ 3 NONAME
-	_ZN17CTSimLoadAppUtils19SimulateStaticLoadLERKiS1_ @ 4 NONAME
-	_ZN17CTSimLoadAppUtils8SimLoadLEv @ 5 NONAME
-

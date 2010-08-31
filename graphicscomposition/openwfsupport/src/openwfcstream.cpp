@@ -18,6 +18,7 @@
 
 //  Include Files  
 #include <e32def.h>
+#include <pixelformats.h>
 #include <graphics/suerror.h>
 #include "symbianstream.h"
 #include "surfacestream.h"
@@ -137,7 +138,7 @@ EXPORT_C void SymbianStreamGetHeader( SymbianStreamType aStream,
                             khronos_int32_t* aWidth, 
                             khronos_int32_t* aHeight, 
                             khronos_int32_t* aStride, 
-                            TUidPixelFormat* aFormat, 
+                            khronos_int32_t* aFormat, 
                             khronos_int32_t* aPixelSize)
 	{
 	CSurfaceStream*	stream=CSurfaceStream::FromHandle(aStream);
@@ -363,46 +364,6 @@ SymbianStreamCheckVisible(SymbianStreamType aStream,
         }
     }
 
-EXPORT_C TInt32
-SymbianStreamProcessDisplayedNotifications(SymbianStreamType aStream, 
-                                           khronos_int32_t aEvent, 
-                                           khronos_int32_t aScreenNumber,
-                                           khronos_int32_t aSerialNumber,
-                                           khronos_int32_t* aReturnMask)
-    {
-    CSurfaceStream* stream = CSurfaceStream::FromHandle(aStream);
-    TInt32 event = aEvent & (ESOWF_EventDisplayed | ESOWF_EventDisplayedX);
-    if (stream && event)
-        {
-        stream->ProcessNotifications(aEvent, 
-                                     aScreenNumber, 
-                                     CSurfaceStream::EDefaultOperation, 
-                                     aSerialNumber, 
-                                     aReturnMask);
-        }
-    return event;
-    }
-
-EXPORT_C TInt32
-SymbianStreamProcessAvailableNotifications(SymbianStreamType aStream, 
-                                           khronos_int32_t aEvent, 
-                                           khronos_int32_t aScreenNumber,
-                                           khronos_int32_t aSerialNumber,
-                                           khronos_int32_t* aReturnMask)
-    {
-    CSurfaceStream* stream = CSurfaceStream::FromHandle(aStream);
-    TInt32 event = aEvent & ESOWF_EventAvailable;
-    if (stream && event)
-        {
-        stream->ProcessNotifications(aEvent, 
-                                     aScreenNumber, 
-                                     CSurfaceStream::EDefaultOperation, 
-                                     aSerialNumber, 
-                                     aReturnMask);
-        }
-    return ESOWF_EventAvailable;
-    }
-
 EXPORT_C TErrCode 
 SymbianStreamAddExtendedObserver(SymbianStreamType aStream, 
                                 SymbianStreamCallback aObserver, 
@@ -446,5 +407,17 @@ SymbianStreamSetFlipState(SymbianStreamType aStream, SymOwfBool aFlip)
         stream->SetFlipState(aFlip);
         }
     }
-}	//extern "C" helps fix and verify linkage
 
+EXPORT_C TErrCode
+SymbianStreamGetChunkHandle(SymbianStreamType aStream, TInt* aHandle)
+    {
+    CSurfaceStream* stream = CSurfaceStream::FromHandle(aStream);
+    if (stream && aHandle)
+        {
+        *aHandle = stream->GetChunkHandle();
+        return KErrNone;
+        }
+    return KErrArgument;
+    }
+
+}   //extern "C" helps fix and verify linkage

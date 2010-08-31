@@ -268,7 +268,7 @@ CTFbsFontHandlePerf::CTFbsFontHandlePerf()
 TVerdict CTFbsFontHandlePerf::doTestStepPreambleL()
 	{
 	CTe_graphicsperformanceSuiteStepBase::doTestStepPreambleL();
-	SetScreenModeL(EColor16MU);
+	SetScreenModeL(EColor16MAP);
 	iDevice = &iScreenDevice->BitmapDevice();
 	return TestStepResult();
 	}
@@ -310,7 +310,7 @@ TVerdict CTFbsFontHandlePerf::doTestStepL()
 		}
 	else
 		{
-		TEST(ret == KErrNone);
+		TEST((ret == KErrNone) || (ret == KErrAlreadyExists));
 
 		_LIT(KLinkedTypefaceHindi,"HindiLinked");
 		typefaceSpec = CLinkedTypefaceSpecification::NewLC(KLinkedTypefaceHindi);
@@ -327,14 +327,15 @@ TVerdict CTFbsFontHandlePerf::doTestStepL()
 		ts = CFbsTypefaceStore::NewL(iDevice);
 		CleanupStack::PushL(ts);
 		ret = ts->RegisterLinkedTypeface(*typefaceSpec);
-		TEST(ret == KErrNone);
+		TEST((ret == KErrNone) || (ret == KErrAlreadyExists));
 		CleanupStack::PopAndDestroy(2, typefaceSpec);
 		
 		//register a linked typeface with four fonts.
         _LIT(KFourLinked,"FourBitmapLinked");
         _LIT(KLinkedTypeFace1, "DejaVu Sans Condensed");
         _LIT(KLinkedTypeFace2, "Devanagari OT Eval");
-        _LIT(KLinkedTypeFace3, "TBKomachiG-R");
+        //_LIT(KLinkedTypeFace3, "TBKomachiG-R"); // This font is not included in uibench roms.
+		_LIT(KLinkedTypeFace3, "DejaVu Sans Mono");
         _LIT(KLinkedTypeFace4, "DejaVu Serif Condensed");
 
 		typefaceSpec = CLinkedTypefaceSpecification::NewLC(KFourLinked);
@@ -343,7 +344,7 @@ TVerdict CTFbsFontHandlePerf::doTestStepL()
 		typefaceSpec->AddLinkedTypefaceGroupL(*group1);
 		CleanupStack::Pop(group1);
 		
-		const TInt KGroup2Id = 4;	
+		const TInt KGroup2Id = 3;	
 		CLinkedTypefaceGroup* group2 = CLinkedTypefaceGroup::NewLC(KGroup2Id);
 		typefaceSpec->AddLinkedTypefaceGroupL(*group2);
 		CleanupStack::Pop(group2);
@@ -373,7 +374,7 @@ TVerdict CTFbsFontHandlePerf::doTestStepL()
 		ts = CFbsTypefaceStore::NewL(iDevice);
 		CleanupStack::PushL(ts);
 		ret = ts->RegisterLinkedTypeface(*typefaceSpec);
-		TEST(ret == KErrNone);
+		TEST((ret == KErrNone) || (ret == KErrAlreadyExists));
 		CleanupStack::PopAndDestroy(2, typefaceSpec);
 		
 		_LIT(KOneLinked,"OneLinked");
@@ -391,9 +392,7 @@ TVerdict CTFbsFontHandlePerf::doTestStepL()
 		ts = CFbsTypefaceStore::NewL(iDevice);
 		CleanupStack::PushL(ts);
 		TRAP(ret, typefaceSpec->RegisterLinkedTypefaceL(*ts));
-		TEST(ret == KErrNone);
-		
-		TEST(typefaceSpec->RemoveTypeface(3) == KErrNone);
+		TEST((ret == KErrNone) || (ret == KErrAlreadyExists));
 		
 		TRAP(ret, typefaceSpec->UpdateLinkedTypefaceL(*ts));
 		

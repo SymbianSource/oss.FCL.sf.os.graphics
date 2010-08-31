@@ -41,4 +41,6 @@ call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/naviengine_graphics24
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/naviengine_graphics25_armv5_auto" --nandLoader %1 --resource %2 --jobId %3 --timeout 60 --listenTimeout 3600 --transferMode serial
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/naviengine_graphics29a_armv5_auto" --nandLoader %1 --resource %2 --jobId %3 --timeout 60 --listenTimeout 3600 --transferMode serial
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/naviengine_graphics29b_armv5_auto" --nandLoader %1 --resource %2 --jobId %3 --timeout 60 --listenTimeout 3600 --transferMode serial
+call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/naviengine_graphics30_armv5_auto" --nandLoader %1 --resource %2 --jobId %3 --timeout 60 --listenTimeout 2400 --transferMode serial
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/naviengine_uiframeworks_armv5_auto" --nandLoader %1 --resource %2 --jobId %3 --timeout 80 --listenTimeout 2400 --transferMode serial
+

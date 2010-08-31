@@ -24,7 +24,7 @@
 
 #include <e32base.h>
 #include <gdi.h>					//Display modes
-#include <cinidata.h>
+#include <iniparser.h>
 
 #include "t_pseudoappsurfacedwindow.h"
 #include "t_pseudoapptestresults.h"

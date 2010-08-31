@@ -46,9 +46,6 @@ SOURCE	openvgengine.cpp
 SOURCEPATH  ../src/tests_copyrect
 SOURCE	tcopyrect.cpp 
 
-SOURCEPATH  ../src/tests_egl
-SOURCE	teglswapbuffer.cpp
-
 SOURCEPATH  ../src/tests_flowwindow
 SOURCE	tflowwindowstest.cpp
 SOURCE	tflowwindowstestopenglvg.cpp 
@@ -90,7 +87,6 @@ USERINCLUDE  ../src/tests_pan
 USERINCLUDE  ../src/tests_scale
 USERINCLUDE  ../src/tests_ui_video
 USERINCLUDE  ../src/tests_zorder
-USERINCLUDE  ../src/tests_egl
 
 //system includes
 MW_LAYER_SYSTEMINCLUDE_SYMBIAN
@@ -125,7 +121,7 @@ LIBRARY     libEGL.lib
 LIBRARY     libGLESv1_CM.lib
 LIBRARY	    libopenvgu.lib
 LIBRARY	    libopenvg.lib
-LIBRARY     egltesthybrid.lib
+// this shouldn't be needed LIBRARY     egltesthybrid.lib
 LIBRARY     surfacemanager.lib
 LIBRARY     tgraphicsharness.lib
 LIBRARY     tprofiler.lib

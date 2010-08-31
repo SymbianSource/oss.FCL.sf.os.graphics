@@ -187,7 +187,7 @@ void CTFbs::RunTestCaseL(TInt aCurTestCase)
 		TestSingletonServer();
 		break;
 	case 21:
-		((CTFbsStep*)iStep)->SetTestStepID(_L("GRAPHICS-FBSERV-0620"));
+		((CTFbsStep*)iStep)->SetTestStepID(_L("GRAPHICS-FBSERV-0623"));
 		TestFontSessionCacheLookupL();
 		break;
 	case 22:
@@ -649,7 +649,7 @@ void CTFbs::TestGetFont()
 	CheckResourceCount();
 	TEST(fbsalt->ResourceCount()==iResourceCount);
 	font3->Reset();
-	User::Free(font3);
+	delete font3;
 	iResourceCount--;
 	CheckResourceCount();
 	TEST(fbsalt->ResourceCount()==iResourceCount);
@@ -2133,7 +2133,7 @@ void CTFbs::TestSingletonServer()
 	}
 
 /**
-@SYMTestCaseID      GRAPHICS-FBSERV-0620
+@SYMTestCaseID      GRAPHICS-FBSERV-0623
 @SYMTestPriority    High
 @SYMTestStatus      Implemented
 @SYMDEF             DEF140138

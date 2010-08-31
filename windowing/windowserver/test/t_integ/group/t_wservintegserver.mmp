@@ -38,9 +38,7 @@ SOURCE			t_wservintegstepfps.cpp
 
 USERINCLUDE		../inc
 
-APP_LAYER_SYSTEMINCLUDE_SYMBIAN
-MW_LAYER_SYSTEMINCLUDE_SYMBIAN
-OS_LAYER_SYSTEMINCLUDE_SYMBIAN
+OS_LAYER_SYSTEMINCLUDE
 
 LIBRARY			euser.lib
 LIBRARY			testexecuteutils.lib
@@ -48,7 +46,7 @@ LIBRARY			testexecutelogclient.lib
 LIBRARY			efsrv.lib
 LIBRARY			bafl.lib
 LIBRARY			estor.lib
-LIBRARY			cinidata.lib
+LIBRARY			iniparser.lib
 LIBRARY			surfacemanager.lib
 LIBRARY			surfaceupdateclient.lib
 LIBRARY			ws32.lib

@@ -1,4 +1,5 @@
 /* Copyright (c) 2009 The Khronos Group Inc.
+ * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -328,19 +329,6 @@ WFC_Context_SetAttribfv(WFC_CONTEXT* context,
                         WFCint count,
                         const WFCfloat* values);
 
-
-/*!
- *  \brief Stream content notification callback
- *
- *  \param stream Handle of the stream
- *  \param event Stream event type
- *  \param data Context
- */
-OWF_API_CALL void
-WFC_Context_SourceStreamUpdated(OWFNativeStreamType stream,
-                                OWFint event,
-                                void* data,
-                                void* param);
 
 /*!
  *  \brief Check if context is currently activated
