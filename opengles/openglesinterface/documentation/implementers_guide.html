@@ -1,0 +1,403 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Khronos API Implementers' Guidelines</title><link rel="stylesheet" href="igstyle.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.69.1"><meta name="description" content="Guidelines to be followed by implementers of Khronos Group
+		APIs"><style type="text/css">
+body { background-image: url('draft.png');
+       background-repeat: no-repeat;
+       background-position: top left;
+       /* The following properties make the watermark "fixed" on the page. */
+       /* I think that's just a bit too distracting for the reader... */
+       /* background-attachment: fixed; */
+       /* background-position: center center; */
+     }</style></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h1 class="title"><a name="id4739083"></a>Khronos API Implementers' Guidelines</h1></div><div><div class="authorgroup"><h4 class="editedby">Edited by</h4><h3 class="editor"><span class="firstname">Mark</span> <span class="surname">Callow</span></h3><div class="affiliation"><span class="orgname">HI Corporation<br></span></div><code class="email">&lt;<a href="mailto:callow_mark%20at%20hicorp.co.jp">callow_mark at hicorp.co.jp</a>&gt;</code><p></p></div></div><div><p class="copyright">Copyright © 2007 The Khronos Group Inc.</p></div><div><div class="legalnotice"><a name="legal"></a><p>This document is protected by copyright laws and contains
+		material proprietary to the Khronos Group, Inc. It or any components
+		may not be reproduced, republished, distributed, transmitted,
+		displayed, broadcast or otherwise exploited in any manner without
+		the express prior written permission of Khronos Group.
+	   	The receipt or possession of this
+		document does not convey any rights to reproduce, disclose, or
+		distribute its contents, or to manufacture, use, or sell anything
+	   	that it may describe, in whole or in part.</p><p>Khronos Group grants express permission to any current Promoter,
+		Contributor or Adopter member of Khronos to copy and redistribute
+		UNMODIFIED versions of this document in any fashion, provided
+		that NO CHARGE is made for the document and the latest available
+		update of the document is used whenever possible.
+	   	Such distributed document may be
+		re-formatted AS LONG AS the contents of the document are not
+		changed in any way.  The document may be incorporated into a
+		product that is sold as long as such product includes significant
+		independent work developed by the seller. A link to the current
+		version of this document on the Khronos Group web-site should
+		be included whenever possible with document distributions.</p><p>Khronos Group makes no, and expressly disclaims any,
+		representations or warranties, express or implied, regarding this
+		document, including, without limitation, any implied warranties
+		of merchantability or fitness for a particular purpose or
+		non-infringement of any intellectual property. Khronos Group makes
+		no, and expressly disclaims any, warranties, express or implied,
+		regarding the correctness, accuracy, completeness, timeliness, and
+		reliability of the document. Under no circumstances will the Khronos
+		Group, or any of its Promoters, Contributors or Members or their
+		respective partners, officers, directors, employees, agents or
+		representatives be liable for any damages, whether direct, indirect,
+		special or consequential damages for lost revenues, lost profits,
+		or otherwise, arising from or in connection with these
+		materials.</p><p><span class="trademark">Khronos</span>™ is a trademark of
+		The Khronos Group Inc. <span class="trademark">OpenGL</span>®
+		is a registered trademark, and
+		<span class="trademark">OpenGL ES</span>™is a trademark, of
+		Silicon Graphics, Inc.</p></div></div><div><div class="revhistory"><table border="1" width="100%" summary="Revision history"><tr><th align="left" valign="top" colspan="3"><b>Revision History</b></th></tr><tr><td align="left">Revision 0.9.0</td><td align="left">2006-12-08 19:15:11 -0800</td><td align="left">msc</td></tr><tr><td align="left" colspan="3">First docbook version</td></tr><tr><td align="left">Revision 0.91.0</td><td align="left">2006-12-12 17:26:03 -0800</td><td align="left">msc</td></tr><tr><td align="left" colspan="3">Public review version: amended copyright notice; changed OpenKODE and GLES utility library names.</td></tr></table></div></div><div><div class="abstract"><p class="title"><b>Abstract</b></p><p>Guidelines to be followed by implementers of Khronos Group
+		<em class="glossterm">APIs</em></p></div></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#introduction">Introduction</a></span></dt><dt><span class="section"><a href="#generalguidelines">General Guidelines </a></span></dt><dd><dl><dt><span class="section"><a href="#controlled">Vendor Controlled Platforms (e.g. BREW, SymbianOS)</a></span></dt><dt><span class="section"><a href="#uncontrolled">Uncontrolled Platforms (e.g. GNU/Linux, Windows, Windows CE)</a></span></dt></dl></dd><dt><span class="section"><a href="#id4787332">Acknowledgements</a></span></dt><dt><span class="glossary"><a href="#id4787444">Glossary</a></span></dt></dl></div><div class="list-of-tables"><p><b>List of Tables</b></p><dl><dt>1. <a href="#id4713194">Header File Names and Locations</a></dt><dt>2. <a href="#id4786950">Recommended Library Names</a></dt></dl></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="introduction"></a>Introduction</h2></div></div></div><p> This document provides guidelines for
+	  <a href="#gls_implementer"><em class="firstterm">implementers
+	  </em></a>
+	  of OpenGL ES, OpenVG and other <a href="#gls_api"><em class="firstterm">API</em></a>
+	  standards specified by the Khronos Group.
+	  The aim of these hints is to provide commonality between implementations to 
+	  ease the logistical problems faced by developers using multiple different 
+	  implementations of an <em class="glossterm">API</em>.
+   	</p><p> One of the primary goals is to allow an application binary to run 
+	  on top of multiple different OpenGL ES / OpenVG / EGL implementations 
+	  on the same platform. </p><p> Implementers are strongly urged to comply with these guidelines. 
+	</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="generalguidelines"></a>General Guidelines </h2></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="controlled"></a>Vendor Controlled Platforms (e.g. BREW, SymbianOS)</h3></div></div></div><p> Implementers should follow the linkage specifications established 
+		by the
+		<a href="#gls_vendor"><em class="firstterm">platform vendor</em></a>
+		.
+	  </p><div class="itemizedlist"><ul type="opencircle"><li style="list-style-type: circle"><p> Use the header files, (e.g., for OpenGL ES, gl.h &amp; egl.h) 
+			provided by the platform vendor. </p></li><li style="list-style-type: circle"><p> Use the function names specified in those header files. </p></li><li style="list-style-type: circle"><p>Implement all <em class="glossterm">API</em>
+			entry points in the same way as in the
+			<em class="glossterm">vendor</em>-provided
+			<a href="#gls_abi"><em class="firstterm">ABI</em></a>. That is,
+			functions should be functions, in-line functions should be
+			in-line functions and macros should be macros.
+		  </p></li><li style="list-style-type: circle"><p> Use the platform specified library names. </p></li></ul></div><p>Vendors of controlled platforms are strongly urged to follow the
+		recommendations given below for <a href="#uncontrolled" title="Uncontrolled Platforms (e.g. GNU/Linux, Windows, Windows CE)">
+		Uncontrolled Platforms</a> when adding a Khronos Group
+	    <em class="glossterm">API</em> to their platform.
+	  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="uncontrolled"></a>Uncontrolled Platforms (e.g. GNU/Linux, Windows, Windows CE)</h3></div></div></div><p> When providing implementations for platforms where the vendor 
+		does not provide standard linkage specifications, implementers
+		are urged to follow the following recommendations.</p><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="headerfiles"></a> Header Files </h4></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="hfgeneral"></a>General</h5></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>Use the Khronos provided header files (e.g., for OpenGL 
+				ES, <code class="filename">gl.h</code> &amp;
+				<code class="filename">egl.h</code>). If changes are
+				unavoidable, consider contributing your changes back to Khronos
+				by updating the standard header files in the Khronos Subversion
+				tree. </p></li><li><p> If you make your own header files and the platform is 
+				Windows, make sure they are suitable for use with
+				<a href="#gls_mfc"><em class="firstterm"><span class="acronym">MFC</span></em></a>.
+			   	For example 
+				<code class="code">#define EGL_DEFAULT_DISPLAY GetDC(0)</code>
+				is broken for MFC. You need to use 
+				<code class="code">::GetDC(0)</code>
+				because several MFC have their own 
+				<code class="code">GetDC(void)</code>
+				methods.</p></li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="hfegl"></a>EGL</h5></div></div></div><div class="itemizedlist"><ul type="disc"><li><p> Package the EGL header files 
+				<code class="filename">egl.h</code>
+				and
+				<code class="filename">eglplatform.h</code>
+				in the folder 
+				<code class="filename">EGL</code>.
+			  </p></li><li><p> <code class="filename">eglplatform.h</code>
+			   	contains platform
+				dependent items and needs to be modified by the implementer.
+				In particular the
+				<span class="type">eglNativeDisplayType</span>, 
+				<span class="type">eglNativeWindowType</span>, and 
+				<span class="type">eglNativePixmapType</span>
+				typedefs must be defined as appropriate for the platform
+				(typically, they will be typedef'ed to corresponding types
+				in the native window system). Developer documentation should
+				mention the correspondence so that developers know what
+			   	parameters to pass to 
+				<code class="function">eglCreateWindowSurface</code>, 
+				<code class="function">eglCreatePixmapSurface</code>, and 
+				<code class="function">eglCopyBuffers</code>.
+			   	Documentation should also describe the format of the 
+				<em class="parameter"><code>display_id</code></em>
+				parameter to 
+				<code class="function">eglGetDisplay</code>,
+			   	since this is a platform-specific identifier.</p></li><li><p> Include 
+				<code class="filename">eglplatform.h</code>
+				in 
+				<code class="filename">egl.h</code>
+				thus: 
+				<code class="code">#include &lt;EGL/eglplatform.h&gt;</code>
+				. Do not use 
+				<code class="code">#include &lt;eglplatform.h&gt;</code>
+				because app. makefiles will then need 2 different 
+				<em class="parameter"><code>-I&lt;path&gt;</code></em>
+				options to find both include files. </p></li><li><p> Do not include 
+				<code class="filename">gl.h</code>
+				in 
+				<code class="filename">egl.h</code>
+				. </p></li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="hfgles1x"></a> OpenGL ES 1.x </h5></div></div></div><div class="itemizedlist"><ul type="disc"><li><p> Package the OpenGL ES header files 
+				<code class="filename">gl.h</code>
+				and 
+				<code class="filename">glplatform.h</code>
+				in the folder 
+				<code class="filename">GLES</code>
+				.  </p></li><li><p> <code class="filename">glplatform.h</code>
+				contains platform dependent items and may need to be
+				modified by the implementer. Implementers are encouraged
+				to provide their additions for newly supported platforms
+				to the Khronos Group for inclusion in the Adopters'
+				distribution.</p></li><li><p> For compatibility with GLES 1.0 implementations, include 
+				in 
+				<code class="filename">GLES</code>
+				a special 
+				<code class="filename">egl.h</code>
+				containing the following: 
+				</p><div class="informalexample"><pre class="programlisting">
+#include &lt;EGL/egl.h&gt;
+#include &lt;GLES/gl.h&gt;</pre></div><p>
+				This is because many early OpenGL ES 1.0 implementations
+				included 
+				<code class="filename">gl.h</code>
+				in 
+				<code class="filename">egl.h</code>
+				so many existing applications only include 
+				<code class="filename">egl.h</code>
+				. </p></li><li><p>The name <code class="filename">glu.h</code>
+				is reserved for future use by the Khronos Group.</p></li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="hfgles2x"></a> OpenGL ES 2.x </h5></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>The core header files for OpenGL ES 2.x are called
+			   	<code class="filename">gl2.h</code> and
+			    <code class="filename">gl2platform.h</code> to
+			    keep them distinct from the GLES 1.x header files and enable
+			    application to use both versions.</p></li><li><p>The function declarations and constant definitions for
+			   	OpenGL ES 2.x are divided into 2 header files: 
+			    <code class="filename">gl2.h</code>
+			    declares and defines all the core functions and constants; 
+			    <code class="filename">gl2ext.h</code>
+				declares and defines functions and constants for all
+				Khronos approved extensions and can be used even if the
+				implementation doesn't provide a particular extension.</p><p>Functions and constants for Implementer
+				extensions should be declared and defined in an implementer's
+				own header file using names and constant values obtained from
+				the Khronos Group's Extension Registry.</p></li><li><p>Package all these header files in the folder
+			    <code class="filename">GLES2</code>.</p></li><li><p>The name <code class="filename">glu2.h</code>
+				is reserved for future use by the Khronos Group.</p></li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="hfopenkode"></a>OpenKODE</h5></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>Package the OpenKODE header files 
+		        <code class="filename">kd.h</code>
+		        and
+		        <code class="filename">kdplatform.h</code>
+		        in the folder 
+				<code class="filename">KD</code>.
+			  </p></li><li><p>Implementers are encouraged to code
+				<code class="filename">kd.h</code> such that it
+				includes as few as possible of the platform's include files,
+				and to avoid declaring C and POSIX standard functions. This
+				will ease the creation of portable OpenKODE applications,
+			   	and help stop non-portable code being added accidentally.
+			  </p></li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="hfopenvg"></a>OpenVG</h5></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>Package the OpenVG header files 
+		        <code class="filename">openvg.h</code>
+		        and, when provided, 
+		        <code class="filename">vgu.h</code>
+		        in the folder 
+		        <code class="filename">VG</code>
+				.</p></li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="hfsummary"></a>Header File Summary</h5></div></div></div><div class="table"><a name="id4713194"></a><p class="title"><b>Table 1. Header File Names and Locations</b></p><table summary="Header File Names and Locations" border="1"><colgroup><col align="left"><col align="left"><col align="left"><col align="left"><col align="left"></colgroup><thead><tr><th align="left"> API </th><th align="left"> Location </th><th align="left"> Header Files </th><th align="left"> How to include </th><th align="left"> Provider </th></tr></thead><tbody><tr><td rowspan="2" align="left" valign="top"> EGL 1.x </td><td rowspan="2" align="left" valign="top"> 
+					<code class="filename">EGL</code>
+				  </td><td align="left"> 
+					<code class="filename">egl.h</code>
+				  </td><td align="left"> 
+					<code class="code">#include &lt;EGL/egl.h&gt;</code>
+				  </td><td align="left">
+					Khronos
+				  </td></tr><tr><td align="left"> 
+					<code class="filename">eglplatform.h</code>
+					<sup>[<a name="id4713330" href="#ftn.id4713330">1</a>]</sup>
+				  </td><td align="left"> 
+					Included by <code class="filename">egl.h</code>
+				  </td><td align="left">
+					Vendor or Implementer
+				  </td></tr><tr><td rowspan="3" align="left" valign="top"> OpenGL ES 1.x </td><td rowspan="3" align="left" valign="top"> 
+					<code class="filename">GLES</code>
+				  </td><td align="left"> 
+					<code class="filename">gl.h</code>
+				  </td><td align="left"> 
+					<code class="code">#include &lt;GLES/gl.h&gt;</code>
+				  </td><td align="left">
+					Khronos
+				  </td></tr><tr><td align="left"> 
+					<code class="filename">glplatform.h</code>
+					<sup>[<a name="id4713439" href="#ftn.id4713439">2</a>]</sup>
+				  </td><td align="left"> 
+					Included by <code class="filename">gl.h</code>
+				  </td><td align="left">
+					Vendor or Implementer
+				  </td></tr><tr><td align="left">
+					<code class="filename">glu.h</code>
+				  </td><td colspan="2" align="center">
+					Reserved for future use
+				  </td></tr><tr><td rowspan="4" align="left" valign="top"> OpenGL ES 2.x </td><td rowspan="4" align="left" valign="top"> 
+					<code class="filename">GLES2</code>
+				  </td><td align="left"> 
+					<code class="filename">gl2.h</code>
+				  </td><td align="left"> 
+					<code class="code">#include &lt;GLES2/gl2.h&gt;</code>
+				  </td><td align="left">
+					Khronos
+				  </td></tr><tr><td align="left"> 
+					<code class="filename">gl2platform.h</code>
+				  </td><td align="left"> 
+					Included by <code class="filename">gl2.h</code>
+				  </td><td align="left">
+					Vendor or Implementer
+				  </td></tr><tr><td align="left"> 
+					<code class="filename">gl2ext.h</code>
+				  </td><td align="left"> 
+					<code class="code">#include &lt;GLES2/gl2ext.h&gt;</code>
+				  </td><td align="left">
+					Khronos
+				  </td></tr><tr><td align="left">
+					<code class="filename">glu2.h</code>
+				  </td><td colspan="2" align="center">
+					Reserved for future use
+				  </td></tr><tr><td rowspan="2" align="left" valign="top"> OpenKODE 1.x </td><td rowspan="2" align="left" valign="top"> 
+					<code class="filename">KD</code>
+				  </td><td align="left"> 
+					<code class="filename">kd.h</code>
+				  </td><td align="left"> 
+					<code class="code">#include &lt;KD/kd.h&gt;</code>
+				  </td><td align="left">
+					Khronos
+				  </td></tr><tr><td align="left"> 
+					<code class="filename">kdplatform.h</code>
+				  </td><td align="left"> 
+					Included by <code class="filename">kd.h</code>
+				  </td><td align="left">
+					Vendor or Implementer
+				  </td></tr><tr><td rowspan="2" align="left" valign="top"> OpenVG 1.x </td><td rowspan="2" align="left" valign="top"> 
+					<code class="filename">VG</code>
+				  </td><td align="left"> 
+					<code class="filename">openvg.h</code>
+				  </td><td align="left"> 
+					<code class="code">#include &lt;VG/openvg.h&gt;</code>
+				  </td><td align="left">
+					Khronos
+				  </td></tr><tr><td align="left"> 
+					<code class="filename">vgu.h</code>
+					<sup>[<a name="id4786686" href="#ftn.id4786686">3</a>]</sup>
+				  </td><td align="left"> 
+					<code class="code">#include &lt;VG/vgu.h&gt;</code>
+				  </td><td align="left">
+					Khronos
+				  </td></tr></tbody></table><div class="footnotes"><div class="footnote"><p><sup>[<a name="ftn.id4713330" href="#id4713330">1</a>] </sup>
+						Many early EGL implementations used
+						<code class="filename">egltypes.h</code>
+						instead of the now recommended
+						<code class="filename">eglplatform.h</code>
+						.</p></div><div class="footnote"><p><sup>[<a name="ftn.id4713439" href="#id4713439">2</a>] </sup>
+						<code class="filename">glplatform.h</code>
+						does not exist in many early implementations of
+						OpenGL ES 1.x. Platform dependent declarations were
+						included directly in <code class="filename">gl.h
+					  </code>.</p></div><div class="footnote"><p><sup>[<a name="ftn.id4786686" href="#id4786686">3</a>] </sup>
+						Required, if the OpenVG utility library is provided.
+					  </p></div></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="notes"></a>Notes </h5></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>To find the include files, use appropriate compiler 
+			  options in the makefiles for your sample programs; e.g.
+			  <em class="parameter"><code>-I</code></em> (gcc, linux) or
+			  <em class="parameter"><code>/I</code></em> (Visual C++).
+			</p></li><li><p>Given the different IDEs &amp; compilers people use, 
+			  especially on Windows, it is not possible to recommend a system 
+			  location to place these include files. Where obvious choices 
+			  exist Khronos recommends implementers take advantage of them. 
+			</p></li><li><p>In particular, GNU/Linux implementations should
+			  follow the 
+			  <a href="http://www.pathname.com/fhs/" target="_top"> 
+				<em class="citetitle">Filesystem Hierarchy Standard</em>
+			  </a>
+			  for location of headers and libraries. 
+			</p></li></ul></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="libraries"></a>Libraries</h4></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>It is highly desirable to implement all
+			  <em class="glossterm">API</em> entry points as
+			  function calls. However in the OpenKODE core, macros or in-lines
+			  may be used instead of a function call provided the following
+			  rules are followed:
+			</p><div class="itemizedlist"><ul type="circle"><li><p>When calling a function, each argument must be evaluated
+				  exactly once (although the order of evaluation is
+				  undefined).</p></li><li><p>It must be possible to take the address of function.
+			    </p></li></ul></div></li><li><p>
+			  Except in cases where macros are allowed, ensure the
+			  <em class="glossterm">API</em> function
+			  names exported by your lib &amp; dll files match the function
+			  names specified by the Khronos standard for the
+			  <em class="glossterm">API</em> you are
+			  implementing. 
+		  </p></li></ul></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="lpackaging"></a>Packaging</h5></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>OpenGL ES, EGL, OpenVG and OpenKODE entry points should
+				be packaged in separate libraries.</p></li><li><p>However to provide backward compatibility for existing
+				applications, two OpenGL ES 1.1 libraries should be provided:
+			   	one with and one without the EGL entry points.</p><p> 
+				<span class="emphasis"><em>Note: There are extant implementations of the dual 
+			  	OpenGL ES libraries demonstrating this is possible on Symbian, 
+			  	GNU/Linux, Win32 and WinCE.</em></span>
+		  	  </p><p>For OpenGL ES 2.x, only a library without EGL entry points 
+			    is needed.</p></li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="lnaming"></a>Naming</h5></div></div></div><p>Khronos recommends the library names shown in the following 
+			table: </p><div class="table"><a name="id4786950"></a><p class="title"><b>Table 2. Recommended Library Names</b></p><table summary="Recommended Library Names" border="1"><colgroup><col align="left"><col align="left"></colgroup><thead><tr><th align="left"> API/Entry Points </th><th align="left"> Name </th></tr></thead><tbody><tr><td align="left"> EGL </td><td align="left"> 
+					<code class="filename">libEGL.{lib,dll}</code>
+				  </td></tr><tr><td align="left"> OpenGL ES 1.x with EGL (Common Profile)</td><td align="left"> 
+					<code class="filename">libGLES_CM.{lib,dll}</code>
+					<sup>[<a name="fnreq" href="#ftn.fnreq">1</a>]</sup>
+					<sup>[<a name="fndepr" href="#ftn.fndepr">2</a>]</sup>
+				  </td></tr><tr><td align="left"> OpenGL ES 1.x with EGL (Lite Profile) </td><td align="left"> 
+					<code class="filename">libGLES_CL.{lib,dll}</code>
+					<sup>[<a href="#ftn.fnreq">1</a>]</sup>
+					<sup>[<a href="#ftn.fndepr">2</a>]</sup>
+				  </td></tr><tr><td align="left"> OpenGL ES 1.x without EGL </td><td align="left"> 
+					<code class="filename">libGLESv1_C[LM].{lib,dll}</code>
+					<sup>[<a name="fnsprev" href="#ftn.fnsprev">3</a>]</sup>
+				  </td></tr><tr><td align="left"> OpenGL ES 2.x without EGL </td><td align="left"> 
+					<code class="filename">libGLESv2.{lib,dll}</code>
+				  </td></tr><tr><td align="left"> </td><td align="left"> 
+					<code class="filename">libGLUESv1.{lib,dll}</code>
+					<sup>[<a name="fnreserved" href="#ftn.fnreserved">4</a>]</sup>
+				  </td></tr><tr><td align="left"> </td><td align="left"> 
+					<code class="filename">libGLUESv2.{lib,dll}</code>
+					<sup>[<a href="#ftn.fnreserved">4</a>]</sup>
+				  </td></tr><tr><td align="left"> OpenKODE </td><td align="left"> 
+					<code class="filename">libKD{lib,dll}</code>
+				  </td></tr><tr><td align="left"> OpenVG </td><td align="left"> 
+					<code class="filename">libOpenVG{lib,dll}</code>
+				  </td></tr><tr><td align="left"> OpenVG Utilities (when present) </td><td align="left"> 
+					<code class="filename">libOpenVGU.{lib,dll}</code>
+				  </td></tr></tbody></table><div class="footnotes"><div class="footnote"><p><sup>[<a name="ftn.fnreq" href="#fnreq">1</a>] </sup> These names are required for OpenGL ES 1.0 
+						and the libraries must contain the EGL entry points 
+						as detailed in Chapter 8, 
+						<span class="emphasis"><em>Packaging</em></span>,
+					   	of the OpenGL ES 1.0 specification.</p></div><div class="footnote"><p><sup>[<a name="ftn.fndepr" href="#fndepr">2</a>] </sup> These names are deprecated for OpenGL ES 1.1 
+						and beyond and should only be used for a library 
+						that includes the EGL entry points in order to support 
+						legacy applications. </p></div><div class="footnote"><p><sup>[<a name="ftn.fnsprev" href="#fnsprev">3</a>] </sup> 
+						<span class="emphasis"><em>The OpenGL ES 1.1 specification at revision 1.1.09
+						  was updated to specify these alternate names for GLES
+						  libraries that do not contain the EGL entry points.
+						</em></span>
+					  </p></div><div class="footnote"><p><sup>[<a name="ftn.fnreserved" href="#fnreserved">4</a>] </sup>These names are reserved for future use by the
+						Khronos Group.</p></div></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="notes2"></a>Notes </h5></div></div></div><div class="itemizedlist"><ul type="disc"><li><p><span class="emphasis"><em>The extensions
+				<code class="filename">.lib</code>
+				&amp; <code class="filename">.dll</code>
+				are allowed to vary by platform. On GNU/Linux for example 
+				they should be .a and .so to match that platform's
+				conventions.</em></span></p></li></ul></div></div></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id4787332"></a>Acknowledgements</h2></div></div></div><p class="ackno"> 
+	<p>Thanks to all the members of the Khronos Group for their input
+	  and in particular to the following:
+	</p>
+	<table class="simplelist" border="0" summary="Simple list"><tr><td>
+	    <span class="othercredit"><span class="firstname">Petri</span> <span class="surname">Kero</span></span>
+	  </td></tr><tr><td>
+	    <span class="othercredit"><span class="firstname">Jon</span> <span class="surname">Leech</span></span>
+	  </td></tr><tr><td> 
+		<span class="othercredit"><span class="firstname">Robert</span> <span class="surname">Palmer</span></span>
+	  </td></tr><tr><td> 
+		<span class="othercredit"><span class="firstname">Jani</span> <span class="surname">Vaarala</span></span>
+	  </td></tr><tr><td> 
+		<span class="othercredit"><span class="firstname">Hans-Martin</span> <span class="surname">Will</span></span>
+	  </td></tr></table>
+  </p></div><div class="glossary"><div class="titlepage"><div><div><h2 class="title"><a name="id4787444"></a>Glossary</h2></div></div></div><dl><dt><a name="gls_abi"></a>Application Binary Interface (ABI)</dt><dd><p>
+		  The low-level interface between a compiled application program and the
+		  operating system or its libraries.
+		</p></dd><dt><a name="gls_api"></a>Application Programming Interface (API)</dt><dd><p>
+		  The source-code level interface between an application program
+		  and the operating system or its libraries.
+		</p></dd><dt><a name="gls_implementer"></a>Implementer</dt><dd><p>
+		  A company or person who implements a Khronos API.
+		</p></dd><dt><a name="gls_mfc"></a>Microsoft Foundation Classes (MFC)</dt><dd><p>
+		  A set of C++ utility classes provided by Microsoft Corporation.
+		</p></dd><dt><a name="gls_vendor"></a>Platform Vendor (Vendor)</dt><dd><p>
+		  A company providing an operating system platform that includes an
+		  <em class="glossterm">ABI</em>
+		  specification for one or more Khronos APIs. E.g., Qualcomm (OpenGL ES
+		  on BREW) and Symbian (OpenGL ES on Symbian OS). A Vendor may also be
+		  an <em class="glossterm">Implementer.</em>
+		</p></dd></dl></div></div></body></html>

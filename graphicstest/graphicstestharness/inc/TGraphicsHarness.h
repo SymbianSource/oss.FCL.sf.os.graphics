@@ -122,17 +122,7 @@ inline const TDesC& CTGraphicsBase::RotationName(TInt aOrientation)
 CTGraphicsBase* CT##a##Step::CreateTestL() \
 	{ \
 	return new (ELeave) CT##a (this); \
-	}
-
-// Macros to automatically test error condition and report when test fails.
-// Essentially same as TESTE(a,b) MACRO that CTestStep uses, except error to
-// check is also error that is reported.
-#define TESTNOERROR(a) \
-	{\
-	TInt b = a;\
-	TBool c = (b == KErrNone);\
-	testBooleanTrueWithErrorCode((c), (b), (TText8*)__FILE__, __LINE__);\
-	}
+	} 
 	
 inline void CTGraphicsBase::testBooleanTrue(TBool aCondition, const TText8* aFile, TInt aLine) 
 	{

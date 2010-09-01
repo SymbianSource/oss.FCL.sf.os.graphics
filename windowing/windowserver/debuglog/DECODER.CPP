@@ -834,13 +834,7 @@ void TWsDecoder::DecodeClient(TBuf<LogTBufSize> &aText, TInt aOpcode, const TAny
 		_LIT(LogGetExitHighPressureThreshold,"EWsClOpGetExitHighPressureThreshold()");
 		aText.AppendFormat(LogGetExitHighPressureThreshold);		
 		}
-		break;
-	case EWsClOpIndicateAppOrientation:
-	    {
-        _LIT(LogIndicateAppOrientation,"EWsClOpIndicateAppOrientation(%d)");
-        aText.AppendFormat(LogIndicateAppOrientation, *pData.Orientation);       	    
-	    }
-	    break;
+		break;	
 	case EWsClOpLastEnumValue:
 		{		
 		_LIT(LogLastEnumValue,"EWsClOpLastEnumValue enum");
@@ -1398,6 +1392,14 @@ void TWsDecoder::decodeWindow(TBuf<LogTBufSize> &aText,TInt aOpcode,const TAny *
         aText.AppendFormat(LogWinClearRedrawStore);
         }
         break;
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+    case EWsWinOpFixNativeOrientation:
+        {
+        _LIT(LogWinFixNativeOrientation,"FixNativeOrientation()");
+        aText.AppendFormat(LogWinFixNativeOrientation);        
+        }
+        break;
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION        
 	default:
 		UnKnownOpcode(aText, aOpcode);
 		break;

@@ -1,0 +1,39 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-BackedUpWindow-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-BlankWindow-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-DirectScreenAccess-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-DsaSession-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-Events-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-Session-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-SoundPlugIn-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-WindowGc-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-Window-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-WsBitmap-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-WsScreenDevice-PublicAPI.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-WsSprite-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-Frame-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-Anim-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-AnimDll-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-AnimGeneralFunctions-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.script
+RUN_SCRIPT	${SYSDRIVE}\graphics\GRAPHICS-WSERV-AnimWindowFunctions-PublicApi.script

@@ -21,7 +21,7 @@
 
 #include <apgtask.h>
 #include <eikenv.h>
-#include <eikmenup.h>
+#include <techview/eikmenup.h>
 #include <eikstart.h>
 
 #include "t_pseudoappeng.h"

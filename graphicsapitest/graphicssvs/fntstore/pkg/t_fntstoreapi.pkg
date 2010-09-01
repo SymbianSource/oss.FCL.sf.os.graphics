@@ -1,0 +1,60 @@
+;
+; Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+; All rights reserved.
+; This component and the accompanying materials are made available
+; under the terms of "Eclipse Public License v1.0"
+; which accompanies this distribution, and is available
+; at the URL "http://www.eclipse.org/legal/epl-v10.html".
+;
+; Initial Contributors:
+; Nokia Corporation - initial contribution.
+;
+; Contributors:
+;
+; Description:
+;
+;
+; Install file for T_GraphicsFntstoreApi.exe
+;
+
+; Languages - 
+&EN
+
+; Installation header
+; UID is the app's UID
+#{"T_FntstoreAPI"},(0x20003723),1,0,0
+
+;%{"Vendor-EN"}
+;:"Symbian"
+
+; Localised Vendor name
+%{"Nokia"}
+
+; Unique Vendor name
+:"Nokia"
+
+
+"T_GraphicsFntstoreApi.exe"-"!:\sys\bin\T_GraphicsFntstoreApi.exe"
+
+"t_graphics.ini"-"!:\graphics\t_graphics.ini"
+"tfntstoreapi.bat"-"!:\graphics\tfntstoreapi.bat"
+"t_graphics.tcs"-"!:\graphics\t_graphics.tcs"
+"t_graphics_panic.tcs"-"!:\graphics\t_graphics_panic.tcs"
+"graphics-fntstore-publicapi.script"-"!:\graphics\graphics-fntstore-publicapi.script"
+
+"graphics-fntstore-fntstore-publicapi.script"-"!:\graphics\graphics-fntstore-fntstore-publicapi.script"
+"graphics-fntstore-fntstore-publicapi.ini"-"!:\graphics\graphics-fntstore-fntstore-publicapi.ini"
+"graphics-fntstore-bitmapfont-publicapi.script"-"!:\graphics\graphics-fntstore-bitmapfont-publicapi.script"
+"graphics-fntstore-bitmapfont-publicapi.ini"-"!:\graphics\graphics-fntstore-bitmapfont-publicapi.ini"
+"graphics-fntstore-openfontrasterizercontext-publicapi.script"-"!:\graphics\graphics-fntstore-openfontrasterizercontext-publicapi.script"
+"graphics-fntstore-openfontrasterizercontext-publicapi.ini"-"!:\graphics\graphics-fntstore-openfontrasterizercontext-publicapi.ini"
+
+"fntstore\dummy"-"!:\graphics\fntstore\dummy"
+"fntstore\testfontws.gdr"-"!:\graphics\fntstore\testfontws.gdr"
+"fntstore\bad_entrysel"-"!:\graphics\fntstore\bad_entrysel"
+
+; Required files
+; None
+
+; Component .sis files
+; None

@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,6 +18,7 @@
 #include <fntstore.h>
 #include <bitmap.h>
 #include <ecom/ecom.h>
+#include "fbsmessage.h"
 #include <graphics/bitmapuid.h>
 #include "SERVER.H"
 #include "BackGroundCompression.h"
@@ -26,8 +27,6 @@
 #include <graphics/openfontconstants.h>
 #include <graphics/openfontrasterizer.h>
 #include <graphics/gdi/glyphsample.h>
-#include "glyphatlas.h"
-#include "FbsMessage.H"
 
 // Local utility functions
 void ListImplementationsWithRetry(TUid& aInterfaceUid, RImplInfoPtrArray &aImplementationArray, TBool aRomOnly);
@@ -62,7 +61,6 @@ CFbTop::~CFbTop()
 #endif
 	iFontNameAlias.ResetAndDestroy();
 	iBitmapObjectIndex.Reset();
-	delete iGlyphAtlas;
 	REComSession::FinalClose();
 	}
 
@@ -142,15 +140,9 @@ void CFbTop::ConstructL()
 	iMBMCache=new (ELeave) CFbTopStreamIdCache(30,30,5);
 
 	LoadOpenFontLibraries();
+	
 	iFontStore->LoadFontsAtStartupL();
 	LoadShaperFactories();
-	TRAP_IGNORE(iGlyphAtlas = CGlyphAtlas::NewL(KFbServGlyphAtlasCacheLimit);)
-#ifdef _DEBUG
-	if (!iGlyphAtlas)
-	    {
-        RDebug::Printf("FBSERV failed to initialize Glyph Atlas");
-	    }
-#endif
 
 	// start a new thread for background compression after all the other objects have been created
 	iBackgroundCompression = CFbsBackgroundCompression::NewL(*this);
@@ -315,8 +307,8 @@ TInt CFbTop::GetNearestFont(
 		{
 		return ret;
 		}
-	
-	return GetFontObjectFromFont(aFontObjPtr, font);
+
+	return CreateFontObjectFromFont(aFontObjPtr, font);
 	}
 	
 /**
@@ -357,27 +349,9 @@ TInt CFbTop::GetNearestNonAliasedFont(CFont*& aFont, TFbsMessage aMessage, const
 	return ret;
 	}
 
-TInt CFbTop::GetFontObjectFromFont(CFontObject*& aFontObjPtr, CFont* aFont)
+TInt CFbTop::CreateFontObjectFromFont(CFontObject*& aFontObjPtr, CFont* aFont)
 	{
-	// First, check if a CFontObject exists for this CFont.
-	// If so, increment its reference count and return it.
-	for (TInt ii = iFontCon->Count() - 1; ii >= 0; --ii)
-		{
-		CFontObject* fontObjPtr = reinterpret_cast<CFontObject*>((*iFontCon)[ii]);
-		if (fontObjPtr->iAddressPointer == reinterpret_cast<CBitmapFont*>(aFont))
-			{
-			aFontObjPtr = fontObjPtr;
-			// The CFontObject instance keeps the reference count of the CBitmapFont, 
-			// not the font store. There is only one CFontObject instance
-			// per CBitmapFont, so to keep the reference count at 1 in the fontstore
-			// call ReleaseFont(). 
-			iFontStore->ReleaseFont(aFont);
-			return fontObjPtr->Open();
-			}
-		}
-	
-	// Existing FontObject not found, so create new one.
-	CFontObject* fontObjPtr = new CFontObject(iFontStore, iGlyphAtlas);
+	CFontObject* fontObjPtr = new CFontObject(iFontStore);
 	if (!fontObjPtr)
 		{
 		iFontStore->ReleaseFont(aFont);
@@ -415,7 +389,7 @@ TInt CFbTop::GetFontById(CFontObject*& aFontObjPtr,TUid aUid,const TAlgStyle& aA
 		{
 		return ret;
 		}
-	return GetFontObjectFromFont(aFontObjPtr, font);
+	return CreateFontObjectFromFont(aFontObjPtr, font);
 	}
 
 
@@ -587,6 +561,18 @@ TBool CFbTop::ValidFontHandle(TInt aHandle)
 	return(EFalse);
 	}
 	
+TBool CFbTop::ValidBitmapFont(TInt aHandle)
+	{
+	TInt limit=iFontCon->Count();
+	for(TInt count=0;count<limit;count++)
+		{
+		CFontObject* fontObjPtr = reinterpret_cast<CFontObject*>((*iFontCon)[count]);
+		if(aHandle==(TInt)(fontObjPtr->iAddressPointer))
+			return(ETrue);
+		}
+	return(EFalse);
+	}
+
 CFontStore* CFbTop::FontStore() const
 	{
 	return(iFontStore);
@@ -737,9 +723,4 @@ TInt CFbTop::BitmapConUniqueID() const
 TInt CFbTop::FontConUniqueID() const
 	{
 	return iFontCon->UniqueID();
-	}
-
-CGlyphAtlas* CFbTop::GlyphAtlas() const
-	{
-	return iGlyphAtlas;
 	}

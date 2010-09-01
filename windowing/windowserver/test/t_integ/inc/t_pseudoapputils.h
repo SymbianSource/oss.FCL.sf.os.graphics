@@ -22,7 +22,7 @@
 #ifndef __T_PSEUDOAPPUTILS_H__
 #define __T_PSEUDOAPPUTILS_H__
 
-#include <iniparser.h>
+#include <cinidata.h>
 
 #include "t_wservconsts.h"			//KWServPseudoAppConfigFile
 

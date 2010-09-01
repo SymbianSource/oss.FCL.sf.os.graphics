@@ -14,7 +14,7 @@
 //
 
 #include "wspluginmanager.h"
-#include "graphics/WSPLUGIN.H"
+#include "Graphics/WSPLUGIN.H"
 #include "inifile.h"
 
 GLREF_D CDebugLogBase* wsDebugLog;

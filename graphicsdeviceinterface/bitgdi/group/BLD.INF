@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -92,7 +92,6 @@ PRJ_TESTEXPORTS
 ../tbit/scripts/bitgditest_t_outlineandshadowfonts.script	z:/bitgditest/bitgditest_t_outlineandshadowfonts.script
 ../tbit/scripts/toutlineandshadow.ini				z:/bitgditest/toutlineandshadow.ini
 ../tbit/scripts/bitgditest_t_extendedbitmap.script	z:/bitgditest/bitgditest_t_extendedbitmap.script
-../tbit/scripts/bitgditest_t_multiplescreens.script	z:/bitgditest/bitgditest_t_multiplescreens.script
 
 //exporting mbm files to epoc32
 ../tbit/mbmfiles/16romc.mbm			z:/system/data/16romc.mbm

@@ -15,6 +15,8 @@
 @rem
 @echo on
 
+testexecute.exe z:\wstest\wstest_t_mulscreens_nga.script
+
 testexecute.exe z:\wstest\wstest_t_alpha_s0_nga.script
 testexecute.exe z:\wstest\wstest_t_alpha_s1_nga.script
 
@@ -23,6 +25,9 @@ testexecute.exe z:\wstest\wstest_t_alphawin_s1_nga.script
 
 testexecute.exe z:\wstest\wstest_t_animdll_s0_nga.script
 testexecute.exe z:\wstest\wstest_t_animdll_s1_nga.script
+
+testexecute.exe z:\wstest\wstest_t_blank_s0_nga.script
+testexecute.exe z:\wstest\wstest_t_blank_s1_nga.script
 
 testexecute.exe z:\wstest\wstest_t_client_s0_nga.script
 testexecute.exe z:\wstest\wstest_t_client_s1_nga.script
@@ -33,8 +38,8 @@ testexecute.exe z:\wstest\wstest_t_crp_s1_nga.script
 testexecute.exe z:\wstest\wstest_t_cursor_s0_nga.script
 testexecute.exe z:\wstest\wstest_t_cursor_s1_nga.script
 
-testexecute.exe z:\wstest\wstest_t_sprite_s0_nga.script
-testexecute.exe z:\wstest\wstest_t_sprite_s1_nga.script
+testexecute.exe z:\wstest\wstest_t_derived_s0_nga.script
+testexecute.exe z:\wstest\wstest_t_derived_s1_nga.script
 
 testexecute.exe z:\wstest\wstest_t_draw_s0_nga.script
 testexecute.exe z:\wstest\wstest_t_draw_s1_nga.script
@@ -48,11 +53,19 @@ testexecute.exe z:\wstest\wstest_t_event_s1_nga.script
 testexecute.exe z:\wstest\wstest_t_fade_s0_nga.script
 testexecute.exe z:\wstest\wstest_t_fade_s1_nga.script
 
+testexecute.exe z:\wstest\wstest_t_gc_s0_nga.script
+testexecute.exe z:\wstest\wstest_t_gc_s1_nga.script
+
+testexecute.exe z:\wstest\wstest_t_gdi_s0_nga.script
+testexecute.exe z:\wstest\wstest_t_gdi_s1_nga.script
+
 testexecute.exe z:\wstest\wstest_t_graphicsresource_s0_nga.script
 testexecute.exe z:\wstest\wstest_t_graphicsresource_s1_nga.script
 
 testexecute.exe z:\wstest\wstest_t_key_s0_nga.script
 testexecute.exe z:\wstest\wstest_t_key_s1_nga.script
+
+testexecute.exe z:\wstest\wstest_t_multiscreens_s0_nga.script
 
 testexecute.exe z:\wstest\wstest_t_oom_s0_nga.script
 testexecute.exe z:\wstest\wstest_t_oom_s1_nga.script
@@ -66,8 +79,14 @@ testexecute.exe z:\wstest\wstest_t_pointer_s1_nga.script
 testexecute.exe z:\wstest\wstest_t_redraw_s0_nga.script
 testexecute.exe z:\wstest\wstest_t_redraw_s1_nga.script
 
+testexecute.exe z:\wstest\wstest_t_region_s0_nga.script
+testexecute.exe z:\wstest\wstest_t_region_s1_nga.script
+
 testexecute.exe z:\wstest\wstest_t_screen_s0_nga.script
 testexecute.exe z:\wstest\wstest_t_screen_s1_nga.script
+
+testexecute.exe z:\wstest\wstest_t_screenmodescaling_s0_nga.script
+testexecute.exe z:\wstest\wstest_t_screenmodescaling_s1_nga.script
 
 testexecute.exe z:\wstest\wstest_t_screendevice_s0_nga.script
 testexecute.exe z:\wstest\wstest_t_screendevice_s1_nga.script
@@ -77,6 +96,18 @@ testexecute.exe z:\wstest\wstest_t_screendeviceresswitch_s1_nga.script
 
 testexecute.exe z:\wstest\wstest_t_security_s0_nga.script
 testexecute.exe z:\wstest\wstest_t_security_s1_nga.script
+
+testexecute.exe z:\wstest\wstest_t_sprite_s0_nga.script
+testexecute.exe z:\wstest\wstest_t_sprite_s1_nga.script
+
+testexecute.exe z:\wstest\wstest_t_transparentanim_s0_nga.script
+testexecute.exe z:\wstest\wstest_t_transparentanim_s1_nga.script
+
+testexecute.exe z:\wstest\wstest_t_windowfunction_s0_nga.script
+testexecute.exe z:\wstest\wstest_t_windowfunction_s1_nga.script
+
+testexecute.exe z:\wstest\wstest_t_wsgraphs_s0_nga.script
+testexecute.exe z:\wstest\wstest_t_wsgraphs_s1_nga.script
 
 testexecute.exe z:\wstest\wstest_t_window_s0_nga.script
 testexecute.exe z:\wstest\wstest_t_window_s1_nga.script

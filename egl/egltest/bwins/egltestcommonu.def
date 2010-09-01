@@ -20,7 +20,7 @@ EXPORTS
 	?Surface@CTestEglSession@@QBEHXZ @ 19 NONAME ; int CTestEglSession::Surface(void) const
 	?ConstructWindowL@CEglTestStep@@IAEXAAVRWindow@@ABVTRect@@@Z @ 20 NONAME ; void CEglTestStep::ConstructWindowL(class RWindow &, class TRect const &)
 	?NativeFbsBitmap@CTestEglSession@@QAEPAVCFbsBitmap@@XZ @ 21 NONAME ; class CFbsBitmap * CTestEglSession::NativeFbsBitmap(void)
-	Reserved22 @ 22 NONAME ABSENT
+	?GetMatchType@@YA?AW4TEglConfigMatchType@@HW4TEglConfigMatchRule@@@Z @ 22 NONAME ; enum TEglConfigMatchType GetMatchType(int, enum TEglConfigMatchRule)
 	?GetConfigExactMatchL@CTestEglSession@@QAEHW4TEglTestConfig@@W4TEglConfigMatchRule@@@Z @ 23 NONAME ; int CTestEglSession::GetConfigExactMatchL(enum TEglTestConfig, enum TEglConfigMatchRule)
 	??0TSgImageInfoTest@@QAE@W4TUidPixelFormat@@VTSize@@@Z @ 24 NONAME ; TSgImageInfoTest::TSgImageInfoTest(enum TUidPixelFormat, class TSize)
 	?InitializeL@CTestEglSession@@QAEXH@Z @ 25 NONAME ; void CTestEglSession::InitializeL(int)
@@ -84,7 +84,7 @@ EXPORTS
 	?CheckExpectedError@CTestEglSession@@QAEHH@Z @ 83 NONAME ; int CTestEglSession::CheckExpectedError(int)
 	?GetVgFormat@CEglTestCommonIniSettings@@QAE?AW4VGImageFormat@@ABVTDesC16@@H@Z @ 84 NONAME ; enum VGImageFormat CEglTestCommonIniSettings::GetVgFormat(class TDesC16 const &, int)
 	?CleanupSurfaceFbsBitmapL@CTestEglSession@@QAEXXZ @ 85 NONAME ; void CTestEglSession::CleanupSurfaceFbsBitmapL(void)
-	?CreateWindowSurfaceAndMakeCurrentL@CTestEglSession@@QAEXHAAVRWindow@@HHHPAH@Z	 @ 86 NONAME ; void CTestEglSession::CreateWindowSurfaceAndMakeCurrentL(int, class RWindow &, int, int, int, int*)
+	?CreateWindowSurfaceAndMakeCurrentL@CTestEglSession@@QAEXHAAVRWindow@@HHH@Z @ 86 NONAME ; void CTestEglSession::CreateWindowSurfaceAndMakeCurrentL(int, class RWindow &, int, int, int)
 	?CloseSgDriver@CTestEglSession@@QAEXXZ @ 87 NONAME ; void CTestEglSession::CloseSgDriver(void)
 	?doTestStepPreambleL@CEglTestStep@@UAE?AW4TVerdict@@XZ @ 88 NONAME ; enum TVerdict CEglTestStep::doTestStepPreambleL(void)
 	??0CTestEglSession@@IAE@AAVCTestExecuteLogger@@AAHH@Z @ 89 NONAME ; CTestEglSession::CTestEglSession(class CTestExecuteLogger &, int &, int)
@@ -119,3 +119,4 @@ EXPORTS
 	?GetThresholdGPUUsedMemory@CEglTestCommonIniSettings@@QAEHABVTDesC16@@@Z @ 118 NONAME ; int CEglTestCommonIniSettings::GetThresholdGPUUsedMemory(class TDesC16 const &)
 	?GetThresholdLastIteration@CEglTestCommonIniSettings@@QAEHABVTDesC16@@@Z @ 119 NONAME ; int CEglTestCommonIniSettings::GetThresholdLastIteration(class TDesC16 const &)
 	?GetWindowSize@CEglTestCommonIniSettings@@QAE?AVTSize@@ABVTDesC16@@@Z @ 120 NONAME ; class TSize CEglTestCommonIniSettings::GetWindowSize(class TDesC16 const &)
+

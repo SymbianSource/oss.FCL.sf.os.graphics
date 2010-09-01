@@ -1,0 +1,45 @@
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies). 
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+// 
+// Description:
+//
+
+TARGET		  t_animplugin.dll
+TARGETTYPE	  ANI
+UID 268450594 0x100048F2
+
+USERINCLUDE	 ../inc
+SYSTEMINCLUDE   /epoc32/include
+
+
+
+//By default, the build tools look for the WINSCW def file in a BWINS directory
+//(at the same level as the directory containing the mmp file), 
+//the GCC ARM def file in a BMARM directory, and the ARMV5 def file in a EABI directory. 
+//If def files are stored in these locations, the project files does not need to specify
+//the location of the def files explicitly. If you want to store the def files in some other 
+//location, you will need to specify in the project file where the .def files are using 
+//the deffile keyword.
+
+
+LIBRARY euser.lib efsrv.lib bitgdi.lib bafl.lib gdi.lib
+
+
+SOURCEPATH ../src
+SOURCE T_TestAnimDll.cpp T_TWinAnim.cpp T_log.cpp T_AnimProc.cpp T_TSpriteAnim.cpp T_TFreeTimerWinAnim.cpp
+
+NOEXPORTLIBRARY
+NOSTRICTDEF
+
+CAPABILITY PowerMgmt ProtServ ReadDeviceData WriteDeviceData
+
+SMPSAFE

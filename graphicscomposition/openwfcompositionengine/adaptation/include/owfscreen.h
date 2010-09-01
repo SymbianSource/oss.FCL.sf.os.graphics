@@ -1,5 +1,4 @@
 /* Copyright (c) 2009 The Khronos Group Inc.
- * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -68,6 +67,8 @@ typedef struct {
     OWF_ORIENTATION_INFO flipped;
 } OWF_SCREEN;
 
+typedef void (*OWF_SCREEN_CALLBACK)(void* obj, OWFint screenNumber, char event);
+
 /*!
  * \brief Get systems's default screen
  *
@@ -79,72 +80,91 @@ OWF_Screen_GetDefaultNumber();
 /*!
  * \brief Get screen's dimensions
  *
- * \param dc display context
+ * \param screen screen number
  * \param header returned screen attributes
  *
  * \return OWF_TRUE if screen exists
  * \return OWF_FALSE if screen does not exist
  */
 OWF_API_CALL OWFboolean
-OWF_Screen_GetHeader(OWF_DISPCTX dc, OWF_SCREEN* header);
+OWF_Screen_GetHeader(OWFint screen, OWF_SCREEN* header);
 
-/*!
- * \brief Validate a screen number
- *
- * \param screen screen number
- *
- * \return OWF_TRUE if screen exists
- * \return OWF_FALSE if screen does not exist
- */
+OWF_API_CALL OWFboolean
+OWF_Number_Of_Screens(OWFint *pNumberOfScreens);
+
 OWF_API_CALL OWFboolean
 OWF_Screen_Valid(OWFint screen);
+
+OWF_API_CALL OWFboolean
+OWF_Screen_Valid_And_Available(OWFint screen);
 
 /*!
  * \brief Checks if the screen rotation support is enabled
  *
- * \param dc display context
+ * \param screen screen number
  *
  * \return OWF_TRUE if the screen rotation is enabled
  * \return OWF_FALSE if the screen rotation is enabled
  */
 OWF_API_CALL OWFboolean
-OWF_Screen_Rotation_Supported(OWF_DISPCTX dc);
+OWF_Screen_Rotation_Supported(OWFint screen);
 
 /*!
  * \brief Create a new screen
  *
- * \param dc display context
- * \param screen screen number
+ * \param width
+ * \param height
  *
- * \return OWF_TRUE if screen exists
- * \return OWF_FALSE if screen does not exist
+ * \return screen number
  */
-OWF_API_CALL OWFboolean
-OWF_Screen_Create(OWFint screen, OWF_DISPCTX dc);
+OWF_API_CALL OWFint
+OWF_Screen_Create(OWFint width, OWFint height, OWF_SCREEN_CALLBACK func, void* obj);
 
 /*!
  * \brief Destroy a screen
  *
- * \param dc display context
+ * \param screen number
  *
  * \return OWF_TRUE if screen exists
  * \return OWF_FALSE if screen does not exist
  */
 OWF_API_CALL void
-OWF_Screen_Destroy(OWF_DISPCTX dc);
+OWF_Screen_Destroy(OWFint screenNumber);
+
+/*!
+ * \brief Resize screen
+ *
+ * \param width
+ * \param height
+ *
+ * \return OWF_TRUE if resize OK
+ * \return OWF_FALSE if resize failed.
+ */
+OWF_API_CALL OWFboolean
+OWF_Screen_Resize(OWFint screen, OWFint width, OWFint height);
 
 /*!
  * \brief Blit image to screen
  *
- * \param dc display context
- * \param dc stream the stream containing the buffer to be displayed
- * rotation the current context rotation
+ * \param screen screen number
+ * \param rotation the context rotation
  *
  * \return OWF_TRUE if screen exists and blitting is  OK
  * \return OWF_FALSE if screen does not exist or blitting is not allowed.
  */
 OWF_API_CALL OWFboolean
-OWF_Screen_Post_Topmost_Layer(OWF_DISPCTX dc, OWFNativeStreamType stream, OWF_ROTATION rotation);
+OWF_Screen_Blit(OWFint screen, void* buffer, OWF_ROTATION rotation);
+
+/*!
+ * \brief Notify objects
+ *
+ * Send data to objects associated with screens
+ *
+ * \param data
+ *
+ */
+OWF_API_CALL void
+OWF_Screen_Notify(void* data);
 
 #ifdef __cplusplus
 }

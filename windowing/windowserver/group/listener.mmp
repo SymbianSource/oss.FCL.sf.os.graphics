@@ -28,7 +28,7 @@ vendorid		0x70000001
 userinclude 	../inc .
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
-sourcepath		../test/tlisten
+sourcepath		../tlisten
 source			proxy.cpp listener.cpp wsgraphicdrawerngacontext.cpp wsgraphicdrawernonngacontext.cpp
 resource		listener.rss
 library			euser.lib ecom.lib gdi.lib bitgdi.lib fbscli.lib wsgraphicdrawer.lib

@@ -15,7 +15,7 @@
 // 
 //
 
-#include "graphics/WsRenderStage.h"
+#include "Graphics/WsRenderStage.h"
 
 // CWsRenderStage::CPimpl \\\\\\\\\\\\\\\\\\\\\\\\
 

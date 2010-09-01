@@ -22,11 +22,11 @@ EXPORTS
 	SymbianStreamSetFlipState @ 21 NONAME
 	SymbianStreamAddExtendedObserver @ 22 NONAME
 	SymbianStreamCheckVisible @ 23 NONAME
-	reserveEntrypoint25 @ 24 NONAME ABSENT
-	reserveEntrypoint26 @ 25 NONAME ABSENT
+	SymbianStreamProcessAvailableNotifications @ 24 NONAME
+	SymbianStreamProcessDisplayedNotifications @ 25 NONAME
 	SymbianStreamProcessNotifications @ 26 NONAME
 	
-	SymbianStreamGetChunkHandle @ 27 NONAME
+	reserveEntrypoint1 @ 27 NONAME ABSENT
 	reserveEntrypoint2 @ 28 NONAME ABSENT
 	reserveEntrypoint3 @ 29 NONAME ABSENT
 	reserveEntrypoint4 @ 30 NONAME ABSENT
@@ -50,8 +50,9 @@ EXPORTS
 	reserveEntrypoint22 @ 48 NONAME ABSENT
 	reserveEntrypoint23 @ 49 NONAME ABSENT
 	_ZN17COpenWfcStreamMap11GetMainHeapEv @ 50 NONAME
-	_ZN17COpenWfcStreamMap5CountEv @ 51 NONAME
-	reserveEntrypoint24 @ 52 NONAME ABSENT
-	_ZN17COpenWfcStreamMap9InstanceLEv @ 53 NONAME
-	_ZN17COpenWfcStreamMap14SurfaceManagerEv @ 54 NONAME
+	_XXX_ZN17COpenWfcStreamMap4FindERK10TSurfaceId @ 51 NONAME ABSENT
+	_ZN17COpenWfcStreamMap5CountEv @ 52 NONAME
+	_ZN17COpenWfcStreamMap7ReserveEi @ 53 NONAME
+	_XXX_ZN17COpenWfcStreamMap8AcquireLERK10TSurfaceId @ 54 NONAME ABSENT 
+	_ZN17COpenWfcStreamMap9InstanceLEv @ 55 NONAME 
 

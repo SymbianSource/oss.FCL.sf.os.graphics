@@ -65,13 +65,8 @@ EXPORT_C extern const TInt KFbServLargeChunkMinPhysicalSize = 0x4000;
 
 This constant defines the minimum size of the virtual address range reserved for the large bitmap chunk.
 @note	Default value: 64MB (0x04000000)
-@note   Emulator value 32MB (0x02000000)
 */
-#ifdef __WINS__
-EXPORT_C extern const TInt KFbServLargeChunkMinVirtualSize = 0x02000000;
-#else
 EXPORT_C extern const TInt KFbServLargeChunkMinVirtualSize = 0x04000000;
-#endif
 
 /**
 @SYMPatchable
@@ -80,10 +75,9 @@ EXPORT_C extern const TInt KFbServLargeChunkMinVirtualSize = 0x04000000;
 
 This constant defines the maximum size of the virtual address range reserved for the large bitmap chunk.
 @note	Default value: 256MB (0x10000000)
-@note   Emulator value 48MB (0x03000000)
 */
 #ifdef __WINS__
-EXPORT_C extern const TInt KFbServLargeChunkMaxVirtualSize = 0x03000000;
+EXPORT_C extern const TInt KFbServLargeChunkMaxVirtualSize = 0x8000000;
 #else
 EXPORT_C extern const TInt KFbServLargeChunkMaxVirtualSize = 0x10000000;
 #endif

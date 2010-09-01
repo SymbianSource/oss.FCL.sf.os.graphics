@@ -22,7 +22,6 @@
 #include "panics.h"
 #include "pointer.h"
 #include "advancedpointereventhelper.h"
-#include "debughelper.h"
 
 GLREF_D CDebugLogBase* wsDebugLog;
 
@@ -101,9 +100,6 @@ void CEventBase::EventReadyCheck()
 	{
 	if ((iEventSignalledState&EEventFlagSignalled && !(iEventSignalledState&EEventFlagCancelled)) || !iEventMsg.IsNull())
 		{
-#ifdef LOG_WSERV_EVENTS
-		RDebug::Printf("_WSEVENT: CEventBase::EventReadyCheck, Event is not ready");
-#endif
 		iWsOwner->PPanic(EWservPanicReadOutstanding);
 		}
 	}
@@ -650,9 +646,6 @@ void CEventQueue::Purge()
 			case EEventPointerExit:
 			case EEventDragDrop:
 breakLoopAndRemoveEvent:
-#ifdef LOG_WSERV_EVENTS
-				RDebug::Print(_L("_WSEVENT: CEventQueue::Purge(), The event to be purged is %S"), &WsEventName(*eventToPurge));
-#endif
 				RemoveEvent(indexToPurge);
 				return;
 			case EEventKeyUp:
@@ -957,26 +950,14 @@ TBool CEventQueue::QueueEvent(const TWsEvent &event, TWservEventPriorities aPrio
 	TBool ret=ETrue;
 	Wait();
 	if (iCount==iQueueSize && !Expand(aPriority))
-		{
 		ret=EFalse;
-#ifdef LOG_WSERV_EVENTS
-		RDebug::Printf("WSEVENT: CEventQueue::QueueEvent(): 0x%X:  Queue Full!!!!!, iCount = %d, iQueueSize = %d", this, iCount, iQueueSize);
-		RDebug::Print(_L("WSEVENT: CEventQueue::QueueEvent(): 0x%X:  Queue Full!!!!! TWsEvent.Type() = %S"), this, &WsEventName(event));
-#endif
-		}
 	else
 		{
 		if (!iEventMsg.IsNull())
 			{
 			SignalEvent();
 			}
-#ifdef LOG_WSERV_EVENTS
-		RDebug::Printf("_WSEVENT: CEventQueue::QueueEvent, Right before adding the event");
-#endif
 		*EventPtr(iCount++)=event;
-#ifdef LOG_WSERV_EVENTS
-		RDebug::Print(_L("_WSEVENT: CEventQueue::QueueEvent, Event %S successfully queued"), &WsEventName(event));
-#endif
 		}
 	Signal();
 	return(ret);
@@ -1076,9 +1057,6 @@ void CEventQueue::GetData()
 		{
 		WS_ASSERT_DEBUG((iEventPtr+iHead)->Type()!=EEventMarkInvalid, EWsPanicCheckEventQueue);
 		CEventBase::GetData(iEventPtr+iHead,sizeof(*iEventPtr));
-#ifdef LOG_WSERV_EVENTS
-		RDebug::Printf("_WSEVENT: CEventQueue::GetData(), TWsEvent.Type() = %d", (iEventPtr+iHead)->Type());
-#endif
 		__ZAP_EVENT(iEventPtr+iHead);
 		iHead=(iHead+1)%iQueueSize;
 		iCount--;
@@ -1105,9 +1083,6 @@ void CEventQueue::RemoveEvent(TInt index)
 // Remove event 'index' in the queue, this event MUST exist in the queue
 //
 	{
-#ifdef LOG_WSERV_EVENTS
-	RDebug::Printf("_WSEVENT: CEventQueue::RemoveEvent(index), Remove event index %d in the queue", index);
-#endif
 	WS_ASSERT_DEBUG(index < iCount, EWsPanicCheckEventQueue);
 	RemoveEvent(EventPtr(index));
 	}
@@ -1117,9 +1092,6 @@ void CEventQueue::RemoveEvent(TWsEvent* aEvToRemove)
 // Remove event in the queue, this event MUST exist in the queue
 //
 	{
-#ifdef LOG_WSERV_EVENTS
-	RDebug::Print(_L("_WSEVENT: CEventQueue::RemoveEvent(aEvToRemove), Remove event %S in the queue"), &WsEventName(*aEvToRemove));
-#endif
 	iCount--;
 	TWsEvent* last = EventPtr(iCount);
 	TWsEvent* prev;

@@ -31,7 +31,7 @@ deffile			wsredir.def
 userinclude		../inc .
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
-sourcepath		../test/tredir
+sourcepath		../tredir
 source			wsredir.cpp
 
 library			euser.lib ws32.lib

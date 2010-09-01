@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -45,7 +45,7 @@ CWsPointerTimer *WsPointer::iRepeatTimer=NULL;
 TPointerCursorMode WsPointer::iPointerCursorMode=EPointerCursorNormal;
 CWsWindow *WsPointer::iRepeatWindow=NULL;
 TRect WsPointer::iRepeatRect;
-TXYInputType  WsPointer::iXyInputType;
+TXYInputType WsPointer::iXyInputType;
 TUint WsPointer::iLastUnmatchedDown1;
 TUint WsPointer::iLastUnmatchedDown2;
 TUint WsPointer::iLastUnmatchedDown3;

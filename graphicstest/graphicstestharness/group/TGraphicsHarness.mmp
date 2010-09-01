@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,14 +19,15 @@ UID				0x1100008D 0x10273363
 VENDORID 		0x70000001
 CAPABILITY		All -tcb
 
-OS_LAYER_SYSTEMINCLUDE
+MW_LAYER_SYSTEMINCLUDE_SYMBIAN
+OS_LAYER_ESTLIB_SYSTEMINCLUDE
 
 USERINCLUDE		../inc
 SOURCEPATH		../src
-SOURCE      	TGraphicsHarness.cpp
-SOURCE 			TTMSGraphicsStep.cpp
-SOURCE			thashreferenceimages.cpp
-SOURCE			apgrfxfacade.cpp
+SOURCE          TGraphicsHarness.cpp
+SOURCE 		TTMSGraphicsStep.cpp
+SOURCE		thashreferenceimages.cpp
+
 
 #if defined(WINS)
 // No special resource file required for emulator since eshell is not required.
@@ -47,6 +48,7 @@ LIBRARY		euser.lib
 LIBRARY	   	testexecuteutils.lib
 LIBRARY		testexecutelogclient.lib
 LIBRARY		ws32.lib 
+LIBRARY		apgrfx.lib 
 LIBRARY		bitgdi.lib 
 LIBRARY		fbscli.lib
 LIBRARY		hal.lib
@@ -54,6 +56,7 @@ LIBRARY		hash.lib
 LIBRARY 	flogger.lib
 LIBRARY     efsrv.lib
 LIBRARY 	bafl.lib
+
 DEFFILE		TGraphicsHarness.def
 
 START BITMAP wsautotest.mbm

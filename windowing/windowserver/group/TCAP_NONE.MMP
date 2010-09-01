@@ -18,7 +18,7 @@
 TARGET			tcap_none.exe
 TARGETTYPE		EXE
 
-SOURCEPATH		../test/tcapability
+SOURCEPATH		../tcapability
 SOURCE			TCapTest.CPP
 
 OS_LAYER_SYSTEMINCLUDE

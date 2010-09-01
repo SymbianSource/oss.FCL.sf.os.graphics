@@ -21,7 +21,7 @@
 #include <e32std.h>
 #include <e32base.h>
 #include "W32STD.H"
-#include "../test/tlib/testbase.h"
+#include "../tlib/testbase.h"
 
 _LIT(VIDEO_MBM_NAME,"Z:\\WSTEST\\MAILANIM.MBM");
 

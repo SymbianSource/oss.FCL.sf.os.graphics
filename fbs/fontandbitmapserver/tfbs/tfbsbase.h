@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,7 +16,7 @@
 #ifndef TFBSBASE_H
 #define TFBSBASE_H
 
-#include "test/TGraphicsHarness.h"
+#include "TGraphicsHarness.h"
 #include <f32file.h>
 
 #define INFO_PRINTF9(p1, p2, p3, p4, p5, p6, p7, p8, p9) \

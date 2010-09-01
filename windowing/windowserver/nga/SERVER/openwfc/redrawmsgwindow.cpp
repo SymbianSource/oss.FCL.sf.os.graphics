@@ -30,7 +30,7 @@
 #include "rootwin.h"
 #include "EVENT.H"
 #include "wsfont.h"
-#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
 #include <graphics/surface.h>
 #include "windowelementset.h"
 

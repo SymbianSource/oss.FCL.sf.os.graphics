@@ -19,7 +19,7 @@
 #include "W32STD.H"
 #include <e32svr.h>
 #include "../SERVER/w32cmd.h"
-#include "../test/tlib/testbase.h"
+#include "../tlib/testbase.h"
 #include "ANIMWIN.H"
 #include "HNDLODR.H"
 

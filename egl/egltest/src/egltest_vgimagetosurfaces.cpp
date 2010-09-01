@@ -19,7 +19,9 @@
 */
 
 #include <test/tefunit.h> // for ASSERT macros
-#include <iniparser.h>
+#ifndef __INIPARSER_H__
+#include <cinidata.h>
+#endif // __INIPARSER_H__
 
 #include "egltest_vgimagetosurfaces.h"
 

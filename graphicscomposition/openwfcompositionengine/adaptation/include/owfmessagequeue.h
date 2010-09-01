@@ -1,5 +1,4 @@
 /* Copyright (c) 2009 The Khronos Group Inc.
- * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -33,13 +32,6 @@
 extern "C" {
 #endif
 
-#define WAIT_FOREVER            -1
-#define MSG_QUEUE_WAIT_MSG_FETCHED      0
-#define MSG_QUEUE_WAIT_MSG_ERR          -1
-#define MSG_QUEUE_WAIT_MSG_TIMEDOUT     -2
-#define MSG_QUEUE_INIT_OK               0
-#define MSG_QUEUE_INIT_ERR              -1
-
 
 typedef struct {
     OWFuint                 id;
@@ -47,7 +39,8 @@ typedef struct {
 } OWF_MESSAGE;
 
 typedef struct _MSGQUE {
-    void*                   queuePtr;
+    OWFint                  read;
+    OWFint                  write;
 } OWF_MESSAGE_QUEUE;
 
 /*

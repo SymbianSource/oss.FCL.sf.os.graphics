@@ -32,8 +32,6 @@
 #include <pointerevent.h>
 #include <advancedpointerevent.h>
 #include <sizemode.h>
-#include <babitflags.h>
-#include <wspublishandsubscribedata.h>
 
 #ifndef SYMBIAN_ENABLE_SPLIT_HEADERS
 #include <graphics/windowserverconstants.h>
@@ -1203,15 +1201,13 @@ class MWsClientClass
 @publishedAll
 @released */
 	{
-	friend class RTFXEffect;
 public:
 	MWsClientClass();
 	MWsClientClass(RWsBuffer *aBuffer);
 	inline TInt WsHandle() const;
 protected:
-	void Write(const TAny *aData1,TInt aLength1,TInt aLength2,TUint aOpcode) const;
-	void Write(const TAny *aData, TInt aLength,const TAny *aData2, TInt aLength2,TUint aOpcode,const TIpcArgs* aIpcArgs=NULL) const;
-	void Write(const TAny *aBuf, TInt aBufLen,TUint aOpcode,const TIpcArgs* aIpcArgs=NULL) const;
+	void Write(const TAny *aData, TInt aLength,const TAny *aData2, TInt aLength2,TUint aOpcode) const;
+	void Write(const TAny *aBuf, TInt aBufLen,TUint aOpcode) const;
 	void Write(TUint aOpcode) const;
 	void WriteInt(TInt aInt, TUint aOpcode) const;
 	void WriteRect(const TRect &aRect, TUint aOpcode) const;
@@ -1235,9 +1231,14 @@ protected:
     TInt CachedWindowSize(TSize& aSize) const;
     void DestroyWindowSizeCacheEntry();
 
-private:
-    void AppendData(const TAny *aData,TInt aLength,TBool aFinished);
-	
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+	void EnableWindowNativeSizeCacheL();
+	TBool WindowNativeSizeCacheEnabled() const;
+	TInt SetWindowNativeSize(const TSize& aNativeSize) const;
+	TInt WindowNativeSize(TSize& aSize) const;
+	void DestroyWindowNativeSizeCacheEntry();
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+
 protected:
 	TInt32 iWsHandle;	/**< WARNING: Member variable for internal use ONLY. Compatibility is not guaranteed in future releases. Please access using the provided get/set APIs only. */
 	RWsBuffer *iBuffer;	/**< WARNING: Member variable for internal use ONLY. Compatibility is not guaranteed in future releases. Please access using the provided get/set APIs only. */
@@ -1381,7 +1382,6 @@ public:
 		line. */
 		ECustomTextCursorAlignBottom
 		};
-	
 //
 public:
 	IMPORT_C RWsSession();
@@ -1532,16 +1532,6 @@ public:
 	IMPORT_C TInt GetExitHighPressureThreshold() const;
 //
     IMPORT_C void EnableWindowSizeCacheL();
-	IMPORT_C void SendEffectCommand(TInt aTfxCmd, const TDesC8& aTfxCmdData=KNullDesC8);
-
-// Registering/Unregistering of TFX effect, to allow animations to be associated with each transition
-	IMPORT_C void RegisterEffect(TInt aAction, TInt aPurpose, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TUint aAppUid=0, TBitFlags aFlags=0);
-	IMPORT_C void UnregisterEffect(TInt aAction, TInt aPurpose, TUint aAppUid=0);
-	IMPORT_C void UnregisterAllEffects();
-	IMPORT_C void OverrideEffects(TInt aAction, TInt aPurpose, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TBitFlags aFlags=0);
-	
-//Application tells the window server the orientation of rendering it intends to use
-	IMPORT_C void IndicateAppOrientation(TRenderOrientation aOrientation);
 	
 // functions not exported, used by CWsGraphic
 	void GraphicMessageReady(TRequestStatus *aStat);
@@ -1730,11 +1720,8 @@ public:
 	IMPORT_C void SetSurfaceTransparency(TBool aSurfaceTransparency);
 	IMPORT_C TRgb KeyColor() const;
 	IMPORT_C void EnableAdvancedPointers();
-	IMPORT_C void SetPurpose(TInt aPurpose);
-	IMPORT_C void SendEffectCommand(TInt aTfxCmd, const TDesC8& aTfxCmdData=KNullDesC8);
-	IMPORT_C void OverrideEffects(TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TBitFlags aFlags=0);
-    IMPORT_C TInt FixNativeOrientation();
-    IMPORT_C TSize SizeForEgl() const;
+	IMPORT_C TInt FixNativeOrientation();
+	IMPORT_C TSize SizeForEgl() const;
 protected:
 	TInt construct(const RWindowTreeNode &parent,TUint32 aHandle, TInt aType, TDisplayMode aDisplayMode);
 	};

@@ -499,8 +499,6 @@ public:
                            TRequestStatus* aStatusDispXTimes,
                            TRequestStatus* aStatusConsumed);
     
-    TInt GetChunkHandle();
-    
 private:
     /**
      *   Notifies the composer that the content has been updated.

@@ -19,12 +19,6 @@
 #include <internaltestfonts.iby>
 #include <testexecute.iby>
 #include <graphics_tprofiler.iby>
-#include <graphics_testfontutils.iby>
-
-REM egl and openvg needed for tfbsglyphdata tests
-#include <egl.iby>
-#include <openvg.iby>
-
 #ifndef SMP
 // MCL profiler is not built for SMP
 #include <profiler.iby>
@@ -32,6 +26,7 @@ REM egl and openvg needed for tfbsglyphdata tests
 #ifdef SYMBIAN_GRAPHICS_USE_GCE
 #include <directgdi.iby>
 #include <directgdiadapter.iby>
+#include <t_halattprovider.iby>
 #endif
 
 file=ABI_DIR\DEBUG_DIR\te_uibench.exe	System\bin\te_uibench.exe
@@ -45,6 +40,7 @@ data=DATAZ_\uibench\te_uibench.script	uibench\te_uibench.script
 data=DATAZ_\uibench\te_uibench_legacy.bat	\te_uibench.bat
 #endif
 data=DATAZ_\uibench\te_uibench.ini	uibench\te_uibench.ini
+
 
 data=DATAZ_\uibench\te_uibench_gdi.ini	uibench\te_uibench_gdi.ini
 data=DATAZ_\uibench\te_uibench_gdi.script uibench\te_uibench_gdi.script

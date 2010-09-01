@@ -21,13 +21,18 @@ rem Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 #include <testexecute.iby>
 #include <egl.iby>
 #include <openvg.iby>
-#include <graphics_simload.iby>
 
 // Requirement for Symbian automation environment
 // file=ABI_DIR\DEBUG_DIR\runtests.exe			test\runtests.exe
 
 // wserv testexecute server
 file=ABI_DIR\DEBUG_DIR\t_wservintegserver.exe 		\sys\bin\t_wservintegserver.exe
+
+// t_simloadapp - application which simulates cpu load
+file=ABI_DIR\BUILD_DIR\t_simloadutils.dll		\sys\bin\t_simloadutils.dll
+file=ABI_DIR\BUILD_DIR\t_simloadapp1.exe		\sys\bin\t_simloadapp1.exe
+file=ABI_DIR\BUILD_DIR\t_simloadapp2.exe		\sys\bin\t_simloadapp2.exe
+file=ABI_DIR\BUILD_DIR\t_simloadapp3.exe		\sys\bin\t_simloadapp3.exe
 
 file=ABI_DIR\BUILD_DIR\t_inidata.dll			\sys\bin\t_inidata.dll
 file=ABI_DIR\BUILD_DIR\t_perfdata.dll			\sys\bin\t_perfdata.dll

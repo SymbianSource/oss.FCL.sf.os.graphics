@@ -63,6 +63,7 @@ public:
 	void Update();
 	void Update(TRequestStatus& aStatus);
 
+	void Update(const TRegion& aRegion);
 	void UpdateRegion(const TRect& aRect);
 	void ResetUpdateRegion();
 	void NotifyWhenAvailable(TRequestStatus& aStatus);

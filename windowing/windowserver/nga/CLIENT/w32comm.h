@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -24,20 +24,6 @@ const TUint KRemoteBufferMessageSlot	=2;
 
 const TUint KAsyncMessageSlotAnimDllHandle	=0;
 const TUint KAsyncMessageSlotAnimHandle		=1;
-const TUint KMaxWservStringSize		        =600;
-
-inline TInt PadValue(TInt aValue)
-	{
-	TInt padding=aValue&0x3;
-	if (padding>0)
-		padding=4-padding;
-	return padding;
-	}
-
-inline TInt PaddedValue(TInt aValue)
-	{
-	return aValue + PadValue(aValue); 
-	}
 
 class TDescriptorType
 	{

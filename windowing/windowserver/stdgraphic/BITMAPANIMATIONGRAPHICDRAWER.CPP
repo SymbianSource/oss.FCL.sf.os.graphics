@@ -15,8 +15,8 @@
 
 #include "stdgraphicdrawer.h"
 #include "wsgraphicdrawercontext.h"
-#include "graphics/WSGRAPHICMSGBUF.H"
-#include "graphics/W32STDGRAPHICTEST.H"
+#include "Graphics/WSGRAPHICMSGBUF.H"
+#include "Graphics/W32STDGRAPHICTEST.H"
 #include <s32mem.h>
 #include <fbs.h>
 #include "W32STDGRAPHIC.H"

@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -451,7 +451,7 @@ EXPORT_C void CTestEglSession::ViewConfigsL()
 		}
 	}
 
-LOCAL_C TEglConfigMatchType GetMatchType(EGLint aAttrib, TEglConfigMatchRule aMatchRule)
+EXPORT_C static TEglConfigMatchType GetMatchType(EGLint aAttrib, TEglConfigMatchRule aMatchRule)
 	{
 	const TConfigMatchRuleItem* curMatchRuleItem = KConfigMatchRules[aMatchRule];
 
@@ -779,7 +779,7 @@ EXPORT_C TBool CTestEglSession::TryUsePixmapRSgImageOpenVgL(EGLConfig aConfig, c
 	return ETrue;
 	}
 
-EXPORT_C void CTestEglSession::CreateWindowSurfaceAndMakeCurrentL(EGLConfig aConfig, RWindow& aWindow, TBool aVgAlphaFormatPre, EGLenum aBindAPI, TInt aRenderVersionNumber, EGLint* aAttribList)
+EXPORT_C void CTestEglSession::CreateWindowSurfaceAndMakeCurrentL(EGLConfig aConfig, RWindow& aWindow, TBool aVgAlphaFormatPre, EGLenum aBindAPI, TInt aRenderVersionNumber)
 	{
 	ASSERT_EQUALS(iSurface, EGL_NO_SURFACE);
 	ASSERT_EQUALS(iContext, EGL_NO_CONTEXT);
@@ -787,16 +787,12 @@ EXPORT_C void CTestEglSession::CreateWindowSurfaceAndMakeCurrentL(EGLConfig aCon
 	ASSERT_EGL_TRUE(eglBindAPI(aBindAPI));
 
 	// Create a Window surface from the native image
-	const EGLint* windowAttribs = aAttribList;
-    if(!windowAttribs)
-        {
-        windowAttribs = (aVgAlphaFormatPre && aBindAPI == EGL_OPENVG_API) ? KPixmapAttribsVgAlphaFormatPre : KPixmapAttribsNone;
-        }
+	const EGLint* windowAttribs = (aVgAlphaFormatPre && aBindAPI == EGL_OPENVG_API) ? KPixmapAttribsVgAlphaFormatPre : KPixmapAttribsNone;
 	iSurface = eglCreateWindowSurface(iDisplay, aConfig, &aWindow, windowAttribs);
 	ASSERT_EGL_TRUE(iSurface != EGL_NO_SURFACE);
 
 	// Create a context for drawing to/reading from the pixmap surface and make it current
-	const EGLint KAttribsListCtxNone[] = { EGL_NONE };
+	const EGLint KAttribsListCtxNone[] = { EGL_NONE };;
 	const EGLint KAttribsListCtxGles2[] = { EGL_CONTEXT_CLIENT_VERSION, aRenderVersionNumber, EGL_NONE };
 	const EGLint* attrib_list_ctx = (aBindAPI == EGL_OPENGL_ES_API && aRenderVersionNumber == 2) ? KAttribsListCtxGles2 : KAttribsListCtxNone;
 	iContext = eglCreateContext(iDisplay, aConfig, EGL_NO_CONTEXT, attrib_list_ctx);
@@ -934,7 +930,7 @@ EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentL(EGLConfig aCon
 		}
 
 	// Create a context for drawing to/reading from the pixmap surface and make it current
-	const EGLint KAttribsListCtxNone[] = { EGL_NONE };
+	const EGLint KAttribsListCtxNone[] = { EGL_NONE };;
 	const EGLint KAttribsListCtxGles2[] = { EGL_CONTEXT_CLIENT_VERSION, aRenderVersionNumber, EGL_NONE };
 	const EGLint* attrib_list_ctx = (aBindAPI == EGL_OPENGL_ES_API && aRenderVersionNumber == 2) ? KAttribsListCtxGles2 : KAttribsListCtxNone;
 	iContext = eglCreateContext(iDisplay, aConfig, EGL_NO_CONTEXT, attrib_list_ctx);
@@ -1053,7 +1049,7 @@ EXPORT_C void CTestEglSession::CreatePixmapSurfaceAndMakeCurrentAndMatchL(const 
 	ASSERT_EGL_TRUE(iSurface != EGL_NO_SURFACE);
 
 	// Create a context for drawing to/reading from the pixmap surface and make it current
-	const EGLint KAttribsListCtxNone[] = { EGL_NONE };
+	const EGLint KAttribsListCtxNone[] = { EGL_NONE };;
 	const EGLint KAttribsListCtxGles2[] = { EGL_CONTEXT_CLIENT_VERSION, aRenderVersionNumber, EGL_NONE };
 	const EGLint* attrib_list_ctx = (aBindAPI == EGL_OPENGL_ES_API && aRenderVersionNumber == 2) ? KAttribsListCtxGles2 : KAttribsListCtxNone;
 	iContext = eglCreateContext(iDisplay, config, EGL_NO_CONTEXT, attrib_list_ctx);
@@ -1084,7 +1080,7 @@ EXPORT_C void CTestEglSession::CreatePbufferSurfaceAndMakeCurrentL(EGLConfig aCo
 	ASSERT_EGL_TRUE(iSurface != EGL_NO_SURFACE);
 
 	// Create a context for drawing to/reading from the pixmap surface and make it current
-	const EGLint KAttribsListCtxNone[] = { EGL_NONE };
+	const EGLint KAttribsListCtxNone[] = { EGL_NONE };;
 	const EGLint KAttribsListCtxGles2[] = { EGL_CONTEXT_CLIENT_VERSION, aRenderVersionNumber, EGL_NONE };
 	const EGLint* attrib_list_ctx = (aBindAPI == EGL_OPENGL_ES_API && aRenderVersionNumber == 2) ? KAttribsListCtxGles2 : KAttribsListCtxNone;
 	iContext = eglCreateContext(iDisplay, aConfig, EGL_NO_CONTEXT, attrib_list_ctx);
@@ -1720,7 +1716,7 @@ EXPORT_C TBool  CTestEglSession::CheckNeededExtensionL(TInt aExtension, const TD
 			return EFalse;
 			}
 		}
-    if(aExtension & KEGL_NOK__private__signal_sync || extensionName.Compare(KEglNokPrivateSignalSync)==0)
+    if(aExtension & KEGL_NOK__private__signal_sync)
         {
         TBool bFoundExtensionEGL_NOK__private__signal_sync = FindExtensionStringL(EIsEGL,KEglNokPrivateSignalSync);
         if (!bFoundExtensionEGL_NOK__private__signal_sync)
@@ -1729,7 +1725,7 @@ EXPORT_C TBool  CTestEglSession::CheckNeededExtensionL(TInt aExtension, const TD
             return EFalse;
             }
         }
-    if(aExtension & KEGL_NOKIA_swap_buffers || extensionName.Compare(KEglNokiaSwapBuffers)==0)
+    if(aExtension & KEGL_NOKIA_swap_buffers)
         {
         TBool bFoundExtensionEGL_NOKIA_swap_buffer = FindExtensionStringL(EIsEGL,KEglNokiaSwapBuffers);
         if (!bFoundExtensionEGL_NOKIA_swap_buffer)
@@ -1739,7 +1735,7 @@ EXPORT_C TBool  CTestEglSession::CheckNeededExtensionL(TInt aExtension, const TD
             }
         }
 #ifndef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
-    if(aExtension & KEGL_SYMBIAN_image_preserved || extensionName.Compare(KEglSymbianImagePreserved)
+    if(aExtension & KEGL_SYMBIAN_image_preserved)
         {
         TBool bFoundExtensionEGL_SYMBIAN_image_preserved = FindExtensionStringL(EIsEGL,KEglSymbianImagePreserved);
         if (!bFoundExtensionEGL_SYMBIAN_image_preserved)
@@ -1749,24 +1745,7 @@ EXPORT_C TBool  CTestEglSession::CheckNeededExtensionL(TInt aExtension, const TD
             }
         }
 #endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
-    if(aExtension & KEGL_NOK_image_endpoint || extensionName.Compare(KEglNokiaImageEndpoint)==0)
-        {
-        TBool bFoundExtensionEGL_NOK_image_endpoint = FindExtensionStringL(EIsEGL,KEglNokiaImageEndpoint);
-        if (!bFoundExtensionEGL_NOK_image_endpoint)
-            {
-            // The extension is not supported
-            return EFalse;
-            }
-        }
-    if(aExtension & KEGL_NOK_surface_scaling || extensionName.Compare(KEglNokiaSurfaceScaling)==0)
-        {
-        TBool bFoundExtensionEGL_NOK_surface_scaling = FindExtensionStringL(EIsEGL,KEglNokiaSurfaceScaling);
-        if (!bFoundExtensionEGL_NOK_surface_scaling)
-            {
-            // The extension is not supported
-            return EFalse;
-            }
-        }
+
 	return ETrue;
 	}
 
@@ -1861,6 +1840,7 @@ EXPORT_C CFbsBitmap* CTestEglSession::CreateReferenceBitmapL(TDisplayMode aMode,
 	TBitmapUtil bmpUtil(bitmap);
 	bmpUtil.Begin(TPoint(0,0));
 	for (TInt colIndex = 0; colIndex < width; ++colIndex)
+
 		{
 		bmpUtil.SetPos(TPoint(colIndex, 0));
 		for (TInt rowIndex =0; rowIndex < height; ++rowIndex)

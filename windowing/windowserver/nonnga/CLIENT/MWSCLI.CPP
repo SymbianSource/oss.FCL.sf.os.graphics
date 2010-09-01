@@ -28,12 +28,12 @@ MWsClientClass::MWsClientClass(RWsBuffer *aBuffer) : iWsHandle(0), iBuffer(aBuff
 	{
 	}
 
-void MWsClientClass::Write(const TAny *aData1, TInt aLength1,const TAny *aData2, TInt aLength2,TUint aOpcode,const TIpcArgs* /*aIpcArgs=NULL*/) const
+void MWsClientClass::Write(const TAny *aData1, TInt aLength1,const TAny *aData2, TInt aLength2,TUint aOpcode) const
 	{
 	iBuffer->Write(iWsHandle,aOpcode,aData1,aLength1,aData2,aLength2);
 	}
 
-void MWsClientClass::Write(const TAny *aData1, TInt aLength1,TUint aOpcode,const TIpcArgs* /*aIpcArgs=NULL*/) const
+void MWsClientClass::Write(const TAny *aData1, TInt aLength1,TUint aOpcode) const
 	{
 	iBuffer->Write(iWsHandle,aOpcode,aData1,aLength1);
 	}
@@ -61,10 +61,6 @@ void MWsClientClass::WritePoint(const TPoint &aPoint, TUint aOpcode) const
 void MWsClientClass::WriteSize(const TSize &aSize, TUint aOpcode) const
 	{
 	Write(&aSize,sizeof(aSize),aOpcode);
-	}
-
-void MWsClientClass::AppendData(const TAny */*aData*/,TInt /*aLength*/,TBool /*aFinished*/)
-	{
 	}
 
 TInt MWsClientClass::WriteReply(TUint aOpcode,const TIpcArgs* aIpcArgs) const

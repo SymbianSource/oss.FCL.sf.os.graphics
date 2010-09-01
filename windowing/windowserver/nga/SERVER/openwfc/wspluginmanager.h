@@ -17,8 +17,8 @@
 #define __WSPLUGINMANAGER_H__
 
 #include <e32base.h>
-#include "graphics/WSPLUGIN.H"
-#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "Graphics/WSPLUGIN.H"
+#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
 
 /**
 The window server has a single plugin manager object, which maintains the set

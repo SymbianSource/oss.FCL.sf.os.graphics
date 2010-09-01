@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,7 +20,9 @@
 
 #include "egltest_image.h"
 
-#include <iniparser.h>
+#ifndef __INIPARSER_H__
+#include <cinidata.h>
+#endif // __INIPARSER_H__
 #include <test/tefunit.h> // for ASSERT macros
 
 #include <test/egltestcommonconversion.h>
@@ -144,7 +146,6 @@ TVerdict CEglTest_EGL_Image_RSgImage_UseOpenVG_PersistImageData::doTestStepL()
 	address += (bitmapSize.iHeight - 1) * stride;
 	vgWritePixels(address, -stride, KDefaultSurfaceFormat,0,0, bitmapSize.iWidth, bitmapSize.iHeight);
 	ASSERT_TRUE(vgGetError()==VG_NO_ERROR);
-	eglWaitClient();   // wait for writing to finish
    	ASSERT_EGL_TRUE(eglDestroySurface(iDisplay, surface));				//Destroying Surface handle
 
 	INFO_PRINTF1(_L("Create a EGLImage out of the SgImage"));

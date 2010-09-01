@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -100,20 +100,19 @@ PRJ_TESTEXPORTS
 ../data/ini/wsini_wsgcesurfwin_emulator_color16ma_changetracking.ini   /epoc32/release/winscw/urel/z/graphics/wsini_wsgcesurfwin_emulator_color16ma_changetracking.ini
 
 PRJ_TESTMMPFILES
-// The following applications inherently require middleware.  These cannot be
-// compiled in a NCP baseline release because such a release omits mw and app.
-// The plan is to re-write to be QT-dependent and then move to the app level
-// package "graphicsuis"
-//	t_app1.mmp
-//	t_dsaapp.mmp
-//	t_fpsapp.mmp
-//	t_pseudoapp.mmp
-//	t_pseudoapp1.mmp
-
+t_app1.mmp
+t_dsaapp.mmp
 t_inidata.mmp
 t_perfdata.mmp
+t_pseudoapp.mmp
+t_pseudoapp1.mmp
+t_fpsapp.mmp
 t_pseudoappengine.mmp
 t_pseudoapppopupwindow.mmp
+t_simloadutils.mmp
+t_simloadapp1.mmp
+t_simloadapp2.mmp
+t_simloadapp3.mmp
 t_testsurfacerasterizer.mmp
 t_winutils.mmp
 t_wservintegserver.mmp

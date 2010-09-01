@@ -17,3 +17,4 @@
 
 # UI_Bench S60
 TESTEXECUTE, \logs\testexecute\te_uibench_s60_techview_emulator.htm, 	, z:\uibench_s60\te_uibench_s60_techview_emulator.script, 	1800
+TESTEXECUTE, \logs\testexecute\te_uibench_s60_teglswapbuffer.htm, 		, z:\uibench_s60\te_uibench_s60_teglswapbuffer.script, 		1800

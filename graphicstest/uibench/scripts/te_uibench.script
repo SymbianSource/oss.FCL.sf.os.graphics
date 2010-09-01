@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,12 +21,12 @@ LOAD_SUITE te_uibench
 
 RUN_UTILS MkDir c:\uibench_sanity\
 RUN_UTILS MakeReadWrite c:\uibench_sanity\
-RUN_UTILS MkDir f:\uibench_sanity\
-RUN_UTILS MakeReadWrite f:\uibench_sanity\
+RUN_UTILS MkDir e:\uibench_sanity\
+RUN_UTILS MakeReadWrite e:\uibench_sanity\
 RUN_UTILS MkDir c:\Profiles\
 RUN_UTILS MakeReadWrite c:\Profiles\
-RUN_UTILS MkDir f:\Profiles\
-RUN_UTILS MakeReadWrite f:\Profiles\
+RUN_UTILS MkDir e:\Profiles\
+RUN_UTILS MakeReadWrite e:\Profiles\
 
 RUN_TEST_STEP 4000 te_uibench tscaleddrawbitmap	z:\uibench\te_uibench.ini
 RUN_TEST_STEP 100 te_uibench tfbsbitmaphandleperf z:\uibench\te_uibench.ini
@@ -41,12 +41,11 @@ RUN_TEST_STEP 300 te_uibench tshadowperf z:\uibench\te_uibench.ini
 RUN_TEST_STEP 1000 te_uibench tsimpledrawing z:\uibench\te_uibench.ini
 RUN_TEST_STEP 200 te_uibench TRedrawing z:\uibench\te_uibench.ini
 RUN_TEST_STEP 1000 te_uibench tnonredrawdrawing z:\uibench\te_uibench.ini
-//RUN_TEST_STEP 20000 te_uibench tfadeperf z:\uibench\te_uibench.ini - disabled due to massive run time & timeout
-//RUN_TEST_STEP 10000 te_uibench tredrawstoreperf z:\uibench\te_uibench.ini - disabled due to massive run time & timeout
+RUN_TEST_STEP 20000 te_uibench tfadeperf z:\uibench\te_uibench.ini
+RUN_TEST_STEP 10000 te_uibench tredrawstoreperf z:\uibench\te_uibench.ini
 RUN_TEST_STEP 1000 te_uibench ttranslucent z:\uibench\te_uibench.ini
 RUN_TEST_STEP 200 te_uibench tspriteperf z:\uibench\te_uibench.ini
 RUN_TEST_STEP 1000 te_uibench textendedbitmap z:\uibench\te_uibench.ini
-RUN_TEST_STEP 2000 te_uibench tfbsglyphdata z:\uibench\te_uibench.ini
 
 // Performance tests Script  for Hindi text rendering
 RUN_SCRIPT z:\uibench\te_uibench_gdi.script

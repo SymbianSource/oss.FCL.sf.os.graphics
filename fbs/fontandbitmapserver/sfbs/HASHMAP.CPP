@@ -1,3 +1,20 @@
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// 
+// 
+//
+
 // HASHMAP.CPP
 //
 // This file holds the class methods for the CHashMap
@@ -6,7 +23,7 @@
 // The original hash function was sourced from http://burtleburtle.net/bob/hash/index.html
 // "By Bob Jenkins, 1996.  bob_jenkins@burtleburtle.net.  You may use this code any way you wish, 
 // private, educational, or commercial.  It's free."
-// portions Copyright (c) 1995 - 2010 Nokia Corporation and/or its subsidiary(-ies).
+//  portions Copyright (c) 1995 - 2009 Nokia Corporation. All rights reserved.
 //
 
 #include "SERVER.H"

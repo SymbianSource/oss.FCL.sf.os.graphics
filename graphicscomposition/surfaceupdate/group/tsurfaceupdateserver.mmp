@@ -48,6 +48,6 @@ library         euser.lib
 
 deffile           surfaceupdateserver.def
 
-EPOCALLOWDLLDATA
+
 
 SMPSAFE

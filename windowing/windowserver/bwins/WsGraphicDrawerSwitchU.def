@@ -59,11 +59,11 @@ EXPORTS
 	call_vector_58 @ 58 NONAME ; class TRegion const * TWservCrEvent::DrawingRegion(void) const
 	call_vector_59 @ 59 NONAME ; int TWservCrEvent::WindowGroupIdentifier(void) const
 	call_vector_60 @ 60 NONAME ; int CWsGraphicDrawerArray::Add(class CWsGraphicDrawer *)
-	call_vector_61 @ 61 NONAME ; struct CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::AddTLC(class CWsGraphicDrawer *)
-	call_vector_62 @ 62 NONAME ; void CWsGraphicDrawerArray::CommitP(struct CWsGraphicDrawerArray::XRollBackBase *)
-	call_vector_63 @ 63 NONAME ; struct CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::RemoveTLC(struct TGraphicDrawerId const &)
+	call_vector_61 @ 61 NONAME ; class CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::AddTLC(class CWsGraphicDrawer *)
+	call_vector_62 @ 62 NONAME ; void CWsGraphicDrawerArray::CommitP(class CWsGraphicDrawerArray::XRollBackBase *)
+	call_vector_63 @ 63 NONAME ; class CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::RemoveTLC(struct TGraphicDrawerId const &)
 	call_vector_64 @ 64 NONAME ; int CWsGraphicDrawerArray::Swap(class CWsGraphicDrawer *)
-	call_vector_65 @ 65 NONAME ; struct CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::SwapTLC(class CWsGraphicDrawer *)
+	call_vector_65 @ 65 NONAME ; class CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::SwapTLC(class CWsGraphicDrawer *)
 	call_vector_66 @ 66 NONAME ; enum CFbsBitGc::TGraphicsOrientation TWservCrEvent::Orientation(void) const
 	call_vector_67 @ 67 NONAME ; void WsGraphicDrawer::FinalClose(void)
 	call_vector_68 @ 68 NONAME ; int TWservCrEvent::WasVisible(void) const

@@ -13,7 +13,6 @@
 @rem
 @rem Description: 
 @rem
-
 rem common/interface test
 rem  - we don't run all common tests as eglrefimpl is not bound to OpenVG/OpenGLES
 testexecute.exe z:\egltest\egltest_t_geterroranddisplay.script

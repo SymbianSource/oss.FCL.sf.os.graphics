@@ -1,0 +1,979 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName  GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi
+//! @SYMScriptTestEnvironment This test script requires a basic ROM.
+
+///////////////////////////////////////////////////////////////////////////////
+// GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.script
+//
+// Tests all public elements of the CWsGraphicBitmapAnimation class
+// as a means of confidence that the API works as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for
+// CWsGraphicBitmapAnimation related classes.
+// Negative testing is performed to confirm that correct errors are returned
+// when incorrect parameters are given.
+//
+// The tests are fully automated.
+///////////////////////////////////////////////////////////////////////////////
+
+LOAD_SUITE  T_GraphicsWservAPI
+
+// ****************************************************************************
+// CWsGraphicBitmapAnimation
+// ****************************************************************************
+
+START_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0001
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0001
+//! @SYMAPI                 CWsGraphicBitmapAnimation::NewL(const TFrames{ref});
+//!                         CWsGraphicBitmapAnimation::~CWsGraphicBitmapAnimation()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        21-04-2008
+//! @SYMTestCaseDesc        Create CWsGraphicBitmapAnimation object just with one frame and then destroy it.
+//! @SYMTestActions         1.Create CFrame objects.
+//!                         2.Connect RFbsSession.
+//!                         3.Load two bitmap objects, one for bitmap, then other for mask.
+//!                         4.Set frame info/bitmap/mask for the CFrame.
+//!                         5.Create CWsGraphicBitmapAnimation object with the CFrame object.
+//!                         6.Disown and Destroy created objects.
+//!                         7.Disconnect RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CWsGraphicBitmapAnimation object was created and destroyed without causing panic.
+//! @SYMTestType            CIT
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim
+        CREATE_OBJECT      CFrame                     frame1
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap1
+        CREATE_OBJECT      CFbsBitmap                 mask1
+        COMMAND            frame1                     NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            bitmap1                    new
+        COMMAND            mask1                      new
+        COMMAND            bitmap1                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0001-0001-Load-command005
+        COMMAND            mask1                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0001-0001-Load-command006
+        COMMAND            frame1                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0001-0001-SetFrameInfo-command007
+        COMMAND            frame1                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0001-0001-SetBitmap-command008
+        COMMAND            frame1                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0001-0001-SetMask-command009 
+        COMMAND            bmpanim                    NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0001-0001-NewL-command010
+        COMMAND            bitmap1                    disown
+        COMMAND            mask1                      disown
+        COMMAND            frame1                     ~
+        COMMAND            bmpanim                    ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0001
+
+
+START_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0002
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0002
+//! @SYMAPI                 CWsGraphicBitmapAnimation::NewL(const TFrames{ref});
+//!                         CWsGraphicBitmapAnimation::~CWsGraphicBitmapAnimation()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        11-03-2008
+//! @SYMTestCaseDesc        Create CWsGraphicBitmapAnimation object and then destroy it.
+//! @SYMTestActions         1.Create two CFrame objects.
+//!                         2.Connect RFbsSession.
+//!                         3.Load four bitmap objects(two bitmaps and two masks).
+//!                         4.Set frame info/bitmap/mask for the two CFrame objects respectively.
+//!                         5.Create CWsGraphicBitmapAnimation object with the two CFrame objects.
+//!                         6.Disown and Destroy created objects.
+//!                         7.Disconnect RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CWsGraphicBitmapAnimation object was created and destroyed without causing panic.
+//! @SYMTestType            CIT
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim
+        CREATE_OBJECT      CFrame                     frame1
+        CREATE_OBJECT      CFrame                     frame2
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap1
+        CREATE_OBJECT      CFbsBitmap                 bitmap2
+        CREATE_OBJECT      CFbsBitmap                 mask1
+        CREATE_OBJECT      CFbsBitmap                 mask2
+        COMMAND            frame1                     NewL
+        COMMAND            frame2                     NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            bitmap1                    new
+        COMMAND            bitmap2                    new
+        COMMAND            mask1                      new
+        COMMAND            mask2                      new
+        COMMAND            bitmap1                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0002-0001-Load-command008
+        COMMAND            bitmap2                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0002-0001-Load-command009
+        COMMAND            mask1                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0002-0001-Load-command010
+        COMMAND            mask2                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0002-0001-Load-command011
+        COMMAND            frame1                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0002-0001-SetFrameInfo-command012
+        COMMAND            frame1                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0002-0001-SetBitmap-command013
+        COMMAND            frame1                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0002-0001-SetMask-command014
+        COMMAND            frame2                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0002-0001-SetFrameInfo-command015
+        COMMAND            frame2                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0002-0001-SetBitmap-command016
+        COMMAND            frame2                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0002-0001-SetMask-command017
+        COMMAND            bmpanim                    NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0002-0001-NewL-command018
+        COMMAND            bitmap1                    disown
+        COMMAND            bitmap2                    disown
+        COMMAND            mask1                      disown
+        COMMAND            mask2                      disown
+        COMMAND            frame1                     ~
+        COMMAND            frame2                     ~
+        COMMAND            bmpanim                    ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0002
+
+
+START_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0003
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0003
+//! @SYMAPI                 CWsGraphicBitmapAnimation::NewL(TUid, const TFrames{ref});
+//!                         CWsGraphicBitmapAnimation::~CWsGraphicBitmapAnimation()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        21-04-2008
+//! @SYMTestCaseDesc        Create CWsGraphicBitmapAnimation object just with one frame and then destroy it.
+//! @SYMTestActions         1.Create CFrame objects.
+//!                         2.Connect RFbsSession.
+//!                         3.Load two bitmap objects, one for bitmap, then other for mask.
+//!                         4.Set frame info/bitmap/mask for the CFrame.
+//!                         5.Create CWsGraphicBitmapAnimation object with the CFrame object.
+//!                         6.Disown and Destroy created objects.
+//!                         7.Disconnect RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CWsGraphicBitmapAnimation object was created and destroyed without causing panic.
+//! @SYMTestType            CIT
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim
+        CREATE_OBJECT      CFrame                     frame1
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap1
+        CREATE_OBJECT      CFbsBitmap                 mask1
+        COMMAND            frame1                     NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            bitmap1                    new
+        COMMAND            mask1                      new
+        COMMAND            bitmap1                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0003-0001-Load-command005
+        COMMAND            mask1                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0003-0001-Load-command006
+        COMMAND            frame1                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0003-0001-SetFrameInfo-command007
+        COMMAND            frame1                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0003-0001-SetBitmap-command008
+        COMMAND            frame1                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0003-0001-SetMask-command009 
+        COMMAND            bmpanim                    NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0003-0001-NewL-command010
+        COMMAND            bitmap1                    disown
+        COMMAND            mask1                      disown
+        COMMAND            frame1                     ~
+        COMMAND            bmpanim                    ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0003
+
+
+START_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0004
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0004
+//! @SYMAPI                 CWsGraphicBitmapAnimation::NewL(TUid, const TFrames{ref});
+//!                         CWsGraphicBitmapAnimation::~CWsGraphicBitmapAnimation()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        11-03-2008
+//! @SYMTestCaseDesc        Create CWsGraphicBitmapAnimation object with UID and then destroy it.
+//! @SYMTestActions         1.Create two CFrame objects.
+//!                         2.Connect RFbsSession.
+//!                         3.Load four bitmap objects(two bitmaps and two masks).
+//!                         4.Set frame info/bitmap/mask for the two CFrame objects respectively.
+//!                         5.Create CWsGraphicBitmapAnimation object with the two CFrame objects and an Uid.
+//!                         6.Disown and Destroy created objects.
+//!                         7.Disconnect RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CWsGraphicBitmapAnimation object was created and destroyed without causing panic.
+//! @SYMTestType            CIT
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim
+        CREATE_OBJECT      CFrame                     frame1
+        CREATE_OBJECT      CFrame                     frame2
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap1
+        CREATE_OBJECT      CFbsBitmap                 bitmap2
+        CREATE_OBJECT      CFbsBitmap                 mask1
+        CREATE_OBJECT      CFbsBitmap                 mask2
+        COMMAND            frame1                     NewL
+        COMMAND            frame2                     NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            bitmap1                    new
+        COMMAND            bitmap2                    new
+        COMMAND            mask1                      new
+        COMMAND            mask2                      new
+        COMMAND            bitmap1                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0004-0001-Load-command008
+        COMMAND            bitmap2                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0004-0001-Load-command009
+        COMMAND            mask1                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0004-0001-Load-command010
+        COMMAND            mask2                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0004-0001-Load-command011
+        COMMAND            frame1                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0004-0001-SetFrameInfo-command012
+        COMMAND            frame1                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0004-0001-SetBitmap-command013
+        COMMAND            frame1                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0004-0001-SetMask-command014
+        COMMAND            frame2                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0004-0001-SetFrameInfo-command015
+        COMMAND            frame2                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0004-0001-SetBitmap-command016
+        COMMAND            frame2                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0004-0001-SetMask-command017
+        COMMAND            bmpanim                    NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0004-0001-NewL-command018
+        COMMAND            bitmap1                    disown
+        COMMAND            bitmap2                    disown
+        COMMAND            mask1                      disown
+        COMMAND            mask2                      disown
+        COMMAND            frame1                     ~
+        COMMAND            frame2                     ~
+        COMMAND            bmpanim                    ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0004
+
+
+START_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0005
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0005
+//! @SYMAPI                 CWsGraphicBitmapAnimation::NewL(const TWsGraphicId{ref},const TFrames{ref});
+//!                         CWsGraphicBitmapAnimation::~CWsGraphicBitmapAnimation()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        21-04-2008
+//! @SYMTestCaseDesc        Create CWsGraphicBitmapAnimation object just with one frame and then destroy it.
+//! @SYMTestActions         1.Create CFrame objects.
+//!                         2.Connect RFbsSession.
+//!                         3.Load two bitmap objects, one for bitmap, then other for mask.
+//!                         4.Set frame info/bitmap/mask for the CFrame.
+//!                         5.Create CWsGraphicBitmapAnimation object with the CFrame object.
+//!                         6.Disown and Destroy created objects.
+//!                         7.Disconnect RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CWsGraphicBitmapAnimation object was created and destroyed without causing panic.
+//! @SYMTestType            CIT
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim2
+        CREATE_OBJECT      CFrame                     frame1
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap1
+        CREATE_OBJECT      CFbsBitmap                 mask1
+        COMMAND            frame1                     NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            bitmap1                    new
+        COMMAND            mask1                      new
+        COMMAND            bitmap1                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0005-0001-Load-command005
+        COMMAND            mask1                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0005-0001-Load-command006
+        COMMAND            frame1                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0005-0001-SetFrameInfo-command007
+        COMMAND            frame1                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0005-0001-SetBitmap-command008
+        COMMAND            frame1                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0005-0001-SetMask-command009 
+        COMMAND            bmpanim                    NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0005-0001-NewL-command010
+        COMMAND            bmpanim2                   NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0005-0001-NewL-command011
+        COMMAND            bitmap1                    disown
+        COMMAND            mask1                      disown
+        COMMAND            frame1                     ~
+        COMMAND            bmpanim                    ~
+        COMMAND            bmpanim2                   ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0005
+
+
+START_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0006
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0006
+//! @SYMAPI                 CWsGraphicBitmapAnimation::NewL(const TWsGraphicId{ref},const TFrames{ref});
+//!                         CWsGraphicBitmapAnimation::~CWsGraphicBitmapAnimation()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        11-03-2008
+//! @SYMTestCaseDesc        Create CWsGraphicBitmapAnimation object and then destroy.
+//! @SYMTestActions         1.Create two CFrame objects.
+//!                         2.Connect RFbsSession.
+//!                         3.Load four bitmap objects(two bitmaps and two masks).
+//!                         4.Set frame info/bitmap/mask for the two CFrame objects respectively.
+//!                         5.Create CWsGraphicBitmapAnimation object with the two CFrame objects and a TWsGraphicId.
+//!                         6.Disown and Destroy created objects.
+//!                         7.Disconnect RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CWsGraphicBitmapAnimation object was created and destroyed without causing panic.
+//! @SYMTestType            CIT
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim2
+        CREATE_OBJECT      CFrame                     frame1
+        CREATE_OBJECT      CFrame                     frame2
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap1
+        CREATE_OBJECT      CFbsBitmap                 bitmap2
+        CREATE_OBJECT      CFbsBitmap                 mask1
+        CREATE_OBJECT      CFbsBitmap                 mask2
+        COMMAND            frame1                     NewL
+        COMMAND            frame2                     NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            bitmap1                    new
+        COMMAND            bitmap2                    new
+        COMMAND            mask1                      new
+        COMMAND            mask2                      new
+        COMMAND            bitmap1                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0006-0001-Load-command008
+        COMMAND            bitmap2                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0006-0001-Load-command009
+        COMMAND            mask1                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0006-0001-Load-command010
+        COMMAND            mask2                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0006-0001-Load-command011
+        COMMAND            frame1                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0006-0001-SetFrameInfo-command012
+        COMMAND            frame1                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0006-0001-SetBitmap-command013
+        COMMAND            frame1                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0006-0001-SetMask-command014
+        COMMAND            frame2                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0006-0001-SetFrameInfo-command015
+        COMMAND            frame2                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0006-0001-SetBitmap-command016
+        COMMAND            frame2                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0006-0001-SetMask-command017
+        COMMAND            bmpanim                    NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0006-0001-NewL-command018
+        COMMAND            bmpanim2                   NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0006-0001-NewL-command019
+        COMMAND            bitmap1                    disown
+        COMMAND            bitmap2                    disown
+        COMMAND            mask1                      disown
+        COMMAND            mask2                      disown
+        COMMAND            frame1                     ~
+        COMMAND            frame2                     ~
+        COMMAND            bmpanim                    ~
+        COMMAND            bmpanim2                   ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0006
+
+
+START_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0007
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0007
+//! @SYMAPI                 CWsGraphicBitmapAnimation::ShareGlobally();
+//!                         CWsGraphicBitmapAnimation::UnShareGlobally()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        11-03-2008
+//! @SYMTestCaseDesc        Create CWsGraphicBitmapAnimation object and shares it with all the client sessions, and then unshares it.
+//! @SYMTestActions         1.Create two CFrame objects.
+//!                         2.Connect RFbsSession.
+//!                         3.Load four bitmap objects(two bitmaps and two masks).
+//!                         4.Set frame info/bitmap/mask for the two CFrame objects respectively.
+//!                         5.Create CWsGraphicBitmapAnimation object with the two CFrame objects.
+//!                         6.Share the graphic artwork with all the client sessions.
+//!                         7.Unshare the graphic artwork with all the client sessions.
+//!                         8.Disown and Destroy created objects.
+//!                         9.Disconnect RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Share and unshare CWsGraphicBitmapAnimation object without causing panic.
+//! @SYMTestType            CIT
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim
+        CREATE_OBJECT      CFrame                     frame1
+        CREATE_OBJECT      CFrame                     frame2
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap1
+        CREATE_OBJECT      CFbsBitmap                 bitmap2
+        CREATE_OBJECT      CFbsBitmap                 mask1
+        CREATE_OBJECT      CFbsBitmap                 mask2
+        COMMAND            frame1                     NewL
+        COMMAND            frame2                     NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            bitmap1                    new
+        COMMAND            bitmap2                    new
+        COMMAND            mask1                      new
+        COMMAND            mask2                      new
+        COMMAND            bitmap1                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0007-0001-Load-command008
+        COMMAND            bitmap2                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0007-0001-Load-command009
+        COMMAND            mask1                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0007-0001-Load-command010
+        COMMAND            mask2                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0007-0001-Load-command011
+        COMMAND            frame1                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0007-0001-SetFrameInfo-command012
+        COMMAND            frame1                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0007-0001-SetBitmap-command013
+        COMMAND            frame1                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0007-0001-SetMask-command014
+        COMMAND            frame2                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0007-0001-SetFrameInfo-command015
+        COMMAND            frame2                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0007-0001-SetBitmap-command016
+        COMMAND            frame2                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0007-0001-SetMask-command017
+        COMMAND            bmpanim                    NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0007-0001-NewL-command018
+        COMMAND            bmpanim                    ShareGlobally
+        COMMAND            bmpanim                    UnShareGlobally
+        COMMAND            bitmap1                    disown
+        COMMAND            bitmap2                    disown
+        COMMAND            mask1                      disown
+        COMMAND            mask2                      disown
+        COMMAND            frame1                     ~
+        COMMAND            frame2                     ~
+        COMMAND            bmpanim                    ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0007
+
+
+START_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008
+//! @SYMAPI                 CWsGraphicBitmapAnimation::Share(TSecureId);
+//!                         CWsGraphicBitmapAnimation::UnShare(TSecureId)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        11-03-2008
+//! @SYMTestCaseDesc        Shares created CWsGraphicBitmapAnimation object with client sessions with the specified Secure ID.
+//! @SYMTestActions         1.Create two CFrame objects.
+//!                         2.Connect RFbsSession.
+//!                         3.Load four bitmap objects(two bitmaps and two masks).
+//!                         4.Set frame info/bitmap/mask for the two CFrame objects respectively.
+//!                         5.Create CWsGraphicBitmapAnimation object with the two CFrame objects.
+//!                         6.Share the created CWsGraphicBitmapAnimation object with the specified Secure ID, and then unshare it.
+//!                         7.Unshare the created CWsGraphicBitmapAnimation object with the specified Secure ID.
+//!                         8.Disown and Destroy created objects.
+//!                         9.Disconnect RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Share and unshare CWsGraphicBitmapAnimation object with the specified client without causing panic.
+//! @SYMTestType            CIT
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim
+        CREATE_OBJECT      CFrame                     frame1
+        CREATE_OBJECT      CFrame                     frame2
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap1
+        CREATE_OBJECT      CFbsBitmap                 bitmap2
+        CREATE_OBJECT      CFbsBitmap                 mask1
+        CREATE_OBJECT      CFbsBitmap                 mask2
+        COMMAND            frame1                     NewL
+        COMMAND            frame2                     NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            bitmap1                    new
+        COMMAND            bitmap2                    new
+        COMMAND            mask1                      new
+        COMMAND            mask2                      new
+        COMMAND            bitmap1                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008-0001-Load-command008
+        COMMAND            bitmap2                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008-0001-Load-command009
+        COMMAND            mask1                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008-0001-Load-command010
+        COMMAND            mask2                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008-0001-Load-command011
+        COMMAND            frame1                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008-0001-SetFrameInfo-command012
+        COMMAND            frame1                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008-0001-SetBitmap-command013
+        COMMAND            frame1                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008-0001-SetMask-command014
+        COMMAND            frame2                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008-0001-SetFrameInfo-command015
+        COMMAND            frame2                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008-0001-SetBitmap-command016
+        COMMAND            frame2                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008-0001-SetMask-command017
+        COMMAND            bmpanim                    NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008-0001-NewL-command018
+        COMMAND            bmpanim                    Share                GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008-0001-Share-command019
+        COMMAND            bmpanim                    UnShare              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008-0001-UnShare-command020
+        COMMAND            bitmap1                    disown
+        COMMAND            bitmap2                    disown
+        COMMAND            mask1                      disown
+        COMMAND            mask2                      disown
+        COMMAND            frame1                     ~
+        COMMAND            frame2                     ~
+        COMMAND            bmpanim                    ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0008
+
+
+START_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0009
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0009
+//! @SYMAPI                 CWsGraphicBitmapAnimation::UnShare(TSecureId)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        11-03-2008
+//! @SYMTestCaseDesc        Unshare the no longer shared CWsGraphicBitmapAnimation object with the specific Secure ID.
+//! @SYMTestActions         1.Create two CFrame objects.
+//!                         2.Connect RFbsSession.
+//!                         3.Load four bitmap objects(two bitmaps and two masks).
+//!                         4.Set frame info/bitmap/mask for the two CFrame objects respectively.
+//!                         5.Create CWsGraphicBitmapAnimation object with the two CFrame objects.
+//!                         6.Stop the created CWsGraphicBitmapAnimation object from being shared, will get an error(KErrNotFound).
+//!                         7.Disown and Destroy created objects.
+//!                         8.Disconnect RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults KErrNotFound(-1) will be returned when unshare the created CWsGraphicBitmapAnimation object.
+//! @SYMTestType            CIT
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim
+        CREATE_OBJECT      CFrame                     frame1
+        CREATE_OBJECT      CFrame                     frame2
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap1
+        CREATE_OBJECT      CFbsBitmap                 bitmap2
+        CREATE_OBJECT      CFbsBitmap                 mask1
+        CREATE_OBJECT      CFbsBitmap                 mask2
+        COMMAND            frame1                     NewL
+        COMMAND            frame2                     NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            bitmap1                    new
+        COMMAND            bitmap2                    new
+        COMMAND            mask1                      new
+        COMMAND            mask2                      new
+        COMMAND            bitmap1                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0009-0001-Load-command008
+        COMMAND            bitmap2                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0009-0001-Load-command009
+        COMMAND            mask1                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0009-0001-Load-command010
+        COMMAND            mask2                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0009-0001-Load-command011
+        COMMAND            frame1                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0009-0001-SetFrameInfo-command012
+        COMMAND            frame1                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0009-0001-SetBitmap-command013
+        COMMAND            frame1                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0009-0001-SetMask-command014
+        COMMAND            frame2                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0009-0001-SetFrameInfo-command015
+        COMMAND            frame2                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0009-0001-SetBitmap-command016
+        COMMAND            frame2                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0009-0001-SetMask-command017
+        COMMAND            bmpanim                    NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0009-0001-NewL-command018
+        COMMAND  !Error=-1 bmpanim                    UnShare              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0009-0001-UnShare-command019
+        COMMAND            bitmap1                    disown
+        COMMAND            bitmap2                    disown
+        COMMAND            mask1                      disown
+        COMMAND            mask2                      disown
+        COMMAND            frame1                     ~
+        COMMAND            frame2                     ~
+        COMMAND            bmpanim                    ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0009
+
+
+START_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0010
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0010
+//! @SYMAPI                 CWsGraphicBitmapAnimation::UnShareGlobally()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        11-03-2008
+//! @SYMTestCaseDesc        Unshare globally the not shared CWsGraphicBitmapAnimation object. 
+//! @SYMTestActions         1.Create two CFrame objects.
+//!                         2.Connect RFbsSession.
+//!                         3.Load four bitmap objects(two bitmaps and two masks).
+//!                         4.Set frame info/bitmap/mask for the two CFrame objects respectively.
+//!                         5.Create CWsGraphicBitmapAnimation object with the two CFrame objects.
+//!                         6.Unshare CWsGraphicBitmapAnimation object which not be shared with all the client sessions.
+//!                         7.Disown and Destroy created objects.
+//!                         8.Disconnect RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults UnShare CWsGraphicBitmapAnimation object without causing panic.
+//! @SYMTestType            CIT
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim
+        CREATE_OBJECT      CFrame                     frame1
+        CREATE_OBJECT      CFrame                     frame2
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap1
+        CREATE_OBJECT      CFbsBitmap                 bitmap2
+        CREATE_OBJECT      CFbsBitmap                 mask1
+        CREATE_OBJECT      CFbsBitmap                 mask2
+        COMMAND            frame1                     NewL
+        COMMAND            frame2                     NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            bitmap1                    new
+        COMMAND            bitmap2                    new
+        COMMAND            mask1                      new
+        COMMAND            mask2                      new
+        COMMAND            bitmap1                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0010-0001-Load-command008
+        COMMAND            bitmap2                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0010-0001-Load-command009
+        COMMAND            mask1                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0010-0001-Load-command010
+        COMMAND            mask2                      Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0010-0001-Load-command011
+        COMMAND            frame1                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0010-0001-SetFrameInfo-command012
+        COMMAND            frame1                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0010-0001-SetBitmap-command013
+        COMMAND            frame1                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0010-0001-SetMask-command014
+        COMMAND            frame2                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0010-0001-SetFrameInfo-command015
+        COMMAND            frame2                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0010-0001-SetBitmap-command016
+        COMMAND            frame2                     SetMask              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0010-0001-SetMask-command017
+        COMMAND            bmpanim                    NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0010-0001-NewL-command018
+        COMMAND            bmpanim                    UnShareGlobally
+        COMMAND            bitmap1                    disown
+        COMMAND            bitmap2                    disown
+        COMMAND            mask1                      disown
+        COMMAND            mask2                      disown
+        COMMAND            frame1                     ~
+        COMMAND            frame2                     ~
+        COMMAND            bmpanim                    ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0010
+
+START_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0011
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0011
+//! @SYMAPI                 CWsGraphicBitmapAnimation::NewL(const TFrames{ref});
+//! @SYMAuthor              Yue Zhang
+//! @SYMCreationDate        27-03-2008
+//! @SYMTestCaseDesc        Negative test, set the FrameInfo to a CFrame object without iDelay parameter.
+//! @SYMTestActions         1. Create a CFrame object;
+//!                         2. Connect RFbsSession;
+//!                         3. Set FrameInfo to the CFrame object without iDelay parameter;
+//!                         4. Create CWsGraphicBitmapAnimation object with the CFrame object;
+//!                         5. Destroy related objects.
+//!                         6. Disconnect RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Error code -20 received at Test Action 4.
+//! @SYMTestType            CIT
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim
+        CREATE_OBJECT      CFrame                     frame1
+        CREATE_OBJECT      RFbsSession                fbssession
+        COMMAND            frame1                     NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            frame1                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0011-0001-SetFrameInfo-command003
+        COMMAND !Error=-20 bmpanim                    NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0011-0001-NewL-command004
+        COMMAND            frame1                     ~
+        COMMAND            bmpanim                    ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0011
+
+
+START_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0012
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0012
+//! @SYMAPI                 CWsGraphicBitmapAnimation::NewL(TUid, const TFrames{ref})
+//! @SYMAuthor              Yue Zhang
+//! @SYMCreationDate        27-03-2008
+//! @SYMTestCaseDesc        Create CWsGraphicBitmapAnimation object with specified Uid and then check the Uid properties.
+//! @SYMTestActions         1. Create CFrame object;
+//!                         2. Create RFbsSession object and Connect;
+//!                         3. Create CFbsBitmap object;
+//!                         4. Load CFbsBitmap;
+//!                         5. Set FrameInfo and Bitmap to the CFrame object.
+//!                         6. Create CWsGraphicBitmapAnimation object with the CFrame object and specified Uid.
+//!                         7. Get the Uid of the CWsGraphicBitmapAnimation object;
+//!                         8.Disown and destroy the created objects;
+//!                         9.Disconnect RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults The Uid get at the action 7 should have the same value as the specified Uid.
+//! @SYMTestType            CIT
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim
+        CREATE_OBJECT      CFrame                     frame1
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap1
+        COMMAND            frame1                     NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            bitmap1                    new
+        COMMAND            bitmap1                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0012-0001-Load-command004
+        COMMAND            frame1                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0012-0001-SetFrameInfo-command005
+        COMMAND            frame1                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0012-0001-SetBitmap-command006
+        COMMAND            bmpanim                    NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0012-0001-NewL-command007
+        COMMAND            bmpanim                    Id                   GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0012-0001-Id-command008
+        COMMAND            bitmap1                    disown
+        COMMAND            frame1                     ~
+        COMMAND            bmpanim                    ~
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0012
+
+
+START_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013
+//! @SYMAPI                 CWsGraphicBitmapAnimation::ShareGlobally();
+//!                         CWsGraphicBitmapAnimation::UnShareGlobally()
+//! @SYMAuthor              Yue Zhang
+//! @SYMCreationDate        28-03-2008
+//! @SYMTestCaseDesc        Using another process draw the bitmap after the CWsGraphicBitmapAnimation share globally or unshare globally.
+//! @SYMTestActions         1. Create CFrame object;
+//!                         2. Create RFbsSession object and connect;
+//!                         3. Create wsga object;
+//!                         4. Create RWsSession object and connect;
+//!                         5. Create CWsScreenDevice object and construct it;
+//!                         6. Create context of CWsScreenDevice;
+//!                         7. Create CFbsBitmap object;
+//!                         8. Load CFbsBitmap;
+//!                         9. Set FrameInfo and Bitmap to the CFrame object.
+//!                         10. Create CWsGraphicBitmapAnimation object with the CFrame object.
+//!                         11. Create RWindowGroup object and construct it.
+//!                         12. Create RWindow object and construct it.
+//!                         13. Set required display mode of RWindow object;
+//!                         14. Set background color of RWindow object.
+//!                         15. Active the RWindow object.
+//!                         16. Set auto flush of RWsSession object.
+//!                         17. Activate the CWindowGc object.
+//!                         18. Draw window session graphic by the CWindowGc object.
+//!                         19. Decativate the CWindowGc object.
+//!                         20. Start a test client in another process;
+//!                         21. Draw the window session bitmap in the client;
+//!                         22. Use CWsScreenDevice object to compare the drawn rectangle.
+//!                         23. Close the test client.
+//!                         24. Share the graphic artwork with all the client sessions;
+//!                         25. Start a test client in another process;
+//!                         26. Draw the window session bitmap in the client;
+//!                         27. Use CWsScreenDevice object to compare the drawn rectangle.
+//!                         28. Close the test client.
+//!                         29. Unshare the graphic artwork with all the client sessions;
+//!                         30. Start a test client in another process;
+//!                         31. Draw the window session bitmap in the client;
+//!                         32. Use CWsScreenDevice object to compare the drawn rectangle.
+//!                         33. Close the test client.
+//!                         34. Disown and destroy the created objects;
+//!                         35. Disconnect RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults The bitmap should not be drawn successfully at test action 21;
+//!                         The bitmap should be drawn successfully at test action 26;
+//!                         The bitmap should not be drawn successfully at test action 31.
+//! @SYMTestType            CIT
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim
+        CREATE_OBJECT      RWsSession                 ws
+        CREATE_OBJECT      CFrame                     frame1
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap1
+        CREATE_OBJECT      CWsScreenDevice            scrdev
+        CREATE_OBJECT      CWindowGc                  wgc
+        CREATE_OBJECT      TWsGraphicAnimation        wsga
+        CREATE_OBJECT      RWindowGroup               wingrp
+        CREATE_OBJECT      RWindow                    win
+        COMMAND            frame1                     NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            wsga                       new
+        COMMAND            ws                         new
+        COMMAND            ws                         Connect
+        COMMAND            scrdev                     new                  GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-new-command006
+        COMMAND            scrdev                     Construct
+        COMMAND            scrdev                     CreateContext        GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-CreateContext_command008
+        COMMAND            bitmap1                    new
+        COMMAND            bitmap1                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-Load-command010
+        COMMAND            frame1                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-SetFrameInfo-command011
+        COMMAND            frame1                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-SetBitmap-command012
+        COMMAND            bmpanim                    NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-NewL-command013
+        COMMAND            wingrp                     new                  GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-new_command014
+        COMMAND            wingrp                     Construct            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-Construct_command015
+        COMMAND            win                        new                  GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-new_command016
+        COMMAND            win                        Construct            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-Construct_command017
+        COMMAND            win                        SetRequiredDisplayMode    GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-SetRequiredDisplayMode_command018
+        COMMAND            win                        SetBackgroundColor        GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-SetBackgroundColor_command019
+        COMMAND            win                        Activate
+        COMMAND            ws                         SetAutoFlush         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-SetAutoFlush_command021
+        COMMAND            wgc                        Activate             GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-Activate_command022
+        COMMAND            win                        BeginRedraw
+        COMMAND            wgc                        DrawWsGraphic        GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-DrawWsGraphic_command024
+        COMMAND            win                        EndRedraw
+        COMMAND            wgc                        Deactivate
+        COMMAND            bmpanim         Util_StartAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-Util_StartAnimTesterClientL_command027
+        COMMAND            scrdev                     RectCompare          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-RectCompare_command028
+        COMMAND            bmpanim         Util_CloseAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-Util_CloseAnimTesterClientL_command029
+        COMMAND            bmpanim                    ShareGlobally
+        COMMAND            bmpanim         Util_StartAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-Util_StartAnimTesterClientL_command031
+        COMMAND            scrdev                     RectCompare          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-RectCompare_command032
+        COMMAND            bmpanim         Util_CloseAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-Util_CloseAnimTesterClientL_command033
+        COMMAND            bmpanim                    UnShareGlobally
+        COMMAND            bmpanim         Util_StartAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-Util_StartAnimTesterClientL_command035
+        COMMAND            scrdev                     RectCompare          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-RectCompare_command036
+        COMMAND            bmpanim         Util_CloseAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013-0001-Util_CloseAnimTesterClientL_command037
+        COMMAND            bitmap1                    disown
+        COMMAND            frame1                     ~
+        COMMAND            bmpanim                    ~
+        COMMAND            win                        Close
+        COMMAND            wingrp                     Close
+        COMMAND            wgc                        ~
+        COMMAND            scrdev                     ~
+        COMMAND            ws                         Close
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0013
+
+
+START_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014
+//! @SYMAPI                 CWsGraphicBitmapAnimation::Share(TSecureId);
+//!                         CWsGraphicBitmapAnimation::UnShare(TSecureId)
+//! @SYMAuthor              Yue Zhang
+//! @SYMCreationDate        28-03-2008
+//! @SYMTestCaseDesc        Using another process with given SID draw the bitmap after the CWsGraphicBitmapAnimation share or unshare to the Sid.
+//! @SYMTestActions         1. Create CFrame object;
+//!                         2. Create RFbsSession object and connect;
+//!                         3. Create wsga object;
+//!                         4. Create RWsSession object and connect;
+//!                         5. Create CWsScreenDevice object and construct it;
+//!                         6. Create context of CWsScreenDevice;
+//!                         7. Create CFbsBitmap object;
+//!                         8. Load CFbsBitmap;
+//!                         9. Set FrameInfo and Bitmap to the CFrame object.
+//!                         10. Create CWsGraphicBitmapAnimation object with the CFrame object.
+//!                         11. Create RWindowGroup object and construct it.
+//!                         12. Create RWindow object and construct it.
+//!                         13. Set required display mode of RWindow object;
+//!                         14. Set background color of RWindow object.
+//!                         15. Active the RWindow object.
+//!                         16. Set auto flush of RWsSession object.
+//!                         17. Activate the CWindowGc object.
+//!                         18. Draw window session graphic by the CWindowGc object.
+//!                         19. Decativate the CWindowGc object.
+//!                         20. Start a test client in another process;
+//!                         21. Draw the window session bitmap in the client;
+//!                         22. Use CWsScreenDevice object to compare the drawn rectangle.
+//!                         23. Close the test client.
+//!                         24. Share the graphic artwork with the specified Secure ID;
+//!                         25. Start a test client in another process;
+//!                         26. Draw the window session bitmap in the client;
+//!                         27. Use CWsScreenDevice object to compare the drawn rectangle.
+//!                         28. Close the test client.
+//!                         29. Unshare the graphic artwork with the specified Secure ID;
+//!                         30. Start a test client in another process;
+//!                         31. Draw the window session bitmap in the client;
+//!                         32. Use CWsScreenDevice object to compare the drawn rectangle.
+//!                         33. Close the test client.
+//!                         34. Disown and destroy the created objects;
+//!                         35. Disconnect RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults The bitmap should not be drawn successfully at test action 21;
+//!                         The bitmap should be drawn successfully at test action 26;
+//!                         The bitmap should not be drawn successfully at test action 31.
+//! @SYMTestType            CIT
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim
+        CREATE_OBJECT      RWsSession                 ws
+        CREATE_OBJECT      CFrame                     frame1
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap1
+        CREATE_OBJECT      CWsScreenDevice            scrdev
+        CREATE_OBJECT      CWindowGc                  wgc
+        CREATE_OBJECT      TWsGraphicAnimation        wsga
+        CREATE_OBJECT      RWindowGroup               wingrp
+        CREATE_OBJECT      RWindow                    win
+        COMMAND            frame1                     NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            wsga                       new
+        COMMAND            ws                         new
+        COMMAND            ws                         Connect
+        COMMAND            scrdev                     new                  GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-new-command006
+        COMMAND            scrdev                     Construct
+        COMMAND            scrdev                     CreateContext        GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-CreateContext_command008
+        COMMAND            bitmap1                    new
+        COMMAND            bitmap1                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-Load-command010
+        COMMAND            frame1                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-SetFrameInfo-command011
+        COMMAND            frame1                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-SetBitmap-command012
+        COMMAND            bmpanim                    NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-NewL-command013
+        COMMAND            wingrp                     new                  GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-new_command014
+        COMMAND            wingrp                     Construct            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-Construct_command015
+        COMMAND            win                        new                  GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-new_command016
+        COMMAND            win                        Construct            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-Construct_command017
+        COMMAND            win                        SetRequiredDisplayMode    GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-SetRequiredDisplayMode_command018
+        COMMAND            win                        SetBackgroundColor        GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-SetBackgroundColor_command019
+        COMMAND            win                        Activate
+        COMMAND            ws                         SetAutoFlush         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-SetAutoFlush_command021
+        COMMAND            wgc                        Activate             GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-Activate_command022
+        COMMAND            win                        BeginRedraw
+        COMMAND            wgc                        DrawWsGraphic        GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-DrawWsGraphic_command024
+        COMMAND            win                        EndRedraw
+        COMMAND            wgc                        Deactivate
+        COMMAND            bmpanim         Util_StartAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-Util_StartAnimTesterClientL_command027
+        COMMAND            scrdev                     RectCompare          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-RectCompare_command028
+        COMMAND            bmpanim         Util_CloseAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-Util_CloseAnimTesterClientL_command029
+        COMMAND            bmpanim                    Share                GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-Share-command030
+        COMMAND            bmpanim         Util_StartAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-Util_StartAnimTesterClientL_command031
+        COMMAND            scrdev                     RectCompare          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-RectCompare_command032
+        COMMAND            bmpanim         Util_CloseAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-Util_CloseAnimTesterClientL_command033
+        COMMAND            bmpanim                    UnShare              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-UnShare-command034
+        COMMAND            bmpanim         Util_StartAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-Util_StartAnimTesterClientL_command035
+        COMMAND            scrdev                     RectCompare          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-RectCompare_command036
+        COMMAND            bmpanim         Util_CloseAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014-0001-Util_CloseAnimTesterClientL_command037
+        COMMAND            bitmap1                    disown
+        COMMAND            frame1                     ~
+        COMMAND            bmpanim                    ~
+        COMMAND            win                        Close
+        COMMAND            wingrp                     Close
+        COMMAND            wgc                        ~
+        COMMAND            scrdev                     ~
+        COMMAND            ws                         Close
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0014
+
+
+START_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015
+//! @SYMAPI                 CWsGraphicBitmapAnimation::Share(TSecureId);
+//!                         CWsGraphicBitmapAnimation::UnShare(TSecureId)
+//! @SYMAuthor              Yue Zhang
+//! @SYMCreationDate        28-03-2008
+//! @SYMTestCaseDesc        Using another process without the given Sid draw the bitmap after the CWsGraphicBitmapAnimation share or unshare to the Sid.
+//! @SYMTestActions         1. Create CFrame object;
+//!                         2. Create RFbsSession object and connect;
+//!                         3. Create wsga object;
+//!                         4. Create RWsSession object and connect;
+//!                         5. Create CWsScreenDevice object and construct it;
+//!                         6. Create context of CWsScreenDevice;
+//!                         7. Create CFbsBitmap object;
+//!                         8. Load CFbsBitmap;
+//!                         9. Set FrameInfo and Bitmap to the CFrame object.
+//!                         10. Create CWsGraphicBitmapAnimation object with the CFrame object.
+//!                         11. Create RWindowGroup object and construct it.
+//!                         12. Create RWindow object and construct it.
+//!                         13. Set required display mode of RWindow object;
+//!                         14. Set background color of RWindow object.
+//!                         15. Active the RWindow object.
+//!                         16. Set auto flush of RWsSession object.
+//!                         17. Activate the CWindowGc object.
+//!                         18. Draw window session graphic by the CWindowGc object.
+//!                         19. Decativate the CWindowGc object.
+//!                         20. Start a test client in another process;
+//!                         21. Draw the window session bitmap in the client;
+//!                         22. Use CWsScreenDevice object to compare the drawn rectangle.
+//!                         23. Close the test client.
+//!                         24. Share the graphic artwork with the specified Secure ID;
+//!                         25. Start a test client in another process;
+//!                         26. Draw the window session bitmap in the client;
+//!                         27. Use CWsScreenDevice object to compare the drawn rectangle.
+//!                         28. Close the test client.
+//!                         29. Unshare the graphic artwork with the specified Secure ID;
+//!                         30. Start a test client in another process;
+//!                         31. Draw the window session bitmap in the client;
+//!                         32. Use CWsScreenDevice object to compare the drawn rectangle.
+//!                         33. Close the test client.
+//!                         34. Disown and destroy the created objects;
+//!                         35. Disconnect RFbsSession.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults The bitmap should not be drawn successfully at test action 21;
+//!                         The bitmap should not be drawn successfully at test action 26;
+//!                         The bitmap should not be drawn successfully at test action 31.
+//! @SYMTestType            CIT
+   START_TEST_BLOCK   10   T_GraphicsWservAPI         \graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+        CREATE_OBJECT      CWsGraphicBitmapAnimation  bmpanim
+        CREATE_OBJECT      RWsSession                 ws
+        CREATE_OBJECT      CFrame                     frame1
+        CREATE_OBJECT      RFbsSession                fbssession
+        CREATE_OBJECT      CFbsBitmap                 bitmap1
+        CREATE_OBJECT      CWsScreenDevice            scrdev
+        CREATE_OBJECT      CWindowGc                  wgc
+        CREATE_OBJECT      TWsGraphicAnimation        wsga
+        CREATE_OBJECT      RWindowGroup               wingrp
+        CREATE_OBJECT      RWindow                    win
+        COMMAND            frame1                     NewL
+        COMMAND            fbssession                 Connect
+        COMMAND            wsga                       new
+        COMMAND            ws                         new
+        COMMAND            ws                         Connect
+        COMMAND            scrdev                     new                  GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-new-command006
+        COMMAND            scrdev                     Construct
+        COMMAND            scrdev                     CreateContext        GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-CreateContext_command008
+        COMMAND            bitmap1                    new
+        COMMAND            bitmap1                    Load                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-Load-command010
+        COMMAND            frame1                     SetFrameInfo         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-SetFrameInfo-command011
+        COMMAND            frame1                     SetBitmap            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-SetBitmap-command012
+        COMMAND            bmpanim                    NewL                 GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-NewL-command013
+        COMMAND            wingrp                     new                  GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-new_command014
+        COMMAND            wingrp                     Construct            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-Construct_command015
+        COMMAND            win                        new                  GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-new_command016
+        COMMAND            win                        Construct            GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-Construct_command017
+        COMMAND            win                        SetRequiredDisplayMode    GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-SetRequiredDisplayMode_command018
+        COMMAND            win                        SetBackgroundColor        GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-SetBackgroundColor_command019
+        COMMAND            win                        Activate
+        COMMAND            ws                         SetAutoFlush         GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-SetAutoFlush_command021
+        COMMAND            wgc                        Activate             GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-Activate_command022
+        COMMAND            win                        BeginRedraw
+        COMMAND            wgc                        DrawWsGraphic        GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-DrawWsGraphic_command024
+        COMMAND            win                        EndRedraw
+        COMMAND            wgc                        Deactivate
+        COMMAND            bmpanim         Util_StartAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-Util_StartAnimTesterClientL_command027
+        COMMAND            scrdev                     RectCompare          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-RectCompare_command028
+        COMMAND            bmpanim         Util_CloseAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-Util_CloseAnimTesterClientL_command029
+        COMMAND            bmpanim                    Share                GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-Share-command030
+        COMMAND            bmpanim         Util_StartAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-Util_StartAnimTesterClientL_command031
+        COMMAND            scrdev                     RectCompare          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-RectCompare_command032
+        COMMAND            bmpanim         Util_CloseAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-Util_CloseAnimTesterClientL_command033
+        COMMAND            bmpanim                    UnShare              GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-UnShare-command034
+        COMMAND            bmpanim         Util_StartAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-Util_StartAnimTesterClientL_command035
+        COMMAND            scrdev                     RectCompare          GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-RectCompare_command036
+        COMMAND            bmpanim         Util_CloseAnimTesterClientL     GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015-0001-Util_CloseAnimTesterClientL_command037
+        COMMAND            bitmap1                    disown
+        COMMAND            frame1                     ~
+        COMMAND            bmpanim                    ~
+        COMMAND            win                        Close
+        COMMAND            wingrp                     Close
+        COMMAND            wgc                        ~
+        COMMAND            scrdev                     ~
+        COMMAND            ws                         Close
+        COMMAND            fbssession                 Disconnect
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi-0015
+

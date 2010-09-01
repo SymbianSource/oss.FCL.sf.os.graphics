@@ -19,13 +19,13 @@
 #include "FBSVER.H"
 #include "FbsRalc.h"
 #include "fbshelper.h"
-#include "FbsMessage.H"
-#include <graphics/fbsoogmmessage.h>
+#include "fbsmessage.h"
 #include "OstTraceDefinitions.h"
 #include "fbstrace.h"
 #ifdef OST_TRACE_COMPILER_IN_USE
 #include "SESSIONTraces.h"
 #endif
+
 
 GLDEF_C void Panic(TFbsPanic aPanic)
 	{
@@ -285,7 +285,6 @@ EXPORT_C TInt RFbsSession::ResourceCount()
 EXPORT_C TInt RFbsSession::SendCommand(TInt aMessage,TInt aInt0,TInt aInt1,TInt aInt2,TInt aInt3) const
    {
 	__ASSERT_ALWAYS(iConnections>0,Panic(EFbsPanicBadConnection));
-
 	switch(aMessage)
 		{
 	case EFbsMessShutdown:
@@ -295,9 +294,7 @@ EXPORT_C TInt RFbsSession::SendCommand(TInt aMessage,TInt aInt0,TInt aInt1,TInt 
 	default:
 		break;
 		}
-
 	TInt ret = SendReceive(aMessage, TIpcArgs(aInt0,aInt1,aInt2,aInt3));
-
 	return(ret);
 	}
 
@@ -538,36 +535,6 @@ TInt RFbsSession::ServerSessionHandle() const
 	__ASSERT_ALWAYS(iConnections>0,Panic(EFbsPanicBadConnection));
 	return iHelper->iServerSessionHandle;
 	}
-
-EXPORT_C TInt RFbsSession::GetGlyphCacheMetrics( TGlyphCacheMetrics& aGlyphCacheMetrics )
-    {
-    TPckgBuf<TGlyphCacheMetrics> metrics;
-    TIpcArgs args( &metrics );
-
-    TInt ret = SendReceive( EFbsMessGetGlyphCacheMetrics, args );
-    aGlyphCacheMetrics = metrics();
-
-    return ret;
-    }
-
-/**
- Perform the IPC to convey the desired OoGM action to the glyph atlas.
-
- @return KErrNone if IPC was successful. One of the system-wide error
-         codes, as described for RSessionBase::SendReceive(), if not.
-
- @note The server-side platform security policy applied to this method is such that it is only useable by the GOoM framework.
-
- @param aOogmMessage. A reference to the class encapsulating the OoGM action required of the glyph atlas.
-*/
-EXPORT_C TInt RFbsSession::ConveyOogmMessage( TFbsOogmMessage& aOogmMessage )
-    {
-    TPckgBuf<TFbsOogmMessage> oogmMessage;
-    oogmMessage() = aOogmMessage;
-    TIpcArgs args( &oogmMessage );
-
-    return SendReceive( EFbsMessOogmNotification, args );
-    }
 
 /**
 Returns the current sizes of the FBServ default heap, the heap for large bitmaps, 

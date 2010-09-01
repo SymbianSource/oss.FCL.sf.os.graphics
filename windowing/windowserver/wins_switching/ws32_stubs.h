@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -14,6 +14,7 @@
 * Description: 
 *
 */
+
 
 extern "C" {
 void common_dispatch();
@@ -5220,87 +5221,6 @@ void call_vector_578 ()
 	_asm jmp common_dispatch
 	}
 
-__declspec(dllexport)
-__declspec(naked)
-void call_vector_579 ()
-	{
-	// ; void RWindowBase::SetPurpose(int)
-	_asm mov eax, 579
-	_asm jmp common_dispatch
-	}
-
-__declspec(dllexport)
-__declspec(naked)
-void call_vector_580 ()
-	{
-	// ; void RWindowBase::SendEffectCommand(int, class TDesC8 const &)
-	_asm mov eax, 580
-	_asm jmp common_dispatch
-	}
-
-__declspec(dllexport)
-__declspec(naked)
-void call_vector_581 ()
-	{
-	// ; void RWsSession::SendEffectCommand(int, class TDesC8 const &)
-	_asm mov eax, 581
-	_asm jmp common_dispatch
-	}
-
-__declspec(dllexport)
-__declspec(naked)
-void call_vector_582 ()
-	{
-	// ; void RWsSession::RegisterEffect(int, int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &, unsigned int, class TBitFlagsT<unsigned long>)
-	_asm mov eax, 582
-	_asm jmp common_dispatch
-	}
-
-__declspec(dllexport)
-__declspec(naked)
-void call_vector_583 ()
-	{
-	// ; void RWindowBase::OverrideEffects(int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &, class TBitFlagsT<unsigned long>)
-	_asm mov eax, 583
-	_asm jmp common_dispatch
-	}
-
-__declspec(dllexport)
-__declspec(naked)
-void call_vector_584 ()
-	{
-	// ; void RWsSession::OverrideEffects(int, int, class TBuf<256> const &, class TBuf<256> const &, class TBuf<256> const &, class TBitFlagsT<unsigned long>)
-	_asm mov eax, 584
-	_asm jmp common_dispatch
-	}
-
-__declspec(dllexport)
-__declspec(naked)
-void call_vector_585 ()
-	{
-	// ; void RWsSession::UnregisterEffect(int, int, unsigned int)
-	_asm mov eax, 585
-	_asm jmp common_dispatch
-	}
-
-__declspec(dllexport)
-__declspec(naked)
-void call_vector_586 ()
-	{
-	// ; void RWsSession::UnregisterAllEffects(void)
-	_asm mov eax, 586
-	_asm jmp common_dispatch
-	}
-
-__declspec(dllexport)
-__declspec(naked)
-void call_vector_587 ()
-	{
-	// ; void RWsSession::IndicateAppOrientation(enum TRenderOrientation)
-	_asm mov eax, 587
-	_asm jmp common_dispatch
-	}
-
 }
-#define MAX_ORDINAL 588
+#define MAX_ORDINAL 579
 

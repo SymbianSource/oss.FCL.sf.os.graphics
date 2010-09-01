@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,13 +13,12 @@
 // Description:
 //
 
-
+#include <apgtask.h>
 #include <hal.h>
 #include <w32debug.h>
 #include <e32std.h> 
 #include <graphics/fbsdefs.h>
 
-#include "apgrfxfacade.h"
 #include "TGraphicsHarness.h"
 #include "GraphicsTestUtilsServer.h"
 
@@ -503,10 +502,10 @@ EXPORT_C TVerdict CTGraphicsStep::doTestStepL()
 		theWindow.Activate();
 	
 	//the following trick we need to put the window on the top
-		TApaTaskListFacade taskList(ws);
-		TApaTaskFacade task = taskList.FindByPos(1);
+		TApaTaskList taskList(ws);
+		TApaTask task = taskList.FindByPos(1);
 		task.BringToForeground();
-		TApaTaskFacade task1(ws);
+		TApaTask task1(ws);	
 		task1.SetWgId(theId1);
 		task1.BringToForeground();
 		}

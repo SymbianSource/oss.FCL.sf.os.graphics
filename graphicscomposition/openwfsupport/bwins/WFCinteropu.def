@@ -22,11 +22,11 @@ EXPORTS
 	SymbianStreamSetFlipState @ 21 NONAME
 	SymbianStreamAddExtendedObserver @ 22 NONAME
 	SymbianStreamCheckVisible @ 23 NONAME
-	reserveEntrypoint25 @ 24 NONAME ABSENT
-	reserveEntrypoint26 @ 25 NONAME ABSENT
+	SymbianStreamProcessAvailableNotifications @ 24 NONAME
+	SymbianStreamProcessDisplayedNotifications @ 25 NONAME
 	SymbianStreamProcessNotifications @ 26 NONAME
 	
-	SymbianStreamGetChunkHandle @ 27 NONAME
+	reserveEntrypoint1 @ 27 NONAME ABSENT
 	reserveEntrypoint2 @ 28 NONAME ABSENT
 	reserveEntrypoint3 @ 29 NONAME ABSENT
 	reserveEntrypoint4 @ 30 NONAME ABSENT
@@ -50,11 +50,9 @@ EXPORTS
 	reserveEntrypoint22 @ 48 NONAME ABSENT
 	reserveEntrypoint23 @ 49 NONAME ABSENT
 	?GetMainHeap@COpenWfcStreamMap@@QAEPAVRHeap@@XZ @ 50 NONAME ; class RHeap * COpenWfcStreamMap::GetMainHeap(void)
-	reserveEntrypoint24 @ 51 NONAME ABSENT 
+	?Reserve@COpenWfcStreamMap@@QAEHH@Z @ 51 NONAME ; int COpenWfcStreamMap::Reserve(int)
 	?InstanceL@COpenWfcStreamMap@@SAAAV1@XZ @ 52 NONAME ; class COpenWfcStreamMap & COpenWfcStreamMap::InstanceL(void)
 	?XXX_Find@COpenWfcStreamMap@@QAEPAVCSurfaceStream@@ABVTSurfaceId@@@Z @ 53 NONAME ABSENT; class CSurfaceStream * COpenWfcStreamMap::Find(class TSurfaceId const &)
 	?Count@COpenWfcStreamMap@@QAEHXZ @ 54 NONAME ; int COpenWfcStreamMap::Count(void)
 	?XXX_AcquireL@COpenWfcStreamMap@@QAEPAVCSurfaceStream@@ABVTSurfaceId@@@Z @ 55 NONAME ABSENT; class CSurfaceStream * COpenWfcStreamMap::AcquireL(class TSurfaceId const &)
-	?SurfaceManager@COpenWfcStreamMap@@QAEAAVRSurfaceManager@@XZ @ 56 NONAME ; class RSurfaceManager & COpenWfcStreamMap::SurfaceManager(void)
-
 

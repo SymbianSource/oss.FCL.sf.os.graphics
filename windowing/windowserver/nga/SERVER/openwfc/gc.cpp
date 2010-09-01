@@ -23,7 +23,7 @@
 #include "ScrDev.H"
 #include "wstop.h"
 #include "panics.h"
-#include "graphics/WSGRAPHICDRAWER.H"
+#include "Graphics/WSGRAPHICDRAWER.H"
 #include "wsfont.h"
 
 class TPlacedAttributes;

@@ -19,7 +19,7 @@
 #include <e32std.h>
 #include "W32STD.H"
 #include <e32svr.h>
-#include "../test/tlib/testbase.h"
+#include "../tlib/testbase.h"
 
 const TInt ETestFailed = 1;
 

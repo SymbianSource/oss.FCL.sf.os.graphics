@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -372,8 +372,6 @@ _LIT8(KVgKhrEglImage,"VG_KHR_EGL_image");
 _LIT8(KEglKhrReusableSync,"EGL_KHR_reusable_sync");
 _LIT8(KEglNokPrivateSignalSync,"EGL_NOK__private__signal_sync");
 _LIT8(KEglNokiaSwapBuffers,"EGL_NOKIA_swap_buffers");
-_LIT8(KEglNokiaImageEndpoint,"EGL_NOK_image_endpoint");
-_LIT8(KEglNokiaSurfaceScaling,"EGL_NOK_surface_scaling");
 #ifndef SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
 _LIT8(KEglSymbianImagePreserved,"EGL_SYMBIAN_image_preserved");
 #endif
@@ -389,9 +387,7 @@ enum TExtensionsId
 	KEGL_KHR_reusable_sync			= 0x10,
 	KEGL_NOK__private__signal_sync  = 0x20,
 	KEGL_NOKIA_swap_buffers         = 0x40,
-    KEGL_SYMBIAN_image_preserved    = 0x80,
-    KEGL_NOK_image_endpoint         = 0x100,
-    KEGL_NOK_surface_scaling        = 0x200
+	KEGL_SYMBIAN_image_preserved	= 0x80
 	};
 
 const TUid KUidEglTestServer={0x10281B40};

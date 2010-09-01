@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -121,11 +121,6 @@ void CTFontSelect::DoFontSelectTestsL()
 	_LIT(KIgnoreFont2, "LinkedFont3TT"); //LinkedFont3/4TT both cause test failure on Freetype
 	_LIT(KIgnoreFont3, "LinkedFont4TT"); //They are test files with incorrect metrics
 
-	// Maximum height of font allowed by iType rasteriser
-	const TInt KMaxITypeHeightInPixels = 256;
-	_LIT(KErrorMessageWithFontName, "Font: %S, pixel height requested: %d, pixel height of font: %d");
-	_LIT(KErrorMessage, "Pixel height requested: %d, pixel height of font: %d");
-
 	for (TInt count = 0; count < typefaces; count++)
 		{
 		iDevice->TypefaceSupport( info, count );
@@ -133,56 +128,18 @@ void CTFontSelect::DoFontSelectTestsL()
 		for (TInt index = 0; index < info.iNumHeights; index++)
 			{
 			TInt height = iDevice->FontHeightInPixels( count, index );
-			if (height > KMaxITypeHeightInPixels)
-				{
-				continue;
-				}
 			fs.iTypeface = info.iTypeface;
 			fs.iHeight = height;
 
 			INFO_PRINTF1(_L("Test GetNearestFontInPixels"));
 			User::LeaveIfError( iDevice->GetNearestFontInPixels( (CFont*&)iFont1 ,fs ) );
-			TInt heightInPixels = iFont1->HeightInPixels();
-			if ( heightInPixels == height )
-				{
-				TEST( ETrue );
-				}
-			else
-				{
-				TOpenFontFaceAttrib attrib;
-				if( iFont1->GetFaceAttrib( attrib ) )
-					{
-					INFO_PRINTF4(KErrorMessageWithFontName, &attrib.FullName(), height, heightInPixels);
-					}
-				else
-					{
-					INFO_PRINTF3(KErrorMessage, height, heightInPixels);
-					}
-				TEST( EFalse );
-				}
+			TEST(iFont1->HeightInPixels() == height);
 
 			INFO_PRINTF1(_L("Test GetNearestFontToDesignHeightInPixels"));
 			User::LeaveIfError( iDevice->GetNearestFontToDesignHeightInPixels( (CFont*&)iFont2, fs ) );
-			heightInPixels = iFont2->HeightInPixels();
-			if ( heightInPixels == height )
-				{
-				TEST( ETrue );
-				}
-			else
-				{
-				TOpenFontFaceAttrib attrib;
-				if( iFont2->GetFaceAttrib( attrib ) )
-					{
-					INFO_PRINTF4(KErrorMessageWithFontName, &attrib.FullName(), height, heightInPixels);
-					}
-				else
-					{
-					INFO_PRINTF3(KErrorMessage, height, heightInPixels);
-					}
-				TEST( EFalse );
-				}
+			TEST(iFont2->HeightInPixels() == height);
 			iDevice->ReleaseFont( iFont2 );
-			iDevice->ReleaseFont( iFont1 );
+			iDevice->ReleaseFont(iFont1);
 			}
 			
 		INFO_PRINTF1(_L("Test GetNearestFontToMaxHeightInPixels"));
@@ -222,7 +179,7 @@ void CTFontSelect::DoFontSelectTestsL()
 				// as it could be down to the hinting rounding error that can very occasionally occur
 				// We can't make this test reliably with bitmap fonts
 				INFO_PRINTF1(_L("Font is scalable"));
-				TEST(iFont3->FontMaxHeight() <= maxHeight+1);
+				TEST(iFont3->FontMaxHeight() <= maxHeight);
 				}
 
 			INFO_PRINTF1(_L("Test font level metrics"));

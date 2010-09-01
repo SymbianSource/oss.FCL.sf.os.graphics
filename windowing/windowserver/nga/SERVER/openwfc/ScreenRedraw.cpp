@@ -26,9 +26,9 @@
 #include "wstop.h"
 #include "WsMemMgr.h"
 #include "renderstagemanager.h"
-#include "graphics/WsRenderStageFactory.h"
-#include "graphics/WsRenderStage.h"
-#include "graphics/wsgraphicscontext.h"
+#include "Graphics/WsRenderStageFactory.h"
+#include "Graphics/WsRenderStage.h"
+#include "Graphics/wsgraphicscontext.h"
 #include "EVENT.H"
 
 #ifdef USE_DEBUG_FRAME_CAPTURE

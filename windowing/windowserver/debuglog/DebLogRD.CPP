@@ -72,6 +72,6 @@ void CDebugLogPrint::WriteToLog8L(const TDesC8 &aDes, const TDesC8 &aDes2)
 	ptr.Copy(aDes2);
 	buf.SetLength(bufLen+aDes2.Length());
 	_LIT(KDebugFormatString, "%S");
-	RDebug::Print(KDebugFormatString, &buf);	
+	RDebug::Print(KDebugFormatString, &buf);
 	}
 

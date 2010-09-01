@@ -21,5 +21,3 @@ TESTEXECUTE, \logs\testexecute\fntstoretest_T_LinkedFontUpdateStage2.htm,	, z:\f
 
 # PREQ1543 bitgdi
 TESTEXECUTE, \logs\testexecute\bitgdiTest_T_outlineandshadowfonts.htm,		, z:\bitgdiTest\bitgdiTest_T_outlineandshadowfonts.script,	2000
-
-TESTEXECUTE, \logs\testexecute\fbstest_t_glyphdataoutlineshadow.htm,		, z:\fbstest\fbstest_t_glyphdataoutlineshadow.script,	600

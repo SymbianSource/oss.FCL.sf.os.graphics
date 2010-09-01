@@ -1,0 +1,80 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+
+#if (!defined __T_WSERV_API_TESTDATA_IBY__)
+#define __T_WSERV_API_TESTDATA_IBY__
+
+data=EPOCROOT##Epoc32\data\z\graphics\setup-t-graphics-wserv-publicapi.script				graphics\setup-t-graphics-wserv-publicapi.script
+
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-BackedUpWindow-PublicApi.script        graphics\GRAPHICS-WSERV-BackedUpWindow-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-BlankWindow-PublicApi.script           graphics\GRAPHICS-WSERV-BlankWindow-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-DirectScreenAccess-PublicApi.script    graphics\GRAPHICS-WSERV-DirectScreenAccess-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-DsaSession-PublicApi.script            graphics\GRAPHICS-WSERV-DsaSession-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-Events-PublicApi.script                graphics\GRAPHICS-WSERV-Events-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-PublicApi.script                       graphics\GRAPHICS-WSERV-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-Session-PublicApi.script               graphics\GRAPHICS-WSERV-Session-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.script           graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WindowGc-PublicApi.script              graphics\GRAPHICS-WSERV-WindowGc-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.script           graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-Window-PublicApi.script                graphics\GRAPHICS-WSERV-Window-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WsBitmap-PublicApi.script              graphics\GRAPHICS-WSERV-WsBitmap-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.script       graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.script       graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WsScreenDevice-PublicApi.script        graphics\GRAPHICS-WSERV-WsScreenDevice-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WsSprite-PublicApi.script              graphics\GRAPHICS-WSERV-WsSprite-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WsPointerCursor-PublicApi.script       graphics\GRAPHICS-WSERV-WsPointerCursor-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.script graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-Frame-PublicApi.script                 graphics\GRAPHICS-WSERV-Frame-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-Anim-PublicApi.script                  graphics\GRAPHICS-WSERV-Anim-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-AnimDll-PublicApi.script               graphics\GRAPHICS-WSERV-AnimDll-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.script              graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-AnimWindowFunctions-PublicApi.script   graphics\GRAPHICS-WSERV-AnimWindowFunctions-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-AnimGeneralFunctions-PublicApi.script  graphics\GRAPHICS-WSERV-AnimGeneralFunctions-PublicApi.script
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi.script   graphics\GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi.script
+
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-BackedUpWindow-PublicApi.ini           graphics\GRAPHICS-WSERV-BackedUpWindow-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-BlankWindow-PublicApi.ini              graphics\GRAPHICS-WSERV-BlankWindow-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-DirectScreenAccess-PublicApi.ini       graphics\GRAPHICS-WSERV-DirectScreenAccess-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-DsaSession-PublicApi.ini               graphics\GRAPHICS-WSERV-DsaSession-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-Events-PublicApi.ini                   graphics\GRAPHICS-WSERV-Events-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-Session-PublicApi.ini                  graphics\GRAPHICS-WSERV-Session-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini              graphics\GRAPHICS-WSERV-SoundPlugin-PublicAPI.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WindowGc-PublicApi.ini                 graphics\GRAPHICS-WSERV-WindowGc-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini              graphics\GRAPHICS-WSERV-WindowGroup-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-Window-PublicApi.ini                   graphics\GRAPHICS-WSERV-Window-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WsBitmap-PublicApi.ini                 graphics\GRAPHICS-WSERV-WsBitmap-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini          graphics\GRAPHICS-WSERV-WsGraphicBitmap-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini          graphics\GRAPHICS-WSERV-WsGraphicMsgBuf-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WsScreenDevice-PublicApi.ini           graphics\GRAPHICS-WSERV-WsScreenDevice-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini                 graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WsPointerCursor-PublicApi.ini          graphics\GRAPHICS-WSERV-WsPointerCursor-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini graphics\GRAPHICS-WSERV-WsGraphicBitmapAnimation-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-Frame-PublicApi.ini                    graphics\GRAPHICS-WSERV-Frame-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-Anim-PublicApi.ini                     graphics\GRAPHICS-WSERV-Anim-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-AnimDll-PublicApi.ini                  graphics\GRAPHICS-WSERV-AnimDll-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-AnimGeneralFunctions-PublicApi.ini     graphics\GRAPHICS-WSERV-AnimGeneralFunctions-PublicApi.ini 
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi.ini      graphics\GRAPHICS-WSERV-AnimSpriteFunctions-PublicApi.ini 
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini                 graphics\GRAPHICS-WSERV-AnimGfwe-PublicApi.ini
+data=EPOCROOT##Epoc32\data\z\graphics\GRAPHICS-WSERV-AnimWindowFunctions-PublicApi.ini      graphics\GRAPHICS-WSERV-AnimWindowFunctions-PublicApi.ini
+
+data=EPOCROOT##Epoc32\data\z\graphics\wserv\test_alpha.mbm                  graphics\wserv\test_alpha.mbm
+data=EPOCROOT##Epoc32\data\z\graphics\wserv\test_board.mbm                  graphics\wserv\test_board.mbm
+data=EPOCROOT##Epoc32\data\z\graphics\wserv\test_mask.mbm                   graphics\wserv\test_mask.mbm
+data=EPOCROOT##Epoc32\data\z\graphics\wserv\test_rwssprite_bitmap.mbm       graphics\wserv\test_rwssprite_bitmap.mbm
+data=EPOCROOT##Epoc32\data\z\graphics\wserv\WsGraphicBitmapAnimation.mbm    graphics\wserv\WsGraphicBitmapAnimation.mbm
+data=EPOCROOT##Epoc32\data\z\graphics\wserv\testfontws.gdr                  graphics\wserv\testfontws.gdr
+
+#endif

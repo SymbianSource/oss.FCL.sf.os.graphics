@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,11 +16,11 @@
 /**
  @file
  @test
+ @internalComponent
 */
 
 #include "t_wservintegstepsurface.h"
 #include "t_wservconsts.h"
-#include <test/t_simload.h>
 
 /**
  CT_WServIntegStepSurface constructor.
@@ -47,15 +47,11 @@ enum TVerdict CT_WServIntegStepSurface::doTestStepL()
 	PrintTestStepName();
 
 	GetConfigDataL(KSimLoadData(), KSimLoadDataName());
-	PrintConfigDataL(KSimLoadConfigFile());
+	PrintConfigDataL(KWServSimLoadConfigFile());
 	CreateSimLoadProcL();
 	ClearConfigData();
 
-	// Semaphore created here to maintain compatibility with DSA test use of t_app1
-	RSemaphore dudSemaphore;
-	User::LeaveIfError(dudSemaphore.CreateGlobal(KWservDsaSemaphoreName(), 0));
-
-    GetConfigDataL(KTApp1Data(), KTApp1DataName());
+	GetConfigDataL(KTApp1Data(), KTApp1DataName());
 	PrintConfigDataL(KWServTApp1ConfigFile());
 	TInt err = CreateTestProcessL(KWServTApp1, EPriorityForeground);
 	TEST(err==KErrNone);
@@ -95,7 +91,6 @@ enum TVerdict CT_WServIntegStepSurface::doTestStepL()
 	CheckResultsL(KPseudoAppResultData(), KPseudoAppResultDataName(), KWServPseudoAppResultFile());
 	PrintResultsL(KWServPseudoAppResultFile());
 
-	dudSemaphore.Close();
 	CleanUp();
 
 	__UHEAP_MARKEND;
@@ -111,7 +106,7 @@ void CT_WServIntegStepSurface::CreateSimLoadProcL()
 
 	while (simLoadAppErr == KErrNone && index <= KNumSimLoadApps)
 		{
-		tempStore.Format(KSimLoadApp, index++);
+		tempStore.Format(KWServSimLoadApp, index++);
 
 		simLoadAppErr = CreateTestProcessL(tempStore, EPriorityHigh);
 		}

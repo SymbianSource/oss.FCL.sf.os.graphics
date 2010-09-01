@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -26,7 +26,6 @@
 #include "tdirectgdiperf.h"
 #include "teventhandlingperf.h"
 #include "tflipframerate.h"
-#include "trenderorientation.h"
 
 /**
 Same code for Secure and non-secure variants
@@ -103,7 +102,6 @@ Implementation of CTestServer pure virtual
 CTestStep* CGceSuiteServer::CreateTestStep(const TDesC& aStepName)
 	{
 	CTestStep* testStep = NULL;
-	
 	if(aStepName == KTGraphicsResource)
 		testStep = new CTGraphicsResource();
 	else if(aStepName == KTBitBltPerfDirectGdi)
@@ -115,9 +113,6 @@ CTestStep* CGceSuiteServer::CreateTestStep(const TDesC& aStepName)
 	else if(aStepName == KEventHandlingPerfName)
 		testStep = new CTEventHandlingPerf();
 	else if(aStepName == KTFlipFramerate)
-	    testStep = new CTFlipFramerate();
-	else if(aStepName == KTRenderOrientation)
-	    testStep = new CTRenderOrientation;
-	
+	    testStep = new CTFlipFramerate;
 	return testStep;
 	}

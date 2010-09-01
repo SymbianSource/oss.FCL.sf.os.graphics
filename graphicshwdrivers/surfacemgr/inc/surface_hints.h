@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -46,12 +46,6 @@ const TInt KSurfaceUpdate = 0x2;
     @see TSurfaceProtection for possible values.
 */
 const TInt KSurfaceProtection = 0x3;
-
-/** Hint about the surface’s characteristics or properties,
-   For example if a surface can be persisted by the effects engine.
-   @see TSurfaceCharacteristics for possible values.
-*/
-const TInt KSurfaceCharacteristics = 0x4;
 
 
 /** Values used for the KSurfaceContent key */
@@ -126,17 +120,6 @@ enum TSurfaceProtection
     };
 
 
-/** Values used for the KSurfaceCharacteristics key. The values are bitmasks and can be combined.
-*/
-enum TSurfaceCharacteristics
-    {
-    /**
-    * Surface cannot be persisted once it has been closed by the creator
-    */
-    ENotPersistable = 1,
-    };
-
-
 class TSurfaceUpdate
     {
     /** Constructor.
@@ -202,7 +185,7 @@ TBool TSurfaceUpdate::TearingFree() const
     return ( iValue & 0x80000000 ) ? ETrue : EFalse;
     }
 
-} //namespace surfaceHints
+}; //namespace surfaceHints
 
 #endif //__SURFACE_HINTS_H__
 

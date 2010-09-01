@@ -18,9 +18,6 @@ rem Copyright (c) 2008 Nokia Corporation and/or its subsidiary(-ies).
 #if (!defined __T_WSERV_GENERICPLUGIN_IBY__)
 #define __T_WSERV_GENERICPLUGIN_IBY__
 
-#include <graphics_sirocco_wsini.hby>
-#define WSERV_TEST_WSINI WSERV_TEST_WSINI_GENERICPLUGIN
-
 #include <testexecute.iby>
 
 // wserv testexecute server

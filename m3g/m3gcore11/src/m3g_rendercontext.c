@@ -424,7 +424,6 @@ M3G_API void m3gFreeGLESResources(M3GRenderContext ctx)
 
     /* EGL might not be initialized yet, so do it here just in case. */ 
     eglInitialize(eglGetDisplay(EGL_DEFAULT_DISPLAY), NULL, NULL);
-    eglBindAPI(EGL_OPENGL_ES_API);
     eglMakeCurrent(eglGetDisplay(EGL_DEFAULT_DISPLAY), NULL, NULL, NULL);
 
     /* Delete EGL surfaces */
@@ -1388,8 +1387,8 @@ M3G_API void m3gReleaseTarget(M3GRenderContext context)
      * last time we rendered, then release the GL context so we don't
      * hog resources */
 #   if !defined(M3G_NGL_CONTEXT_API)
-    if (ctx->target.type == SURFACE_WINDOW) {
-        m3gSwapBuffers(ctx->target.surface);
+    if (ctx->target.type != SURFACE_EGL) {
+//    m3gSwapBuffers(ctx->target.surface);
     }
 #   endif
     m3gCollectGLObjects(M3G_INTERFACE(ctx));

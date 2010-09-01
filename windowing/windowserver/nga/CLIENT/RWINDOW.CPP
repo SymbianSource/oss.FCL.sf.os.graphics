@@ -1,4 +1,4 @@
-// Copyright (c) 1994-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1994-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,7 +20,6 @@
 #include "CLIENT.H"
 #include "w32comm.h"
 #include <graphics/surface.h>
-#include "rtfxeffect.h"
 
 RWindowTreeNode::RWindowTreeNode()
 /** Protected default constructor.
@@ -171,6 +170,12 @@ resources owned by its children are not freed. To free these resources, Close()
 	         {
 	         DestroyWindowSizeCacheEntry();
 	         }
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+	    if (WindowNativeSizeCacheEnabled())
+	         {
+	         DestroyWindowNativeSizeCacheEntry();
+	         }
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
         Write(EWsWinOpFree);
 	    }
 	iWsHandle=NULL;
@@ -841,15 +846,31 @@ This function always causes a flush of the window server buffer.
         }
 	}
 
+EXPORT_C TSize RWindowBase::SizeForEgl() const
+#ifdef SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 /**
 @internalAll
 Disclaimer - this API is internal and is subject to change
-@deprecated */
-EXPORT_C TSize RWindowBase::SizeForEgl() const
+@prototype */
+	{
+	TSize size;
+	if (WindowNativeSizeCacheEnabled() && WindowNativeSize(size) == KErrNone)
+		{
+		return size;
+		}
+	else
+		{
+		return Size();
+		}
+	}
+#else
     {
-    return Size();
+    // API should not be used if macro undefined.
+    ASSERT(0);
+    return TSize();
     }
-    
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+
 EXPORT_C void RWindowBase::SetPosition(const TPoint &aPos)
 /** Sets the position of a window relative to its parent. 
 
@@ -1363,7 +1384,7 @@ one finger touching it at the same time), then this method will enable deliverin
 events from all detected pointers to this window.
 
 This method must be called before the window is activated by calling RWindowBase::Activate().
-Otherwise the client is panicked with the code EWservPanicUnableToEnableAdvPointer.
+Otherwise this will be ignored (release build), or panic (debug build). 
 
 If this method is not called for the window, it is assumed that the window is not
 able to receive events from multiple pointers, and thus only events from a single
@@ -1390,11 +1411,44 @@ receive only events from the emulated pointer.
 /**
 @internalAll
 Disclaimer - this API is internal and is subject to change
-@deprecated */
+@prototype */
 EXPORT_C TInt RWindowBase::FixNativeOrientation()
+#if !defined(SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION) || defined (SYMBIAN_GRAPHICS_BUILD_OPENWF_WSERV) || defined (__WINS__) 
     {
     return KErrNotSupported;
     }
+#else
+	{
+    TInt err = KErrNone;
+	if (!WindowNativeSizeCacheEnabled())
+		{
+		TRAP(err, EnableWindowNativeSizeCacheL());
+		if (err != KErrNone)
+		    {
+            return err;
+		    }
+		}
+	
+	const CFbsBitGc::TGraphicsOrientation orientation = static_cast<CFbsBitGc::TGraphicsOrientation>(WriteReply(EWsWinOpFixNativeOrientation));
+	switch (orientation)
+		{
+	case CFbsBitGc::EGraphicsOrientationNormal:
+    case CFbsBitGc::EGraphicsOrientationRotated180:
+		err = SetWindowNativeSize(Size());
+        break;
+	case CFbsBitGc::EGraphicsOrientationRotated90 :
+    case CFbsBitGc::EGraphicsOrientationRotated270:
+        {
+	    TSize size = Size();
+	    err = SetWindowNativeSize(TSize(size.iHeight, size.iWidth));
+        }
+		break;
+	default:
+	    Assert(EW32AssertInvalidOrientation);
+		}
+	return err;
+	}
+#endif // SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
 
 EXPORT_C TInt RWindowBase::AllocPointerMoveBuffer(TInt aMaxNumPoints, TUint aFlags)
 /** Allocates a buffer for storing pointer movements. 
@@ -1878,54 +1932,7 @@ EXPORT_C TRgb RWindowBase::KeyColor() const
 	return argb;
 	}
 
-EXPORT_C void RWindowBase::SetPurpose(TInt aPurpose)
-/** 
-Sets specific window  purpose to the TFX layer. The purpose passed 
-by the client API will be directed to MWsTfxLayer::SetPurpose. 
-@param aPurpose The window purpose information. 
-@see MWsTfxLayer
-@publishedPartner
-@prototype
-*/
-	{
-	WriteInt(aPurpose,EWsWinOpSetPurpose);
-	}
-
-EXPORT_C void RWindowBase::SendEffectCommand(TInt aTfxCmd,const TDesC8& aTfxCmdData)
-/** 
-Sets specific effect data or execute commands to the TFX layer.
-The data or command passed by the client API will be directed to MWsTfxLayer::SendEffectCommand.
-MWsTfxLayer will accept only window specific commands and data.
-@param aTfxCmd TFX layer command.
-@param aTfxCmdData Data structure related to the specified value of aTfxCmd. The default value is KNullDesC8.
-@publishedPartner
-*/
-    {
-    __ASSERT_ALWAYS(aTfxCmdData.Length()<=KMaxWservStringSize, Panic(EW32PanicStringTooLong));
-    TWsClCmdSendEffectCommand params(aTfxCmd,aTfxCmdData.Size(),this->iWsHandle);
-    Write(&params,sizeof(params),aTfxCmdData.Ptr(),aTfxCmdData.Size(),EWsWinOpSendEffectCommand);
-    }
-
-EXPORT_C void RWindowBase::OverrideEffects(TInt aAction, const TFileName& aResourceDir, const TFileName& aFilenameOutgoing, const TFileName& aFilenameIncoming, TBitFlags aFlags)
-/**
-Overides the default animation for current window's transition effect by sent animation description.
-Please refer RWsSession::RegisterEffect() comments for more information on animation description.
-
-@param aAction The particular transition to set the animation for.
-@param aResourceDir The name of the directory that contains the animation description files.
-@param aFilenameOutgoing The file containing the description of the animation for the outgoing phase of the transition. 
-						 Specify KNullDesC for no outgoing phase effect.
-@param aFilenameIncoming The file containing the description of the animation for the incoming phase of the transition. 
-						 Specify KNullDesC for no incoming phase effect.
-@param aFlags Flag for the effect. Please see TTfxFlags for values this flag parameter can use.
-
-@publishedPartner
-*/
-	{
-	RTFXEffect tfxEffect(iWsHandle, iBuffer);
-	tfxEffect.OverrideTFXEffect(RTFXEffect::ETFXWindow, aAction, 0, aResourceDir, aFilenameOutgoing, aFilenameIncoming, aFlags);
-	}
-//////////////////////////// RDrawableWindow ////////////////////////////////
+// RDrawableWindow //
 
 void RDrawableWindow::doScroll(const TRect &aClipRect, const TPoint &aOffset, const TRect &aRect, TInt aOpcode)
 	{
@@ -2798,7 +2805,6 @@ aModifierMask need to be set and which need to be unset. For example, see the
 description above. 
 @param aPriority A priority value - if more than one window group has requested 
 capture for the same key event, the one with the highest priority will capture it.
-The value must be greater than KMinTInt.
 @return A handle identifying the capture key, or one of the system-wide error 
 codes (if <0). KErrPermissionDenied indicates that the requested key cannot be 
 captured by this window group, because it has been protected by another window group. 
@@ -2867,7 +2873,6 @@ Possible values are defined in TEventModifier.
 aModifierMask need to be set and which need to be unset. 
 @param aPriority A priority value - if more than one window group has requested 
 capture for the same key event, the one with the highest priority will capture it.
-The value must be greater than KMinTInt.
 @return A handle identifying the capture key, or one of the system-wide error 
 codes (if < 0). KErrPermissionDenied indicates that the requested key cannot be captured by this 
 window group, because it has been protected by another window group. For more information, see 
@@ -2939,7 +2944,6 @@ in aModifierMask match these states, where 1 = modifier set, and 0 = modifier
 not set. Modifier key states are defined in TEventModifier. 
 @param aPriority If more than one window group has requested capture for the 
 same long key event, the one with the highest priority will capture the event.
-The value must be greater than KMinTInt.
 @param aFlags Configures the long key capture behaviour. See the TLongCaptureFlags 
 enum.
 @return Identifying value for the long key capture. For use with the CancelCaptureLongKey() 
@@ -2975,7 +2979,6 @@ in aModifierMask match these states, where 1 = modifier set, and 0 = modifier
 not set. Modifier key states are defined in TEventModifier. 
 @param aPriority If more than one window group has requested capture for the 
 same long key event, the one with the highest priority will capture the event.
-The value must be greater than KMinTInt.
 @param aFlags Configures the long key capture behaviour. See the TLongCaptureFlags 
 enum.
 @return Identifying value for the long key capture. For use with the CancelCaptureLongKey() 

@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -22,12 +22,8 @@
 #ifndef __T_WINUTILS_H__
 #define __T_WINUTILS_H__
 
-#include <e32std.h>
-#include <w32std.h>
-#include <displaymode.h>
-#include <fbs.h>
-#include <bitdev.h>
-#include <iniparser.h>
+#include <eikenv.h>		//Displaymode
+#include <cinidata.h>
 
 class CTestBitmap : public CBase
 	{

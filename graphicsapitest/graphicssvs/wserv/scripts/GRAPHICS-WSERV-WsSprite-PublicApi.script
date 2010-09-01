@@ -1,0 +1,1620 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName		GRAPHICS-WSERV-WsSprite-PublicApi
+//! @SYMScriptTestEnvironment	This test script requires a basic ROM.
+
+///////////////////////////////////////////////////////////////////////////////
+// GRAPHICS-WSERV-WsSprite-PublicApi.script
+//
+// Tests all public elements of the RWsSprite class
+// as a means of confidence that the API works as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for
+// RWsSprite related classes.
+// Negative testing is performed to confirm that correct errors are returned
+// when incorrect parameters are given.
+//
+// The tests are fully automated.
+///////////////////////////////////////////////////////////////////////////////
+
+LOAD_SUITE  T_GraphicsWservAPI
+
+// ****************************************************************************
+// RWsSprite
+// ****************************************************************************
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0001
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0001
+//! @SYMAPI                 RWsSprite::RWsSprite()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        28/11/2007
+//! @SYMTestCaseDesc        Create a RWsSprite object with default construct.
+//! @SYMTestActions         1.Create RWsSprite with default constructor.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults RWsSprite object was created without causing panic
+//! @SYMTestType            CIT
+   START_TEST_BLOCK     10         T_GraphicsWservAPI     \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSprite  sprite
+        COMMAND         sprite     new
+        COMMAND         sprite     Close
+   END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0001
+
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0002
+//! @SYMTestCaseID              GRAPHICS-WSERV-WsSprite-PublicApi-0002
+//! @SYMAPI                     RWsSprite::RWsSprite(RWsSession{ref})
+//! @SYMAuthor                  Jeffery Zhao
+//! @SYMCreationDate            28/11/2007
+//! @SYMTestCaseDesc            Create a RWsSprite object.          
+//! @SYMTestActions             1. Create and connect a RWsSession
+//!                             2. Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                             3. Close RWsSession.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     RWsSprite object was created without causing panic
+//! @SYMTestType                CIT
+    START_TEST_BLOCK        10              T_GraphicsWservAPI     \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession      ws
+        CREATE_OBJECT   RWsSprite       sprite
+        COMMAND         ws              new
+        COMMAND         ws              Connect
+        COMMAND         sprite          new                    GRAPHICS-WSERV-WsSprite-PublicApi-0002-0001-new_command004
+        COMMAND         sprite          Close
+        COMMAND         ws              Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0002
+
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0003
+//! @SYMTestCaseID              GRAPHICS-WSERV-WsSprite-PublicApi-0003
+//! @SYMAPI                     RWsSprite::Construct(RWindowTreeNode{ref}, const TPoint{ref}, TInt)
+//! @SYMAuthor                  Jeffery Zhao
+//! @SYMCreationDate            28/11/2007
+//! @SYMTestCaseDesc            Create a RWsSprite object with RWsSprite(RWsSession &aWs) and construct.
+//! @SYMTestActions             1. Create and connect a RWsSession
+//!                             2. Create and construct RWindowGroup and RWindow.
+//!                             3. Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                             4. Construct RWsSprite.
+//!                             5. Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     RWsSprite object was constructed without causing panic
+//! @SYMTestType                CIT
+    START_TEST_BLOCK       10                T_GraphicsWservAPI  \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession        ws
+        CREATE_OBJECT   RWindowGroup      wingrp
+        CREATE_OBJECT   RWindow           win
+        CREATE_OBJECT   RWsSprite         sprite
+        COMMAND         ws                new
+        COMMAND         ws                Connect
+        COMMAND         wingrp            new                  GRAPHICS-WSERV-WsSprite-Setup-0003-0001-new_command001
+        COMMAND         wingrp            Construct            GRAPHICS-WSERV-WsSprite-Setup-0003-0001-Construct_command003
+        COMMAND         win               new                  GRAPHICS-WSERV-WsSprite-PublicApi-0003-0001-new_command004
+        COMMAND         win               Construct            GRAPHICS-WSERV-WsSprite-Setup-0003-0001-Construct_command002
+        COMMAND         sprite            new                  GRAPHICS-WSERV-WsSprite-PublicApi-0003-0001-new_command006
+        COMMAND         sprite            Construct            GRAPHICS-WSERV-WsSprite-PublicApi-0003-0001-Construct_command007
+        
+        COMMAND         sprite            Close
+        COMMAND         win               Close
+        COMMAND         wingrp            Close
+        COMMAND         ws                Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0003
+
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0004
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0004
+//! @SYMAPI                 RWsSpriteBase::AppendMember(const TSpriteMember{ref})
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        28/11/2007
+//! @SYMTestCaseDesc        Create and construct a RWsSprite object with RWsSession and append sprite member.
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other are iBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow.
+//!                         3.  Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct RWsSprite.
+//!                         5.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         6.  Append three different bitmaps to the sprite, each with the same mask.
+//!                         7.  Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Adds sprite member to a sprite successfully and returns KErrNone.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10         T_GraphicsWservAPI    \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession        ws
+        CREATE_OBJECT   RWindowGroup    wingrp
+        CREATE_OBJECT   CFbsBitmap      mask1
+        CREATE_OBJECT   CFbsBitmap      bitmap1
+        CREATE_OBJECT   CFbsBitmap      bitmap2
+        CREATE_OBJECT   CFbsBitmap      bitmap3
+        CREATE_OBJECT   RWindow         win
+        CREATE_OBJECT   RWsSprite       sprite
+        COMMAND     ws        new
+        COMMAND     ws        Connect
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-Setup-0004-0001-new_command001
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-Setup-0004-0001-Construct_command003
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0004-0001-new_command004
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-Setup-0004-0001-Construct_command002
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0004-0001-new_command006
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0004-0001-Construct_command007
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0004-0001-Load_command009
+
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0004-0001-Load_command011
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0004-0001-AppendMember_command012
+
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0004-0001-Load_command014
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0004-0001-AppendMember_command015
+        
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0004-0001-Load_command017
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0004-0001-AppendMember_command018
+        
+        COMMAND     sprite    Close
+        COMMAND     mask1     ~
+        COMMAND     bitmap1   ~
+        COMMAND     bitmap2   ~
+        COMMAND     bitmap3   ~
+        COMMAND     win       Close
+        COMMAND     wingrp    Close
+        COMMAND     ws        Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0004
+
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0005
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0005
+//! @SYMAPI                 RWsSpriteBase::Activate()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        28/11/2007
+//! @SYMTestCaseDesc        Create spirte and append three member then activate it.
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other are iBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow.
+//!                         3.  Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct RWsSprite.
+//!                         5.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         6.  Append three different bitmaps to the sprite, each with the same mask.
+//!                         7.  Activate RWsSprite.
+//!                         8.  Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Activates sprites successfully and returns KErrNone.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10          T_GraphicsWservAPI    \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession    ws
+        CREATE_OBJECT   RWindowGroup  wingrp
+        CREATE_OBJECT   CFbsBitmap    mask1
+        CREATE_OBJECT   CFbsBitmap    bitmap1
+        CREATE_OBJECT   CFbsBitmap    bitmap2
+        CREATE_OBJECT   CFbsBitmap    bitmap3
+        CREATE_OBJECT   RWindow       win
+        CREATE_OBJECT   RWsSprite     sprite
+        COMMAND     ws        new
+        COMMAND     ws        Connect
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-Setup-0005-0001-new_command001
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-Setup-0005-0001-Construct_command003
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0005-0001-new_command004
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-Setup-0005-0001-Construct_command002
+        COMMAND     win       Activate
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0005-0001-new_command006
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0005-0001-Construct_command007
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0005-0001-Load_command009
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0005-0001-Load_command011
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0005-0001-AppendMember_command012
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0005-0001-Load_command014
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0005-0001-AppendMember_command015
+
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0005-0001-Load_command017
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0005-0001-AppendMember_command018
+
+        COMMAND     sprite    Activate
+        
+        COMMAND     sprite    Close
+        COMMAND     mask1     ~
+        COMMAND     bitmap1   ~
+        COMMAND     bitmap2   ~
+        COMMAND     bitmap3   ~
+        COMMAND     win       Close
+        COMMAND     wingrp    Close
+        COMMAND     ws        Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0005
+
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0006
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0006
+//! @SYMAPI                 RWsSpriteBase::UpdateMember(TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        22/01/2008
+//! @SYMTestCaseDesc        Create 2 sprite object with same 2 sprite member and update the first object's TSpriteMember bitmap size,then verify.
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other are iBitmap member of TSpriteMember.
+//!                         The bitmap size is (50,50), after activate sprite, we change the first sprite member bitmap size to (40,40) of first sprit object.
+//! @SYMTestActions         1.  Create and connect a RWsSession, create 5 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow.
+//!                         3.  Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct RWsSprite at position(10,10).
+//!                         5.  Create and construct the second sprite at position(10,70).
+//!                         6.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         7.  Append three different bitmaps to the two sprites, each with the same mask.
+//!                         8.  Activate the two RWsSprite.
+//!                         9.  Compare the rectangle(10,10,60,60) with (10,70,60,120) which the sprite objects located,they should be same.
+//!                         10. Change bitmap size of bitmap1 object which is the first TSpriteMember of first sprite object to (40,40).
+//!                         11. Update first sprite object's sprite member(index=0).
+//!                         12. Compare the two rectangles again, they should be NOT same.
+//!                         13. Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Call UpdateMember function without causing panic
+//! @SYMTestType            CIT
+    START_TEST_BLOCK        10          T_GraphicsWservAPI  \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession  ws
+        CREATE_OBJECT   CWsScreenDevice scrdev
+        CREATE_OBJECT   CFbsBitmap   mask1
+        CREATE_OBJECT   CFbsBitmap   bitmap1
+        CREATE_OBJECT   CFbsBitmap   bitmap2
+        CREATE_OBJECT   CFbsBitmap   bitmap3
+        CREATE_OBJECT   CFbsBitmap   bitmap4
+        CREATE_OBJECT   RWindowGroup wingrp
+        CREATE_OBJECT   RWindow      win
+        CREATE_OBJECT   RWsSprite    sprite
+        CREATE_OBJECT   RWsSprite    sprite2
+        COMMAND     ws        new
+        COMMAND     ws        Connect
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-new_command003
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-Construct_command004
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-new_command005
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-Construct_command006
+        COMMAND     win       Activate
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-new_command008
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-Construct_command009
+        COMMAND     sprite2   new           GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-new_command010
+        COMMAND     sprite2   Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-Construct_command011
+        
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-Load_command013
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-Load_command015
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-AppendMember_command016
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-Load_command018
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-AppendMember_command019
+
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-Load_command021
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-AppendMember_command022
+
+        COMMAND     bitmap4   new           
+        COMMAND     bitmap4   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-Load_command024
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-AppendMember_command025
+        
+        COMMAND     sprite    Activate
+        COMMAND     sprite2   Activate
+        
+        COMMAND     scrdev    new           GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-new_command028       
+        COMMAND     scrdev    Construct
+        COMMAND     win       BeginRedraw
+        COMMAND     win       EndRedraw
+        //!COMMAND     scrdev    RectCompare   GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-RectCompare_command032
+        
+        COMMAND     bitmap1   Resize        GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-Resize_command033
+        COMMAND     sprite    UpdateMember  GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-UpdateMember_command034
+        //!COMMAND     scrdev    RectCompare   GRAPHICS-WSERV-WsSprite-PublicApi-0006-0001-RectCompare_command035
+        
+        COMMAND     sprite    Close
+        COMMAND     sprite2   Close
+        COMMAND     mask1     ~
+        COMMAND     bitmap1   ~
+        COMMAND     bitmap2   ~
+        COMMAND     bitmap3   ~
+        COMMAND     bitmap4   ~
+        COMMAND     scrdev    ~
+        COMMAND     win       Close
+        COMMAND     wingrp    Close
+        COMMAND     ws        Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0006
+
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0007
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0007
+//! @SYMAPI                 RWsSpriteBase::UpdateMember(TInt, const TSpriteMember{ref})
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        28/11/2007
+//! @SYMTestCaseDesc        Update the sprite by changed bitmap of member data and verify.
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other are iBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow.
+//!                         3.  Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct RWsSprite at position(10,10).
+//!                         5.  Create and construct the second sprite at position(10,70).
+//!                         6.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         7.  Append 2 RWsSprite member with the same member data to the created 2 sprites.
+//!                         8.  Activate the two RWsSprite.
+//!                         9.  Compare the rectangle(10,10,60,60) with (10,70,60,120) which the sprite objects located,they should be same.
+//!                         10. Load a new bitmap to the first sprite then update.
+//!                         11. Compare the two rectangles again, they should be NOT same.
+//!                         12. Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults UpdateMember function successfully without causing panic and runs as expected.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK        10           T_GraphicsWservAPI \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession   ws
+        CREATE_OBJECT   CWsScreenDevice scrdev
+        CREATE_OBJECT   CFbsBitmap   mask1
+        CREATE_OBJECT   CFbsBitmap   bitmap1
+        CREATE_OBJECT   CFbsBitmap   bitmap2
+        CREATE_OBJECT   CFbsBitmap   bitmap3
+        CREATE_OBJECT   RWindowGroup wingrp
+        CREATE_OBJECT   RWindow      win
+        CREATE_OBJECT   RWsSprite    sprite
+        CREATE_OBJECT   RWsSprite    sprite2
+        COMMAND     ws        new
+        COMMAND     ws        Connect
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-new_command003
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-Construct_command004
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-new_command005
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-Construct_command006
+        COMMAND     win       Activate
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-new_command008
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-Construct_command009
+        COMMAND     sprite2   new           GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-new_command010
+        COMMAND     sprite2   Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-Construct_command011
+        
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-Load_command013
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-Load_command015
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-AppendMember_command016
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-AppendMember_command017
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-Load_command019
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-AppendMember_command020
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-AppendMember_command021
+        
+        COMMAND     sprite    Activate
+        COMMAND     sprite2   Activate
+        
+        COMMAND     scrdev    new           GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-new_command24       
+        COMMAND     scrdev    Construct
+        COMMAND     win       BeginRedraw
+        COMMAND     win       EndRedraw
+        //!COMMAND     scrdev    RectCompare   GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-RectCompare_command028
+        
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-Load_command030
+        COMMAND     sprite    UpdateMember  GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-UpdateMember_command031
+        
+        //!COMMAND     scrdev    RectCompare   GRAPHICS-WSERV-WsSprite-PublicApi-0007-0001-RectCompare_command032
+        
+        COMMAND     sprite    Close
+        COMMAND     sprite2   Close
+        COMMAND     mask1     ~
+        COMMAND     bitmap1   ~
+        COMMAND     bitmap2   ~
+        COMMAND     bitmap3   ~
+        COMMAND     scrdev    ~ 
+        COMMAND     win       Close
+        COMMAND     wingrp    Close
+        COMMAND     ws        Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0007
+
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0008
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0008
+//! @SYMAPI                 RWsSprite::SetPosition(const TPoint{ref})
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        28/11/2007
+//! @SYMTestCaseDesc        Create sprite and set its position.
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other are iBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow.
+//!                         3.  Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct RWsSprite.
+//!                         5.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         6.  Append three different bitmaps to the sprite, each with the same mask.
+//!                         7.  SetPosition sprite position.
+//!                         8.  Activate RWsSprite.
+//!                         9.  SetPosition sprite again.
+//!                         10. Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Call SetPosition function without causing panic
+//! @SYMTestType            CIT
+    START_TEST_BLOCK        10           T_GraphicsWservAPI \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession   ws
+        CREATE_OBJECT   CFbsBitmap   mask1
+        CREATE_OBJECT   CFbsBitmap   bitmap1
+        CREATE_OBJECT   CFbsBitmap   bitmap2
+        CREATE_OBJECT   CFbsBitmap   bitmap3
+        CREATE_OBJECT   RWindowGroup wingrp
+        CREATE_OBJECT   RWindow      win
+        CREATE_OBJECT   RWsSprite    sprite
+        COMMAND     ws        new
+        COMMAND     ws        Connect
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-Setup-0008-0001-new_command001
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-Setup-0008-0001-Construct_command003
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0008-0001-new_command004
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-Setup-0008-0001-Construct_command002
+        COMMAND     win       Activate
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0008-0001-new_command006
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0008-0001-Construct_command007
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0008-0001-Load_command009
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0008-0001-Load_command011
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0008-0001-AppendMember_command012
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0008-0001-Load_command014
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0008-0001-AppendMember_command015
+
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0008-0001-Load_command017
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0008-0001-AppendMember_command018
+
+        COMMAND     sprite    SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0008-0001-SetPosition_command019
+        COMMAND     sprite    Activate
+        COMMAND     sprite    SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0008-0001-SetPosition_command021
+        
+        COMMAND     sprite    Close
+        COMMAND     mask1     ~
+        COMMAND     bitmap1   ~
+        COMMAND     bitmap2   ~
+        COMMAND     bitmap3   ~
+        COMMAND     win       Close
+        COMMAND     wingrp    Close
+        COMMAND     ws        Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0008
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0009
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0009
+//! @SYMAPI                 RWsSprite::Activate()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        14/12/2007
+//! @SYMTestCaseDesc        Create sprite then activate, verify the sprite are displayed after activation.
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other are iBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, and create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow.
+//!                         3.  Create two RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct the two RWsSprite.
+//!                         5.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         6.  Append three different bitmaps to the two sprites, each with the same mask.
+//!                         7.  Set the two RWsSprite's position.
+//!                         8.  Activate the first RWsSprite.
+//!                         9.  Create CWsScreenDevice and compare the two rect before the second RWsSprite activate, they should be not same.
+//!                         10. Activate the second RWsSprite and compare the two rect again, they should be same.
+//!                         11. Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. Compare two rect, one including sprite, the other not, so the two rect should not be same.
+//!                         2. Compare two rect with two sprite, they should be same.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK        10           T_GraphicsWservAPI \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession        ws
+        CREATE_OBJECT   CWsScreenDevice   scrdev
+        CREATE_OBJECT   CFbsBitmap        mask1
+        CREATE_OBJECT   CFbsBitmap        bitmap1
+        CREATE_OBJECT   CFbsBitmap        bitmap2
+        CREATE_OBJECT   CFbsBitmap        bitmap3
+        CREATE_OBJECT   RWindowGroup      wingrp
+        CREATE_OBJECT   RWindow           win
+        CREATE_OBJECT   RWsSprite         sprite
+        CREATE_OBJECT   RWsSprite         sprite2
+        COMMAND     ws        new
+        COMMAND     ws        Connect                
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-Setup-0009-0001-new_command001
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-Setup-0009-0001-Construct_command003
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-new_command004
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-Setup-0009-0001-Construct_command002
+        COMMAND     win       Activate
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-new_command006
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-Construct_command007
+        COMMAND     sprite2   new           GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-new_command006
+        COMMAND     sprite2   Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-Construct_command007
+        
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-Load_command009
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-Load_command011
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-AppendMember_command012
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-AppendMember_command012
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-Load_command014
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-AppendMember_command015
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-AppendMember_command015
+
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-Load_command017
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-AppendMember_command018
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-AppendMember_command018
+        
+        COMMAND     sprite    SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-SetPosition_command019
+        COMMAND     sprite2   SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-SetPosition_command020
+        COMMAND     sprite    Activate
+        
+        COMMAND     scrdev    new           GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-new_command21       
+        COMMAND     scrdev    Construct
+        COMMAND     win       BeginRedraw
+        COMMAND     win       EndRedraw
+        //!COMMAND     scrdev    RectCompare   GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-RectCompare_command23
+
+        COMMAND     sprite2   Activate
+        //!COMMAND     scrdev    RectCompare   GRAPHICS-WSERV-WsSprite-PublicApi-0009-0001-RectCompare_command24
+        
+        COMMAND     sprite    Close
+        COMMAND     sprite2   Close
+        COMMAND     mask1     ~
+        COMMAND     bitmap1   ~
+        COMMAND     bitmap2   ~
+        COMMAND     bitmap3   ~
+        COMMAND     scrdev    ~ 
+        COMMAND     win       Close
+        COMMAND     wingrp    Close
+        COMMAND     ws        Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0009
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0010
+//! @SYMTestCaseID              GRAPHICS-WSERV-WsSprite-PublicApi-0010
+//! @SYMAPI                     RWsSprite::Construct(RWindowTreeNode{ref}, const TPoint{ref}, TInt)
+//! @SYMAuthor                  Jeffery Zhao
+//! @SYMCreationDate            29/12/2007
+//! @SYMTestCaseDesc            Create a RWsSprite object with RWsSession and construct with negative position(-20,-20) and flag 0.
+//! @SYMTestActions             1. Create and connect a RWsSession
+//!                             2. Create and construct RWindowGroup and RWindow.
+//!                             3. Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                             4. Construct RWsSprite with negative position and flag 0.
+//!                             5. Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus              Implemented
+//! @SYMTestPriority            High
+//! @SYMTestExpectedResults     RWsSprite object was constructed without causing panic
+//! @SYMTestType                CIT
+    START_TEST_BLOCK       10                T_GraphicsWservAPI  \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession        ws
+        CREATE_OBJECT   RWindowGroup      wingrp
+        CREATE_OBJECT   RWindow           win
+        CREATE_OBJECT   RWsSprite         sprite
+        COMMAND         ws                new
+        COMMAND         ws                Connect
+        COMMAND         wingrp            new                  GRAPHICS-WSERV-WsSprite-PublicApi-0010-0001-new_command003
+        COMMAND         wingrp            Construct            GRAPHICS-WSERV-WsSprite-PublicApi-0010-0001-Construct_command004
+        COMMAND         win               new                  GRAPHICS-WSERV-WsSprite-PublicApi-0010-0001-new_command005
+        COMMAND         win               Construct            GRAPHICS-WSERV-WsSprite-PublicApi-0010-0001-Construct_command006
+        COMMAND         sprite            new                  GRAPHICS-WSERV-WsSprite-PublicApi-0010-0001-new_command007
+        COMMAND         sprite            Construct            GRAPHICS-WSERV-WsSprite-PublicApi-0010-0001-Construct_command008
+        COMMAND         sprite            Close
+        COMMAND         win               Close
+        COMMAND         wingrp            Close
+        COMMAND         ws                Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0010
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0011
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0011
+//! @SYMAPI                 RWsSprite::Construct(RWindowTreeNode{ref}, const TPoint{ref}, TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        29/12/2007
+//! @SYMTestCaseDesc        Construct sprite with ESpriteFlash flag.
+//!                         Verify ESpriteFlash flag which be used when construct RWsSprite.
+//!                         Create two sprite objects using the same bitmap data, but one set ESpriteFlash flag, and the other not.
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other are iBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, and create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow.
+//!                         3.  Create two RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct the two RWsSprite, one is constructed with ESpriteFlash flag, the other is constructed with flag 0.
+//!                         5.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         6.  Append three different bitmaps to the sprite, each with the same mask.
+//!                         7.  Activate the two RWsSprite.
+//!                         8.  Create CWsScreenDevice and compare the two rect which the two sprite located, they should differ.
+//!                         9.  Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. Constrcut RWsSprite with ESpriteFlash flag without panic.
+//!                         2. Compare two rect with two sprite, they should differ.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK        10           T_GraphicsWservAPI \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession        ws
+        CREATE_OBJECT   CWsScreenDevice   scrdev
+        CREATE_OBJECT   CFbsBitmap        mask1
+        CREATE_OBJECT   CFbsBitmap        bitmap1
+        CREATE_OBJECT   CFbsBitmap        bitmap2
+        CREATE_OBJECT   CFbsBitmap        bitmap3
+        CREATE_OBJECT   RWindowGroup      wingrp
+        CREATE_OBJECT   RWindow           win
+        CREATE_OBJECT   RWsSprite         sprite
+        CREATE_OBJECT   RWsSprite         sprite2
+        COMMAND     ws        new
+        COMMAND     ws        Connect                
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-new_command003
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-Construct_command004
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-new_command005
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-Construct_command006
+        COMMAND     win       Activate
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-new_command008
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-Construct_command009
+        COMMAND     sprite2   new           GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-new_command010
+        COMMAND     sprite2   Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-Construct_command011
+        
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-Load_command013
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-Load_command015
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-AppendMember_command016
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-AppendMember_command017
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-Load_command019
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-AppendMember_command020
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-AppendMember_command021
+
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-Load_command023
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-AppendMember_command024
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-AppendMember_command025
+        
+        COMMAND     sprite    Activate
+        COMMAND     sprite2   Activate
+        
+        COMMAND     scrdev    new           GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-new_command28       
+        COMMAND     scrdev    Construct
+        COMMAND     win       BeginRedraw
+        COMMAND     win       EndRedraw
+        COMMAND     scrdev    RectCompare   GRAPHICS-WSERV-WsSprite-PublicApi-0011-0001-RectCompare_command32
+        
+        COMMAND     sprite    Close
+        COMMAND     sprite2   Close
+        COMMAND     mask1     ~
+        COMMAND     bitmap1   ~
+        COMMAND     bitmap2   ~
+        COMMAND     bitmap3   ~
+        COMMAND     scrdev    ~ 
+        COMMAND     win       Close
+        COMMAND     wingrp    Close
+        COMMAND     ws        Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0011
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0012
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0012
+//! @SYMAPI                 RWsSprite::Construct(RWindowTreeNode{ref}, const TPoint{ref}, TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        29/12/2007
+//! @SYMTestCaseDesc        Create a RWsSprite object with negative position(-20,-20) and ESpriteFlash flag.
+//! @SYMTestActions         1. Create and connect a RWsSession
+//!                         2. Create and construct RWindowGroup and RWindow.
+//!                         3. Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4. Construct RWsSprite with negative position and ESpriteFlash flag.
+//!                         5. Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults RWsSprite object was constructed without causing panic
+//! @SYMTestType            CIT
+    START_TEST_BLOCK       10                T_GraphicsWservAPI  \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession        ws
+        CREATE_OBJECT   RWindowGroup      wingrp
+        CREATE_OBJECT   RWindow           win
+        CREATE_OBJECT   RWsSprite         sprite
+        COMMAND         ws                new
+        COMMAND         ws                Connect
+        COMMAND         wingrp            new                  GRAPHICS-WSERV-WsSprite-PublicApi-0012-0001-new_command003
+        COMMAND         wingrp            Construct            GRAPHICS-WSERV-WsSprite-PublicApi-0012-0001-Construct_command004
+        COMMAND         win               new                  GRAPHICS-WSERV-WsSprite-PublicApi-0012-0001-new_command005
+        COMMAND         win               Construct            GRAPHICS-WSERV-WsSprite-PublicApi-0012-0001-Construct_command006
+        COMMAND         sprite            new                  GRAPHICS-WSERV-WsSprite-PublicApi-0012-0001-new_command007
+        COMMAND         sprite            Construct            GRAPHICS-WSERV-WsSprite-PublicApi-0012-0001-Construct_command008
+        COMMAND         sprite            Close
+        COMMAND         win               Close
+        COMMAND         wingrp            Close
+        COMMAND         ws                Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0012
+
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0013
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0013
+//! @SYMAPI                 RWsSprite::Construct(RWindowTreeNode{ref}, const TPoint{ref}, TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        29/12/2007
+//! @SYMTestCaseDesc        Construct sprite with ESpriteNoChildClip flag.
+//!                         Verify ESpriteNoChildClip flag which be used when construct RWsSprite.
+//!                         Creates a window, and then creates its child window for the window. 
+//!                         After creating the windows, the first sprite is constructed with the parent window and the flag ESpriteNoChildClip,
+//!                         and the second sprite is constructed with the parent window without the sprite flag. 
+//!                         Finally compare the first sprite and the second sprite to verify the behavior of the sprite flag.
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other are iBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, and create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow, child window.
+//!                         3.  Create two RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct the two RWsSprite,one is constructed with ESpriteNoChildClip flag, then other is constructed with flag 0.
+//!                         5.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         6.  Append three different bitmaps to the two sprites, each with the same mask.
+//!                         7.  Set the two window redraw and set the child window size,position.
+//!                         8.  Activate the two window.
+//!                         9.  Activate the two RWsSprite.
+//!                         10. Create CWsScreenDevice and compare the two rect which the two sprite located, they should be not same.
+//!                         11. Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. Constrcut RWsSprite with ESpriteNoChildClip flag without panic.
+//!                         2. Compare two rect which two sprite(set/unset ESpriteNoChildClip flag) located, they should be not same.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK        10           T_GraphicsWservAPI \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession        ws
+        CREATE_OBJECT   CWsScreenDevice   scrdev
+        CREATE_OBJECT   CFbsBitmap        mask1
+        CREATE_OBJECT   CFbsBitmap        bitmap1
+        CREATE_OBJECT   CFbsBitmap        bitmap2
+        CREATE_OBJECT   CFbsBitmap        bitmap3
+        CREATE_OBJECT   RWindowGroup      wingrp
+        CREATE_OBJECT   RWindow           win
+        CREATE_OBJECT   RWindow           win2
+        CREATE_OBJECT   RWsSprite         sprite
+        CREATE_OBJECT   RWsSprite         sprite2
+        COMMAND     ws        new
+        COMMAND     ws        Connect                
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-new_command003
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-Construct_command004
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-new_command005
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-Construct_command006
+        COMMAND     win2      new           GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-new_command007
+        COMMAND     win2      Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-Construct_command008
+        
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-new_command009
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-Construct_command010
+        COMMAND     sprite2   new           GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-new_command011
+        COMMAND     sprite2   Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-Construct_command012
+        
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-Load_command014
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-Load_command016
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-AppendMember_command017
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-AppendMember_command018
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-Load_command020
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-AppendMember_command021
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-AppendMember_command022
+
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-Load_command024
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-AppendMember_command025
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-AppendMember_command026
+        
+        COMMAND     win       BeginRedraw
+        COMMAND     win       EndRedraw
+        COMMAND     win2      BeginRedraw
+        COMMAND     win2      EndRedraw
+        COMMAND     win2      SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-SetPosition_command031
+        COMMAND     win2      SetSize       GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-SetSize_command032
+        COMMAND     win       Activate
+        COMMAND     win2      Activate
+        
+        COMMAND     sprite    Activate
+        COMMAND     sprite2   Activate
+        
+        COMMAND     scrdev    new           GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-new_command037       
+        COMMAND     scrdev    Construct
+                       
+        //!COMMAND     scrdev    RectCompare   GRAPHICS-WSERV-WsSprite-PublicApi-0013-0001-RectCompare_command039
+
+        COMMAND     sprite    Close
+        COMMAND     sprite2   Close
+        COMMAND     mask1     ~
+        COMMAND     bitmap1   ~
+        COMMAND     bitmap2   ~
+        COMMAND     bitmap3   ~
+        COMMAND     scrdev    ~ 
+        COMMAND     win2      Close
+        COMMAND     win       Close
+        COMMAND     wingrp    Close
+        COMMAND     ws        Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0013
+
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0014
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0014
+//! @SYMAPI                 RWsSprite::Construct(RWindowTreeNode{ref}, const TPoint{ref}, TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        29/12/2007
+//! @SYMTestCaseDesc        Create a RWsSprite object with negative position(-20,-20) and ESpriteNoChildClip flag.
+//! @SYMTestActions         1. Create and connect a RWsSession
+//!                         2. Create and construct RWindowGroup and RWindow.
+//!                         3. Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4. Construct RWsSprite with negative position and ESpriteNoChildClip flag.
+//!                         5. Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults RWsSprite object was constructed without causing panic
+//! @SYMTestType            CIT
+    START_TEST_BLOCK       10                T_GraphicsWservAPI  \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession        ws
+        CREATE_OBJECT   RWindowGroup      wingrp
+        CREATE_OBJECT   RWindow           win
+        CREATE_OBJECT   RWsSprite         sprite
+        COMMAND         ws                new
+        COMMAND         ws                Connect
+        COMMAND         wingrp            new                  GRAPHICS-WSERV-WsSprite-PublicApi-0014-0001-new_command003
+        COMMAND         wingrp            Construct            GRAPHICS-WSERV-WsSprite-PublicApi-0014-0001-Construct_command004
+        COMMAND         win               new                  GRAPHICS-WSERV-WsSprite-PublicApi-0014-0001-new_command005
+        COMMAND         win               Construct            GRAPHICS-WSERV-WsSprite-PublicApi-0014-0001-Construct_command006
+        COMMAND         sprite            new                  GRAPHICS-WSERV-WsSprite-PublicApi-0014-0001-new_command007
+        COMMAND         sprite            Construct            GRAPHICS-WSERV-WsSprite-PublicApi-0014-0001-Construct_command008
+        COMMAND         sprite            Close
+        COMMAND         win               Close
+        COMMAND         wingrp            Close
+        COMMAND         ws                Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0014
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0015
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0015
+//! @SYMAPI                 RWsSprite::Construct(RWindowTreeNode{ref}, const TPoint{ref}, TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        29/12/2007
+//! @SYMTestCaseDesc        Construct sprite with ESpriteNoShadows flag.
+//!                         Verify ESpriteNoShadows flag which be used when construct RWsSprite.
+//!                         Create a window and create two sprite on it,one sprite with ESpriteNoShadows flag set,the other not set the flag;
+//!                         Create another window over first window, and set its shadow can cover part of the two sprite.
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other are iBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, and create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and two RWindow objects.
+//!                         3.  Create two RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct the two RWsSprite,one is constructed with ESpriteNoShadows flag, then other is constructed with flag 0.
+//!                         5.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         6.  Append three different bitmaps to the two sprite, each with the same mask.
+//!                         7.  Set the two window redraw and set the second window size,position and shadow,make it over the first window.
+//!                         8.  Activate the two window.
+//!                         9.  Activate the two RWsSprite.
+//!                         10. Create CWsScreenDevice and compare the two rect which the two sprite located, they should be not same.
+//!                         11. Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. Constrcut RWsSprite with ESpriteNoShadows flag without panic.
+//!                         2. Compare two rect which two sprite(set/unset ESpriteNoShadows) located, they should be not same.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK        10           T_GraphicsWservAPI \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession        ws
+        CREATE_OBJECT   CWsScreenDevice   scrdev
+        CREATE_OBJECT   CFbsBitmap        mask1
+        CREATE_OBJECT   CFbsBitmap        bitmap1
+        CREATE_OBJECT   CFbsBitmap        bitmap2
+        CREATE_OBJECT   CFbsBitmap        bitmap3
+        CREATE_OBJECT   RWindowGroup      wingrp
+        CREATE_OBJECT   RWindow           win
+        CREATE_OBJECT   RWindow           win2
+        CREATE_OBJECT   RWsSprite         sprite
+        CREATE_OBJECT   RWsSprite         sprite2
+        COMMAND     ws        new
+        COMMAND     ws        Connect                
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-new_command003
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-Construct_command004
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-new_command005
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-Construct_command006
+        COMMAND     win2      new           GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-new_command007
+        COMMAND     win2      Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-Construct_command008
+        
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-new_command009
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-Construct_command010
+        COMMAND     sprite2   new           GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-new_command011
+        COMMAND     sprite2   Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-Construct_command012
+        
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-Load_command014
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-Load_command016
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-AppendMember_command017
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-AppendMember_command018
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-Load_command020
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-AppendMember_command021
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-AppendMember_command022
+
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-Load_command024
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-AppendMember_command025
+        COMMAND     sprite2   AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-AppendMember_command026
+        
+        COMMAND     win       BeginRedraw
+        COMMAND     win       EndRedraw
+        COMMAND     win2      BeginRedraw
+        COMMAND     win2      EndRedraw
+        COMMAND     win2      SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-SetPosition_command031
+        COMMAND     win2      SetSize       GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-SetSize_command032
+        COMMAND     win2      SetShadowHeight GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-SetShadowHeight_command033
+        COMMAND     win       Activate
+        COMMAND     win2      Activate
+        
+        COMMAND     sprite    Activate
+        COMMAND     sprite2   Activate
+        
+        COMMAND     scrdev    new           GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-new_command038       
+        COMMAND     scrdev    Construct
+                       
+        COMMAND     scrdev    RectCompare   GRAPHICS-WSERV-WsSprite-PublicApi-0015-0001-RectCompare_command040
+
+        COMMAND     sprite    Close
+        COMMAND     sprite2   Close
+        COMMAND     mask1     ~
+        COMMAND     bitmap1   ~
+        COMMAND     bitmap2   ~
+        COMMAND     bitmap3   ~
+        COMMAND     scrdev    ~ 
+        COMMAND     win2      Close
+        COMMAND     win       Close
+        COMMAND     wingrp    Close
+        COMMAND     ws        Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0015
+
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0016
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0016
+//! @SYMAPI                 RWsSprite::Construct(RWindowTreeNode{ref}, const TPoint{ref}, TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        29/12/2007
+//! @SYMTestCaseDesc        Create a RWsSprite object with negative position(-20,-20) which out of screen and ESpriteNoShadows flag.
+//! @SYMTestActions         1. Create and connect a RWsSession
+//!                         2. Create and construct RWindowGroup and RWindow.
+//!                         3. Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4. Construct RWsSprite with negative position and ESpriteNoShadows flag.
+//!                         5. Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults RWsSprite object was constructed without causing panic
+//! @SYMTestType            CIT
+    START_TEST_BLOCK       10                T_GraphicsWservAPI  \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession        ws
+        CREATE_OBJECT   RWindowGroup      wingrp
+        CREATE_OBJECT   RWindow           win
+        CREATE_OBJECT   RWsSprite         sprite
+        COMMAND         ws                new
+        COMMAND         ws                Connect
+        COMMAND         wingrp            new                  GRAPHICS-WSERV-WsSprite-PublicApi-0016-0001-new_command003
+        COMMAND         wingrp            Construct            GRAPHICS-WSERV-WsSprite-PublicApi-0016-0001-Construct_command004
+        COMMAND         win               new                  GRAPHICS-WSERV-WsSprite-PublicApi-0016-0001-new_command005
+        COMMAND         win               Construct            GRAPHICS-WSERV-WsSprite-PublicApi-0016-0001-Construct_command006
+        COMMAND         sprite            new                  GRAPHICS-WSERV-WsSprite-PublicApi-0016-0001-new_command007
+        COMMAND         sprite            Construct            GRAPHICS-WSERV-WsSprite-PublicApi-0016-0001-Construct_command008
+        COMMAND         sprite            Close
+        COMMAND         win               Close
+        COMMAND         wingrp            Close
+        COMMAND         ws                Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0016
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0017
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0017
+//! @SYMAPI                 RWsSprite::SetPosition(const TPoint{ref})
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        29/12/2007
+//! @SYMTestCaseDesc        Create sprite with ESpriteFlash flag and set its position.
+//!                         Construct sprite with ESpriteFlash flag and set its position to(-50,-50), (50,50), (5000,5000).
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other are iBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow.
+//!                         3.  Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct RWsSprite with ESpriteFlash flag.
+//!                         5.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         6.  Append three different bitmaps to the sprite, each with the same mask.
+//!                         7.  Activate RWsSprite.
+//!                         8.  Set sprite position to (-50,-50).
+//!                         9.  Set sprite position to (50,50).
+//!                         10. Set sprite position to (5000,5000).
+//!                         11. Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Call SetPosition function without causing panic
+//! @SYMTestType            CIT
+    START_TEST_BLOCK        10           T_GraphicsWservAPI \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession   ws
+        CREATE_OBJECT   CFbsBitmap   mask1
+        CREATE_OBJECT   CFbsBitmap   bitmap1
+        CREATE_OBJECT   CFbsBitmap   bitmap2
+        CREATE_OBJECT   CFbsBitmap   bitmap3
+        CREATE_OBJECT   RWindowGroup wingrp
+        CREATE_OBJECT   RWindow      win
+        CREATE_OBJECT   RWsSprite    sprite
+        COMMAND     ws        new
+        COMMAND     ws        Connect
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-new_command003
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-Construct_command004
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-new_command005
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-Construct_command006
+        COMMAND     win       Activate
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-new_command008
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-Construct_command009
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-Load_command011
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-Load_command013
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-AppendMember_command014
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-Load_command016
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-AppendMember_command017
+
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-Load_command019
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-AppendMember_command020
+
+        COMMAND     sprite    Activate
+        COMMAND     sprite    SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-SetPosition_command022
+        COMMAND     sprite    SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-SetPosition_command023
+        COMMAND     sprite    SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0017-0001-SetPosition_command024
+        
+        COMMAND     sprite    Close
+        COMMAND     mask1     ~
+        COMMAND     bitmap1   ~
+        COMMAND     bitmap2   ~
+        COMMAND     bitmap3   ~
+        COMMAND     win       Close
+        COMMAND     wingrp    Close
+        COMMAND     ws        Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0017
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0018
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0018
+//! @SYMAPI                 RWsSprite::SetPosition(const TPoint{ref})
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        29/12/2007
+//! @SYMTestCaseDesc        Create sprite with ESpriteNoChildClip flag and set its position.
+//!                         Construct sprite with ESpriteNoChildClip flag and set its position to(-50,-50), (50,50), (5000,5000).
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other are iBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow.
+//!                         3.  Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct RWsSprite with ESpriteNoChildClip flag.
+//!                         5.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         6.  Append three different bitmaps to the sprite, each with the same mask.
+//!                         7.  Activate RWsSprite.
+//!                         8.  Set sprite position to (-50,-50).
+//!                         9.  Set sprite position to (50,50).
+//!                         10. Set sprite position to (5000,5000).
+//!                         11. Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Call SetPosition function without causing panic
+//! @SYMTestType            CIT
+    START_TEST_BLOCK        10           T_GraphicsWservAPI \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession   ws
+        CREATE_OBJECT   CFbsBitmap   mask1
+        CREATE_OBJECT   CFbsBitmap   bitmap1
+        CREATE_OBJECT   CFbsBitmap   bitmap2
+        CREATE_OBJECT   CFbsBitmap   bitmap3
+        CREATE_OBJECT   RWindowGroup wingrp
+        CREATE_OBJECT   RWindow      win
+        CREATE_OBJECT   RWsSprite    sprite
+        COMMAND     ws        new
+        COMMAND     ws        Connect
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-new_command003
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-Construct_command004
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-new_command005
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-Construct_command006
+        COMMAND     win       Activate
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-new_command008
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-Construct_command009
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-Load_command011
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-Load_command013
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-AppendMember_command014
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-Load_command016
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-AppendMember_command017
+
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-Load_command019
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-AppendMember_command020
+
+        COMMAND     sprite    Activate
+        COMMAND     sprite    SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-SetPosition_command022
+        COMMAND     sprite    SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-SetPosition_command023
+        COMMAND     sprite    SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0018-0001-SetPosition_command024
+        
+        COMMAND     sprite    Close
+        COMMAND     mask1     ~
+        COMMAND     bitmap1   ~
+        COMMAND     bitmap2   ~
+        COMMAND     bitmap3   ~
+        COMMAND     win       Close
+        COMMAND     wingrp    Close
+        COMMAND     ws        Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0018
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0019
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0019
+//! @SYMAPI                 RWsSprite::SetPosition(const TPoint{ref})
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        29/12/2007
+//! @SYMTestCaseDesc        Create sprite with ESpriteNoShadows flag and set its position.
+//!                         Construct sprite with ESpriteNoShadows flag and set its position to(-50,-50), (50,50), (5000,5000).
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other are iBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow.
+//!                         3.  Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct RWsSprite with ESpriteNoShadows flag.
+//!                         5.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         6.  Append three different bitmaps to the sprite, each with the same mask.
+//!                         7.  Activate RWsSprite.
+//!                         8.  Set sprite position to (-50,-50).
+//!                         9.  Set sprite position to (50,50).
+//!                         10. Set sprite position to (5000,5000).
+//!                         11. Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Call SetPosition function without causing panic
+//! @SYMTestType            CIT
+    START_TEST_BLOCK        10           T_GraphicsWservAPI \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession   ws
+        CREATE_OBJECT   CFbsBitmap   mask1
+        CREATE_OBJECT   CFbsBitmap   bitmap1
+        CREATE_OBJECT   CFbsBitmap   bitmap2
+        CREATE_OBJECT   CFbsBitmap   bitmap3
+        CREATE_OBJECT   RWindowGroup wingrp
+        CREATE_OBJECT   RWindow      win
+        CREATE_OBJECT   RWsSprite    sprite
+        COMMAND     ws        new
+        COMMAND     ws        Connect
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-new_command003
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-Construct_command004
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-new_command005
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-Construct_command006
+        COMMAND     win       Activate
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-new_command008
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-Construct_command009
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-Load_command011
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-Load_command013
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-AppendMember_command014
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-Load_command016
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-AppendMember_command017
+
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-Load_command019
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-AppendMember_command020
+
+        COMMAND     sprite    Activate
+        COMMAND     sprite    SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-SetPosition_command022
+        COMMAND     sprite    SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-SetPosition_command023
+        COMMAND     sprite    SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0019-0001-SetPosition_command024
+        
+        COMMAND     sprite    Close
+        COMMAND     mask1     ~
+        COMMAND     bitmap1   ~
+        COMMAND     bitmap2   ~
+        COMMAND     bitmap3   ~
+        COMMAND     win       Close
+        COMMAND     wingrp    Close
+        COMMAND     ws        Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0019
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0020
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0020
+//! @SYMAPI                 RWsSprite::SetPosition(const TPoint{ref})
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        29/12/2007
+//! @SYMTestCaseDesc        Verify sprite position.
+//!                         Compare two rect before sprite active,they should same;then move the sprite in one of the rect,compare again,they should be different.
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other are iBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow.
+//!                         3.  Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct RWsSprite.
+//!                         5.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         6.  Append three different bitmaps to the sprite, each with the same mask.
+//!                         7.  Compare two rect without sprite,they should be same.
+//!                         8.  Activate RWsSprite.
+//!                         9.  Set sprite position.
+//!                         10. Compare two rect with sprite, they should be different.
+//!                         11. Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. Before activing the sprite, the two rect should be same.
+//!                         2. After activing and moving the sprite , the two rect should be different.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK        10           T_GraphicsWservAPI \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession   ws
+        CREATE_OBJECT   CWsScreenDevice scrdev
+        CREATE_OBJECT   CFbsBitmap   mask1
+        CREATE_OBJECT   CFbsBitmap   bitmap1
+        CREATE_OBJECT   CFbsBitmap   bitmap2
+        CREATE_OBJECT   CFbsBitmap   bitmap3
+        CREATE_OBJECT   RWindowGroup wingrp
+        CREATE_OBJECT   RWindow      win
+        CREATE_OBJECT   RWsSprite    sprite
+        COMMAND     ws        new
+        COMMAND     ws        Connect
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-new_command003
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-Construct_command004
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-new_command005
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-Construct_command006
+        COMMAND     win       Activate
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-new_command008
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-Construct_command009
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-Load_command011
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-Load_command013
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-AppendMember_command014
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-Load_command016
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-AppendMember_command017
+
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-Load_command019
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-AppendMember_command020
+
+        COMMAND     scrdev    new           GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-new_command021
+        COMMAND     win       BeginRedraw
+        COMMAND     win       EndRedraw
+        COMMAND     scrdev    Construct
+                       
+        //!COMMAND     scrdev    RectCompare   GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-RectCompare_command025
+        
+        COMMAND     sprite    Activate
+        COMMAND     sprite    SetPosition   GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-SetPosition_command027
+        
+        //!COMMAND     scrdev    RectCompare   GRAPHICS-WSERV-WsSprite-PublicApi-0020-0001-RectCompare_command028
+        
+        COMMAND     sprite    Close
+        COMMAND     mask1     ~
+        COMMAND     bitmap1   ~
+        COMMAND     bitmap2   ~
+        COMMAND     bitmap3   ~
+        COMMAND     scrdev    ~
+        COMMAND     win       Close
+        COMMAND     wingrp    Close
+        COMMAND     ws        Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0020
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0022
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0022
+//! @SYMAPI                 RWsSpriteBase::Activate()
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        03/01/2008
+//! @SYMTestCaseDesc        Negative test, activate sprite without setting sprite member.
+//! @SYMTestActions         1.  Create and connect a RWsSession.
+//!                         2.  Create and construct RWindowGroup & RWindow.
+//!                         3.  Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct RWsSprite.
+//!                         5.  Activate RWsSprite without setting sprite member.
+//!                         6.  Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults WSERV 63 panic when we Activate the sprite.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10          T_GraphicsWservAPI    \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession    ws
+        CREATE_OBJECT   RWindowGroup  wingrp
+        CREATE_OBJECT   RWindow       win
+        CREATE_OBJECT   RWsSprite     sprite
+        COMMAND     ws        new
+        COMMAND     ws        Connect
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-PublicApi-0022-0001-new_command003
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0022-0001-Construct_command004
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0022-0001-new_command005
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0022-0001-Construct_command006
+        COMMAND     win       Activate
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0022-0001-new_command008
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0022-0001-Construct_command009
+        
+        COMMAND     sprite    Activate
+
+    END_TEST_BLOCK !PanicString=WSERV !PanicCode=63
+    RUN_TEST_STEP	100	T_GraphicsWservAPI	utilityClearPanicDlg
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0022
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0023
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0023
+//! @SYMAPI                 RWsSpriteBase::UpdateMember(TInt, const TSpriteMember{ref})
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        03/01/2008
+//! @SYMTestCaseDesc        Negative test, update non-exist sprite member index(-1) with UpdateMember.
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other are iBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow.
+//!                         3.  Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct RWsSprite.
+//!                         5.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         6.  Append three different bitmaps to the sprite, each with the same mask.
+//!                         7.  Activate RWsSprite.
+//!                         8.  Update sprite member with UpdateMember(TInt,const TSpriteMember &).
+//!                         9.  Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Call UpdateMember function with non-exist sprite member index and return KErrArgument(-6).
+//! @SYMTestType            CIT
+    START_TEST_BLOCK        10          T_GraphicsWservAPI  \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession  ws
+        CREATE_OBJECT   CFbsBitmap   mask1
+        CREATE_OBJECT   CFbsBitmap   bitmap1
+        CREATE_OBJECT   CFbsBitmap   bitmap2
+        CREATE_OBJECT   CFbsBitmap   bitmap3
+        CREATE_OBJECT   RWindowGroup wingrp
+        CREATE_OBJECT   RWindow      win
+        CREATE_OBJECT   RWsSprite    sprite
+        COMMAND     ws        new
+        COMMAND     ws        Connect
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-PublicApi-0023-0001-new_command003
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0023-0001-Construct_command004
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0023-0001-new_command005
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0023-0001-Construct_command006
+        COMMAND     win       Activate
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0023-0001-new_command008
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0023-0001-Construct_command009
+        COMMAND     mask1   new           
+        COMMAND     mask1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0023-0001-Load_command011
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0023-0001-Load_command013
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0023-0001-AppendMember_command014
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0023-0001-Load_command016
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0023-0001-AppendMember_command017
+
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0023-0001-Load_command019
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0023-0001-AppendMember_command020
+
+        COMMAND     sprite    Activate
+        COMMAND !Error=-6  sprite    UpdateMember  GRAPHICS-WSERV-WsSprite-PublicApi-0023-0001-UpdateMember_command022
+        
+        COMMAND     sprite    Close
+        COMMAND     mask1     ~
+        COMMAND     bitmap1   ~
+        COMMAND     bitmap2   ~
+        COMMAND     bitmap3   ~
+        COMMAND     win       Close
+        COMMAND     wingrp    Close
+        COMMAND     ws        Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0023
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0024
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0024
+//! @SYMAPI                 RWsSpriteBase::UpdateMember(TInt)
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        03/01/2008
+//! @SYMTestCaseDesc        Negative test, Update non-exist sprite member index(-1) with UpdateMember.
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other are iBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow.
+//!                         3.  Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct RWsSprite.
+//!                         5.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         6.  Append three different bitmaps to the sprite, each with the same mask.
+//!                         7.  Activate RWsSprite.
+//!                         8.  Update sprite member with UpdateMember(TInt).
+//!                         9.  Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Call UpdateMember function with non-exist sprite member index and without panic.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK        10          T_GraphicsWservAPI  \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession  ws
+        CREATE_OBJECT   CFbsBitmap   mask1
+        CREATE_OBJECT   CFbsBitmap   bitmap1
+        CREATE_OBJECT   CFbsBitmap   bitmap2
+        CREATE_OBJECT   CFbsBitmap   bitmap3
+        CREATE_OBJECT   RWindowGroup wingrp
+        CREATE_OBJECT   RWindow      win
+        CREATE_OBJECT   RWsSprite    sprite
+        COMMAND     ws        new
+        COMMAND     ws        Connect
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-PublicApi-0024-0001-new_command003
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0024-0001-Construct_command004
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0024-0001-new_command005
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0024-0001-Construct_command006
+        COMMAND     win       Activate
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0024-0001-new_command008
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0024-0001-Construct_command009
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0024-0001-Load_command011
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0024-0001-Load_command013
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0024-0001-AppendMember_command014
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0024-0001-Load_command016
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0024-0001-AppendMember_command017
+
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0024-0001-Load_command019
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0024-0001-AppendMember_command020
+
+        COMMAND     sprite    Activate
+        COMMAND     sprite    UpdateMember  GRAPHICS-WSERV-WsSprite-PublicApi-0024-0001-UpdateMember_command022
+        
+        COMMAND     sprite    Close
+        COMMAND     mask1     ~
+        COMMAND     bitmap1   ~
+        COMMAND     bitmap2   ~
+        COMMAND     bitmap3   ~
+        COMMAND     win       Close
+        COMMAND     wingrp    Close
+        COMMAND     ws        Close
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0024
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0025
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0025
+//! @SYMAPI                 RWsSpriteBase::UpdateMember(TInt, const TSpriteMember{ref})
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        04/01/2008
+//! @SYMTestCaseDesc        Negative test, update sprite member TSpriteMember with big size bitmap(200*200 dots per inch for mask).
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other(bitmap1,bitmap2,bitmap3) are iBitmap member of TSpriteMember.
+//!                         bitmap4 is big bitmap for iMaskBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow.
+//!                         3.  Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct RWsSprite.
+//!                         5.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         6.  Append three different bitmaps to the sprite, each with the same mask.
+//!                         7.  Activate RWsSprite.
+//!                         8.  Create and load big bitmap of TSpriteMember for update.
+//!                         9.  Update sprite member with UpdateMember(TInt,const TSpriteMember &), this action will panic because the bitmap size bigger than mask bitmap.
+//!                         10. Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults WSERV 40 panic received when we call RWsSpriteBase::UpdateMember.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK        10          T_GraphicsWservAPI  \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession  ws
+        CREATE_OBJECT   CFbsBitmap   mask1
+        CREATE_OBJECT   CFbsBitmap   bitmap1
+        CREATE_OBJECT   CFbsBitmap   bitmap2
+        CREATE_OBJECT   CFbsBitmap   bitmap3
+        CREATE_OBJECT   CFbsBitmap   bitmap4
+        CREATE_OBJECT   RWindowGroup wingrp
+        CREATE_OBJECT   RWindow      win
+        CREATE_OBJECT   RWsSprite    sprite
+        COMMAND     ws        new
+        COMMAND     ws        Connect
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-PublicApi-0025-0001-new_command003
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0025-0001-Construct_command004
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0025-0001-new_command005
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0025-0001-Construct_command006
+        COMMAND     win       Activate
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0025-0001-new_command008
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0025-0001-Construct_command009
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0025-0001-Load_command011
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0025-0001-Load_command013
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0025-0001-AppendMember_command014
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0025-0001-Load_command016
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0025-0001-AppendMember_command017
+
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0025-0001-Load_command019
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0025-0001-AppendMember_command020
+
+        COMMAND     sprite    Activate
+        
+        COMMAND     bitmap4   new           
+        COMMAND     bitmap4   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0025-0001-Load_command023
+        
+        COMMAND     sprite    UpdateMember  GRAPHICS-WSERV-WsSprite-PublicApi-0025-0001-UpdateMember_command024
+        
+    END_TEST_BLOCK !PanicString=WSERV !PanicCode=40
+    RUN_TEST_STEP	100	T_GraphicsWservAPI	utilityClearPanicDlg
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0025
+
+START_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0026
+//! @SYMTestCaseID          GRAPHICS-WSERV-WsSprite-PublicApi-0026
+//! @SYMAPI                 RWsSpriteBase::AppendMember(const TSpriteMember{ref})
+//! @SYMAuthor              Jeffery Zhao
+//! @SYMCreationDate        04/01/2008
+//! @SYMTestCaseDesc        Negative test, append sprite member TSpriteMember with big size bitmap(200*200 dots per inch for mask).
+//!                         mask1 is iMaskBitmap member of TSpriteMember and the other(bitmap1,bitmap2) are iBitmap member of TSpriteMember.
+//!                         bitmap3 is big bitmap for iMaskBitmap member of TSpriteMember.
+//! @SYMTestActions         1.  Create and connect a RWsSession, create 4 CFbsBitmap objects.
+//!                         2.  Create and construct RWindowGroup and RWindow.
+//!                         3.  Create RWsSprite with RWsSession by using RWsSprite(RWsSession &aWs).
+//!                         4.  Construct RWsSprite.
+//!                         5.  Create CFbsBitmap object and load bitmap to initialize TSpriteMember.
+//!                         6.  Append three different bitmaps to the sprite, each with the same mask; and the third one is bigger than mask bitmap.
+//!                         7.  Activate RWsSprite, this action will panic because the bitmap size bigger than mask bitmap.
+//!                         8.  Destruct all created object and Close RWsSprite,RWsSession and RWindow.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults WSERV 40 panic received when we Activate the sprite.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK        10          T_GraphicsWservAPI  \graphics\GRAPHICS-WSERV-WsSprite-PublicApi.ini
+        CREATE_OBJECT   RWsSession  ws
+        CREATE_OBJECT   CFbsBitmap   mask1
+        CREATE_OBJECT   CFbsBitmap   bitmap1
+        CREATE_OBJECT   CFbsBitmap   bitmap2
+        CREATE_OBJECT   CFbsBitmap   bitmap3
+        CREATE_OBJECT   CFbsBitmap   bitmap4
+        CREATE_OBJECT   RWindowGroup wingrp
+        CREATE_OBJECT   RWindow      win
+        CREATE_OBJECT   RWsSprite    sprite
+        COMMAND     ws        new
+        COMMAND     ws        Connect
+        COMMAND     wingrp    new           GRAPHICS-WSERV-WsSprite-PublicApi-0026-0001-new_command003
+        COMMAND     wingrp    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0026-0001-Construct_command004
+        COMMAND     win       new           GRAPHICS-WSERV-WsSprite-PublicApi-0026-0001-new_command005
+        COMMAND     win       Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0026-0001-Construct_command006
+        COMMAND     win       Activate
+        COMMAND     sprite    new           GRAPHICS-WSERV-WsSprite-PublicApi-0026-0001-new_command008
+        COMMAND     sprite    Construct     GRAPHICS-WSERV-WsSprite-PublicApi-0026-0001-Construct_command009
+        COMMAND     mask1     new           
+        COMMAND     mask1     Load          GRAPHICS-WSERV-WsSprite-PublicApi-0026-0001-Load_command011
+        
+        COMMAND     bitmap1   new           
+        COMMAND     bitmap1   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0026-0001-Load_command013
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0026-0001-AppendMember_command014
+        
+        COMMAND     bitmap2   new           
+        COMMAND     bitmap2   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0026-0001-Load_command016
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0026-0001-AppendMember_command017
+
+        COMMAND     bitmap3   new           
+        COMMAND     bitmap3   Load          GRAPHICS-WSERV-WsSprite-PublicApi-0026-0001-Load_command019
+        COMMAND     sprite    AppendMember  GRAPHICS-WSERV-WsSprite-PublicApi-0026-0001-AppendMember_command020
+
+        COMMAND     sprite    Activate
+                 
+    END_TEST_BLOCK !PanicString=WSERV !PanicCode=40
+    RUN_TEST_STEP	100	T_GraphicsWservAPI	utilityClearPanicDlg
+END_TESTCASE GRAPHICS-WSERV-WsSprite-PublicApi-0026

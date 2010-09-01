@@ -38,4 +38,5 @@ const TUid KTextInContextWidthInPixelsUid = {0x10285D50};
 const TUid KUidIsFbsBitmapGc = {0x10285BBE};
 
 
+
 #endif /* GDICONSTS_H */

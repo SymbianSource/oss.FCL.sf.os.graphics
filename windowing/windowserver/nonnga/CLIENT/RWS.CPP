@@ -22,7 +22,6 @@
 #include "CLIENT.H"
 #include "wstraces.h"
 #include "graphics/windowserverconstants.h"
-#include <wspublishandsubscribedata.h>
 
 const TInt KMaxWSERVMessagesSlot=-1;
 
@@ -2385,48 +2384,6 @@ EXPORT_C TInt RWsSession::GetExitHighPressureThreshold() const
 EXPORT_C void RWsSession::EnableWindowSizeCacheL()
 /** Dummy implementation in order to preserve compatibility with WSERV NGA.
     @internalComponent */ 
-	{
-	ASSERT(0);
-	}
-
-EXPORT_C void RWsSession::SendEffectCommand(TInt /*aTfxCmd*/,const TDesC8& /*aTfxCmdData*/)
-/** Dummy implementation in order to preserve compatibility with WSERV NGA.
-	@internalComponent */
-	{
-	ASSERT(0);
-	}
-
-EXPORT_C void RWsSession::RegisterEffect(TInt /*aAction*/, TInt /*aPurpose*/, const TFileName& /*aResourceDir*/, const TFileName& /*aFilenameOutgoing*/, const TFileName& /*aFilenameIncoming*/, TUint /*aAppUid*/, TBitFlags /*aFlags*/)
-/** Dummy implementation in order to preserve compatibility with WSERV NGA.
-	@internalComponent */
-	{
-	ASSERT(0);
-	}
-
-EXPORT_C void RWsSession::UnregisterEffect(TInt /*aAction*/, TInt /*aPurpose*/, TUint /*aAppUid*/)
-/** Dummy implementation in order to preserve compatibility with WSERV NGA.
-	@internalComponent */
-	{
-	ASSERT(0);
-	}
-
-EXPORT_C void RWsSession::UnregisterAllEffects()
-/** Dummy implementation in order to preserve compatibility with WSERV NGA.
-	@internalComponent */
-	{
-	ASSERT(0);
-	}
-
-EXPORT_C void RWsSession::OverrideEffects(TInt /*aAction*/, TInt /*aPurpose*/, const TFileName& /*aResourceDir*/, const TFileName& /*aFilenameOutgoing*/, const TFileName& /*aFilenameIncoming*/, TBitFlags /*aFlags*/)
-	/** Dummy implementation in order to preserve compatibility with WSERV NGA.
-	@internalComponent */
-	{
-	ASSERT(0);
-	}
-
-EXPORT_C void RWsSession::IndicateAppOrientation(TRenderOrientation /*aOrientation*/)
-	/** Dummy implementation in order to preserve compatibility with WSERV NGA.
-	@internalComponent */
-	{
-	ASSERT(0);
-	}
+    {
+    ASSERT(0);
+    }

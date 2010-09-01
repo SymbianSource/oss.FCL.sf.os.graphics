@@ -21,7 +21,7 @@
 #include "renderstagemanager.h"
 #include "wspluginmanager.h"
 
-#include "graphics/WsRenderStageFactory.h"
+#include "Graphics/WsRenderStageFactory.h"
 
 //  Constants
 

@@ -1,5 +1,4 @@
 /* Copyright (c) 2009 The Khronos Group Inc.
- * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -61,6 +60,8 @@
 #define AUTO_COMPOSE_DELAY      15000
 #define FIRST_CONTEXT_HANDLE    2000
 
+#define WAIT_FOREVER            -1
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -111,6 +112,7 @@ WFC_Context_CreateState(WFC_CONTEXT* context)
     fInt.linear         = fExt.linear;
     fInt.premultiplied  = fExt.premultiplied;
     fInt.rowPadding     = 1;
+    
      
     if (context->type == WFC_CONTEXT_TYPE_ON_SCREEN)
         {
@@ -119,7 +121,7 @@ WFC_Context_CreateState(WFC_CONTEXT* context)
         /* The rotated version of the target buffer for hardware rotation
          * or a de-rotated version of the internal buffer into another scratch buffer for software rotation
          */ 
-        if (OWF_Screen_Rotation_Supported(context->displayContext))
+        if (OWF_Screen_Rotation_Supported(context->screenNumber))
             {   /* The rotated version of the target buffer for hardware rotation */
             context->state.rotatedTargetImage=OWF_Image_Create(context->targetHeight,context->targetWidth,&fExt,context->scratchBuffer[2],0);
             }
@@ -225,13 +227,9 @@ WFC_Context_Shutdown(WFC_CONTEXT* context)
     DPRINT(("WFC_Context_Shutdown(context = %d)", context->handle));
 
     DPRINT(("Waiting for composer thread termination"));
-    if (context->composerThread)
-        {
-        OWF_Message_Send(&context->composerQueue, WFC_MESSAGE_QUIT, 0);
-        OWF_Thread_Join(context->composerThread, NULL);
-        OWF_Thread_Destroy(context->composerThread);
-        }
-    
+    OWF_Message_Send(&context->composerQueue, WFC_MESSAGE_QUIT, 0);
+    OWF_Thread_Join(context->composerThread, NULL);
+    OWF_Thread_Destroy(context->composerThread);
     context->composerThread = NULL;
 
     if (context->device)
@@ -281,9 +279,8 @@ WFC_Context_InitializeAttributes(WFC_CONTEXT* context,
         OWF_ASSERT(attribError==ATTR_ERROR_NO_MEMORY);
         return attribError;
         }
-
-  
-    /* The composition code reads the member variables directly, 
+    
+    /* The composition code uses the member variables directly, 
      * not via the attribute engine.
      */
     OWF_Attribute_Initi(&context->attributes,
@@ -316,14 +313,6 @@ WFC_Context_InitializeAttributes(WFC_CONTEXT* context,
                         (OWFint*) &context->lowestElement,
                         OWF_TRUE);
     attribError=OWF_AttributeList_GetError(&context->attributes);
-	
-	/* After commit to working, writable attribute abstracted variables
-	must not be written to directly. */
-    OWF_AttributeList_Commit(&context->attributes,
-                             WFC_CONTEXT_TYPE,
-                             WFC_CONTEXT_BG_COLOR,
-		             WORKING_ATTR_VALUE_INDEX );
-	
     return attribError;
 }
 
@@ -372,86 +361,67 @@ WFC_Context_Initialize(WFC_CONTEXT* context,
         return NULL;
         }
 
-    err2 =OWF_MessageQueue_Init(&context->composerQueue);
-    if (err2 != 0)
-        {
-        DPRINT(("WFC_Context_Initialize(): Cannot initialise the message queue err(%d)", err2));   
-        return NULL;
-        }
-    
-    context->composerThread = OWF_Thread_Create(WFC_Context_ComposerThread, context);
-    if (!(context->composerThread))
-        {
-        /* must call these to remove references to context */
-        DPRINT(("WFC_Context_Initialize(): Failed to create thread!"));
-        return NULL;
-        }
-
-    OWF_ComposerThread_RendezvousWait(context->displayContext);
-    
-    /*the following section of the code could be pushed to adaptation in future*/
+     /*the following section of the code could be pushed to adaptation in future*/
     if (type == WFC_CONTEXT_TYPE_ON_SCREEN)
     {
-       OWF_IMAGE_FORMAT        imageFormat;
-       OWF_SCREEN              screen;
-       WFCint width = 0;
-       WFCint height = 0;
-       WFCint normalSize = 0;
-       WFCint flippedSize = 0;
-       WFCNativeStreamType stream;
+        OWF_IMAGE_FORMAT        imageFormat;
+        OWF_SCREEN              screen;
+        WFCint width = 0;
+        WFCint height = 0;
+        WFCint normalSize = 0;
+        WFCint flippedSize = 0;
+        WFCNativeStreamType stream;
     
-       /* Set up stream for sending data to screen */
-       
-       if (!OWF_Screen_GetHeader(context->displayContext, &screen))
-       {
-           DPRINT(("WFC_Context_Initialize(): Could not retrieve the screen parameters"));
-           WFC_Context_Shutdown(context);
-           return NULL;
-       }
-    
-       /* Set on-screen pixel format */
-       imageFormat.pixelFormat     = OWF_SURFACE_PIXEL_FORMAT;
-       imageFormat.premultiplied   = OWF_SURFACE_PREMULTIPLIED;
-       imageFormat.linear          = OWF_SURFACE_LINEAR;
-       imageFormat.rowPadding      = OWF_SURFACE_ROWPADDING;
-    
-       width = screen.normal.width;
-       height = screen.normal.height;
-       
-       normalSize = screen.normal.height * screen.normal.stride;
-       flippedSize = screen.flipped.height * screen.flipped.stride;
-       
-       if (flippedSize > normalSize)
-           {
-           width = screen.flipped.width;
-           height = screen.flipped.height;
-           }
-       
-       stream = owfNativeStreamCreateImageStream(width,
-                                                 height,
-                                                 &imageFormat,
-                                                 1);
-    
-       if (stream)
-       {
-           WFC_Context_SetTargetStream(context, stream);
-           
-           /* At this point the stream's refcount is 2 - we must decrement
-            * it by one to ensure that the stream is destroyed when the
-            * context (that "owns" it) is destroyed.
-            */
-           owfNativeStreamRemoveReference(stream);
-       }
-       else
-       {
-           DPRINT(("WFC_Context_Initialize(): cannot create internal target stream"));
-           WFC_Context_Shutdown(context);
-           return NULL;
-       }
+        /* Set up stream for sending data to screen */
+        
+        if (!OWF_Screen_GetHeader(screenNum, &screen))
+        {
+            DPRINT(("WFC_Context_Initialize(): Could not retrieve the screen parameters"));
+            return NULL;
+        }
+
+        /* Set on-screen pixel format */
+        imageFormat.pixelFormat     = OWF_SURFACE_PIXEL_FORMAT;
+        imageFormat.premultiplied   = OWF_SURFACE_PREMULTIPLIED;
+        imageFormat.linear          = OWF_SURFACE_LINEAR;
+        imageFormat.rowPadding      = OWF_SURFACE_ROWPADDING;
+
+        width = screen.normal.width;
+        height = screen.normal.height;
+        
+        normalSize = screen.normal.height * screen.normal.stride;
+        flippedSize = screen.flipped.height * screen.flipped.stride;
+        
+        if (flippedSize > normalSize)
+            {
+            width = screen.flipped.width;
+            height = screen.flipped.height;
+            }
+        
+        stream = owfNativeStreamCreateImageStream(width,
+                                                  height,
+                                                  &imageFormat,
+                                                  1);
+
+        if (stream)
+        {
+            WFC_Context_SetTargetStream(context, stream);
+            
+            /* At this point the stream's refcount is 2 - we must decrement
+             * it by one to ensure that the stream is destroyed when the
+             * context (that "owns" it) is destroyed.
+             */
+            owfNativeStreamRemoveReference(stream);
+        }
+        else
+        {
+            DPRINT(("WFC_Context_Initialize(): cannot create internal target stream"));
+            return NULL;
+        }
     }
     else
     {
-       WFC_Context_SetTargetStream(context, stream);
+        WFC_Context_SetTargetStream(context, stream);
     }
     
     nbufs = SCRATCH_BUFFER_COUNT-1;
@@ -472,13 +442,17 @@ WFC_Context_Initialize(WFC_CONTEXT* context,
                                          OWF_IMAGE_L32);
     fail = fail || (scratch[nbufs] == NULL);
     
+    err2 = OWF_MessageQueue_Init(&context->composerQueue);
+    fail = fail || (err2 != 0);
+
     if (fail)
     {
+        OWF_MessageQueue_Destroy(&context->composerQueue);
+
         for (ii = 0; ii < SCRATCH_BUFFER_COUNT; ii++)
         {
             OWF_Image_FreeData(context->displayContext, &scratch[ii]);
         }
-        WFC_Context_Shutdown(context);
         return NULL;
     }
 
@@ -486,7 +460,12 @@ WFC_Context_Initialize(WFC_CONTEXT* context,
     {
         context->scratchBuffer[ii] = scratch[ii];
     }
-    
+
+    if (!WFC_Pipeline_CreateState(context) || !WFC_Context_CreateState(context))
+         {
+         DPRINT(("WFC_Context_Initialize(): Could not create pipeline state object"));
+         return NULL;
+         }
     if (    OWF_Semaphore_Init(&context->compositionSemaphore, 1)
         ||  OWF_Semaphore_Init(&context->commitSemaphore, 1)
         ||  OWF_Mutex_Init(&context->updateFlagMutex)
@@ -495,23 +474,13 @@ WFC_Context_Initialize(WFC_CONTEXT* context,
         )
         {
         DPRINT(("WFC_Context_Initialize(): Could not create mutexes and semaphores!"));
-        WFC_Context_Shutdown(context);
         return NULL;
         }
-
-    if (!WFC_Pipeline_CreateState(context) || !WFC_Context_CreateState(context))
-         {
-         DPRINT(("WFC_Context_Initialize(): Could not create pipeline state object"));
-         WFC_Context_Shutdown(context);
-         return NULL;
-         }
-    
 
     attribStatus= WFC_Context_InitializeAttributes(context, type);
 
     if (attribStatus!=ATTR_ERROR_NONE)
         {
-        WFC_Context_Shutdown(context);
         return NULL;
         }
     
@@ -525,7 +494,9 @@ WFC_Context_Initialize(WFC_CONTEXT* context,
     if (!( context->scenePool &&
           context->nodePool && context->elementPool))
     {
-        WFC_Context_Shutdown(context);
+        /* must call these to remove references to context */
+        context->workScene = NULL;
+        context->committedScene = NULL;
         return NULL;
     }
 
@@ -541,10 +512,27 @@ WFC_Context_Initialize(WFC_CONTEXT* context,
     if (!(context->workScene && context->committedScene &&
           context->nodePool && context->elementPool))
     {
-        WFC_Context_Shutdown(context);
+        /* must call these to remove references to context */
+        WFC_Scene_Destroy(context->workScene);
+        WFC_Scene_Destroy(context->committedScene);
+        context->workScene = NULL;
+        context->committedScene = NULL;
         return NULL;
     }
 
+
+    context->composerThread = OWF_Thread_Create(WFC_Context_ComposerThread,
+                                                context);
+    if (!(context->composerThread))
+        {
+        /* must call these to remove references to context */
+        WFC_Scene_Destroy(context->workScene);
+        WFC_Scene_Destroy(context->committedScene);
+        context->workScene = NULL;
+        context->committedScene = NULL;
+        return NULL;
+        }
+    
     return context;
 }
 
@@ -565,7 +553,7 @@ WFC_Context_Create(WFC_DEVICE* device,
     WFC_CONTEXT*            context = NULL;
 
     OWF_ASSERT(device);
-    context = CREATE(WFC_CONTEXT);
+   context = CREATE(WFC_CONTEXT);
 
     if (context)
     {
@@ -596,182 +584,6 @@ WFC_Context_SetTargetStream(WFC_CONTEXT* context,
                              &context->targetWidth, &context->targetHeight,
                              NULL, NULL, NULL);
 }
-
-static OWFboolean
-WFC_FastpathCheckTransparency(WFCbitfield transparencyTypes, WFCfloat globalAlpha, OWF_PIXEL_FORMAT sourceFormat)
-    {
-    if ((transparencyTypes & WFC_TRANSPARENCY_ELEMENT_GLOBAL_ALPHA) && (globalAlpha != 255.0f))
-        {
-        DPRINT(("=== WFC_FastpathCheckTransparency - Failed global alfa(%f) check", globalAlpha));
-        return OWF_FALSE;
-        }
-
-    if ((transparencyTypes & WFC_TRANSPARENCY_SOURCE) && (sourceFormat != OWF_IMAGE_XRGB8888))
-        {
-        DPRINT(("=== WFC_FastpathCheckTransparency - Failed transparency check types=0x%x format=0x%x", 
-                transparencyTypes, sourceFormat));
-        return OWF_FALSE;
-        }
-    
-
-    return OWF_TRUE;
-    }
-
-static OWFboolean
-WFC_FastpathCheckGeometry(WFC_CONTEXT* context, WFC_ELEMENT* element)
-    {
-    OWFint sourceWidth = 0;
-    OWFint sourceHeight = 0;
-    OWFint destWidth = 0;
-    OWFint destHeight = 0;
-    OWFint targetWidth = 0;
-    OWFint targetHeight = 0;
-    
-    OWF_ASSERT(context);
-    OWF_ASSERT(element);
-
-    if ((element->srcRect[0] != 0) || (element->srcRect[1] != 0))
-        {
-        DPRINT(("=== WFC_FastpathCheckGeometry(context = %p) - FAILED Source Position Check", context));
-        return OWF_FALSE;
-        }
-    
-    if ((element->dstRect[0] != 0) || (element->dstRect[1] != 0))
-        {
-        DPRINT(("=== WFC_FastpathCheckGeometry(context = %p) - FAILED Destination Position Check", context));
-        return OWF_FALSE;
-        }
-    
-    if(element->sourceFlip)
-        {
-        DPRINT(("=== WFC_FastpathCheckGeometry(context = %p) - FAILED Source Flip Check", context));
-        return OWF_FALSE;
-        }
-    
-    if(element->sourceRotation == WFC_ROTATION_0)
-        {
-        sourceWidth = element->srcRect[2];
-        sourceHeight = element->srcRect[3];
-        }
-    else
-        {
-        DPRINT(("=== WFC_FastpathCheckGeometry(context = %p) - FAILED Source Rotation (0x%x) Check", 
-                context, element->sourceRotation));
-        return OWF_FALSE;
-        }
-    
-    destWidth = element->dstRect[2];
-    destHeight = element->dstRect[3];
-    
-    if ((sourceWidth != destWidth) || (sourceHeight != destHeight))
-       {
-       DPRINT(("=== WFC_FastpathCheckGeometry(context = %p) - FAILED Non-scaling Check", context));
-       return OWF_FALSE;
-       }
-
-    if (context->rotation == WFC_ROTATION_0 || OWF_Screen_Rotation_Supported(context->displayContext))
-        {
-        if (context->rotation == WFC_ROTATION_0 || context->rotation == WFC_ROTATION_180)
-            {
-            targetWidth = context->targetWidth;
-            targetHeight = context->targetHeight;
-            }
-        else
-            {
-            targetWidth = context->targetHeight;
-            targetHeight = context->targetWidth;
-            }
-        
-        if (destWidth == targetWidth && destHeight == targetHeight)
-            {
-            return OWF_TRUE;
-            }
-        else
-            {
-            DPRINT(("=== WFC_FastpathCheckGeometry(context = %p) - Failed Dimensions Check", context));
-            }
-        }
-    else
-        {
-        DPRINT(("=== WFC_FastpathCheckGeometry(context = %p) - Failed Supported Rotations Check", context));
-        }
-    
-    return OWF_FALSE;
-    }
-
-/**
- * Check if the current scene is candidate for fastpath optimisation.
- * Fastpath optimisation means the topmost visible layer will be passed direct to the 
- * lower level for presentation on the display without being composed.
- * There are two questions:
- * - Is the scene itself suitable for fastpathing?
- * - Can the surface selected for fastpathing be presented directly by the display?
- * This function will check the scene (eg reject if the top stream is non-opaque or smaller than the screen)
- *
- * @param context context object containing the scene to be checked.
- **/
-
-/* [Not in doxygen]
- * The first time MOpenWFC_RI_Display_Update::SetTopLayerSurface (or SetLayerSurface) is called 
- * with a different stream handle, it can fail indicating the display cannot accept the stream.
- * The compositor will then have to immediately compose that frame as normal, and should continue
- * to perform normal composition until the scene changes to present a different stream as fastpath candidate.  
- * 
- * There is a middle ground, e.g. can the hardware handle over-sized images, or do scaling or do rotation?
- * SetTopLayerSurface accepts an optional list of imperfect attributes to be checked by the adaptation.
- * By WFC_Context_CheckFastpath only listing the attributes that are considered imperfect,
- * and SetLayerSurface rejecting fastpath for any attribute IDs that it doesn't recognise,
- * safe independent extensibility is assured. 
- */
-static void
-WFC_Context_CheckFastpath(WFC_CONTEXT* context)
-    {
-    WFC_ELEMENT* element = NULL;
-    OWF_ASSERT(context);
-    
-    DPRINT(("WFC_Context_CheckFastpath(context = %p) - Check Fastpath", context));
-    if ((context->type != WFC_CONTEXT_TYPE_ON_SCREEN) ||
-        OWF_DisplayContext_FastpathChecked(context->displayContext))
-        {
-        return;
-        }
-    
-    // Simple case-fast path top most layer
-    // More complex case, fast-path top most VISIBLE, OPAQUE layer.
-    OWF_DisplayContext_DisableFastpath(context->displayContext);
-    OWF_DisplayContext_SetFastpathChecked(context->displayContext);
-    // Find top layer
-    element = WFC_Scene_TopMostElement(context->committedScene);
-    if (element && element->source && element->skipCompose == WFC_FALSE)
-        {
-    
-        if (element->mask)
-            {
-            DPRINT(("=== WFC_Context_CheckFastpath(context = %p) - FAILED elemenent includes mask", context));
-            return;
-            }
-        
-        OWF_ASSERT(element->source->lockedStream.image);
-        
-        OWF_ASSERT(element->source->streamHandle != OWF_INVALID_HANDLE);
-        
-        if (!WFC_FastpathCheckGeometry(context, element))
-            {
-            return;
-            }
-        
-        if (!WFC_FastpathCheckTransparency(element->transparencyTypes, 
-                                           element->globalAlpha, 
-                                           element->source->lockedStream.image->format.pixelFormat))
-            {
-            return;
-            }
-        
-        OWF_DisplayContext_EnableFastpath(context->displayContext, element->source->streamHandle);
-        DPRINT(("=== WFC_Context_CheckFastpath(context = %p) - Fastpath Enabled", context));
-        }
-    }
-
 /*---------------------------------------------------------------------------
  * Checks if the given stream would be valid as an off-screen context target.
  * 
@@ -888,7 +700,7 @@ WFC_Context_DoCommit(WFC_CONTEXT* context)
 /*---------------------------------------------------------------------------
  *
  *----------------------------------------------------------------------------*/
-static OWFboolean
+static void
 WFC_Context_LockTargetForWriting(WFC_CONTEXT* context)
 {
     OWF_ASSERT(context);
@@ -897,18 +709,12 @@ WFC_Context_LockTargetForWriting(WFC_CONTEXT* context)
 
     context->state.targetBuffer =
         owfNativeStreamAcquireWriteBuffer(context->stream);
-    
-    if (!context->state.targetBuffer)
-        {
-        DPRINT(("Failed to WFC_Context_LockTargetForWriting owfNativeStreamAcquireWriteBuffer"));
-        return OWF_FALSE;
-        }
     context->state.targetPixels =
         owfNativeStreamGetBufferPtr(context->stream,
                                     context->state.targetBuffer);
 
     if ((WFC_ROTATION_0   == context->rotation || WFC_ROTATION_180 == context->rotation) ||
-        !OWF_Screen_Rotation_Supported(context->displayContext))
+        !OWF_Screen_Rotation_Supported(context->screenNumber))
     {
         /* final target, in target format */
         context->state.targetImage =context->state.unrotatedTargetImage;
@@ -941,15 +747,16 @@ WFC_Context_LockTargetForWriting(WFC_CONTEXT* context)
         {
         OWF_ASSERT(WFC_FALSE);
         }
-    return OWF_TRUE;
 }
 
 /*---------------------------------------------------------------------------
  *
  *----------------------------------------------------------------------------*/
 static void
-WFC_Context_UnlockTarget(WFC_CONTEXT* context,OWFboolean aDoPost)
+WFC_Context_UnlockTarget(WFC_CONTEXT* context)
 {
+    OWFNativeStreamBuffer   frontBuffer = OWF_INVALID_HANDLE;
+    void*                   pixelDataPtr = NULL;
     OWF_ROTATION rotation = OWF_ROTATION_0;
 
     OWF_ASSERT(context);
@@ -963,42 +770,49 @@ WFC_Context_UnlockTarget(WFC_CONTEXT* context,OWFboolean aDoPost)
                                       NULL);
 
     
-    if (aDoPost)
+    /* Refactor the code that follows so that it is triggered by the above releasewrite */
+    
+    /* Acquire target stream front buffer and blit to SDL screen */
+    frontBuffer = owfNativeStreamAcquireReadBuffer(context->stream);
+    DPRINT(("  Locking target stream=%d, buffer=%d",
+            context->stream, frontBuffer));
+
+    pixelDataPtr = owfNativeStreamGetBufferPtr(context->stream, frontBuffer);
+
+    switch (context->rotation)
     {
-        switch (context->rotation)
+        case WFC_ROTATION_0:
         {
-            case WFC_ROTATION_0:
-            {
-                rotation = OWF_ROTATION_0;
-                break;
-            }
-            case WFC_ROTATION_90:
-            {
-                rotation = OWF_ROTATION_90;
-                break;
-            }
-            case WFC_ROTATION_180:
-            {
-                rotation = OWF_ROTATION_180;
-                break;
-            }
-            case WFC_ROTATION_270:
-            {
-                rotation = OWF_ROTATION_270;
-                break;
-            }
-            default:
-            {
-                OWF_ASSERT(0);
-            }
+            rotation = OWF_ROTATION_0;
+            break;
         }
-        
-        if (!OWF_Screen_Post_Topmost_Layer(context->displayContext, context->stream, rotation))
-            {   //getting a fail here is bad... display did not accept the composition buffer.
-            DPRINT(("WFC_Context_UnlockTarget - OWF_Screen_Post_Topmost_Layer failed for composition stream"));
-           OWF_ASSERT(0);
-            }
+        case WFC_ROTATION_90:
+        {
+            rotation = OWF_ROTATION_90;
+            break;
+        }
+        case WFC_ROTATION_180:
+        {
+            rotation = OWF_ROTATION_180;
+            break;
+        }
+        case WFC_ROTATION_270:
+        {
+            rotation = OWF_ROTATION_270;
+            break;
+        }
+        default:
+        {
+            OWF_ASSERT(0);
+        }
     }
+    
+    OWF_Screen_Blit(context->screenNumber, pixelDataPtr, rotation);
+
+    owfNativeStreamReleaseReadBuffer(context->stream, frontBuffer);
+    DPRINT(("  Releasing target stream=%d, buffer=%d",
+            context->stream, frontBuffer));
+
 }
 
 /*---------------------------------------------------------------------------
@@ -1034,6 +848,8 @@ WFC_Context_PrepareComposition(WFC_CONTEXT* context)
     b = b * a / OWF_ALPHA_MAX_VALUE;
 
     OWF_Image_Clear(context->state.internalTargetImage, r, g, b, a);
+
+    WFC_Scene_LockSourcesAndMasks(context->committedScene);
 }
 
 
@@ -1045,11 +861,13 @@ static void
 WFC_Context_FinishComposition(WFC_CONTEXT* context)
 {
     OWF_ROTATION            rotation = OWF_ROTATION_0;
+    OWFint                  screenNumber;
     OWFboolean              screenRotation;
 
     OWF_ASSERT(context);
 
-    screenRotation = OWF_Screen_Rotation_Supported(context->displayContext);
+    screenNumber = context->screenNumber;
+    screenRotation = OWF_Screen_Rotation_Supported(screenNumber);
     /* re-use scratch buffer 1 for context rotation */
     if (WFC_ROTATION_0   == context->rotation || screenRotation)
     {
@@ -1106,7 +924,8 @@ WFC_Context_FinishComposition(WFC_CONTEXT* context)
 
         OWF_Image_DestinationFormatConversion(context->state.targetImage, context->state.rotatedTargetImage);
     }
-    WFC_Context_UnlockTarget(context,(context->type==WFC_CONTEXT_TYPE_ON_SCREEN)?OWF_TRUE:OWF_FALSE);
+    WFC_Context_UnlockTarget(context);
+    WFC_Scene_UnlockSourcesAndMasks(context->committedScene);
 }
 
 /*!---------------------------------------------------------------------------
@@ -1131,167 +950,56 @@ WFC_Context_DoCompose(WFC_CONTEXT* context)
     context->sourceUpdateCount = 0;
     OWF_Mutex_Unlock(&context->updateFlagMutex);
     
+    WFC_Context_PrepareComposition(context);
+
     DPRINT(("WFC_Context_Compose"));
     /* Composition always uses the committed version
      * of the scene.
      */
 
-    WFC_Scene_LockSourcesAndMasks(context->committedScene);
-    
     OWF_Mutex_Lock(&context->sceneMutex);
     
-    WFC_Context_CheckFastpath(context);
-    if (OWF_DisplayContext_FastpathEnabled(context->displayContext))
-        {
-        WFCboolean targetStreamAccessed;
-        OWFboolean screenRotation;
-        screenRotation = OWF_Screen_Rotation_Supported(context->displayContext);
-        if (WFC_Context_Active(context))
-            {   //Full fastpath is only supported for autonomous composition 
-            OWFNativeStreamType stream = OWF_INVALID_HANDLE;
-            OWF_ROTATION rotation = OWF_ROTATION_0;
-    
-            DPRINT(("== WFC_Context_DoCompose(context = %p) - Fastpathing", context));
-    
-            stream = OWF_DisplayContext_FastpathStream(context->displayContext);
-            if (screenRotation)
-                {
-                switch (context->rotation)
-                    {
-                    case WFC_ROTATION_0:
-                        {
-                        rotation = OWF_ROTATION_0;
-                        break;
-                        }
-                    case WFC_ROTATION_90:
-                        {
-                        rotation = OWF_ROTATION_90;
-                        break;
-                        }
-                    case WFC_ROTATION_180:
-                        {
-                        rotation = OWF_ROTATION_180;
-                        break;
-                        }
-                    case WFC_ROTATION_270:
-                        {
-                        rotation = OWF_ROTATION_270;
-                        break;
-                        }
-                    default:
-                        {
-                        OWF_ASSERT(0);
-                        rotation = OWF_ROTATION_0;
-                        }
-                    }
-                }
-    
-            if (!OWF_Screen_Post_Topmost_Layer(context->displayContext, stream, rotation))
-                {
-            
-                DPRINT(("WFC_Context_Compose calls OWF_DisplayContext_DisableFastpath because !OWF_Screen_Post_Topmost_Layer()"));
-                OWF_DisplayContext_DisableFastpath(context->displayContext);
-                //If fastpath is disabled here then we need to compose properly this cycle
-                }
-            }
-        targetStreamAccessed = OWF_DisplayContext_InternalStreamAccessed(context->displayContext);
-        if (OWF_DisplayContext_FastpathEnabled(context->displayContext) && ( targetStreamAccessed || !WFC_Context_Active(context) ))
-            {   //Fastpath in non-autonomous composition just does a simple copy and post.
-            DPRINT(("== WFC_Context_DoCompose(context = %p) -   fastpath copy target", context));
-            if (WFC_Context_LockTargetForWriting(context))
-                {
-                OWFboolean copy;
-                if (screenRotation)
-                    {
-                    if (WFC_ROTATION_90 == context->rotation || WFC_ROTATION_270 == context->rotation)
-                        {
-                        owfSetStreamFlipState(context->stream, OWF_TRUE);
-                        }
-                    else
-                        {
-                        owfSetStreamFlipState(context->stream, OWF_FALSE);
-                        }
-                    }
-                copy=OWF_DisplayContext_CopyFastpathedStreamToTargetStream(context);
-                if (!WFC_Context_Active(context))
-                    {
-                    if (!copy)
-                        {
-                        DPRINT(("WFC_Context_Compose calls OWF_DisplayContext_DisableFastpath because !OWF_DisplayContext_CopyFastpathedStreamToTargetStream()"));
-                        OWF_DisplayContext_DisableFastpath(context->displayContext);
-                        //If fastpath is disabled here then we need to compose properly this cycle
-                        }
-                    }
-                else
-                    {
-                    copy=OWF_FALSE;
-                    }
-              
-                WFC_Context_UnlockTarget(context,copy);
-                }
-            else
-                {
-                //If non-autonomous, then the lock target is required.
-                OWF_ASSERT(WFC_Context_Active(context));
-                }
+    scene = context->committedScene;
+    OWF_ASSERT(scene);
 
-            }
-        if (OWF_DisplayContext_FastpathEnabled(context->displayContext))
-            {
-            WFC_ELEMENT* topmostElement = NULL;
-            topmostElement = WFC_Scene_TopMostElement(context->committedScene);
-            owfSymElementNotifications(context, topmostElement);
-            }
+    for (node = scene->elements; NULL != node; node = node->next)
+    {
+        
+        WFC_ELEMENT*            element = NULL;
+        WFC_ELEMENT_STATE*      elementState = NULL;
+        element = ELEMENT(node->data);
+
+        if (element->skipCompose)
+        {
+             /* this element is somehow degraded, its source is missing or
+              * something else; skip to next element */
+            DPRINT(("  *** Skipping element %d", element->handle));
+            continue;
         }
-    if (!OWF_DisplayContext_FastpathEnabled(context->displayContext))
-        {
-        DPRINT(("== WFC_Context_DoCompose(context = %p) -   Composing", context));
-        WFC_Context_PrepareComposition(context);
 
-        scene = context->committedScene;
-        OWF_ASSERT(scene);
-    
-        for (node = scene->elements; NULL != node; node = node->next)
-            {
+        DPRINT(("  Composing element %d", element->handle));
+
+        /* BeginComposition may fail e.g. if the element's destination
+         * rectangle is something bizarre, i.e. causes overflows or
+         * something.
+         */
+        if ((elementState=WFC_Pipeline_BeginComposition(context, element))!=NULL)
+        {
+            owfSymElementNotifications(context, element);
             
-            WFC_ELEMENT*            element = NULL;
-            WFC_ELEMENT_STATE*      elementState = NULL;
-            element = ELEMENT(node->data);
-    
-            if (element->skipCompose)
-                {
-                 /* this element is somehow degraded, its source is missing or
-                  * something else; skip to next element */
-                DPRINT(("  *** Skipping element %d", element->handle));
-                continue;
-                }
-    
-            DPRINT(("  Composing element %d", element->handle));
-    
-            /* BeginComposition may fail e.g. if the element's destination
-             * rectangle is something bizarre, i.e. causes overflows or
-             * something.
-             */
-            if ((elementState=WFC_Pipeline_BeginComposition(context, element))!=NULL)
-                {
-                owfSymElementNotifications(context, element);
+            WFC_Pipeline_ExecuteSourceConversionStage(context, elementState);
+            WFC_Pipeline_ExecuteCropStage(context, elementState);
+            WFC_Pipeline_ExecuteFlipStage(context, elementState);
+            WFC_Pipeline_ExecuteRotationStage(context, elementState);
+            WFC_Pipeline_ExecuteScalingStage(context, elementState);
+            WFC_Pipeline_ExecuteBlendingStage(context, elementState);
                 
-                WFC_Pipeline_ExecuteSourceConversionStage(context, elementState);
-                WFC_Pipeline_ExecuteCropStage(context, elementState);
-                WFC_Pipeline_ExecuteFlipStage(context, elementState);
-                WFC_Pipeline_ExecuteRotationStage(context, elementState);
-                WFC_Pipeline_ExecuteScalingStage(context, elementState);
-                WFC_Pipeline_ExecuteBlendingStage(context, elementState);
-                    
-                WFC_Pipeline_EndComposition(context, element,elementState);
-                }
-            }
-    
-        WFC_Context_FinishComposition(context);
-        DPRINT(("=== WFC_Context_DoCompose(context = %p) - Diplayed Composition", context));
+            WFC_Pipeline_EndComposition(context, element,elementState);
         }
+    }
+
+    WFC_Context_FinishComposition(context);
     
-    WFC_Scene_UnlockSourcesAndMasks(context->committedScene);
     owfSymProcessAllNotifications(context);
     OWF_Mutex_Unlock(&context->sceneMutex);
     
@@ -1497,6 +1205,7 @@ OWF_API_CALL WFCErrorCode
 WFC_Context_RemoveElement(WFC_CONTEXT* context,
                           WFCElement element)
 {
+    WFCErrorCode            err = WFC_ERROR_BAD_HANDLE;
     WFC_ELEMENT*            elemento = NULL;
 
     OWF_ASSERT(context);
@@ -1511,9 +1220,11 @@ WFC_Context_RemoveElement(WFC_CONTEXT* context,
          */
         elemento->shared = WFC_FALSE;
         context->lowestElement = WFC_Scene_LowestElement(context->workScene);
+
+        err = WFC_ERROR_NONE;
     }
 
-    return WFC_ERROR_NONE;
+    return err;
 }
 
 /*!
@@ -1680,10 +1391,6 @@ WFC_Context_SetAttribi(WFC_CONTEXT* context,
                   WFC_ROTATION_270 == value))
             {
                result = WFC_ERROR_ILLEGAL_ARGUMENT;
-            }
-            else
-            {
-                OWF_DisplayContext_ResetFastpathCheck(context->displayContext);
             }
             break;
         }
@@ -1878,7 +1585,6 @@ static void*
 WFC_Context_ComposerThread(void* data)
 {
     WFC_CONTEXT*            context = (WFC_CONTEXT*) data;
-    OWFboolean screenCreated = OWF_TRUE;
     OWF_MESSAGE             msg;
 
 
@@ -1886,17 +1592,8 @@ WFC_Context_ComposerThread(void* data)
     DPRINT(("WFC_Context_ComposerThread starting"));
 
     memset(&msg, 0, sizeof(OWF_MESSAGE));
-    
-    if (context->type == WFC_CONTEXT_TYPE_ON_SCREEN)
-        {
-        screenCreated = OWF_Screen_Create(context->screenNumber, context->displayContext);
-        }
-    
-    OWF_ComposerThread_Rendezvous(context->displayContext);
 
-    OWF_ComposerThread_RendezvousDestroy(context->displayContext);
-    
-    while (context->device && msg.id != WFC_MESSAGE_QUIT && screenCreated)
+    while (context->device && msg.id != WFC_MESSAGE_QUIT)
     {
         OWFint              err = -1;
 
@@ -1934,11 +1631,6 @@ WFC_Context_ComposerThread(void* data)
                                                           context,
                                                           WFC_FALSE);
                     context->activationState = WFC_CONTEXT_STATE_PASSIVE;
-                    if (OWF_DisplayContext_FastpathEnabled(context->displayContext))
-                        {
-                        DPRINT(("COMMIT: Invoking fastpath recomposition after deactivate"));
-                        WFC_Context_DoCompose(context);
-                        }
                     break;
                 }
 
@@ -1948,7 +1640,7 @@ WFC_Context_ComposerThread(void* data)
 
                     DPRINT(("COMMIT: Invoking DoCommit"));
                     WFC_Context_DoCommit(context);
-                    OWF_DisplayContext_ResetFastpathCheck(context->displayContext);
+
                     if (!WFC_Context_Active(context))
                     {
                         DPRINT(("COMMIT: Context is inactive, composition "
@@ -1996,16 +1688,61 @@ WFC_Context_ComposerThread(void* data)
         }
     }
 
-    if (context->type == WFC_CONTEXT_TYPE_ON_SCREEN)
-        {
-        OWF_Screen_Destroy(context->displayContext);
-        }
     /* Release any use of EGL by this thread. */
     eglReleaseThread();
 
     DPRINT(("WFC_Context_ComposerThread terminating"));
     OWF_Thread_Exit(NULL);
     return NULL;
+}
+
+/*---------------------------------------------------------------------------
+ *
+ *----------------------------------------------------------------------------*/
+
+OWF_API_CALL void
+WFC_Context_SourceStreamUpdated(OWFNativeStreamType stream,
+                                OWFint event,
+                                void* data,
+                                void* returnParam)
+{
+    (void)returnParam;
+    OWF_ASSERT(data);
+
+    DPRINT(("WFC_Context_SourceStreamUpdated(%p, %x, %p)",
+            stream, event, data));
+    stream = stream; /* suppress compiler warning */
+ 
+    switch (event)
+    {
+        case OWF_OBSERVER_RETURN_DEFAULT_EVENT:
+        if (returnParam)
+        {
+            OWF_DEFAULT_EVENT_PARAM* parameter = (OWF_DEFAULT_EVENT_PARAM*) returnParam;
+            if ((parameter->length) == sizeof(OWF_DEFAULT_EVENT_PARAM))
+                {
+                parameter->event = OWF_STREAM_UPDATED;
+                }
+        }
+        break;
+    
+        case OWF_STREAM_UPDATED:
+            {
+                WFC_CONTEXT*            context = NULL;
+                context = CONTEXT(data);
+                OWF_ASSERT(context);
+                OWF_Mutex_Lock(&context->updateFlagMutex);
+                
+                if (WFC_Context_Active(context))
+                {
+                    ++context->sourceUpdateCount;
+                }
+                OWF_Mutex_Unlock(&context->updateFlagMutex);
+            }
+            break;
+        default:
+            break;
+    }
 }
 
 /*---------------------------------------------------------------------------

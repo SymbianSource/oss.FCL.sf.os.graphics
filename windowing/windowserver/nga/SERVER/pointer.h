@@ -230,7 +230,10 @@ private:
 	static TInt iExitHighPressureThreshold;
 	
 	/** Used to offset the y pointer */
-	static TInt iYOffset;
+	/** upgraded to use dynamic value */
+	static TInt iYOffsetTop;
+	static TInt iYOffsetBottom;
+	static TInt iYOffsetMax;
 	
 #if defined(__WINS__)
 	/** Tell whether to rotate pointer coords in _WINS_ builds */

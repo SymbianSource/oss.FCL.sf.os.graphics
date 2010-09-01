@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -14,24 +14,24 @@
 // Description: 
 //
 
-PRINT Run WServ NGA pointer event tests on screen 0
+PRINT Run WServ YShifting pointer offset test on screen 0
 
 LOAD_SUITE tautoserver_nga
 
 PRINT Run Final WServ pointer shift tests on screen 0
 DELAY 5000
 //!@SYMTestCaseID			graphics-wserv-CR2052-0001
-//!@SYMPREQ					CR2052
-//!@SYMTestCaseDesc			Test pointer event positions for offset YSHIFTING in wsini.ini			
-//!@SYMTestActions			Simulate the pointer click events in various positions/rotations. A keyword YSHIFTING with a value greater than 0 should required to test the pointer offset. 
-//!							Add those event in event queue and retrieve the positions from the event queue for verification
+//!@SYMPREQ				CR2052
+//!@SYMTestCaseDesc			Test pointer event positions for offset YSHIFTINGTOP, YSHIFTINGBOTTOM and YSHIFTINGMAX values in wsini.ini			
+//!@SYMTestActions			Simulate the pointer click events in various positions on the screen. The above keywords with a value other than 0 
+//!					is required to test the pointer offset. Add those event in event queue and retrieve the positions from the event queue for verification.
+//!					Repeat the above tests for different pointer number.
 //!@SYMTestStatus			Implemented
 //!@SYMTestPriority			2
-//!@SYMTestExpectedResults	Simlated pointer position and expected pointer positions should match.  
+//!@SYMTestExpectedResults		Simlated pointer position and expected pointer positions should match.  
 //!@SYMTestType				CT
 
-RUN_TEST_STEP 1500 tautoserver_nga TEventTest
-RUN_TEST_STEP 200 tautoserver_nga TMultiPtrEventTest
+RUN_TEST_STEP 1500 tautoserver_nga TPointerOffsetTest
 
 
 

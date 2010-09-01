@@ -1,5 +1,4 @@
 /* Copyright (c) 2009 The Khronos Group Inc.
- * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -175,15 +174,6 @@ WFC_Scene_Commit(WFC_SCENE* scene);
  */
 OWF_API_CALL WFCElement
 WFC_Scene_LowestElement(WFC_SCENE* scene);
-
-/*!
- *  \brief Search for the topmost element
- *
- *  \param scene            Scene to search
- *  \return pointer to the topmost element
- */
-OWF_API_CALL WFC_ELEMENT*
-WFC_Scene_TopMostElement(WFC_SCENE* scene);
 
 #ifdef __cplusplus
 }

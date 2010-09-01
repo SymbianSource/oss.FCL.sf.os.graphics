@@ -781,9 +781,9 @@ static M3GObject m3gGetLoaded(Loader *loader, M3Gint idx, M3GClass classID)
             isCompatible = M3G_FALSE;
             break;
         case M3G_CLASS_MESH:
-            isCompatible = (objClassID == M3G_CLASS_MESH)
-                || (objClassID == M3G_CLASS_MORPHING_MESH)
-                || (objClassID == M3G_CLASS_SKINNED_MESH);
+            isCompatible = (classID == M3G_CLASS_MESH)
+                || (classID == M3G_CLASS_MORPHING_MESH)
+                || (classID == M3G_CLASS_SKINNED_MESH);
             break;
         default:
             isCompatible = (classID == objClassID);

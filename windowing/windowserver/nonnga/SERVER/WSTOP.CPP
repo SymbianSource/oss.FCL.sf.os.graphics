@@ -18,7 +18,6 @@
 #include "wstop.h"
 
 #include <hal.h>
-#include <graphics/fbsdefs.h>
 #include "ANIM.H"
 #include "gc.h"
 #include "playbackgc.h"

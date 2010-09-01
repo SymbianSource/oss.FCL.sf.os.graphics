@@ -44,7 +44,6 @@ PRJ_EXPORTS
 ../inc/gdistructs.h	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/gdi/gdistructs.h)
 ../inc/gdiconsts.h	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/gdi/gdiconsts.h)
 ../inc/gdiinline.inl	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/gdi/gdiinline.inl)
-../inc/gdiplatapi.h	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/gdi/gdiplatapi.h)
 
 ../inc/hextree.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(hextree.h)
 ../inc/hextree.inl SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(hextree.inl)

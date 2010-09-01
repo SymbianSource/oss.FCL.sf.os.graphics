@@ -1,5 +1,4 @@
 /* Copyright (c) 2009 The Khronos Group Inc.
- * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -36,8 +35,6 @@ extern "C"
 #include "owfmemory.h"
 #include "owfdebug.h"
 
-#ifdef DEBUG
-
 #define MAGIK   0x05EAF00D
 #define FENCE1  0xFACED00D
 #define FENCE2  0xFACE50FF
@@ -55,12 +52,12 @@ typedef struct BLOCK_ {
 } BLOCK;
 
 
-
+#ifdef DEBUG
 
 static void
 OWF_Memory_Shutdown(void);
 
-
+#endif
 
 static void
 OWF_Memory_LockUnlockManagedBlocks(OWFboolean lock)
@@ -314,7 +311,6 @@ OWF_Memory_Shutdown()
     }
     OWF_Memory_UnlockManagedBlocks();
 }
-#endif
 #endif
 
 #ifdef __cplusplus

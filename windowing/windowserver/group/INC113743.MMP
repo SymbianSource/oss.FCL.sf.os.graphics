@@ -22,7 +22,7 @@
 TARGET            inc113743.exe
 TARGETTYPE        exe
 
-SOURCEPATH        ../test/tauto
+SOURCEPATH        ../tauto
 
 SOURCE            topaquechild.cpp
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN

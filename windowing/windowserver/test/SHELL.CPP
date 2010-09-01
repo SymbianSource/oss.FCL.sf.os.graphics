@@ -21,8 +21,8 @@
 #include "../SERVER/w32cmd.h"
 #include <e32svr.h>
 #include <hal.h>
-#include "../test/tlib/testbase.h"
-#include "../test/TClick/CLICK.H"
+#include "../tlib/testbase.h"
+#include "../TClick/CLICK.H"
 
 #define __USING_PROCESS_
 

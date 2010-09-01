@@ -281,18 +281,18 @@ void CWsConfigChangeNotifier::RunL()
 			
 			iOwner->IncreaseConfigSpinner();
 			
-			//if the config change comes from a render stage then ensure screen device size 
-			//is also updated
-			TSize currentRes;
-			currentConfig.GetResolution(currentRes);
-			TBool disconnected = (currentRes.iHeight == 0 || currentRes.iWidth == 0) ? ETrue : EFalse;
+            //if the config change comes from a render stage then ensure screen device size 
+            //is also updated
+            TSize currentRes;
+            currentConfig.GetResolution(currentRes);
+            TBool disconnected = (currentRes.iHeight == 0 || currentRes.iWidth == 0) ? ETrue : EFalse;
             
-			//if the config change is due to CScreen::SetConfiguration() being called then we
-			//don't want to update it again. Only update if the configs are different and the
-			//display is connected...
-			TDisplayConfiguration lastSetConfig(iLastSetConfig);
-			if (!((currentConfig == lastSetConfig) || (disconnected)))
-			    {
+            //if the config change is due to CScreen::SetConfiguration() being called then we
+            //don't want to update it again. Only update if the configs are different and the
+            //display is connected...
+            TDisplayConfiguration lastSetConfig(iLastSetConfig);
+            if (!((currentConfig == lastSetConfig) || (disconnected)))
+                {
                 TDisplayConfiguration1::TRotation rotation;
                 if (lastSetConfig.GetRotation(rotation))
                     {
@@ -301,8 +301,8 @@ void CWsConfigChangeNotifier::RunL()
                     currentConfig.SetRotation(rotation);
                     }
                 iOwner->UpdateConfiguration(currentConfig);
-			    }		
-			
+                }
+
 			//put config change event on queue
 			RPointerArray<CWsClient> clientArray;
 			CleanupClosePushL(clientArray);
@@ -332,7 +332,6 @@ void CWsConfigChangeNotifier::RunL()
 		{
 		IssueNotificationRequest();
 		}
-	
 	}
 
 

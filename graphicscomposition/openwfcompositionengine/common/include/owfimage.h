@@ -1,5 +1,4 @@
 /* Copyright (c) 2009 The Khronos Group Inc.
- * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -196,6 +195,8 @@ typedef struct _OWF_BLEND_INFO {
 
     OWF_IMAGE*              mask;
     OWFsubpixel             globalAlpha;
+    OWFboolean              destinationFullyOpaque;
+    OWFpixel*               tsColor;
 } OWF_BLEND_INFO;
 
 

@@ -191,7 +191,7 @@ void CFpsAppEng::RunL()
 		}
 
 	Mem::Move(iSurfacePtr, iBufPtr1, iNoOfBytes);
-	__ASSERT_ALWAYS( KErrNone==iSurfaceUpdateSession.SubmitUpdate(KAllScreens, iSurfaceId, 0, NULL),User::Panic(_L("Fps App"), -1));
+	__ASSERT_ALWAYS( KErrNone==iSurfaceUpdateSession.SubmitUpdate(0, iSurfaceId, 0, NULL),User::Panic(_L("Fps App"), -1));
 	iClient.Flush();
 
 //	After(TTimeIntervalMicroSeconds32(10000));	// 0.002sec, 100fps	

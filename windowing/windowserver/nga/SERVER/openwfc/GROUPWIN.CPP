@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -515,8 +515,9 @@ void CWsWindowGroup::CommandL(TInt aOpcode, const TAny *aCmdData)
 					CWsObject *destroyObj = iWsOwner->HandleToObj(*pData.UInt, WS_HANDLE_CAPTURE_KEY);
 					if (destroyObj)
 						{
-						// Cancel any repeat that is underway for this capture
-						CKeyboardRepeat::CancelRepeat(destroyObj, EFalse);
+						//Cancel any repeat that is underway for this key
+						const TWsWinCmdCaptureKey& capKey(*pData.CaptureKey);
+						CKeyboardRepeat::CancelRepeat(this,capKey.key,EFalse,capKey.modifierMask);
 						delete destroyObj;
 						}
 					else
@@ -534,6 +535,9 @@ void CWsWindowGroup::CommandL(TInt aOpcode, const TAny *aCmdData)
 					CWsObject *destroyObj = iWsOwner->HandleToObj(*pData.UInt, WS_HANDLE_CAPTURE_KEY_UPDOWNS);
 					if (destroyObj)
 						{
+						//Cancel any repeat that is underway for this key
+						const TWsWinCmdCaptureKey& capKey(*pData.CaptureKey);
+						CKeyboardRepeat::CancelRepeat(this,capKey.key,EFalse,capKey.modifierMask);
 						delete destroyObj;
 						}
 					else
@@ -551,8 +555,9 @@ void CWsWindowGroup::CommandL(TInt aOpcode, const TAny *aCmdData)
 					CWsObject *destroyObj = iWsOwner->HandleToObj(*pData.UInt, WS_HANDLE_CAPTURE_LONG_KEY);
 					if (destroyObj)
 						{
-						// Cancel any repeat that is underway for this capture
-						CKeyboardRepeat::CancelRepeat(destroyObj, ETrue);
+						//Cancel any repeat that is underway for this key
+						const TWsWinCmdCaptureLongKey& capKey(*pData.CaptureLongKey);
+						CKeyboardRepeat::CancelRepeat(this,capKey.inputKey,ETrue,capKey.modifierMask);
 						delete destroyObj;
 						} 
 					else
@@ -901,12 +906,6 @@ void CWsWindowGroup::SetOrdinalPosition(TInt aPos)
 TBool CWsWindowGroup::SetOrdinalPosition(TInt aPos,CWsWindowGroup* aClosingWindow)
 	{
 	TBool ret=ETrue;
-	
-	// Remember if the window group tree is actually changed or not, so that we know whether to 
-	// check the render orientation after the re-ordering is done ( see CWsTop::CheckRenderOrientation()
-	// call at end of this method
-	TBool changed = CheckOrdinalPositionChange(aPos);	
-	
 	if (!iQueue)
 		ret=DoSetOrdinalPosition1(aPos,aClosingWindow);
 	else
@@ -963,11 +962,6 @@ TBool CWsWindowGroup::SetOrdinalPosition(TInt aPos,CWsWindowGroup* aClosingWindo
 #endif
 		}
 
-	// If the ordinal positions have changed, check to see if there is a new render orientation
-	// and publish it if so
-	if(changed)
-	    CWsTop::CheckRenderOrientation();
-	
 	return ret;
 	}
 
@@ -1354,13 +1348,13 @@ void CWsWindowGroup::RemoveAllPriorityKeys()
 		}
 	}
 
-TBool CWsWindowGroup::CheckForPriorityKey(const TKeyEvent &aKeyEvent)
+TBool CWsWindowGroup::CheckForPriorityKey(const TKeyData &aKey, TInt aScanCode)
 	{
 	for(TPriorityKey *pk=iPriorityKeys;pk;pk=pk->iNext)
 		{
-		if (pk->KeyMatches(aKeyEvent))
+		if (pk->KeyMatches(aKey))
 			{	
-			WsOwner()->PriorityKeyPressed(ClientHandle(), aKeyEvent);
+			WsOwner()->PriorityKeyPressed(ClientHandle(),aKey, aScanCode);
 			return(ETrue);
 			}
 		}

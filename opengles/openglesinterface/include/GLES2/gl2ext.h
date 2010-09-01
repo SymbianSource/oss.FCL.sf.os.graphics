@@ -2,7 +2,7 @@
 #define __gl2ext_h_
 
 /*
- * Portions Copyright (c) 2008 - 2009 Nokia Corporation and/or its subsidiary(-ies).
+ *  portions Copyright (c) 2008 - 2009 Nokia Corporation. All rights reserved.
  * Differences from the actual sample implementation provided by Khronos:
  * 1. This comment text.
  * 2. Doxygen comment with tag 'publishedAll', and tag 'released'

@@ -58,6 +58,4 @@ REM FBSERV - Font & Bitmap Server
 #include <graphics_adaptation.hby>
 #include FBSRASTERIZER_DRV
 
-//#include <fbsoogmplugin.iby>
-
 #endif //__FBSERV_IBY__

@@ -62,6 +62,8 @@ public:
 	//Native Stream
 	void FillNativeStreamSurfaceL(TSurfaceId& aSurface, TUint8* aBufferPtr, const TRgb& aColor);
 	TBool CompareSurfacesL(TSurfaceId& aSurface, TInt aBuffer, TSurfaceId& aStreamSurface, TUint8* aBufferPtr);
+	
+	void SetAutoUpdateScreenNum(TInt aScreenNum);
 	RSurfaceManager& Manager()	{return iManager;}
 	RSurfaceUpdateSession& Session()	{return iSurfaceUpdateSession;}
 private:
@@ -71,6 +73,7 @@ private:
 private:
 	RSurfaceManager iManager;
 	RSurfaceUpdateSession iSurfaceUpdateSession;
+    TInt    iScreenNum;
 	//This local object wraps the array operations in a heap switch
 	//The reason for providing this wrapper is to allow threads to share the surface manager surface ID list.
 	//In particular, the next test can attempt to release the previous test's surfaces if it paniced. 

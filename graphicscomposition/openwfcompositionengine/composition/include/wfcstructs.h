@@ -1,5 +1,4 @@
 /* Copyright (c) 2009 The Khronos Group Inc.
- * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -283,6 +282,14 @@ typedef struct WFC_CONTEXT_ {
     TFPtrEglPrivateSignalSyncNok    eglPrivateSignalSync;
 } WFC_CONTEXT;
 
+typedef struct WFC_CONTENT_UPDATED_PARAM_ {
+    WFCint      length;
+    WFCint      id;
+    WFCint      par;
+    WFCint      serialNumber;
+    WFCint      immediateAvailable;
+    WFCint      immediateVisibility;
+} WFC_CONTENT_UPDATED_PARAM;
 
 #define IMAGE_PROVIDER(x)   ((WFC_IMAGE_PROVIDER*)(x))
 #define ELEMENT(x)          ((WFC_ELEMENT*)(x))

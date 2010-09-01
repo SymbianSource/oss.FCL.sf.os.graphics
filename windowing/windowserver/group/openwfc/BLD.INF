@@ -36,14 +36,12 @@ PRJ_EXPORTS
 ../../inc/advancedpointerevent.h SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(advancedpointerevent.h)
 ../../inc/advancedpointerevent.inl SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(advancedpointerevent.inl)
 ../../inc/textcursor.h SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(textcursor.h)
-../../inc/wspublishandsubscribedata.h  SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(wspublishandsubscribedata.h)
-
 #ifndef SYMBIAN_ENABLE_SPLIT_HEADERS
 #ifdef SYMBIAN_OLD_EXPORT_LOCATION
-../../inc/graphics/windowserverconstants.h /epoc32/include/graphics/windowserverconstants.h
+../../inc/Graphics/windowserverconstants.h /epoc32/include/graphics/windowserverconstants.h
 #endif
 #endif
-../../inc/graphics/pointereventdata.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/pointereventdata.h)
+../../inc/Graphics/pointereventdata.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/pointereventdata.h)
 ../../inc/W32ADLL.H SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(w32adll.h)
 ../../inc/W32CLICK.H SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(w32click.h)
 ../../inc/W32STDGRAPHIC.H SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(w32stdgraphic.h)
@@ -61,27 +59,25 @@ PRJ_EXPORTS
 ../../eabi/wsclicku.def  /epoc32/include/def/eabi/wsclicku.def
 
 //Graphic Drawer exports for partners
-../../inc/graphics/WSGRAPHICDRAWER.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsgraphicdrawer.h)
-../../inc/graphics/openwfc/WSGRAPHICDRAWERINTERFACE.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsgraphicdrawerinterface.h)
-../../inc/graphics/WSGRAPHICMSGBUF.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsgraphicmsgbuf.h)
-../../inc/graphics/W32STDGRAPHICTEST.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/w32stdgraphictest.h)
+../../inc/Graphics/WSGRAPHICDRAWER.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsgraphicdrawer.h)
+../../inc/Graphics/openwfc/WSGRAPHICDRAWERINTERFACE.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsgraphicdrawerinterface.h)
+../../inc/Graphics/WSGRAPHICMSGBUF.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsgraphicmsgbuf.h)
+../../inc/Graphics/W32STDGRAPHICTEST.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/w32stdgraphictest.h)
 
 //Plugin exports for partners
-../../inc/graphics/WSPLUGIN.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsplugin.h)
-../../inc/graphics/WsRenderStage.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsrenderstage.h)
-../../inc/graphics/WsRenderStageFactory.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsrenderstagefactory.h)
-../../inc/graphics/wscursor.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wscursor.h)
-../../inc/graphics/wsgraphicscontext.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsgraphicscontext.h)
-../../inc/graphics/wsscreendevice.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsscreendevice.h)
-../../inc/graphics/wsuibuffer.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsuibuffer.h)
-../../inc/graphics/wsdrawablesourceprovider.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdrawablesourceprovider.h)
-../../inc/graphics/wsdisplaycontrol.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdisplaycontrol.h)
-../../inc/graphics/openwfc/wsdisplaymapping.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdisplaymapping.h)
-../../inc/graphics/wsdisplaypolicy.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdisplaypolicy.h)
-../../inc/graphics/openwfc/wselement.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wselement.h)
-../../inc/graphics/openwfc/wsscene.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsscene.h)
-../../inc/graphics/wskeyrouter.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wskeyrouter.h)
-../../inc/graphics/wscontentreadyforcomposition.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wscontentreadyforcomposition.h)
+../../inc/Graphics/WSPLUGIN.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsplugin.h)
+../../inc/Graphics/WsRenderStage.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsrenderstage.h)
+../../inc/Graphics/WsRenderStageFactory.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsrenderstagefactory.h)
+../../inc/Graphics/wscursor.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wscursor.h)
+../../inc/Graphics/wsgraphicscontext.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsgraphicscontext.h)
+../../inc/Graphics/wsscreendevice.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsscreendevice.h)
+../../inc/Graphics/wsuibuffer.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsuibuffer.h)
+../../inc/Graphics/wsdrawablesourceprovider.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdrawablesourceprovider.h)
+../../inc/Graphics/wsdisplaycontrol.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdisplaycontrol.h)
+../../inc/Graphics/openwfc/wsdisplaymapping.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdisplaymapping.h)
+../../inc/Graphics/wsdisplaypolicy.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdisplaypolicy.h)
+../../inc/Graphics/openwfc/wselement.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wselement.h)
+../../inc/Graphics/openwfc/wsscene.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsscene.h)
 
 //RemoteGc exports for partners
 ../../inc/RemoteGc.h		SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/remotegc.h)
@@ -89,21 +85,21 @@ PRJ_EXPORTS
 ../../inc/RemoteGcUtils.h	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/remotegcutils.h)
 
 //Test Screen Capture
-../../inc/graphics/testscreencapture.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/testscreencapture.h)
-../../inc/graphics/wsscreendeviceutils.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsscreendeviceutils.h)
-../../inc/graphics/wstestscreencapture.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wstestscreencapture.h)
+../../inc/Graphics/testscreencapture.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/testscreencapture.h)
+../../inc/Graphics/wsscreendeviceutils.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsscreendeviceutils.h)
+../../inc/Graphics/wstestscreencapture.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wstestscreencapture.h)
 
-../../inc/graphics/wsdrawresource.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdrawresource.h)
+../../inc/Graphics/wsdrawresource.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdrawresource.h)
 
 #ifdef SYMBIAN_BUILD_GCE
 //Surface support
-../../inc/graphics/surfaceconfiguration.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/surfaceconfiguration.h)
-../../inc/graphics/openwfc/surfaceconfiguration.inl SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/surfaceconfiguration.inl)
+../../inc/Graphics/surfaceconfiguration.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/surfaceconfiguration.h)
+../../inc/Graphics/openwfc/surfaceconfiguration.inl SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/surfaceconfiguration.inl)
 //Display Control
-../../inc/graphics/displaycontrol.h	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/displaycontrol.h)
+../../inc/Graphics/displaycontrol.h	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/displaycontrol.h)
 
 //Display Mapping
-../../inc/graphics/displaymapping.h	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/displaymapping.h)
+../../inc/Graphics/displaymapping.h	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/displaymapping.h)
 
 
 #endif // SYMBIAN_BUILD_GCE
@@ -204,7 +200,6 @@ PRJ_TESTMMPFILES
 #ifdef SYMBIAN_BUILD_GCE
 ../../group/AUTODLL_nga.MMP support
 ../../test/TAutoServer/openwfc/TAutoServer_nga.mmp
-../../test/TAutoServer/tevent_captureapp.mmp
 #endif
 
 #ifdef WINS
@@ -372,12 +367,12 @@ PRJ_TESTEXPORTS
 ../../test/test.mbm 	z:/wstest/test.mbm
 ../../test/trom.mbm 	z:/wstest/trom.mbm
 ../../test/MAILANIM.MBM 	z:/wstest/mailanim.mbm
-../../test/tanim/tanim.mbm 	z:/wstest/tanim.mbm
-../../test/tauto/tauto.mbm 	z:/wstest/tauto.mbm 
-../../test/tauto/Dither.MBM 	z:/wstest/dither.mbm
-../../test/tauto/mytest.mbm 	z:/wstest/mytest.mbm
-../../test/tauto/symball.gif	z:/wstest/symball.gif
-../../test/tauto/config/graphics-wserv-autotest.ini		z:/wstest/graphics-wserv-autotest.ini
+../../tanim/tanim.mbm 	z:/wstest/tanim.mbm
+../../tauto/tauto.mbm 	z:/wstest/tauto.mbm 
+../../tauto/Dither.MBM 	z:/wstest/dither.mbm
+../../tauto/mytest.mbm 	z:/wstest/mytest.mbm
+../../tauto/symball.gif	z:/wstest/symball.gif
+../../tauto/config/graphics-wserv-autotest.ini		z:/wstest/graphics-wserv-autotest.ini
 ../../group/DLL_LIST.TXT 		z:/system/data/dll_list.txt
 
 #ifdef SYMBIAN_BUILD_GCE
@@ -387,6 +382,7 @@ PRJ_TESTEXPORTS
 ../../test/scripts/wspointershifttest_run.bat				z:/wstest/wspointershifttest_run.bat
 ../../test/scripts/epoc_pointershift.ini					z:/wstest/epoc_pointershift.ini
 ../../group/wsini_pointershift_wins.ini					z:/wstest/wsini_pointershift_wins.ini
+../../group/wsini_pointershift.ini				/epoc32/data/z/system/data/wsini_pointershift.ini
 
 #endif // SYMBIAN_BUILD_GCE
 

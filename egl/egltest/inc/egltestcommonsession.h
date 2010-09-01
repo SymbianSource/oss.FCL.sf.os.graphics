@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -45,10 +45,6 @@ typedef EGLBoolean (*TFPtrEglSignalSyncKhr) (EGLDisplay dpy, EGLSyncKHR sync, EG
 typedef EGLint (*TFPtrEglSignalSyncImpl) (EGLDisplay dpy, EGLSyncKHR sync, EGLenum mode);
 typedef EGLBoolean (*TFPtrEglGetSyncAttribKhr) (EGLDisplay dpy, EGLSyncKHR sync, EGLint attribute, EGLint *value);
 typedef EGLint (*TFPtrEglPrivateSignalSyncNok) (EGLDisplay dpy, EGLSyncKHR sync, EGLenum mode);
-
-//pointer to function for surface scaling
-typedef EGLBoolean (*TFPtrEglQuerySurfaceScalingCapabilityNok) (EGLDisplay dpy, EGLConfig config, EGLint surface_width, EGLint surface_height, EGLint target_width, EGLint target_height, EGLint *value);
-typedef EGLBoolean (*TFPtrEglSetSurfaceScalingNok) (EGLDisplay dpy, EGLSurface surface, EGLint target_offset_x, EGLint target_offset_y, EGLint target_width, EGLint target_height);
 
 const TUint KImagesArrayGranularity = 4;
 
@@ -108,7 +104,7 @@ public:
 	//
 	//Compound functions that construct surface 
 	//
-	IMPORT_C void CreateWindowSurfaceAndMakeCurrentL(EGLConfig aConfig, RWindow& aWindow, TBool aVgAlphaFormatPre = EFalse, EGLenum aBindAPI = EGL_OPENVG_API, TInt aRenderVersionNumber = 1, EGLint* aAttribList = NULL);	
+	IMPORT_C void CreateWindowSurfaceAndMakeCurrentL(EGLConfig aConfig, RWindow& aWindow, TBool aVgAlphaFormatPre = EFalse, EGLenum aBindAPI = EGL_OPENVG_API, TInt aRenderVersionNumber = 1);	
 	IMPORT_C void CreatePixmapSurfaceAndMakeCurrentAndMatchL(const TSgImageInfo& aImageInfo, TResourceCloseRule aResourceCloseRule, EGLenum aBindAPI = EGL_OPENVG_API, TInt aRenderVersionNumber = 1);
 	IMPORT_C void CreatePixmapSurfaceAndMakeCurrentAndMatchL(const TSize& aSize, TDisplayMode aDisplayMode, EGLenum aBindAPI = EGL_OPENVG_API, TInt aRenderVersionNumber = 1);
     IMPORT_C void CreatePbufferSurfaceAndMakeCurrentL(EGLConfig aConfig, const TSize& aSize, EGLenum aBindAPI = EGL_OPENVG_API, TInt aRenderVersionNumber = 1);
@@ -269,7 +265,7 @@ protected:
 #endif	
 	TBool 		iFbsSessionOpen;
 
-	//we will use a "lazy" initialization for iIsOpenGLESSupported, iIsOpenGLES2Supported and iIsOpenVGSupportedvariable members, 
+	//we will use a “lazy” initialization for iIsOpenGLESSupported, iIsOpenGLES2Supported and iIsOpenVGSupportedvariable members, 
 	//i.e. they will be initialized upon the first request
 	TBool       iIsSupportedRenderInitialized; //signify that iIsOpenGLESSupported, iIsOpenGLES2Supported and iIsOpenVGSupported members have been initialized   
 	TBool       iIsOpenGLESSupported;  

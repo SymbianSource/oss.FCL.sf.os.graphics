@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -82,7 +82,7 @@ public:
 	void AddPriorityKeyL(TUint aKeycode, TUint aModifierMask, TUint aModifiers);
 	void RemovePriorityKey(TUint aKeycode, TUint aModifierMask, TUint aModifiers);
 	void RemoveAllPriorityKeys();
-	TBool CheckForPriorityKey(const TKeyEvent &aKeyEvent);
+	TBool CheckForPriorityKey(const TKeyData &aKey, TInt aScanCode);
 	inline CWsPointerCursor *GroupPointerCursor() const;
 	static CWsWindowGroup *WindowGroupFromIdentifier(TInt aIdentifier);
 	static CWsWindowGroup *WindowGroupFromIdentifierL(TInt aIdentifier);
@@ -110,7 +110,7 @@ public:
 	void SetScreenDevice(DWsScreenDevice *aDevice);
 	static void SetEventQueueTestState(TBool aEventQueState);
 	TBool HasVisibleTranslucentChild();
-	void  ReleasePendedMessage();	
+	void  ReleasePendedMessage();
 private:
 	void SwitchToOwningWindow(CWsWindowGroup *aClosingWindow);
 	void MoveChainedWindows(TDblQueIter<CWsWindowGroup>& aIter,TBool aForward,TInt aPos,CWsWindowGroup* aClosingWindow);

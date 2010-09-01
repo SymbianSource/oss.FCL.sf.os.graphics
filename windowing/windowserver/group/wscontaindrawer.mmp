@@ -31,7 +31,7 @@ deffile			wscontaindrawer.def
 userinclude		../inc
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
-sourcepath		../test/tcontaindrawer
+sourcepath		../tcontaindrawer
 source			wscontaindrawer.cpp wssimpledrawer.cpp 
 
 

@@ -18,7 +18,9 @@
  @test
 */
 
-#include <iniparser.h>
+#ifndef __INIPARSER_H__
+#include <cinidata.h>
+#endif // __INIPARSER_H__
 #include <test/tefunit.h> // for ASSERT macros
 
 #include "egltest_nativepixmaptype.h"

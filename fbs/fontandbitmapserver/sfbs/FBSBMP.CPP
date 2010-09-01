@@ -23,7 +23,7 @@
 #include "fbshelper.h"
 #include "fbsrasterizer.h"
 #include "BitwiseBitmap.inl"
-#include "FbsMessage.H"
+#include "fbsmessage.h"
 #include "bitmapconst.h"
 #include "OstTraceDefinitions.h"
 #include "fbstrace.h"
@@ -569,7 +569,12 @@ EXPORT_C TInt CFbsBitmap::Load(const TDesC& aFileName,TInt32 aId,TBool aShareIfL
         IsFileInRom(aFileName, rompointer);
         TBool romPointerValid;
         err = DoLoadFromRom(rompointer, aId, aFileOffset, romPointerValid);
-        if(!romPointerValid)
+        if(romPointerValid)
+            {
+            FBS_OST(OstTrace1( TRACE_ERROR, CFBSBITMAP_LOAD2_ERROR2, "! this=0x%08x; romPointerValid", (TUint)this);)
+            err = KErrCouldNotConnect;
+            }
+        else
             {
             _LIT(KResourcePath, "?:\\Resource\\*");
             TInt match = aFileName.MatchF(KResourcePath);

@@ -1,13 +1,19 @@
-/*
- * Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
- * All rights reserved.
- * This component and the accompanying materials are made available
- * under the terms of "Eclipse Public License v1.0"
- * which accompanies this distribution, and is available
- * at the URL "http://www.eclipse.org/legal/epl-v10.html".
- */
-
-/* Generated from  "../BWINS/graphicdraweru.def" file size: 11100 */
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// Generated from "../BWINS/graphicdraweru.def" file size: 11211
+// 
+//
 
 extern "C" {
 void common_dispatch();
@@ -556,7 +562,7 @@ __declspec(dllexport)
 __declspec(naked)
 void call_vector_61 ()
 	{
-	// ; struct CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::AddTLC(class CWsGraphicDrawer *)
+	// ; class CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::AddTLC(class CWsGraphicDrawer *)
 	_asm mov eax, 61
 	_asm jmp common_dispatch
 	}
@@ -565,7 +571,7 @@ __declspec(dllexport)
 __declspec(naked)
 void call_vector_62 ()
 	{
-	// ; void CWsGraphicDrawerArray::CommitP(struct CWsGraphicDrawerArray::XRollBackBase *)
+	// ; void CWsGraphicDrawerArray::CommitP(class CWsGraphicDrawerArray::XRollBackBase *)
 	_asm mov eax, 62
 	_asm jmp common_dispatch
 	}
@@ -574,7 +580,7 @@ __declspec(dllexport)
 __declspec(naked)
 void call_vector_63 ()
 	{
-	// ; struct CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::RemoveTLC(struct TGraphicDrawerId const &)
+	// ; class CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::RemoveTLC(struct TGraphicDrawerId const &)
 	_asm mov eax, 63
 	_asm jmp common_dispatch
 	}
@@ -592,7 +598,7 @@ __declspec(dllexport)
 __declspec(naked)
 void call_vector_65 ()
 	{
-	// ; struct CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::SwapTLC(class CWsGraphicDrawer *)
+	// ; class CWsGraphicDrawerArray::XRollBackBase * CWsGraphicDrawerArray::SwapTLC(class CWsGraphicDrawer *)
 	_asm mov eax, 65
 	_asm jmp common_dispatch
 	}

@@ -1261,7 +1261,6 @@ static void m3gConfigureGL(Interface *m3g)
 
     M3G_ASSERT(numConfigs > 0);
     
-    eglBindAPI(EGL_OPENGL_ES_API);
     ctx = eglCreateContext(eglGetDisplay(0),
                            config,
                            NULL,

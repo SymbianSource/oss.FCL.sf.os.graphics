@@ -1,23 +1,14 @@
-// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
 //
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and/or associated documentation files (the
-// "Materials"), to deal in the Materials without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Materials, and to
-// permit persons to whom the Materials are furnished to do so, subject to
-// the following conditions:
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
 //
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Materials.
-//
-// THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-// MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
+// Contributors:
 //
 // Description:
 // Display Channel adaptation for owfscreen
@@ -105,10 +96,10 @@ owfSymContextSourceStreamUpdated(SymbianStreamType stream,
             
             if (param)
                 {
-                SYMOWF_CONTENT_UPDATED_PARAM* parameter = (SYMOWF_CONTENT_UPDATED_PARAM*) param;
+                WFC_CONTENT_UPDATED_PARAM* parameter = (WFC_CONTENT_UPDATED_PARAM*) param;
                 OWFNativeStreamType owfStream = (OWFNativeStreamType) stream;
                 
-                if ((parameter->length) == sizeof(SYMOWF_CONTENT_UPDATED_PARAM))
+                if ((parameter->length) == sizeof(WFC_CONTENT_UPDATED_PARAM))
                     {
                         switch (parameter->id)
                             {
@@ -193,8 +184,10 @@ owfSymDeviceSetUpdateFlags(WFC_CONTEXT* context, OWFNativeStreamType stream, WFC
     WFC_DEVICE* device = NULL;
     WFCint      i;
     
-    OWF_ASSERT(context && (context->device));
-
+    if (!context || !(context->device))
+    {
+        return;
+    }
     device = context->device;
     
     for (i = 0; i < device->providers.length; i++)
@@ -215,8 +208,10 @@ owfSymDeviceSetVisibilityState(WFC_CONTEXT* context, OWFNativeStreamType stream,
     WFC_DEVICE* device = NULL;
     WFCint      i;
     
-    OWF_ASSERT(context && (context->device));
-
+    if (!context || !(context->device))
+    {
+        return;
+    }
     device = context->device;
     
     for (i = 0; i < device->providers.length; i++)
@@ -404,8 +399,10 @@ owfSymElementNotifications(WFC_CONTEXT* context, WFC_ELEMENT* element)
     WFC_IMAGE_PROVIDER* source = NULL;
     OWFNativeStreamType stream = OWF_INVALID_HANDLE;
     
-    OWF_ASSERT(context && element && (context->device) && (element->source));
-    
+    if (!context || !element || !(context->device) || !(element->source))
+    {
+        return OWF_FALSE;
+    }
     source = IMAGE_PROVIDER(element->source);
     
     if (source->type != WFC_IMAGE_SOURCE)
@@ -441,8 +438,10 @@ owfSymDeviceResetVisibilityState(WFC_CONTEXT* context)
     WFC_DEVICE* device = NULL;
     WFCint      i;
     
-    OWF_ASSERT(context && (context->device));
-
+    if (!context || !(context->device))
+    {
+        return;
+    }
     device = context->device;
     
     OWFDisplayContext *pDispCtx = _OWF_DISPLAYCONTEXT(context->displayContext);

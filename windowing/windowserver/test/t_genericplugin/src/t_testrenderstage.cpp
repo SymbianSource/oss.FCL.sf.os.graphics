@@ -20,7 +20,7 @@
 */
 
 #include "t_testrenderstage.h"
-#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
 #include "graphics/wsgraphicscontext.h"
 #include "t_logfile.h"
 #include <fbs.h>

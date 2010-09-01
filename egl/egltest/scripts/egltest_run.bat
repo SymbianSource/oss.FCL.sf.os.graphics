@@ -1,5 +1,5 @@
 @rem
-@rem Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
+@rem Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
 @rem All rights reserved.
 @rem This component and the accompanying materials are made available
 @rem under the terms of "Eclipse Public License v1.0"
@@ -27,10 +27,7 @@ testexecute.exe z:\egltest\egltest_t_image_multiprocess.script
 testexecute.exe z:\egltest\egltest_t_vgimagetosurfaces.script
 testexecute.exe z:\egltest\egltest_t_image_negative.script
 testexecute.exe z:\egltest\egltest_t_benchmark_sgimage.script
-testexecute.exe z:\egltest\egltest_t_oom_sgimage.script
-testexecute.exe z:\egltest\egltest_t_stress_sgimage.script
-testexecute.exe z:\egltest\egltest_t_benchmark_swapbuffers.script
-testexecute.exe z:\egltest\egltest_t_surfacescaling.script
+
 
 :: Ignore the following if using this script for emulator testing.
 :: Logs are automatically copied on hardware to MMC

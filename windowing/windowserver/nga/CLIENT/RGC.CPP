@@ -2267,7 +2267,6 @@ EXPORT_C TInt RWsDrawableSource::Create(const RSgDrawable& aDrawable, TInt aScre
 	CGraphicsResourceWrapperFactory* grwFactory = new CGraphicsResourceWrapperFactory();
 	if (!grwFactory)
 		return KErrNoMemory;
-	// coverity[uninit_use_in_call]
 	CGraphicsResourceWrapper* graphicsResource = grwFactory->NewGraphicsResourceWrapper();
 	if(!graphicsResource)
 		{

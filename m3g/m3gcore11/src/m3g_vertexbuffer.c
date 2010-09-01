@@ -350,7 +350,8 @@ static void m3gUpdateArray(VertexBuffer *buffer,
     if (newArray != NULL) {
     	if (buffer->arrayCount == 0 || (buffer->arrayCount == 1
                                         && change == 0)) {
-    		buffer->vertexCount = m3gGetArrayVertexCount(newArray);
+    		buffer->vertexCount =
+                (newArray != NULL ? m3gGetArrayVertexCount(newArray) : 0);
     	}
     	else if (m3gGetArrayVertexCount(newArray) != buffer->vertexCount) {
             m3gRaiseError(M3G_INTERFACE(buffer), M3G_INVALID_VALUE);

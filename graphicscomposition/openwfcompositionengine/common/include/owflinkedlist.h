@@ -1,5 +1,4 @@
 /* Copyright (c) 2009 The Khronos Group Inc.
- * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -131,6 +130,41 @@ OWF_List_Remove(OWF_NODE* root, OWF_NODE* node);
  */
 OWF_API_CALL OWF_NODE*
 OWF_List_Clear(OWF_NODE* root);
+
+/*!
+ *  Calls given callback function for each node in the list
+ *  as long as the callback function returns a non-zero value.
+ *  Useful for performing some action on list until some condition
+ *  is met.
+ *
+ *  \param root List root
+ *  \param func Callback function
+ *  \param data Data to be passed to callback function
+ */
+OWF_API_CALL void
+OWF_List_ForEach(OWF_NODE* root, NODEITERFUNC func, void* data);
+
+/*
+ *  Returns first node for which given comparison function
+ *  returns a non-zero value. Useful for searching the list
+ *  for something of intrest. To find all matching nodes
+ *  from the list, use the following pattern:
+ *
+ *  node = OWF_List_Find(list, compareFunc, dada);
+ *  while (node) {
+ *      processFoundNode(node);
+ *      node = OWF_List_Find(node->next, compareFunc, dada);
+ *  }
+ *
+ *  \param root List root
+ *  \param func Node equality comparison function
+ *  \param data Data to pass to node comparison function.
+ *
+ *  \return Node that matches in comparison.
+ */
+OWF_API_CALL OWF_NODE*
+OWF_List_Find(OWF_NODE* root, NODECMPFUNC func, void* data);
+
 
 #ifdef __cplusplus
 }

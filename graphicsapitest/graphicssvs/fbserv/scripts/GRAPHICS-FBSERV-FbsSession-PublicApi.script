@@ -1,0 +1,532 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName		GRAPHICS-FBSERV-FbsSession-PublicApi
+//! @SYMScriptTestEnvironment	This test script requires a basic ROM.
+
+/////////////////////////////////////////////////////////////////////
+// GRAPHICS-FBSERV-FbsSession-PublicAPI.script
+//
+// Tests all public elements of the RFbsSession class
+// as a means of confidence that the APIs work as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for RFbsSession.
+// Negative testing is performed to confirm that correct errors are returned when incorrect parameters are given.
+// The tests are fully automated.
+/////////////////////////////////////////////////////////////////////
+
+LOAD_SUITE	T_FBServAPI
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0001
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0001
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		23/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::Connect() (Connect() version), RFbsSession::GetSession() and RFbsSession::Disconnect() test
+//!				Uses API elements: Connect(), GetSession(), Disconnect()
+//! @SYMTestActions		1. Call RFbsSession::GetSession()
+//!				2. Create a RFbsSession using RFbsSession::Connect()
+//!				3. Call RFbsSession::GetSession()
+//!				4. Close the RFbsSession using RFbsSession::Disconnect()
+//!				5. Call RFbsSession::GetSession()
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that GetSession() returns not NULL when session is opened and NULL when session is disconnected or not opened
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+		CREATE_OBJECT	RFbsSession	RFbsSession1
+		COMMAND		RFbsSession1	GetSession	GRAPHICS-FBSERV-FbsSession-PublicApi-0001-001-GetSession_command001
+		COMMAND		RFbsSession1	Connect
+		COMMAND		RFbsSession1	GetSession
+		COMMAND		RFbsSession1	Disconnect
+		COMMAND		RFbsSession1	GetSession	GRAPHICS-FBSERV-FbsSession-PublicApi-0001-001-GetSession_command005
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0001
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0002
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0002
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		23/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::Connect() (Connect(RFs \&aFileServer) version), RFbsSession::GetSession() and RFbsSession::Disconnect() test with a file-server session specified
+//!				Uses API elements: Connect(), GetSession(), Disconnect()
+//! @SYMTestActions		1. Create and connect a file-server session
+//!				2. Create a RFbsSession using RFbsSession::Connect() passing RFs instance as an argument
+//!				3. Call RFbsSession::GetSession()
+//!				4. Close the RFbsSession using RFbsSession::Disconnect()
+//!				5. Call RFbsSession::GetSession()
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	Expects that GetSession() returns not NULL when session is opened and NULL when session is disconnected
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+		CREATE_OBJECT	RFbsSession	RFbsSession1
+		COMMAND		RFbsSession1	GetSession	GRAPHICS-FBSERV-FbsSession-PublicApi-0002-001-GetSession_command001
+		COMMAND		RFbsSession1	Connect		GRAPHICS-FBSERV-FbsSession-PublicApi-0002-001-Connect_command002
+		COMMAND		RFbsSession1	GetSession
+		COMMAND		RFbsSession1	Disconnect
+		COMMAND		RFbsSession1	GetSession	GRAPHICS-FBSERV-FbsSession-PublicApi-0002-001-GetSession_command005
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0002
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0003
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0003
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		23/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::SetCallBack(), RFbsSession::CallBack(), RFbsSession::ResetCallBack() test
+//!				Uses API elements: Connect(), SetCallBack(), CallBack(), ResetCallBack(), Disconnect()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CallBack() expecting that nothing happpens (no check is needed, just make sure that the call doesn't fail)
+//!				3. Set instance variable iCallBackCalled to EFalse
+//!				4. Call SetCallBack() specifying a function that sets the instance variable iCallBackCalled to ETrue
+//!				5. Call CallBack()
+//!				6. Check that iCallBackCalled is ETrue
+//!				7. Set the instance variable iCallBackCalled to EFalse
+//!				8. Call ResetCallBack()
+//!				9. Call CallBack()
+//!				10. Check that iCallBackCalled is EFalse
+//!				11. Disconnect session
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	See actions
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+		CREATE_OBJECT	RFbsSession	RFbsSession1
+		COMMAND		RFbsSession1	Connect
+		COMMAND		RFbsSession1	GetSession
+		COMMAND		RFbsSession1	CallBack
+		COMMAND		RFbsSession1	SetCallBack
+		COMMAND		RFbsSession1	CallBack	GRAPHICS-FBSERV-FbsSession-PublicApi-0003-001-CallBack_command005
+		COMMAND		RFbsSession1	ResetCallBack
+		COMMAND		RFbsSession1	CallBack	GRAPHICS-FBSERV-FbsSession-PublicApi-0003-001-CallBack_command007
+		COMMAND		RFbsSession1	Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0003
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0004
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0004
+//! @SYMAPI			RFbsSession
+//!				CFbsTypefaceStore
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		23/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		CFbsTypefaceStore::ResourceCount() test
+//!				Uses API elements: RFbsSession::Connect(), RFbsSession::ResourceCount(), CFbsTypefaceStore::ReleaseFont()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call CFbsTypefaceStore::NewL() passing NULL as an argument
+//!				3. Call ResourceCount()
+//!				4. Call CFbsTypefaceStore::GetNearestFontToDesignHeightInPixels() for Arial, 12px font
+//!				5. Call ResourceCount() and make sure that the value was increased by one
+//!				6. Call CFbsTypefaceStore::ReleaseFont() passing previously obtained font
+//!				7. Call ResourceCount() and make sure that the value was decreased by one
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	See actions
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100			T_FBServAPI				\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+		CREATE_OBJECT	RFbsSession		RFbsSession1
+		CREATE_OBJECT	CFbsTypefaceStore	CFbsTypefaceStore1
+		CREATE_OBJECT	CFbsFont		CFbsFont1
+		COMMAND		RFbsSession1		Connect
+		COMMAND		RFbsSession1		GetSession
+		COMMAND		CFbsTypefaceStore1	NewL
+		COMMAND		RFbsSession1		ResourceCount
+		COMMAND		CFbsTypefaceStore1	GetNearestFontToDesignHeightInPixels	GRAPHICS-FBSERV-FbsSession-PublicApi-0004-001-GetNearestFontToDesignHeightInPixels_command008
+		COMMAND		RFbsSession1		ResourceCount				GRAPHICS-FBSERV-FbsSession-PublicApi-0004-001-ResourceCount_command010
+		COMMAND		CFbsTypefaceStore1	ReleaseFont				GRAPHICS-FBSERV-FbsSession-PublicApi-0004-001-ReleaseFont_command012
+		COMMAND		RFbsSession1		ResourceCount				GRAPHICS-FBSERV-FbsSession-PublicApi-0004-001-ResourceCount_command014
+		COMMAND		CFbsTypefaceStore1	~
+		COMMAND		RFbsSession1		Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0004
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0005
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0005
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		23/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::SendCommand() test
+//!				Uses API elements: Connect(), SendCommand()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call SendCommand() passing 0 as an argument
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The function SendCommand() call doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+		CREATE_OBJECT	RFbsSession	RFbsSession1
+		COMMAND		RFbsSession1	Connect
+		COMMAND		RFbsSession1	GetSession
+		COMMAND		RFbsSession1	SendCommand	GRAPHICS-FBSERV-FbsSession-PublicApi-0005-001-SendCommand_command003
+		COMMAND		RFbsSession1	Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0005
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0006
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0006
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		23/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::Version() test
+//!				Uses API elements: Connect(), Version()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call Version() method
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The test expects that fields of TVersion instance will be initialized
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+		CREATE_OBJECT	RFbsSession	RFbsSession1
+		COMMAND		RFbsSession1	Connect
+		COMMAND		RFbsSession1	GetSession
+		COMMAND		RFbsSession1	Version
+		COMMAND		RFbsSession1	Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0006
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0007
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0007
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		23/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::HeapBase() test
+//!				Uses API elements: Connect(), HeapBase()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call HeapBase() method
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The test expects that the HeapBase() method doesn't cause panic and the returned value will not be NULL
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+		CREATE_OBJECT	RFbsSession	RFbsSession1
+		COMMAND		RFbsSession1	Connect
+		COMMAND		RFbsSession1	GetSession
+		COMMAND		RFbsSession1	HeapBase
+		COMMAND		RFbsSession1	Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0007
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0008
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0008
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		23/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::SessionHandle() test
+//!				Uses API elements: Connect(), SessionHandle()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call SessionHandle() method
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		Critical
+//! @SYMTestExpectedResults	The test expects that the SessionHandle() method doesn't cause panic and the returned value will not be NULL
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+		CREATE_OBJECT	RFbsSession	RFbsSession1
+		COMMAND		RFbsSession1	Connect
+		COMMAND		RFbsSession1	GetSession
+		COMMAND		RFbsSession1	SessionHandle
+		COMMAND		RFbsSession1	Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0008
+
+
+//!START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0009
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0009
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::Connect() (Connect(RFs \&aFileServer) version) negative test with a not-connected file-server session specified
+//!				Uses API elements: Connect()
+//! @SYMTestActions		1. Create and connect a file-server session, but don't connect it
+//!				2. Create a RFbsSession using RFbsSession::Connect() passing RFs instance as an argument
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Expects that RFbsSession::Connect() will return an error
+//! @SYMTestType		CIT
+//!	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+//!		CREATE_OBJECT	RFbsSession	RFbsSession1
+//!		COMMAND		RFbsSession1	Connect		GRAPHICS-FBSERV-FbsSession-PublicApi-0009-001-Connect_command001
+//!	END_TEST_BLOCK	!PanicCode=0 !PanicString=KERN-EXEC
+//!    RUN_TEST_STEP	100	T_FBServAPI	utilityClearPanicDlg
+//!END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0009
+
+
+//! START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0010
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0010
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::SendCommand() negative test that send a wrong command
+//!				Uses API elements: Connect(), SendCommand()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Call SendCommand() passing -1 as an argument
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The operation should panic
+//! @SYMTestType		CIT
+//! 	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+//! 		CREATE_OBJECT	RFbsSession	RFbsSession1
+//! 		COMMAND		RFbsSession1	Connect
+//! 		COMMAND		RFbsSession1	GetSession
+//! 		COMMAND		RFbsSession1	SendCommand	GRAPHICS-FBSERV-FbsSession-PublicApi-0010-001-SendCommand_command003
+//! 	END_TEST_BLOCK	!PanicString=USER !PanicCode=72
+//!     RUN_TEST_STEP	100	T_FBServAPI	utilityClearPanicDlg
+//!END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0010
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0011
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0011
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		29/03/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::Disconnect() negative test for not connected session
+//!				Uses API elements: Disconnect()
+//! @SYMTestActions		1. Create a RFbsSession but don't call it's Connect() method
+//!				2. Call RFbsSession::Disconnect()
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function Disconnect() call doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+		CREATE_OBJECT	RFbsSession	RFbsSession1
+		COMMAND		RFbsSession1	Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0011
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0012
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0012
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Anton Golovko
+//! @SYMCreationDate		11/07/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession() test
+//!				Uses API elements: RFbsSession()
+//! @SYMTestActions		1. Call RFbsSession() constuctor
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The RFbsSession() constructor call doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+		CREATE_OBJECT	RFbsSession	RFbsSession1
+		COMMAND		RFbsSession1	Constructor
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0012
+
+
+
+//!START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0014
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0014
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Rnno Sgirka
+//! @SYMCreationDate		25/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::SendCommand() negative test for not connected session
+//!				Uses API elements: SendCommand()
+//! @SYMTestActions		1. Create a RFbsSession but don't call it's Connect() method
+//!				2. Call SendCommand() passing 0 as an argument
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Expects that SendCommand() panics
+//! @SYMTestType		CIT
+
+//!	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+
+//!		CREATE_OBJECT	RFbsSession	RFbsSession1
+
+//!		COMMAND		RFbsSession1	SendCommand	GRAPHICS-FBSERV-FbsSession-PublicApi-0014-001-SendCommand_command001
+
+//!	END_TEST_BLOCK	!PanicCode=3 !PanicString=KERN-EXEC
+
+//!    RUN_TEST_STEP	100	T_FBServAPI	utilityClearPanicDlg
+
+//!END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0014
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0015
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0015
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Rnno Sgirka
+//! @SYMCreationDate		25/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::Version() test for not connected session
+//!				Uses API elements: Version()
+//! @SYMTestActions		1. Create a RFbsSession but don't call it's Connect() method
+//!				2. Call RFbsSession::Version()
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function Version() call doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+		CREATE_OBJECT	RFbsSession	RFbsSession1
+		COMMAND		RFbsSession1	Version
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0015
+
+
+//!START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0016
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0016
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor		Rnno Sgirka
+//! @SYMCreationDate		25/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::SessionHandle() negative test for not connected session
+//!				Uses API elements: SessionHandle()
+//! @SYMTestActions		1. Create a RFbsSession but don't call it's Connect() method
+//!				2. Call RFbsSession::SessionHandle()
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Expects that SessionHandle() panics
+//! @SYMTestType		CIT
+//!	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+//!		CREATE_OBJECT	RFbsSession	RFbsSession1
+//!		COMMAND		RFbsSession1	SessionHandle
+//!	END_TEST_BLOCK	!PanicCode=3 !PanicString=KERN-EXEC
+//!    RUN_TEST_STEP	100	T_FBServAPI	utilityClearPanicDlg
+//!END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0016
+
+
+//!START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0017
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0017
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor		Rnno Sgirka
+//! @SYMCreationDate		25/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::CallBack() negative test for not connected session
+//!				Uses API elements: CallBack()
+//! @SYMTestActions		1. Create a RFbsSession but don't call it's Connect() method
+//!				2. Call RFbsSession::CallBack()
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Expects that CallBack() panics
+//! @SYMTestType		CIT
+//!	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+//!		CREATE_OBJECT	RFbsSession	RFbsSession1
+//!		COMMAND		RFbsSession1	CallBack
+//!	END_TEST_BLOCK	!PanicCode=3 !PanicString=KERN-EXEC
+//!    RUN_TEST_STEP	100	T_FBServAPI	utilityClearPanicDlg
+//!END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0017
+
+
+//!START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0018
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0018
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor		Rnno Sgirka
+//! @SYMCreationDate		25/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::SetCallBack() negative test for not connected session
+//!				Uses API elements: SetCallBack()
+//! @SYMTestActions		1. Create a RFbsSession but don't call it's Connect() method
+//!				2. Call RFbsSession::SetCallBack()
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Expects that SetCallBack() panics
+//! @SYMTestType		CIT
+//!	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+//!		CREATE_OBJECT	RFbsSession	RFbsSession1
+//!		COMMAND		RFbsSession1	SetCallBack
+//!	END_TEST_BLOCK	!PanicCode=3 !PanicString=KERN-EXEC
+//!    RUN_TEST_STEP	100	T_FBServAPI	utilityClearPanicDlg
+//!END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0018
+
+
+//!START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0019
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0019
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Rnno Sgirka
+//! @SYMCreationDate		25/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::ResetCallBack() negative test for not connected session
+//!				Uses API elements: ResetCallBack()
+//! @SYMTestActions		1. Create a RFbsSession but don't call it's Connect() method
+//!				2. Call RFbsSession::ResetCallBack()
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	Expects that ResetCallBack() panics
+//! @SYMTestType		CIT
+//!	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+//!		CREATE_OBJECT	RFbsSession	RFbsSession1
+//!		COMMAND		RFbsSession1	ResetCallBack
+//!	END_TEST_BLOCK	!PanicCode=3 !PanicString=KERN-EXEC
+//!    RUN_TEST_STEP	100	T_FBServAPI	utilityClearPanicDlg
+//!END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0019
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0020
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0020
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Rnno Sgirka
+//! @SYMCreationDate		29/05/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::SendCommand() test that sends a correct message with correct message parameters
+//!				Uses API elements: Connect(), SendCommand()
+//! @SYMTestActions		1. Create a RFbsSession
+//!				2. Create a 100x200 bitmap.
+//!				3. Send message 15 (EFbsMessBitmapResize) using SendCommand() passing as arguments: the handle of the bitmap, new width 50, new height 20.
+//!				4. Disconnect the session
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function SendCommand() call doesn't cause panic.
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+		CREATE_OBJECT	RFbsSession	RFbsSession1
+		CREATE_OBJECT	CFbsBitmap	CFbsBitmap1
+		COMMAND		RFbsSession1	Connect
+		COMMAND		RFbsSession1	GetSession
+		COMMAND		CFbsBitmap1	new
+		COMMAND		CFbsBitmap1	Create		GRAPHICS-FBSERV-FbsSession-PublicApi-0020-001-Create_command005
+		COMMAND		RFbsSession1	SendCommand	GRAPHICS-FBSERV-FbsSession-PublicApi-0020-001-SendCommand_command007
+		COMMAND		CFbsBitmap1	~
+		COMMAND		RFbsSession1	Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0020
+
+
+START_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0021
+//! @SYMTestCaseID		GRAPHICS-FBSERV-FbsSession-PublicApi-0021
+//! @SYMAPI			RFbsSession
+//! @SYMAuthor			Louis Henry Nayegon
+//! @SYMCreationDate		02/08/2006
+//! @SYMTestCaseDependencies	setup-GRAPHICS-FBSERV-FbsSession-PublicApi.script
+//! @SYMTestCaseDesc		RFbsSession::Disconnect() called without a connection
+//! @SYMTestActions		1. Disconnect the session
+//! @SYMTestStatus		Implemented
+//! @SYMTestPriority		High
+//! @SYMTestExpectedResults	The function Disconnect() passes
+//! @SYMTestType		CIT
+	START_TEST_BLOCK	100		T_FBServAPI	\graphics\GRAPHICS-FBSERV-FbsSession-PublicApi.ini
+		CREATE_OBJECT	RFbsSession	RFbsSession1
+		COMMAND		RFbsSession1	Disconnect
+	END_TEST_BLOCK
+END_TESTCASE 			GRAPHICS-FBSERV-FbsSession-PublicApi-0021

@@ -1,23 +1,14 @@
-// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
 //
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and/or associated documentation files (the
-// "Materials"), to deal in the Materials without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Materials, and to
-// permit persons to whom the Materials are furnished to do so, subject to
-// the following conditions:
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
 //
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Materials.
-//
-// THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-// MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
+// Contributors:
 //
 // Description:
 // Native Stream Stubs
@@ -27,13 +18,18 @@
 #include <WF/wfc.h>
 #include <graphics/symbianstream.h>
 #include <graphics/surfacemanager.h>
-#include <graphics/streammap.h>
 #include "owfnativestream.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+static RSurfaceManager& SurfaceManagerSingleton()
+        {
+        static RSurfaceManager surfaceManager;
+        static int err=surfaceManager.Open();
+        return surfaceManager;
+        }
 
 static khronos_int32_t max(khronos_int32_t aLhs, khronos_int32_t aRhs)
 {
@@ -43,7 +39,9 @@ static khronos_int32_t max(khronos_int32_t aLhs, khronos_int32_t aRhs)
     return aRhs;
 }
 
-static TSurfaceId createSurface(RSurfaceManager& surface_manager, khronos_int32_t width,
+
+
+static TSurfaceId createSurface(khronos_int32_t width,
         khronos_int32_t height,
         const OWF_IMAGE_FORMAT*   format,
         khronos_int32_t nbufs)
@@ -65,7 +63,7 @@ static TSurfaceId createSurface(RSurfaceManager& surface_manager, khronos_int32_
             case OWF_IMAGE_RGB565:
                 b.iPixelFormat = EUidPixelFormatRGB_565;
                 bytesPerPixel = 2;
-                b.iAlignment = max(format->rowPadding, 4);
+                b.iAlignment = max(4,format->rowPadding);
                 break;
             case OWF_IMAGE_ARGB8888:
                 {
@@ -84,7 +82,17 @@ static TSurfaceId createSurface(RSurfaceManager& surface_manager, khronos_int32_
             case OWF_IMAGE_XRGB8888 :
                 b.iPixelFormat = EUidPixelFormatXRGB_8888;
                 bytesPerPixel = 4;
-                b.iAlignment = max(format->rowPadding,4);
+                b.iAlignment = max(4,format->rowPadding);
+                break;
+            case OWF_IMAGE_L8 :
+                b.iPixelFormat = EUidPixelFormatA_8;
+                bytesPerPixel = 1;
+                b.iAlignment = max(4,format->rowPadding);
+                break;
+            case OWF_IMAGE_L1 :
+                b.iPixelFormat = EUidPixelFormatL_1;
+                bytesPerPixel = -8;
+                b.iAlignment = max(4,format->rowPadding);
                 break;
             default:
                 return surface;
@@ -102,10 +110,10 @@ static TSurfaceId createSurface(RSurfaceManager& surface_manager, khronos_int32_
             {
             b.iStride = (width-(bytesPerPixel+1)) / (-bytesPerPixel);
             }
-        b.iContiguous = OWF_TRUE;
+        b.iContiguous = OWF_FALSE;
         b.iMappable = OWF_TRUE;
         
-        TInt err=surface_manager.CreateSurface(bf, surface);
+        TInt err=SurfaceManagerSingleton().CreateSurface(bf, surface);
         if (err<0)
             {
             surface=TSurfaceId::CreateNullId();
@@ -149,28 +157,21 @@ owfNativeStreamCreateImageStream(OWFint width,
                                  const OWF_IMAGE_FORMAT* format,
                                  OWFint nbufs)
         {
-        RSurfaceManager surface_manager;
-        TInt err=surface_manager.Open();
-        if (err<KErrNone)
-            {
-            return WFC_INVALID_HANDLE;
-            }
         TSurfaceId surface;
         
-        surface = createSurface(surface_manager, width, height, format, nbufs);
+        surface = createSurface(width, height, format, nbufs);
         if (surface.IsNull())
             {
             return WFC_INVALID_HANDLE;
             }
-        SymbianStreamType ns=WFC_INVALID_HANDLE;  //No more error checking required...
+        SymbianStreamType ns=NULL;  //No more error checking required...
         SymbianStreamAcquire(&surface,&ns);
         
-        surface_manager.CloseSurface(surface);
+        SurfaceManagerSingleton().CloseSurface(surface);
         if (ns)
             {
             WipeWriteBuffer(ns);
             }
-        surface_manager.Close();
         return (OWFNativeStreamType)ns;
         }
 /*!---------------------------------------------------------------------------
@@ -335,7 +336,7 @@ owfNativeStreamGetHeader(OWFNativeStreamType stream,
                                 pixelSize);
         if (format)
             {   //translate format. If error then OWF_IMAGE_NOT_SUPPORTED is set.
-            PixelFormatConversion(static_cast<TUidPixelFormat>(symFormat),*format);
+            PixelFormatConversion(symFormat,*format);
             }
         }
 
@@ -404,6 +405,54 @@ owfNativeStreamReleaseWriteBuffer(OWFNativeStreamType stream,
         (void)dpy;
         (void)sync;
         SymbianStreamReleaseWriteBuffer((SymbianStreamType)stream,(SymbianStreamBuffer)buf);
+        }
+
+/*!---------------------------------------------------------------------------
+ *  Register stream content observer (append to chain). The observer will
+ *  receive buffer modification event from the stream whenever a buffer is
+ *  committed.
+ *
+ *  \param stream           Stream handle
+ *  \param observer         Stream observer
+ *  \param data             data to pass to observer callback
+ *                          function when event is dispatched.
+ *----------------------------------------------------------------------------*/
+OWF_API_CALL OWF_STREAM_ERROR
+owfNativeStreamAddObserver(OWFNativeStreamType stream,
+                           OWFStreamCallback observer,
+                           void* data)
+        {
+        int err = SymbianStreamAddObserver((SymbianStreamType)stream,(SymbianStreamCallback)observer,data);
+        switch (err)
+            {
+            case KErrBadHandle:    return OWF_STREAM_ERROR_INVALID_STREAM;
+            case KErrNotFound:     return OWF_STREAM_ERROR_INVALID_OBSERVER;
+            case KErrGeneral:      return OWF_STREAM_ERROR_OUT_OF_MEMORY;
+            default:               return OWF_STREAM_ERROR_NONE;
+            }
+        }
+
+/*!---------------------------------------------------------------------------
+ *  Remove stream content observer.
+ *
+ *  \param stream           Stream handle
+ *  \param observer         Observer to remove
+ *  \param data             client data supplied for registration
+ *
+ *  \param Zero if the observer was removed successfully, otherwise non-zero
+ *  (OWF_STREAM_ERROR_INVALID_STREAM if the stream is invalid;
+ *   OWF_STREAM_ERROR_INVALID_OBSERVER if the observer is invalid.)
+ *----------------------------------------------------------------------------*/
+OWF_API_CALL OWF_STREAM_ERROR
+owfNativeStreamRemoveObserver(OWFNativeStreamType stream,
+                              OWFStreamCallback observer,
+                              void* data)
+        {
+        SYMOWF_DEFAULT_EVENT_PARAM eventPar;
+        eventPar.length = sizeof(eventPar);
+        eventPar.event = ESOWF_NoEvent;
+        observer(SYMBIAN_INVALID_HANDLE, ESOWF_ObserverReturnDefaultEvent, NULL, &eventPar);
+        return (OWF_STREAM_ERROR)SymbianStreamRemoveObserver((SymbianStreamType)stream,data,(type_SymbianStreamEventBits)eventPar.event);
         }
 
 /*!---------------------------------------------------------------------------

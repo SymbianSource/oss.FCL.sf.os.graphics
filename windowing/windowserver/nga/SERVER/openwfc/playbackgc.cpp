@@ -25,8 +25,8 @@
 #include "windowgroup.h"
 #include "wsfont.h"
 #include "wstop.h"
-#include "graphics/WSGRAPHICDRAWER.H"
-#include "graphics/surfaceconfiguration.h"
+#include "Graphics/WSGRAPHICDRAWER.H"
+#include "Graphics/surfaceconfiguration.h"
 #include "windowelementset.h"
 
 #include <graphics/wsgraphicscontext.h>

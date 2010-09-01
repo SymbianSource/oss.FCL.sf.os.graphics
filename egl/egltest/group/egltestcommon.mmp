@@ -58,6 +58,6 @@ LIBRARY                 graphicsresource.lib
 LIBRARY                 tgraphicsharness.lib
 LIBRARY                 testexecuteutils.lib
 LIBRARY                 testexecutelogclient.lib
-LIBRARY			iniparser.lib
+LIBRARY                 cinidata.lib
 
 SMPSAFE

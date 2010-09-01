@@ -128,8 +128,10 @@ WARNING SGXBACKEND is deprecated.
 	#	define FBSRASTERIZER_DRV <fbsrasterizer_stub.iby>
 	#endif
 	
-	#ifndef OPENWFCLIB_DRV
-	#	define OPENWFCLIB_DRV <openwfc_ref.iby>
+	#ifdef SYMBIAN_GRAPHICS_USE_OPENWF_MIGRATION
+	#   ifndef OPENWFCLIB_DRV
+	#       define OPENWFCLIB_DRV <openwfc_ref.iby>
+	#   endif
 	#endif
 	
 #elif SYMBIAN_GRAPHICS_ADAPTATION == SGA_MBX
@@ -213,8 +215,10 @@ WARNING SGXBACKEND is deprecated.
 	#	define SGRESOURCE_DRV <sgresource_sw.iby>
 	#endif
 	
-	#ifndef OPENWFCLIB_DRV
-	# define OPENWFCLIB_DRV <openwfc_ref.iby>
+	#ifdef SYMBIAN_GRAPHICS_USE_OPENWF_MIGRATION
+	#   ifndef OPENWFCLIB_DRV
+	#       define OPENWFCLIB_DRV <openwfc_ref.iby>
+	#   endif
 	#endif
 	
 #else
@@ -232,7 +236,6 @@ REM "SURFACEMANAGER DRV"   : SURFACEMANAGER_DRV
 REM "SURFACEUPDATE DRV"    : SURFACEUPDATE_DRV
 REM "DIRECTGDI DRV"        : DIRECTGDI_DRV 
 REM "FBSRASTERIZER DRV"    : FBSRASTERIZER_DRV 
-REM "SRGRESOURCE DRV"      : SGRESOURCE_DRV 
-REM "OPENWFCLIB DRV"       : OPENWFCLIB_DRV 
+REM "SRGREOURCE DRV"       : SGRESOURCE_DRV 
 
 #endif  // __GRAPHICS_ADAPTATION_HBY__

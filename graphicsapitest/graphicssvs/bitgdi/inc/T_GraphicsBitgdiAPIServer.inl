@@ -1,0 +1,48 @@
+/*
+* Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies). 
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:
+*
+*/
+
+/**
+@test
+@internalComponent
+
+This contains CT_GraphicsBitgdiAPIServer inline functions
+*/
+
+
+/*@{*/
+/*@}*/
+
+inline CT_GraphicsBitgdiAPIServer::CT_GraphicsBitgdiAPIBlock::CT_GraphicsBitgdiAPIBlock()
+	{
+	}
+
+inline CT_GraphicsBitgdiAPIServer::CT_GraphicsBitgdiAPIBlock::~CT_GraphicsBitgdiAPIBlock()
+	{
+	}
+
+inline CT_GraphicsBitgdiAPIServer::CT_GraphicsBitgdiAPIServer()
+	{
+	}
+
+inline CT_GraphicsBitgdiAPIServer::~CT_GraphicsBitgdiAPIServer()
+	{
+	}
+
+inline CTestBlockController*	CT_GraphicsBitgdiAPIServer::CreateTestBlock()
+	{
+	return new CT_GraphicsBitgdiAPIBlock();
+	}

@@ -141,9 +141,9 @@ enum TGdiPanic
 	EGdiPanic_OutOfText				= 2,
 	/** Internal failure. */
 	EGdiPanic_Invariant				= 3,
-	/** Unused panic codes. Can be reused if needed. */
-	EGdiPanic_Unused1				= 4,
-	EGdiPanic_Unused2				= 5,
+	/** Reserved panic codes. Not to be used. */
+	EGdiPanic_Reserved1				= 4,
+	EGdiPanic_Reserved2				= 5,
 	/** Setting a typeface name that is too long */
 	EGdiPanic_TypefaceNameOverflow	= 6,
 	};
@@ -1229,10 +1229,7 @@ const TUid KFontMaxAscent		= {0x10204B10};
 const TUid KFontStandardDescent	= {0x10204B11};
 const TUid KFontMaxDescent		= {0x10205AFC};
 const TUid KFontLineGap			= {0x10204B12};
-const TUid KFontGetFontTable    = {0x102872C1};
-const TUid KFontGetGlyphOutline = {0x102872C2};
-const TUid KFontReleaseGlyphOutline = {0x2002A1FD};
-const TUid KFontReleaseFontTable = {0x2002AC24};
+
 
 
 /** Abstract font interface.

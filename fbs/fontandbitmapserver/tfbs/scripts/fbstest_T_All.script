@@ -28,7 +28,6 @@ RUN_TEST_STEP 100 TFbsServer TStreamIdCache
 RUN_TEST_STEP 100 TFbsServer TFbsSecure 
 RUN_TEST_STEP 100 TFbsServer TFile
 RUN_TEST_STEP 100 TFbsServer TClean
-RUN_TEST_STEP 100 TFbsServer TFontTableAndGlyphOutline
 
 // ShutDown test must NOT have the ECapabilityPowerMgmt capability.
 // Set test server to have All -TCB -PowerMgmt (FFFA)
@@ -59,10 +58,6 @@ RUN_TEST_STEP !PanicCode=-6 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.in
 RUN_TEST_STEP !PanicCode=-6 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini ShapeDelete
 RUN_TEST_STEP !PanicCode=-6 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini SetTwipsHeight
 RUN_TEST_STEP !PanicCode=-6 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini GetTwipsHeight
-RUN_TEST_STEP !PanicCode=-6 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini GetFontTableWrongMsg
-RUN_TEST_STEP !PanicCode=-6 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini ReleaseFontTableWrongMsg
-RUN_TEST_STEP !PanicCode=-38 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini GetGlyphOutlineWrongMsg
-RUN_TEST_STEP !PanicCode=-38 100 TFbsServer TIPCTest z:\fbstest\ipctest_config.ini ReleaseGlyphOutlineWrongMsg
 
 // Set test server to have only ReadDeviceData (00000010) Capabilitities
 RUN_PROGRAM -1 setcap TFbsServer.exe 00000010 TFbsServer0010.exe

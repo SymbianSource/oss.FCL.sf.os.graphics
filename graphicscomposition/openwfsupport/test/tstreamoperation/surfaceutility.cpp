@@ -22,7 +22,7 @@
 #include "surfaceutility.h"
 
 CSurfaceUtility::CSurfaceUtility(CSurfaceUtility* aClone)
-	:	iSurfaces(aClone?&(aClone->iSurfaces):NULL)
+	:	iScreenNum(0), iSurfaces(aClone?&(aClone->iSurfaces):NULL)
 	{
 	}
 	
@@ -375,7 +375,7 @@ void CSurfaceUtility::FillSurfaceL(TSurfaceId& aSurface, const TRgb& aColor)
 		Mem::Copy(linePtr, surfacePtr, info.iSize.iWidth * BytesPerPixelL(info.iPixelFormat));
 		}
 	
-	TInt err = SubmitUpdate(KAllScreens, aSurface, 0, NULL);
+	TInt err = SubmitUpdate(iScreenNum, aSurface, 0, NULL);
 	if (err!=KErrNone)
 		LOG(("Error submitting update: 0x%X\n", err));
 
@@ -497,7 +497,7 @@ void CSurfaceUtility::FillSurfaceL(TSurfaceId& aSurface, TInt aBuffer, const TRg
 		Mem::Copy(linePtr, surfacePtr, info.iSize.iWidth * BytesPerPixelL(info.iPixelFormat));
 		}
 	
-	TInt err = SubmitUpdate(KAllScreens, aSurface, 0, NULL);
+	TInt err = SubmitUpdate(iScreenNum, aSurface, 0, NULL);
 	if (err!=KErrNone)
 		LOG(("Error submitting update: 0x%X\n", err));
 
@@ -535,16 +535,16 @@ Submit an update to a surface to the update server.
 @param aSurface	The surface which has been updated.
 @param aRegion	The area of the surface affected, or NULL for all of it.
 */
-TInt CSurfaceUtility::SubmitUpdate(TInt /* aScreenNumber */, const TSurfaceId& aSurface,TInt aBufferNumber, TInt aNullRegion)
+TInt CSurfaceUtility::SubmitUpdate(TInt aScreenNumber, const TSurfaceId& aSurface,TInt aBufferNumber, TInt aNullRegion)
     {
     if (aNullRegion==0)
         {
-        return SubmitUpdate(KAllScreens, aSurface, aBufferNumber);
+        return SubmitUpdate(aScreenNumber, aSurface, aBufferNumber);
         }
     else
         if (aBufferNumber==0)
             {
-            return SubmitUpdate(KAllScreens, aSurface, aNullRegion);
+            return SubmitUpdate(aScreenNumber, aSurface, aNullRegion);
             }
         else
             {
@@ -552,12 +552,12 @@ TInt CSurfaceUtility::SubmitUpdate(TInt /* aScreenNumber */, const TSurfaceId& a
             }
     }
 
-TInt CSurfaceUtility::SubmitUpdate(TInt /* aScreenNumber */, const TSurfaceId& aSurface, const TRegion* aRegion,TInt aBufferNumber)
+TInt CSurfaceUtility::SubmitUpdate(TInt aScreenNumber, const TSurfaceId& aSurface, const TRegion* aRegion,TInt aBufferNumber)
     {
-    return SubmitUpdate(KAllScreens, aSurface, aBufferNumber, aRegion);
+    return SubmitUpdate(aScreenNumber, aSurface, aBufferNumber, aRegion);
     }
 
-TInt CSurfaceUtility::SubmitUpdate(TInt /* aScreenNumber */, const TSurfaceId& aSurface,TInt aBufferNumber, const TRegion* aRegion)
+TInt CSurfaceUtility::SubmitUpdate(TInt aScreenNumber, const TSurfaceId& aSurface,TInt aBufferNumber, const TRegion* aRegion)
 	{
 	if (!iSurfaceUpdateSession.Handle())
 	    {
@@ -570,12 +570,17 @@ TInt CSurfaceUtility::SubmitUpdate(TInt /* aScreenNumber */, const TSurfaceId& a
         }
     else
         {
-        TInt err =iSurfaceUpdateSession.SubmitUpdate(KAllScreens, aSurface, aBufferNumber, aRegion); 
+        TInt err =iSurfaceUpdateSession.SubmitUpdate(aScreenNumber, aSurface, aBufferNumber, aRegion); 
         if (err!=KErrNone)
             LOG(("Error submitting update: 0x%X\n", err));
         return err;
         }
 	}
+
+void CSurfaceUtility::SetAutoUpdateScreenNum(TInt aScreenNum)
+    {
+    iScreenNum=aScreenNum;
+    }
 
 void CSurfaceUtility::FillNativeStreamSurfaceL(TSurfaceId& aSurface, TUint8* aBufferPtr, const TRgb& aColor)
 	{

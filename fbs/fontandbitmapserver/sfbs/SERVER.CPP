@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -22,7 +22,7 @@
 #include "BitwiseBitmap.inl"
 
 const TInt KFbsPriority = 0;
-const TInt KFbsGoomMonitorSid = 0x10207218;
+
 // Setup security policies
 const TInt KRanges[] = 
 	{
@@ -36,11 +36,7 @@ const TInt KRanges[] =
 	EFbsMessRegisterLinkedTypeface,
 	EFbsMessFetchLinkedTypeface,
 	EFbsMessUpdateLinkedTypeface,
-	EFbsMessGetFontTable,
-    EFbsMessOogmNotification,
-    EFbsMessGetGlyphCacheMetrics,
 	};
-
 const TUint KRangeCount = sizeof(KRanges)/sizeof(TInt);
 const TUint8 KElementsIndex[KRangeCount] = 
 	{
@@ -54,20 +50,14 @@ const TUint8 KElementsIndex[KRangeCount] =
 	1, // ECapabilityWriteDeviceData for EFbsMessRegisterLinkedTypeface
 	2, // ECapabilityReadDeviceData for EFbsMessFetchLinkedTypeface
 	1, // ECapabilityWriteDeviceData for EFbsMessUpdateLinkedTypeface
-	0, // ECapability_None for EFbsMessGetFontTable and beyond
-    4, // SID for EFbsMessOogmNotification.
-    0, // For EFbsMessGetGlyphCacheMetrics and on.
 	};
-
 const CPolicyServer::TPolicyElement KElements[] = 
 	{
 	{_INIT_SECURITY_POLICY_C1(ECapability_None), CPolicyServer::EFailClient},
 	{_INIT_SECURITY_POLICY_C1(ECapabilityWriteDeviceData), CPolicyServer::EFailClient},
 	{_INIT_SECURITY_POLICY_C1(ECapabilityReadDeviceData), CPolicyServer::EFailClient},
-	{_INIT_SECURITY_POLICY_C1(ECapabilityPowerMgmt), CPolicyServer::EFailClient},
-	{_INIT_SECURITY_POLICY_S0(KFbsGoomMonitorSid), CPolicyServer::EFailClient}
+	{_INIT_SECURITY_POLICY_C1(ECapabilityPowerMgmt), CPolicyServer::EFailClient},	
  	};
-
 const CPolicyServer::TPolicy KFbsPolicy =
 	{
 	CPolicyServer::EAlwaysPass, //specifies all connect attempts should pass
@@ -78,7 +68,9 @@ const CPolicyServer::TPolicy KFbsPolicy =
 	};
 
 CFontBitmapServer::CFontBitmapServer():
-	CPolicyServer(KFbsPriority, KFbsPolicy)
+	CPolicyServer(KFbsPriority, KFbsPolicy),
+	iConnectionId(0),
+	iTopLevelStore(NULL)
 	{
 	}
 
@@ -91,33 +83,25 @@ CFontBitmapServer::~CFontBitmapServer()
 
 CFontBitmapServer* CFontBitmapServer::NewL()
 	{
-	CFontBitmapServer* self = new(ELeave) CFontBitmapServer;
-	CleanupStack::PushL(self);
-	self->ConstructL();
-	CleanupStack::Pop(); //self
-	return self;
-	}
-
-/**
-Two-phase constructor.
-*/
-void CFontBitmapServer::ConstructL()
-	{
-	iTopLevelStore=CFbTop::NewL();
+	CFontBitmapServer* fbs=new(ELeave) CFontBitmapServer;
+	CleanupStack::PushL(fbs);
+	fbs->iTopLevelStore=CFbTop::NewL();
 	
 	// If fbserv data paging is configured as unpaged, automatically pin client descriptors 
 	if(!RProcess().DefaultDataPaged())
 		{
-		SetPinClientDescriptors(ETrue);
+		fbs->SetPinClientDescriptors(ETrue);
 		}
-	StartL(KFBSERVGlobalThreadName);
+
+	fbs->StartL(KFBSERVGlobalThreadName);
+	CleanupStack::Pop();
+	return(fbs);
 	}
 
 CFbTop* CFontBitmapServer::TopLevelStore()
 	{
 	return(iTopLevelStore);
 	}
-
 CSession2* CFontBitmapServer::NewSessionL(const TVersion& aVersion,const RMessage2& /*aMessage*/ ) const
 	{
 	TVersion v(KFbsMajorVersionNumber,KFbsMinorVersionNumber,KFbsBuildVersionNumber);
@@ -141,7 +125,7 @@ TInt CFontBitmapServer::HandleMesgTypefaceSupport(const RMessage2& aMessage, TBo
 	TPckgBuf<TSize> pixelSize;
 	TInt index=aMessage.Int0();
 	TInt limit=iTopLevelStore->FontStore()->NumTypefaces();
-	if(index < 0 || index > limit)
+	if(index<0 || index>limit)
 		{
 		return KErrArgument;
 		}
@@ -209,7 +193,7 @@ void CFontBitmapServer::ProcMessage(const RMessage2& aMessage, TInt aSession, TI
 void CFontBitmapServer::ProcMessage(const RMessage2& aMessage, TInt aSession)
 #endif
 	{
-    TInt ret=KErrNone;
+	TInt ret=KErrNone;
 	TBool clientPanicRequired = EFalse;
 #ifdef _DEBUG
 	TInt num=0;
@@ -360,7 +344,6 @@ void CFontBitmapServer::ProcMessage(const RMessage2& aMessage, TInt aSession)
 #ifdef _DEBUG
 	aRet=ret;
 #endif	
-
 	}
 
 /**
@@ -378,9 +361,9 @@ Not supported in release builds.
 void CFontBitmapServer::GetHeapSizesL(const RMessage2& aMessage)
 	{
 	TPckgBuf<THeapSizes> data;
-	TInt defaultHeapSize = 0;
-	TInt smallBmpHeapSize = 0;		
-	TInt bigBmpHeapSize = 0;		
+	TInt defaultHeapSize;
+	TInt smallBmpHeapSize;		
+	TInt bigBmpHeapSize;		
 	
 	User::Heap().AllocSize(defaultHeapSize);
 	bigBmpHeapSize = iTopLevelStore->iLargeBitmapChunk.Size();
@@ -400,24 +383,18 @@ void CFontBitmapServer::GetHeapSizesL(const RMessage2&)
 #endif
 
 
-CFontObject::CFontObject(CFontStore* aFontStore, CGlyphAtlas* aGlyphAtlas):
+CFontObject::CFontObject(CFontStore* aFontStore):
 	CObject(),
-	iFontStore(aFontStore),
-	iGlyphAtlas(aGlyphAtlas)
+	iAddressPointer(NULL),
+	iFontStore(aFontStore)
 	{
 	}
 
 CFontObject::~CFontObject()
 	{
 	if (AccessCount()==1)
-		{
 		Dec();
-		}
 	iFontStore->ReleaseFont(iAddressPointer);
-	if (iGlyphAtlas)
-		{
-		iGlyphAtlas->FontReleased(*iAddressPointer);
-		}
 	}
 
 // CBitmapObject constructor - takes ownership of aBmp
@@ -447,9 +424,7 @@ void CBitmapObject::ConstructL(TBool aReplacement)
 		{
 		iHandle = reinterpret_cast<TInt>(this);
 		while (iFbTop->iBitmapObjectIndex.FindInOrder(this, Compare) != KErrNotFound)
-			{
 			++iHandle;
-			}
 		User::LeaveIfError(iFbTop->iBitmapObjectIndex.InsertInOrder(this, Compare));
 		}
 	}
@@ -494,13 +469,9 @@ CBitmapObject::~CBitmapObject()
 			if (index != KErrNotFound)
 				{
 				if (iCleanBitmap)
-					{
 					iFbTop->iBitmapObjectIndex[index] = iCleanBitmap;
-					}
 				else
-					{
 					iFbTop->iBitmapObjectIndex.Remove(index);
-					}
 				}
 			}
 		if (iCleanBitmap != NULL)
@@ -529,7 +500,7 @@ void CBitmapObject::SetCleanBitmap(CBitmapObject* aNewBmpObj)
 
 void CBitmapObject::Close()
 	{
-	if ((iCleanBitmap != NULL) && (Owner() != NULL) && (AccessCount() == 2))
+	if (iCleanBitmap != NULL && Owner() != NULL && AccessCount() == 2)
 		{
 		static_cast<CBitmapObject*>(Owner())->iCleanBitmap = iCleanBitmap;
 		iCleanBitmap->SetOwner(Owner());
@@ -552,7 +523,8 @@ TInt CBitmapObject::Compare(const TInt* aHandle, const CBitmapObject& aBmpObj)
 // CSharedBitmapObject constructor - takes ownership of aBmp and aKey
 CSharedBitmapObject::CSharedBitmapObject(CFbTop& aFbTop, CBitwiseBitmap* aBmp, TDesC* aKey):
 	CBitmapObject(aFbTop, aBmp),
-	iKey(aKey)
+	iKey(aKey),
+	iNext(NULL)
 	{
 	__ASSERT_DEBUG(iKey, User::Invariant());	
 	}

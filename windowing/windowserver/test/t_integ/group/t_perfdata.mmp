@@ -38,7 +38,7 @@ OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 LIBRARY       	euser.lib 
 LIBRARY		  	hal.lib
-LIBRARY			iniparser.lib
+LIBRARY		  	cinidata.lib
 LIBRARY         efsrv.lib
 LIBRARY         estor.lib
 

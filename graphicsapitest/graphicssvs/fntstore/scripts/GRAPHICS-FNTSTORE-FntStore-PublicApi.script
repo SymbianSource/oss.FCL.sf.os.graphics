@@ -1,0 +1,1517 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+//! @file
+//! @SYMTestSuiteName		GRAPHICS-FNTSTORE-FntStore-PublicApi
+//! @SYMScriptTestEnvironment	
+
+/////////////////////////////////////////////////////////////////////
+// GRAPHICS-FNTSTORE-FntStore-PublicApi.script
+//
+// Tests all public elements of the CFontStore
+// classes as a means of confidence that the APIs work as expected.
+//
+// The purpose is to provide a regression test suite of PublishedAll APIs for CFontStore
+// The tests are fully automated.
+/////////////////////////////////////////////////////////////////////
+
+LOAD_SUITE      T_GraphicsFntstoreApi
+DELAY           1000
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0001
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0001
+//! @SYMAPI     			CFontStore::NewL(RHeap{ptr})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        25/03/2009
+//! @SYMTestCaseDesc        Creates a new CFontStore object with heap size 65536.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFontStore::NewL() returns a CFontStore object.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL            GRAPHICS-FNTSTORE-FntStore-PublicApi-0001-NewL_command01
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0001
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0002
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0002
+//! @SYMAPI     			CFontStore::NewL(RHeap{ptr})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        26/03/2009
+//! @SYMTestCaseDesc        Creates a new CFontStore object using heap of current thread.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFontStore::NewL() returns a CFontStore object.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0002
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0003
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0003
+//! @SYMAPI     			CFontStore::NewL(RHeap{ptr})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        26/03/2009
+//! @SYMTestCaseDesc        Negative case. Creates a new CFontStore object with heap size 0, which means NULL heap.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Get error -4 (KErrNoMemory).
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND  !Error=-4  fntStore        NewL            GRAPHICS-FNTSTORE-FntStore-PublicApi-0003-NewL_command01
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0003
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0004
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0004
+//! @SYMAPI     			CFontStore::AddFileL(const TDesC{ref})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        27/03/2009
+//! @SYMTestCaseDesc        Finds or creates a font file object to support a font file.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Get the number of typefaces.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the number of typefaces.
+//!                         5. Remove the file.
+//!                         6. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::AddFileL() is called successfully.
+//!                         2. Before and after add file, number of typefaces is expected as specified in test data respectively.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        NumTypefaces    GRAPHICS-FNTSTORE-FntStore-PublicApi-0004-NumTypefaces_command02
+        COMMAND             fntStore        AddFileL        GRAPHICS-FNTSTORE-FntStore-PublicApi-0004-AddFileL_command03
+        COMMAND             fntStore        NumTypefaces    GRAPHICS-FNTSTORE-FntStore-PublicApi-0004-NumTypefaces_command04
+        COMMAND             fntStore        RemoveFile      GRAPHICS-FNTSTORE-FntStore-PublicApi-0004-RemoveFile_command05
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0004
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0005
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0005
+//! @SYMAPI     			CFontStore::AddFileL(const TDesC{ref})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        27/03/2009
+//! @SYMTestCaseDesc        Negative case. Add a not supported font file.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Add a font file specified in test data.
+//!                         3. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Get error -5 (KErrNotSupported)
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND  !Error=-5  fntStore        AddFileL        GRAPHICS-FNTSTORE-FntStore-PublicApi-0005-AddFileL_command02
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0005
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0006
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0006
+//! @SYMAPI     			CFontStore::AddFileL(const TDesC{ref})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        27/03/2009
+//! @SYMTestCaseDesc        Add 2 font files. One is gdr file, another is test open font file.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Get the number of typefaces.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the number of typefaces.
+//!                         5. Install a test rasterizer.
+//!                         6. Add open font file specified in test data.
+//!                         7. Get the number of typefaces.
+//!                         8. Remove all font files.
+//!                         9. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::AddFileL() is called successfully.
+//!                         2. Before and after add font files, the number of typefaces is expected as specified respectively.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0006-NumTypefaces_command02
+        COMMAND             fntStore        AddFileL                GRAPHICS-FNTSTORE-FntStore-PublicApi-0006-AddFileL_command03
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0006-NumTypefaces_command04
+        COMMAND             fntStore        InstallRasterizerL      GRAPHICS-FNTSTORE-FntStore-PublicApi-0006-InstallRasterizerL_command05
+        COMMAND             fntStore        AddFileL                GRAPHICS-FNTSTORE-FntStore-PublicApi-0006-AddFileL_command06
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0006-NumTypefaces_command07
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0006
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0007
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0007
+//! @SYMAPI     			CFontStore::AddFileL(const TDesC{ref})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        27/03/2009
+//! @SYMTestCaseDesc        Add a font file twice.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Add a font file specified in test data and get the number of typefaces.
+//!                         3. Add the font file again and get the number of typefaces.
+//!                         4. Remove all files.
+//!                         5. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::AddFileL() is called successfully.
+//!                         2. Before and after 1st AddFileL(), number of typefaces is expected as specified in test data respectively.
+//!                         3. Before and after 2nd AddFileL(), number of typefaces keeps unchanged.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        AddFileL        GRAPHICS-FNTSTORE-FntStore-PublicApi-0007-AddFileL_command02
+        COMMAND             fntStore        NumTypefaces    GRAPHICS-FNTSTORE-FntStore-PublicApi-0007-NumTypefaces_command03
+        COMMAND             fntStore        AddFileL        GRAPHICS-FNTSTORE-FntStore-PublicApi-0007-AddFileL_command04
+        COMMAND             fntStore        NumTypefaces    GRAPHICS-FNTSTORE-FntStore-PublicApi-0007-NumTypefaces_command05
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0007
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0011
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0011
+//! @SYMAPI     			CFontStore::RemoveFile(TUid)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        27/03/2009
+//! @SYMTestCaseDesc        Remove font file.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data and get the number of typefaces.
+//!                         4. Remove the file and get the number of typefaces.
+//!                         5. Add 2 font files and get the number of typefaces.
+//!                         6. Remove all files.
+//!                         7. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::RemoveFile() is called successfully.
+//!                         2. After both RemoveFile(), the number of typefaces is 0.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL      GRAPHICS-FNTSTORE-FntStore-PublicApi-0011-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                GRAPHICS-FNTSTORE-FntStore-PublicApi-0011-AddFileL_command03
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0011-NumTypefaces_command04
+        COMMAND             fntStore        RemoveFile              GRAPHICS-FNTSTORE-FntStore-PublicApi-0011-RemoveFile_command05
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0011-NumTypefaces_command06
+        COMMAND             fntStore        AddFileL                GRAPHICS-FNTSTORE-FntStore-PublicApi-0011-AddFileL_command07
+        COMMAND             fntStore        AddFileL                GRAPHICS-FNTSTORE-FntStore-PublicApi-0011-AddFileL_command08
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0011-NumTypefaces_command09
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0011-NumTypefaces_command11
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0011
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0012
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0012
+//! @SYMAPI     			CFontStore::RemoveFile(TUid)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        27/03/2009
+//! @SYMTestCaseDesc        Negative case. Remove all files whilst no file is added.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Get the number of typefaces.
+//!                         3. Remove all files and get the number of typefaces.
+//!                         4. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::RemoveFile() is called successfully.
+//!                         2. Before and after RemoveFile(), the number of typefaces is 0.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0012-NumTypefaces_command02
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0012-NumTypefaces_command04
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0012
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0013
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0013
+//! @SYMAPI     			CFontStore::RemoveFile(TUid)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        27/03/2009
+//! @SYMTestCaseDesc        Remove font file.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add 2 font files specified in test data and get the number of typefaces.
+//!                         4. Remove 1st file and get the number of typefaces.
+//!                         5. Add 1st font file and get the number of typefaces.
+//!                         6. Remove all files and get the number of typefaces.
+//!                         7. Add 1st file twice and get the number of typefaces.
+//!                         8. Remove the file once and get the number of typefaces.
+//!                         9. Remove all files and get the number of typefaces.
+//!                         10. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::RemoveFile() is called successfully.
+//!                         2. After 1st RemoveFile(), the number of typefaces is that contained in 2nd file.
+//!                         3. After 2nd RemoveFile(), the number of typefaces is 0.
+//!                         4. After 3rd RemoveFile(), the number of typefaces is that contained in 1st file.
+//!                         5. After 4th RemoveFile(), the number of typefaces is 0.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL      GRAPHICS-FNTSTORE-FntStore-PublicApi-0013-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                GRAPHICS-FNTSTORE-FntStore-PublicApi-0013-AddFileL_command03
+        COMMAND             fntStore        AddFileL                GRAPHICS-FNTSTORE-FntStore-PublicApi-0013-AddFileL_command04
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0013-NumTypefaces_command05
+        COMMAND             fntStore        RemoveFile              GRAPHICS-FNTSTORE-FntStore-PublicApi-0013-RemoveFile_command06
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0013-NumTypefaces_command07
+        COMMAND             fntStore        AddFileL                GRAPHICS-FNTSTORE-FntStore-PublicApi-0013-AddFileL_command08
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0013-NumTypefaces_command09
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0013-NumTypefaces_command11
+        COMMAND             fntStore        AddFileL                GRAPHICS-FNTSTORE-FntStore-PublicApi-0013-AddFileL_command12
+        COMMAND             fntStore        AddFileL                GRAPHICS-FNTSTORE-FntStore-PublicApi-0013-AddFileL_command13
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0013-NumTypefaces_command14
+        COMMAND             fntStore        RemoveFile              GRAPHICS-FNTSTORE-FntStore-PublicApi-0013-RemoveFile_command15
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0013-NumTypefaces_command16
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        NumTypefaces            GRAPHICS-FNTSTORE-FntStore-PublicApi-0013-NumTypefaces_command17
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0013
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0014
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0014
+//! @SYMAPI     			CFontStore::RemoveFile(TUid)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        27/03/2009
+//! @SYMTestCaseDesc        Negative case. Remove file using invalid uid.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Remove file using invalid uid.
+//!                         3. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFontStore::RemoveFile() is called successfully.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        RemoveFile          GRAPHICS-FNTSTORE-FntStore-PublicApi-0014-RemoveFile_command2
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0014
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0015
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0015
+//! @SYMAPI     			CFontStore::RemoveFile(TUid)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        27/03/2009
+//! @SYMTestCaseDesc        Negative case. Remove file without releaseing gotten font.
+//! @SYMTestActions         1. Create a CFontStore object, a TAlgStyle object and a CBitmapFont object.
+//!                         2. Add a font file.
+//!                         3. Get font by uid and don't release it.
+//!                         4. Remove the font file just added.
+//!                         5. Install a rasterizer.
+//!                         6. Add a open font file.
+//!                         7. Get a font per TFontSpec and don't release it.
+//!                         8. Remove the font file just added.
+//!                         9. Destroy all objects.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFontStore::RemoveFile() is called successfully.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       TAlgStyle       algStyle
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND             algStyle        new
+        COMMAND             fntStore        AddFileL                                GRAPHICS-FNTSTORE-FntStore-PublicApi-0015-AddFileL_command03
+        COMMAND             fntStore        GetFontById                             GRAPHICS-FNTSTORE-FntStore-PublicApi-0015-GetFontById_command04
+        COMMAND             fntStore        RemoveFile                              GRAPHICS-FNTSTORE-FntStore-PublicApi-0015-RemoveFile_command05
+        COMMAND             fntStore        InstallRasterizerL                      GRAPHICS-FNTSTORE-FntStore-PublicApi-0015-InstallRasterizerL_command06
+        COMMAND             fntStore        AddFileL                                GRAPHICS-FNTSTORE-FntStore-PublicApi-0015-AddFileL_command07
+        COMMAND             fntStore        GetNearestFontToDesignHeightInPixels    GRAPHICS-FNTSTORE-FntStore-PublicApi-0015-GetNearestFontToDesignHeightInPixels_command07
+        COMMAND             fntStore        RemoveFile                              GRAPHICS-FNTSTORE-FntStore-PublicApi-0015-RemoveFile_command08
+        COMMAND             fntStore        ~
+        COMMAND             algStyle        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0015
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0021
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0021
+//! @SYMAPI     			CFontStore::GetNearestFontToDesignHeightInPixels(CFont{ptr}{ref},const TFontSpec{ref})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        27/03/2009
+//! @SYMTestCaseDesc        Gets the font which is the nearest to the given font specification.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the font specified in test data.
+//!                         5. Check the font is expected.
+//!                         6. Release the font.
+//!                         7. Remove all files.
+//!                         8. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::GetNearestFontToDesignHeightInPixels() is called successfully.
+//!                         2. The font returned is as expected.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL                      GRAPHICS-FNTSTORE-FntStore-PublicApi-0021-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                                GRAPHICS-FNTSTORE-FntStore-PublicApi-0021-AddFileL_command03
+        COMMAND             fntStore        GetNearestFontToDesignHeightInPixels    GRAPHICS-FNTSTORE-FntStore-PublicApi-0021-GetNearestFontToDesignHeightInPixels_command04
+        COMMAND             bitmapFont      HeightInPixels                          GRAPHICS-FNTSTORE-FntStore-PublicApi-0021-HeightInPixels_command05
+        COMMAND             fntStore        ReleaseFont                             GRAPHICS-FNTSTORE-FntStore-PublicApi-0021-ReleaseFont_command06
+        COMMAND             fntStore        RemoveFile                              GRAPHICS-FNTSTORE-FntStore-PublicApi-0021-RemoveFile_command07
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0021
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0022
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0022
+//! @SYMAPI     			CFontStore::GetNearestFontToDesignHeightInPixels(CFont{ptr}{ref},const TFontSpec{ref})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Gets the font which is the nearest to the given font specification, which is not contained in font file.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the font specified in test data.
+//!                         5. Check the font is expected.
+//!                         6. Release the font.
+//!                         7. Remove all files.
+//!                         8. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::GetNearestFontToDesignHeightInPixels() is called successfully.
+//!                         2. The font returned is as expected.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL                      GRAPHICS-FNTSTORE-FntStore-PublicApi-0022-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                                GRAPHICS-FNTSTORE-FntStore-PublicApi-0022-AddFileL_command03
+        COMMAND             fntStore        GetNearestFontToDesignHeightInPixels    GRAPHICS-FNTSTORE-FntStore-PublicApi-0022-GetNearestFontToDesignHeightInPixels_command04
+        COMMAND             bitmapFont      FontSpecInTwips                         GRAPHICS-FNTSTORE-FntStore-PublicApi-0022-FontSpecInTwips_command05
+        COMMAND             bitmapFont      HeightInPixels                          GRAPHICS-FNTSTORE-FntStore-PublicApi-0022-HeightInPixels_command06
+        COMMAND             fntStore        ReleaseFont                             GRAPHICS-FNTSTORE-FntStore-PublicApi-0022-ReleaseFont_command07
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0022
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0023
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0023
+//! @SYMAPI     			CFontStore::GetNearestFontToDesignHeightInPixels(CFont{ptr}{ref},const TFontSpec{ref})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Negative case. Gets the font which is the nearest to the given font specification without font file added.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Get the font specified in test data.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Get error code -2 (KErrGeneral).
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND  !Error=-2  fntStore        GetNearestFontToDesignHeightInPixels    GRAPHICS-FNTSTORE-FntStore-PublicApi-0023-GetNearestFontToDesignHeightInPixels_command02
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0023
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0031
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0031
+//! @SYMAPI     			CFontStore::GetNearestFontToMaxHeightInPixels(CFont{ptr}{ref},const TFontSpec{ref}, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Gets the font which is the nearest to the given font specification.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the font specified in test data.
+//!                         5. Check the font is expected.
+//!                         6. Release the font.
+//!                         7. Remove all files.
+//!                         8. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::GetNearestFontToMaxHeightInPixels() is called successfully.
+//!                         2. The font returned is as expected.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL                      GRAPHICS-FNTSTORE-FntStore-PublicApi-0031-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                                GRAPHICS-FNTSTORE-FntStore-PublicApi-0031-AddFileL_command03
+        COMMAND             fntStore        GetNearestFontToMaxHeightInPixels       GRAPHICS-FNTSTORE-FntStore-PublicApi-0031-GetNearestFontToMaxHeightInPixels_command04
+        COMMAND             bitmapFont      HeightInPixels                          GRAPHICS-FNTSTORE-FntStore-PublicApi-0031-HeightInPixels_command05
+        COMMAND             fntStore        ReleaseFont                             GRAPHICS-FNTSTORE-FntStore-PublicApi-0031-ReleaseFont_command06
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0031
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0032
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0032
+//! @SYMAPI     			CFontStore::GetNearestFontToMaxHeightInPixels(CFont{ptr}{ref},const TFontSpec{ref}, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Gets the font which is the nearest to the given font specification, which is not contained in font file.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the font specified in test data.
+//!                         5. Check the font is expected.
+//!                         6. Release the font.
+//!                         7. Remove all files.
+//!                         8. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::GetNearestFontToMaxHeightInPixels() is called successfully.
+//!                         2. The font returned is as expected.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL                      GRAPHICS-FNTSTORE-FntStore-PublicApi-0032-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                                GRAPHICS-FNTSTORE-FntStore-PublicApi-0032-AddFileL_command03
+        COMMAND             fntStore        GetNearestFontToMaxHeightInPixels       GRAPHICS-FNTSTORE-FntStore-PublicApi-0032-GetNearestFontToMaxHeightInPixels_command04
+        COMMAND             bitmapFont      FontSpecInTwips                         GRAPHICS-FNTSTORE-FntStore-PublicApi-0032-FontSpecInTwips_command05
+        COMMAND             bitmapFont      HeightInPixels                          GRAPHICS-FNTSTORE-FntStore-PublicApi-0032-HeightInPixels_command06
+        COMMAND             fntStore        ReleaseFont                             GRAPHICS-FNTSTORE-FntStore-PublicApi-0032-ReleaseFont_command07
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0032
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0033
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0033
+//! @SYMAPI     			CFontStore::GetNearestFontToMaxHeightInPixels(CFont{ptr}{ref},const TFontSpec{ref}, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Negative case. Gets the font which is the nearest to the given font specification without font file added.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Get the font specified in test data.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Get error code -2 (KErrGeneral).
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND  !Error=-2  fntStore        GetNearestFontToMaxHeightInPixels    GRAPHICS-FNTSTORE-FntStore-PublicApi-0033-GetNearestFontToMaxHeightInPixels_command02
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0033
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0034
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0034
+//! @SYMAPI     			CFontStore::GetNearestFontToMaxHeightInPixels(CFont{ptr}{ref},const TFontSpec{ref}, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        03/04/2009
+//! @SYMTestCaseDesc        Negative case. Gets the font with max height set to 9999, 1, and negative number respectively.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Get the font specified with max height 9999.
+//!                         3. Get the font specified with max height 1.
+//!                         4. Get the font specified with max height set to negative number.
+//!                         5. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. 1st call to CFontStore::GetNearestFontToMaxHeightInPixels() returns -40 (KErrTooBig)
+//!                         2. 2nd call to CFontStore::GetNearestFontToMaxHeightInPixels() returns -6 (KErrArgument)
+//!                         3. 3rd call to CFontStore::GetNearestFontToMaxHeightInPixels() returns -2 (KErrGeneral)
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND  !Error=-40 fntStore        GetNearestFontToMaxHeightInPixels       GRAPHICS-FNTSTORE-FntStore-PublicApi-0034-GetNearestFontToMaxHeightInPixels_command02
+        COMMAND  !Error=-6  fntStore        GetNearestFontToMaxHeightInPixels       GRAPHICS-FNTSTORE-FntStore-PublicApi-0034-GetNearestFontToMaxHeightInPixels_command03
+        COMMAND  !Error=-2  fntStore        GetNearestFontToMaxHeightInPixels       GRAPHICS-FNTSTORE-FntStore-PublicApi-0034-GetNearestFontToMaxHeightInPixels_command04
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0034
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0041
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0041
+//! @SYMAPI     			CFontStore::GetNearestFontToDesignHeightInTwips(CFont{ptr}{ref},const TOpenFontSpec{ref})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Gets the font which is the nearest to the given font specification.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the font specified in test data.
+//!                         5. Check the font is expected.
+//!                         6. Release the font.
+//!                         7. Remove all files.
+//!                         8. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::GetNearestFontToDesignHeightInTwips() is called successfully.
+//!                         2. The font returned is as expected.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL                      GRAPHICS-FNTSTORE-FntStore-PublicApi-0041-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                                GRAPHICS-FNTSTORE-FntStore-PublicApi-0041-AddFileL_command03
+        COMMAND             fntStore        GetNearestFontToDesignHeightInTwips     GRAPHICS-FNTSTORE-FntStore-PublicApi-0041-GetNearestFontToDesignHeightInTwips_command04
+        COMMAND             bitmapFont      FontSpecInTwips                         GRAPHICS-FNTSTORE-FntStore-PublicApi-0041-FontSpecInTwips_command05
+        COMMAND             fntStore        ReleaseFont                             GRAPHICS-FNTSTORE-FntStore-PublicApi-0041-ReleaseFont_command06
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0041
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0042
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0042
+//! @SYMAPI     			CFontStore::GetNearestFontToDesignHeightInTwips(CFont{ptr}{ref},const TOpenFontSpec{ref})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Gets the font which is the nearest to the given font specification, which is not contained in font file.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the font specified in test data.
+//!                         5. Check the font is expected.
+//!                         6. Release the font.
+//!                         7. Remove all files.
+//!                         8. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::GetNearestFontToDesignHeightInTwips() is called successfully.
+//!                         2. The font returned is as expected.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL                      GRAPHICS-FNTSTORE-FntStore-PublicApi-0042-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                                GRAPHICS-FNTSTORE-FntStore-PublicApi-0042-AddFileL_command03
+        COMMAND             fntStore        GetNearestFontToDesignHeightInTwips     GRAPHICS-FNTSTORE-FntStore-PublicApi-0042-GetNearestFontToDesignHeightInTwips_command04
+        COMMAND             bitmapFont      FontSpecInTwips                         GRAPHICS-FNTSTORE-FntStore-PublicApi-0042-FontSpecInTwips_command05
+        COMMAND             fntStore        ReleaseFont                             GRAPHICS-FNTSTORE-FntStore-PublicApi-0042-ReleaseFont_command06
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0042
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0043
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0043
+//! @SYMAPI     			CFontStore::GetNearestFontToDesignHeightInTwips(CFont{ptr}{ref},const TOpenFontSpec{ref})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Negative case. Gets the font which is the nearest to the given font specification without font file added.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Get the font specified in test data.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Get error code -2 (KErrGeneral).
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND  !Error=-2  fntStore        GetNearestFontToDesignHeightInTwips    GRAPHICS-FNTSTORE-FntStore-PublicApi-0043-GetNearestFontToDesignHeightInTwips_command02
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0043
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0051
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0051
+//! @SYMAPI     			CFontStore::GetNearestFontToDesignHeightInPixels(CFont{ptr}{ref},const TOpenFontSpec{ref})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Gets the font which is the nearest to the given font specification.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the font specified in test data.
+//!                         5. Check the font is expected.
+//!                         6. Release the font.
+//!                         7. Remove all files.
+//!                         8. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::GetNearestFontToDesignHeightInPixels() is called successfully.
+//!                         2. The font returned is as expected.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL                      GRAPHICS-FNTSTORE-FntStore-PublicApi-0051-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                                GRAPHICS-FNTSTORE-FntStore-PublicApi-0051-AddFileL_command03
+        COMMAND             fntStore        GetNearestFontToDesignHeightInPixels    GRAPHICS-FNTSTORE-FntStore-PublicApi-0051-GetNearestFontToDesignHeightInPixels_command04
+        COMMAND             bitmapFont      HeightInPixels                          GRAPHICS-FNTSTORE-FntStore-PublicApi-0051-HeightInPixels_command05
+        COMMAND             fntStore        ReleaseFont                             GRAPHICS-FNTSTORE-FntStore-PublicApi-0051-ReleaseFont_command06
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0051
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0052
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0052
+//! @SYMAPI     			CFontStore::GetNearestFontToDesignHeightInPixels(CFont{ptr}{ref},const TOpenFontSpec{ref})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Gets the font which is the nearest to the given font specification, which is not contained in font file.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the font specified in test data.
+//!                         5. Check the font is expected.
+//!                         6. Release the font.
+//!                         7. Remove all files.
+//!                         8. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::GetNearestFontToDesignHeightInPixels() is called successfully.
+//!                         2. The font returned is as expected.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL                      GRAPHICS-FNTSTORE-FntStore-PublicApi-0052-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                                GRAPHICS-FNTSTORE-FntStore-PublicApi-0052-AddFileL_command03
+        COMMAND             fntStore        GetNearestFontToDesignHeightInPixels    GRAPHICS-FNTSTORE-FntStore-PublicApi-0052-GetNearestFontToDesignHeightInPixels_command04
+        COMMAND             bitmapFont      FontSpecInTwips                         GRAPHICS-FNTSTORE-FntStore-PublicApi-0052-FontSpecInTwips_command05
+        COMMAND             bitmapFont      HeightInPixels                          GRAPHICS-FNTSTORE-FntStore-PublicApi-0052-HeightInPixels_command06
+        COMMAND             fntStore        ReleaseFont                             GRAPHICS-FNTSTORE-FntStore-PublicApi-0052-ReleaseFont_command07
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0052
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0053
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0053
+//! @SYMAPI     			CFontStore::GetNearestFontToDesignHeightInPixels(CFont{ptr}{ref},const TOpenFontSpec{ref})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Negative case. Gets the font which is the nearest to the given font specification without font file added.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Get the font specified in test data.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Get error code -2 (KErrGeneral).
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND  !Error=-2  fntStore        GetNearestFontToDesignHeightInPixels    GRAPHICS-FNTSTORE-FntStore-PublicApi-0053-GetNearestFontToDesignHeightInPixels_command02
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0053
+
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0061
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0061
+//! @SYMAPI     			CFontStore::GetNearestFontToMaxHeightInTwips(CFont{ptr}{ref},const TOpenFontSpec{ref}, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Gets the font which is the nearest to the given font specification.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the font specified in test data.
+//!                         5. Check the font is expected.
+//!                         6. Release the font.
+//!                         7. Remove all files.
+//!                         8. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::GetNearestFontToMaxHeightInTwips() is called successfully.
+//!                         2. The font returned is as expected.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL                      GRAPHICS-FNTSTORE-FntStore-PublicApi-0061-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                                GRAPHICS-FNTSTORE-FntStore-PublicApi-0061-AddFileL_command03
+        COMMAND             fntStore        GetNearestFontToMaxHeightInTwips        GRAPHICS-FNTSTORE-FntStore-PublicApi-0061-GetNearestFontToMaxHeightInTwips_command04
+        COMMAND             bitmapFont      FontSpecInTwips                         GRAPHICS-FNTSTORE-FntStore-PublicApi-0061-FontSpecInTwips_command05
+        COMMAND             fntStore        ReleaseFont                             GRAPHICS-FNTSTORE-FntStore-PublicApi-0061-ReleaseFont_command06
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0061
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0062
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0062
+//! @SYMAPI     			CFontStore::GetNearestFontToMaxHeightInTwips(CFont{ptr}{ref},const TOpenFontSpec{ref}, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Gets the font which is the nearest to the given font specification, which is not contained in font file.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the font specified in test data.
+//!                         5. Check the font is expected.
+//!                         6. Release the font.
+//!                         7. Remove all files.
+//!                         8. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::GetNearestFontToMaxHeightInTwips() is called successfully.
+//!                         2. The font returned is as expected.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL                      GRAPHICS-FNTSTORE-FntStore-PublicApi-0062-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                                GRAPHICS-FNTSTORE-FntStore-PublicApi-0062-AddFileL_command03
+        COMMAND             fntStore        GetNearestFontToMaxHeightInTwips        GRAPHICS-FNTSTORE-FntStore-PublicApi-0062-GetNearestFontToMaxHeightInTwips_command04
+        COMMAND             bitmapFont      FontSpecInTwips                         GRAPHICS-FNTSTORE-FntStore-PublicApi-0062-FontSpecInTwips_command05
+        COMMAND             fntStore        ReleaseFont                             GRAPHICS-FNTSTORE-FntStore-PublicApi-0062-ReleaseFont_command06
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0062
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0063
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0063
+//! @SYMAPI     			CFontStore::GetNearestFontToMaxHeightInTwips(CFont{ptr}{ref},const TOpenFontSpec{ref}, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Negative case. Gets the font which is the nearest to the given font specification without font file added.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Get the font specified in test data.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Get error code -2 (KErrGeneral).
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND  !Error=-2  fntStore        GetNearestFontToMaxHeightInTwips        GRAPHICS-FNTSTORE-FntStore-PublicApi-0063-GetNearestFontToMaxHeightInTwips_command02
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0063
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0071
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0071
+//! @SYMAPI     			CFontStore::GetNearestFontToMaxHeightInPixels(CFont{ptr}{ref},const TOpenFontSpec{ref}, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Gets the font which is the nearest to the given font specification.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the font specified in test data.
+//!                         5. Check the font is expected.
+//!                         6. Release the font.
+//!                         7. Remove all files.
+//!                         8. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::GetNearestFontToMaxHeightInPixels() is called successfully.
+//!                         2. The font returned is as expected.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL                      GRAPHICS-FNTSTORE-FntStore-PublicApi-0071-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                                GRAPHICS-FNTSTORE-FntStore-PublicApi-0071-AddFileL_command03
+        COMMAND             fntStore        GetNearestFontToMaxHeightInPixels       GRAPHICS-FNTSTORE-FntStore-PublicApi-0071-GetNearestFontToMaxHeightInPixels_command04
+        COMMAND             bitmapFont      HeightInPixels                          GRAPHICS-FNTSTORE-FntStore-PublicApi-0071-HeightInPixels_command05
+        COMMAND             fntStore        ReleaseFont                             GRAPHICS-FNTSTORE-FntStore-PublicApi-0071-ReleaseFont_command06
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0071
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0072
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0072
+//! @SYMAPI     			CFontStore::GetNearestFontToMaxHeightInPixels(CFont{ptr}{ref},const TOpenFontSpec{ref}, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Gets the font which is the nearest to the given font specification, which is not contained in font file.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the font specified in test data.
+//!                         5. Check the font is expected.
+//!                         6. Release the font.
+//!                         7. Remove all files.
+//!                         8. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::GetNearestFontToMaxHeightInPixels() is called successfully.
+//!                         2. The font returned is as expected.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL                      GRAPHICS-FNTSTORE-FntStore-PublicApi-0072-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                                GRAPHICS-FNTSTORE-FntStore-PublicApi-0072-AddFileL_command03
+        COMMAND             fntStore        GetNearestFontToMaxHeightInPixels       GRAPHICS-FNTSTORE-FntStore-PublicApi-0072-GetNearestFontToMaxHeightInPixels_command04
+        COMMAND             bitmapFont      FontSpecInTwips                         GRAPHICS-FNTSTORE-FntStore-PublicApi-0072-FontSpecInTwips_command05
+        COMMAND             bitmapFont      HeightInPixels                          GRAPHICS-FNTSTORE-FntStore-PublicApi-0072-HeightInPixels_command06
+        COMMAND             fntStore        ReleaseFont                             GRAPHICS-FNTSTORE-FntStore-PublicApi-0072-ReleaseFont_command07
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0072
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0081
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0081
+//! @SYMAPI     			CFontStore::GetFontById(CFont{ptr}{ref},TUid{ref}, const TAlgStyle{ref})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Gets a bitmap font using the given font UID and algorithmic style.
+//! @SYMTestActions         1. Create a CFontStore object, a TAlgStyle object and a CBitmapFont object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the font specified in test data.
+//!                         5. Check the font is expected.
+//!                         6. Release the font.
+//!                         7. Remove all files.
+//!                         8. Destroy all objects.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::GetFontById() is called successfully.
+//!                         2. The font returned is as expected.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        CREATE_OBJECT       TAlgStyle       algStyle
+        COMMAND             fntStore        NewL
+        COMMAND             algStyle        new
+        COMMAND             fntStore        AddFileL                    GRAPHICS-FNTSTORE-FntStore-PublicApi-0081-AddFileL_command03
+        COMMAND             fntStore        GetFontById                 GRAPHICS-FNTSTORE-FntStore-PublicApi-0081-GetFontById_command04
+        COMMAND             bitmapFont      FontSpecInTwips             GRAPHICS-FNTSTORE-FntStore-PublicApi-0081-FontSpecInTwips_command05
+        COMMAND             fntStore        ReleaseFont                 GRAPHICS-FNTSTORE-FntStore-PublicApi-0081-ReleaseFont_command06
+        COMMAND             fntStore        RemoveFile
+        COMMAND             algStyle        ~
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0081
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0082
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0082
+//! @SYMAPI     			CFontStore::GetFontById(CFont{ptr}{ref},TUid{ref}, const TAlgStyle{ref})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Negative case. Gets a bitmap font using invalid font UID.
+//! @SYMTestActions         1. Create a CFontStore object, a TAlgStyle object and a CBitmapFont object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the font specified in test data.
+//!                         5. Remove all files.
+//!                         6. Destroy all objects.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Get error code -1 KErrNotFound.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        CREATE_OBJECT       TAlgStyle       algStyle
+        COMMAND             fntStore        NewL
+        COMMAND             algStyle        new
+        COMMAND             fntStore        InstallRasterizerL          GRAPHICS-FNTSTORE-FntStore-PublicApi-0082-InstallRasterizerL_command03
+        COMMAND             fntStore        AddFileL                    GRAPHICS-FNTSTORE-FntStore-PublicApi-0082-AddFileL_command04
+        COMMAND   !Error=-1 fntStore        GetFontById                 GRAPHICS-FNTSTORE-FntStore-PublicApi-0082-GetFontById_command05
+        COMMAND             fntStore        RemoveFile
+        COMMAND             algStyle        ~
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0082
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0091
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0091
+//! @SYMAPI     			CFontStore::ReleaseFont(CFont{ptr})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Releases the hold of a typeface store client on a specified font.
+//! @SYMTestActions         1. Create a CFontStore object and a CBitmapFont object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the font specified in test data.
+//!                         5. Release the font.
+//!                         6. Remove all files.
+//!                         7. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFontStore::ReleaseFont() is called successfully.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        CREATE_OBJECT       CBitmapFont     bitmapFont
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL                      GRAPHICS-FNTSTORE-FntStore-PublicApi-0091-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                                GRAPHICS-FNTSTORE-FntStore-PublicApi-0091-AddFileL_command03
+        COMMAND             fntStore        GetNearestFontToMaxHeightInPixels       GRAPHICS-FNTSTORE-FntStore-PublicApi-0091-GetNearestFontToMaxHeightInPixels_command04
+        COMMAND             fntStore        ReleaseFont                             GRAPHICS-FNTSTORE-FntStore-PublicApi-0091-ReleaseFont_command05
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0091
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0101
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0101
+//! @SYMAPI     			CFontStore::NumTypefaces()
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Gets the number of typefaces held in the font store.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Get the number of typefaces.
+//!                         3. Add a font file specified in test data.
+//!                         4. Get the number of typefaces.
+//!                         5. Remove the file.
+//!                         6. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::NumTypefaces() is called successfully.
+//!                         2. Before and after add file, number of typefaces is expected as specified in test data respectively.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        NumTypefaces    GRAPHICS-FNTSTORE-FntStore-PublicApi-0101-NumTypefaces_command02
+        COMMAND             fntStore        AddFileL        GRAPHICS-FNTSTORE-FntStore-PublicApi-0101-AddFileL_command03
+        COMMAND             fntStore        NumTypefaces    GRAPHICS-FNTSTORE-FntStore-PublicApi-0101-NumTypefaces_command04
+        COMMAND             fntStore        RemoveFile      GRAPHICS-FNTSTORE-FntStore-PublicApi-0101-RemoveFile_command05
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0101
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0111
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0111
+//! @SYMAPI     			CFontStore::TypefaceSupport(TTypefaceSupport{ref},TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        31/03/2009
+//! @SYMTestCaseDesc        Gets a typeface support object for the typeface in the font store represented by the given index.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Add a font file specified in test data.
+//!                         3. Enumerate all typefaces in the font file.
+//!                         4. Remove all files.
+//!                         5. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::TypefaceSupport() is called successfully.
+//!                         2. All typefaces in the font store are enumerated.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        AddFileL            GRAPHICS-FNTSTORE-FntStore-PublicApi-0111-AddFileL_command02
+        COMMAND             fntStore        TypefaceSupport     GRAPHICS-FNTSTORE-FntStore-PublicApi-0111-TypefaceSupport_command03
+        COMMAND             fntStore        TypefaceSupport     GRAPHICS-FNTSTORE-FntStore-PublicApi-0111-TypefaceSupport_command04
+        COMMAND             fntStore        TypefaceSupport     GRAPHICS-FNTSTORE-FntStore-PublicApi-0111-TypefaceSupport_command05
+        COMMAND             fntStore        TypefaceSupport     GRAPHICS-FNTSTORE-FntStore-PublicApi-0111-TypefaceSupport_command06
+        COMMAND             fntStore        TypefaceSupport     GRAPHICS-FNTSTORE-FntStore-PublicApi-0111-TypefaceSupport_command07
+        COMMAND             fntStore        TypefaceSupport     GRAPHICS-FNTSTORE-FntStore-PublicApi-0111-TypefaceSupport_command08
+        COMMAND             fntStore        TypefaceSupport     GRAPHICS-FNTSTORE-FntStore-PublicApi-0111-TypefaceSupport_command09
+        COMMAND             fntStore        TypefaceSupport     GRAPHICS-FNTSTORE-FntStore-PublicApi-0111-TypefaceSupport_command10
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0111
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0112
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0112
+//! @SYMAPI     			CFontStore::TypefaceSupport(TTypefaceSupport{ref},TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        31/03/2009
+//! @SYMTestCaseDesc        Negative case. Gets a typeface support object for the typeface in the font store with negative index.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Add a font file specified in test data.
+//!                         3. Get a typeface support with index -1.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Get panic code 0 and panic string FntStore.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        AddFileL            GRAPHICS-FNTSTORE-FntStore-PublicApi-0112-AddFileL_command02
+        COMMAND             fntStore        TypefaceSupport     GRAPHICS-FNTSTORE-FntStore-PublicApi-0112-TypefaceSupport_command03
+    END_TEST_BLOCK     !PanicString=FntStore     !PanicCode=0
+    RUN_TEST_STEP	100	T_GraphicsFntstoreApi	utilityClearPanicDlg
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0112
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0113
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0113
+//! @SYMAPI     			CFontStore::TypefaceSupport(TTypefaceSupport{ref},TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        31/03/2009
+//! @SYMTestCaseDesc        Negative case. Gets typeface support object for the typeface in the font store with index > NumTypefaces().
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Add a font file specified in test data.
+//!                         3. Get a typeface support with index 99.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Can not get typeface. Uninitialized value is returned.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        AddFileL            GRAPHICS-FNTSTORE-FntStore-PublicApi-0113-AddFileL_command02
+        COMMAND             fntStore        TypefaceSupport     GRAPHICS-FNTSTORE-FntStore-PublicApi-0113-TypefaceSupport_command03
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0113
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0114
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0114
+//! @SYMAPI     			CFontStore::TypefaceSupport(TTypefaceSupport{ref},TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        03/04/2009
+//! @SYMTestCaseDesc        Negative case. Gets typeface support object for the typeface in the font store with index > NumTypefaces().
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Install a rasterizer and add 2 font files.
+//!                         3. Get a typeface support with index of the 1st typeface in 2nd file.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFontStore::TypefaceSupport() is called successfully.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL          GRAPHICS-FNTSTORE-FntStore-PublicApi-0114-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                    GRAPHICS-FNTSTORE-FntStore-PublicApi-0114-AddFileL_command03
+        COMMAND             fntStore        AddFileL                    GRAPHICS-FNTSTORE-FntStore-PublicApi-0114-AddFileL_command04
+        COMMAND             fntStore        TypefaceSupport             GRAPHICS-FNTSTORE-FntStore-PublicApi-0114-TypefaceSupport_command05
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0114
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0121
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0121
+//! @SYMAPI     			CFontStore::FontHeightInTwips(TInt, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Gets the height of a font in twips.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Gets the height of a font specified in test data in twips.
+//!                         5. Remove all files.
+//!                         6. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::FontHeightInTwips() is called successfully.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL          GRAPHICS-FNTSTORE-FntStore-PublicApi-0121-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                    GRAPHICS-FNTSTORE-FntStore-PublicApi-0121-AddFileL_command03
+        COMMAND             fntStore        FontHeightInTwips           GRAPHICS-FNTSTORE-FntStore-PublicApi-0121-FontHeightInTwips_command04
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0121
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0122
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0122
+//! @SYMAPI     			CFontStore::FontHeightInTwips(TInt, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Negative case. Gets the height of a font with combination of typeface index > NumTypefaces(), typeface index in range, height index > numheights, height index < 0.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Gets the height of a font with typeface index > NumTypefaces().
+//!                         5. Gets the height of a font with typeface index in range and height index > numheights.
+//!                         6. Gets the height of a font with typeface index in range and height index < 0.
+//!                         7. Remove all files.
+//!                         8. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::FontHeightInTwips() is called successfully.
+//!                         2. The 1st and 3rd call of CFontStore::FontHeightInTwips() returns 0.
+//!                         3. The 2nd call of CFontStore::FontHeightInTwips() returns positive number.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL          GRAPHICS-FNTSTORE-FntStore-PublicApi-0122-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                    GRAPHICS-FNTSTORE-FntStore-PublicApi-0122-AddFileL_command03
+        COMMAND             fntStore        FontHeightInTwips           GRAPHICS-FNTSTORE-FntStore-PublicApi-0122-FontHeightInTwips_command04
+        COMMAND             fntStore        FontHeightInTwips           GRAPHICS-FNTSTORE-FntStore-PublicApi-0122-FontHeightInTwips_command05
+        COMMAND             fntStore        FontHeightInTwips           GRAPHICS-FNTSTORE-FntStore-PublicApi-0122-FontHeightInTwips_command06
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0122
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0123
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0123
+//! @SYMAPI     			CFontStore::FontHeightInTwips(TInt, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        30/03/2009
+//! @SYMTestCaseDesc        Negative case. Gets the height of a font with negative typeface index.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Gets the height of a font with negative typeface index.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Get panic code 0 and panic string FntStore.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL          GRAPHICS-FNTSTORE-FntStore-PublicApi-0123-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                    GRAPHICS-FNTSTORE-FntStore-PublicApi-0123-AddFileL_command03
+        COMMAND             fntStore        FontHeightInTwips           GRAPHICS-FNTSTORE-FntStore-PublicApi-0123-FontHeightInTwips_command04
+    END_TEST_BLOCK     !PanicString=FntStore     !PanicCode=0
+    RUN_TEST_STEP	100	T_GraphicsFntstoreApi	utilityClearPanicDlg
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0123
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0131
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0131
+//! @SYMAPI     			CFontStore::FontHeightInPixels(TInt, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        31/03/2009
+//! @SYMTestCaseDesc        Gets the height of a font in twips.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a open font file specified in test data.
+//!                         4. Gets the height of a font specified in test data in twips.
+//!                         5. Remove all files.
+//!                         6. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::FontHeightInPixels() is called successfully.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL          GRAPHICS-FNTSTORE-FntStore-PublicApi-0131-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                    GRAPHICS-FNTSTORE-FntStore-PublicApi-0131-AddFileL_command03
+        COMMAND             fntStore        FontHeightInPixels          GRAPHICS-FNTSTORE-FntStore-PublicApi-0131-FontHeightInPixels_command04
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0131
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0132
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0132
+//! @SYMAPI     			CFontStore::FontHeightInPixels(TInt, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        31/03/2009
+//! @SYMTestCaseDesc        Negative case. Gets the height of a font with combination of typeface index > NumTypefaces(), typeface index in range, height index > numheights, height index < 0.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Gets the height of a font with typeface index > NumTypefaces().
+//!                         5. Gets the height of a font with typeface index in range and height index > numheights.
+//!                         6. Gets the height of a font with typeface index in range and height index < 0.
+//!                         7. Remove all files.
+//!                         8. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::FontHeightInPixels() is called successfully.
+//!                         2. The 1st and 3rd call of CFontStore::FontHeightInPixels() returns 0.
+//!                         3. The 2nd call of CFontStore::FontHeightInPixels() returns the biggest height.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL          GRAPHICS-FNTSTORE-FntStore-PublicApi-0132-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                    GRAPHICS-FNTSTORE-FntStore-PublicApi-0132-AddFileL_command03
+        COMMAND             fntStore        FontHeightInPixels          GRAPHICS-FNTSTORE-FntStore-PublicApi-0132-FontHeightInPixels_command04
+        COMMAND             fntStore        FontHeightInPixels          GRAPHICS-FNTSTORE-FntStore-PublicApi-0132-FontHeightInPixels_command05
+        COMMAND             fntStore        FontHeightInPixels          GRAPHICS-FNTSTORE-FntStore-PublicApi-0132-FontHeightInPixels_command06
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0132
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0133
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0133
+//! @SYMAPI     			CFontStore::FontHeightInPixels(TInt, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        31/03/2009
+//! @SYMTestCaseDesc        Negative case. Gets the height of a font with negative typeface index.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Install a test rasterizer.
+//!                         3. Add a font file specified in test data.
+//!                         4. Gets the height of a font with negative typeface index.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults Get panic code 0 and panic string FntStore.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL          GRAPHICS-FNTSTORE-FntStore-PublicApi-0133-InstallRasterizerL_command02
+        COMMAND             fntStore        AddFileL                    GRAPHICS-FNTSTORE-FntStore-PublicApi-0133-AddFileL_command03
+        COMMAND             fntStore        FontHeightInPixels          GRAPHICS-FNTSTORE-FntStore-PublicApi-0133-FontHeightInPixels_command04
+    END_TEST_BLOCK     !PanicString=FntStore     !PanicCode=0
+    RUN_TEST_STEP	100	T_GraphicsFntstoreApi	utilityClearPanicDlg
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0133
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0134
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0134
+//! @SYMAPI     			CFontStore::FontHeightInPixels(TInt, TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        03/04/2009
+//! @SYMTestCaseDesc        Gets the height of a font in twips.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Add a font file specified in test data.
+//!                         3. Gets the height of a font specified in test data in twips.
+//!                         4. Remove all files.
+//!                         5. Destroy the CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::FontHeightInPixels() is called successfully.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        AddFileL                    GRAPHICS-FNTSTORE-FntStore-PublicApi-0134-AddFileL_command02
+        COMMAND             fntStore        FontHeightInPixels          GRAPHICS-FNTSTORE-FntStore-PublicApi-0134-FontHeightInPixels_command03
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0134
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0141
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0141
+//! @SYMAPI     			CFontStore::InstallRasterizerL(COpenFontRasterizer{ptr})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        31/03/2009
+//! @SYMTestCaseDesc        Installs and takes ownership of an Open Font rasterizer.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Add a font file specified in test data.
+//!                         3. Install a test rasterizer.
+//!                         4. Add a font file specified in test data.
+//!                         5. Remove all files.
+//!                         6. Destroy CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults 1. CFontStore::InstallRasterizerL() is called successfully.
+//!                         2. Before install rasterizer, CFontStore::AddFileL() returns error -25 (KErrEof).
+//!                         3. After install rasterizer, CFontStore::AddFileL() returns 0 (KErrNone).
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND  !Error=-25 fntStore        AddFileL                    GRAPHICS-FNTSTORE-FntStore-PublicApi-0141-AddFileL_command02
+        COMMAND             fntStore        InstallRasterizerL          GRAPHICS-FNTSTORE-FntStore-PublicApi-0141-InstallRasterizerL_command03
+        COMMAND             fntStore        AddFileL                    GRAPHICS-FNTSTORE-FntStore-PublicApi-0141-AddFileL_command04
+        COMMAND             fntStore        RemoveFile
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0141
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0142
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0142
+//! @SYMAPI     			CFontStore::InstallRasterizerL(COpenFontRasterizer{ptr})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        31/03/2009
+//! @SYMTestCaseDesc        Negative case. Installs a null rasterizer.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Install a null rasterizer.
+//!                         3. Destroy CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFontStore::InstallRasterizerL() is called successfully.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallRasterizerL          GRAPHICS-FNTSTORE-FntStore-PublicApi-0142-InstallRasterizerL_command02
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0142
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0151
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0151
+//! @SYMAPI     			CFontStore::DeleteSessionCache(TInt)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        31/03/2009
+//! @SYMTestCaseDesc        Deletes the glyph cache belonging to a particular client.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Delete a session cache specified by session handle.
+//!                         3. Destroy CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFontStore::DeleteSessionCache() is called successfully.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        DeleteSessionCache          GRAPHICS-FNTSTORE-FntStore-PublicApi-0151-DeleteSessionCache_command02
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0151
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0161
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0161
+//! @SYMAPI     			CFontStore::DefaultBitmapType()
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        31/03/2009
+//! @SYMTestCaseDesc        Get the default bitmap type.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Get the default bitmap type.
+//!                         3. Destroy CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFontStore::DefaultBitmapType() is called successfully.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        DefaultBitmapType           GRAPHICS-FNTSTORE-FntStore-PublicApi-0161-DefaultBitmapType_command02
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0161
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0171
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0171
+//! @SYMAPI     			CFontStore::SetDefaultBitmapType(TGlyphBitmapType)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        31/03/2009
+//! @SYMTestCaseDesc        Sets a default bitmap type.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Set the default bitmap type.
+//!                         3. Check the bitmap type set using DefaultBitmapType.
+//!                         4. Set the default bitmap type.
+//!                         5. Check the bitmap type set using DefaultBitmapType.
+//!                         6. Set the default bitmap type.
+//!                         7. Check the bitmap type set using DefaultBitmapType.
+//!                         8. Set the default bitmap type.
+//!                         9. Check the bitmap type set using DefaultBitmapType.
+//!                         10. Set the default bitmap type.
+//!                         11. Check the bitmap type set using DefaultBitmapType.
+//!                         12. Destroy CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFontStore::SetDefaultBitmapType() is called successfully.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        SetDefaultBitmapType        GRAPHICS-FNTSTORE-FntStore-PublicApi-0171-SetDefaultBitmapType_command02
+        COMMAND             fntStore        DefaultBitmapType           GRAPHICS-FNTSTORE-FntStore-PublicApi-0171-DefaultBitmapType_command03
+        COMMAND             fntStore        SetDefaultBitmapType        GRAPHICS-FNTSTORE-FntStore-PublicApi-0171-SetDefaultBitmapType_command04
+        COMMAND             fntStore        DefaultBitmapType           GRAPHICS-FNTSTORE-FntStore-PublicApi-0171-DefaultBitmapType_command05
+        COMMAND             fntStore        SetDefaultBitmapType        GRAPHICS-FNTSTORE-FntStore-PublicApi-0171-SetDefaultBitmapType_command06
+        COMMAND             fntStore        DefaultBitmapType           GRAPHICS-FNTSTORE-FntStore-PublicApi-0171-DefaultBitmapType_command07
+        COMMAND             fntStore        SetDefaultBitmapType        GRAPHICS-FNTSTORE-FntStore-PublicApi-0171-SetDefaultBitmapType_command08
+        COMMAND             fntStore        DefaultBitmapType           GRAPHICS-FNTSTORE-FntStore-PublicApi-0171-DefaultBitmapType_command09
+        COMMAND             fntStore        SetDefaultBitmapType        GRAPHICS-FNTSTORE-FntStore-PublicApi-0171-SetDefaultBitmapType_command10
+        COMMAND             fntStore        DefaultBitmapType           GRAPHICS-FNTSTORE-FntStore-PublicApi-0171-DefaultBitmapType_command11
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0171
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0172
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0172
+//! @SYMAPI     			CFontStore::SetDefaultBitmapType(TGlyphBitmapType)
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        31/03/2009
+//! @SYMTestCaseDesc        Negative case. Sets a default bitmap type with invalid number.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         2. Set the default bitmap type.
+//!                         3. Check the bitmap type set using DefaultBitmapType.
+//!                         4. Destroy CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFontStore::SetDefaultBitmapType() is called successfully.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        SetDefaultBitmapType        GRAPHICS-FNTSTORE-FntStore-PublicApi-0172-SetDefaultBitmapType_command02
+        COMMAND             fntStore        DefaultBitmapType           GRAPHICS-FNTSTORE-FntStore-PublicApi-0172-DefaultBitmapType_command03
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0172
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0181
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0181
+//! @SYMAPI     			CFontStore::InstallShaperFactoryL(CShaperFactory{ptr})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        31/03/2009
+//! @SYMTestCaseDesc        Installs and takes ownership of a shaper.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         3. Install a test shaper.
+//!                         3. Destroy CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFontStore::InstallShaperFactoryL() is called successfully.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallShaperFactoryL       GRAPHICS-FNTSTORE-FntStore-PublicApi-0181-InstallShaperFactoryL_command02
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0181
+
+START_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0182
+//! @SYMTestCaseID          GRAPHICS-FNTSTORE-FntStore-PublicApi-0182
+//! @SYMAPI     			CFontStore::InstallShaperFactoryL(CShaperFactory{ptr})
+//! @SYMAuthor              Felix Rao
+//! @SYMCreationDate        31/03/2009
+//! @SYMTestCaseDesc        Negative case. Installs and takes ownership of a null shaper.
+//! @SYMTestActions         1. Create a CFontStore object.
+//!                         3. Install a null shaper.
+//!                         3. Destroy CFontStore object.
+//! @SYMTestStatus          Implemented
+//! @SYMTestPriority        High
+//! @SYMTestExpectedResults CFontStore::InstallShaperFactoryL() is called successfully.
+//! @SYMTestType            CIT
+    START_TEST_BLOCK    10  T_GraphicsFntstoreApi   \graphics\GRAPHICS-FNTSTORE-FntStore-PublicApi.ini
+        CREATE_OBJECT       CFontStore      fntStore
+        COMMAND             fntStore        NewL
+        COMMAND             fntStore        InstallShaperFactoryL       GRAPHICS-FNTSTORE-FntStore-PublicApi-0182-InstallShaperFactoryL_command02
+        COMMAND             fntStore        ~
+    END_TEST_BLOCK
+END_TESTCASE GRAPHICS-FNTSTORE-FntStore-PublicApi-0182
+

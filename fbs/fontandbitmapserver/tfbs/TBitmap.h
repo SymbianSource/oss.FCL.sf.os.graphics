@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,8 +20,8 @@
 
 #include <gdi.h>
 #include "TFBS.H"
-#include "test/TGraphicsHarness.h"
-#include "fbsbitmapasyncstreamer.h"
+#include "TGraphicsHarness.h"
+#include "../sfbs/fbsbitmapasyncstreamer.h"
 
 
 //The main test class. Add your test methods here.

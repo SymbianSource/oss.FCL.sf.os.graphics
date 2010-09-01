@@ -13,9 +13,9 @@
 // Description:
 //
 
-#include "graphics/WSGRAPHICDRAWER.H"
-#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
-#include "graphics/wsgraphicdrawerinternal.h"
+#include "Graphics/WSGRAPHICDRAWER.H"
+#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include "Graphics/wsgraphicdrawerinternal.h"
 
 // TGraphicDrawerId \\\\\\\\\\\\\\\\\\\\\\\\
 

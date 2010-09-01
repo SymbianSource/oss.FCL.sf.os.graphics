@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,7 +18,7 @@
 #ifndef __CLIENT_H__
 #define __CLIENT_H__
 
-#include <graphics/WSGRAPHICDRAWERINTERFACE.H>
+#include <Graphics/WSGRAPHICDRAWERINTERFACE.H>
 #include "WSGRAPHICDRAWERARRAY.H"
 
 #include <e32std.h>
@@ -146,7 +146,7 @@ public:
 	inline void PurgePointerEvents();
 
 	// Key events
-	inline void PriorityKeyPressed(TInt aHandle, const TKeyEvent &aKeyEvent);
+	inline void PriorityKeyPressed(TInt aHandle, const TKeyData &aKey, TInt aScanCode);
 
 	// Notification of misc events
 	void AddNotificationL(TInt aKey, const RMessage2& aClientMsg);
@@ -168,9 +168,6 @@ public:
 	TBool RetryEvent(TEventCode aEventCode);
 
     inline void WgMsgQueueOverflow();// Set flag  window group message queue is overflow and has pending messages
-    
-    //Get orientation value that app indicated
-    TInt GetIndicatedAppOrientation();
 
 private: // from MWsClient
 	TInt SendMessage(const CWsGraphicDrawer* aOnBehalfOf, const TDesC8& aData);
@@ -258,10 +255,6 @@ private:
 	
 	// Misc
 	void SetComputeMode(RWsSession::TComputeMode aComputeMode);
-	
-	//Set orientation that application indicated
-	void IndicateAppOrientation(TRenderOrientation aOrientation);
-	
 public:
 	static TWsCmdHeaderBase iCurrentCommand;
 private:
@@ -300,7 +293,6 @@ private:
 	RMessage2 iClientMessage;
 	RHandleBase* iResponseHandle;
 	TInt iMessageIdSeq;
-	TInt iIndicatedAppOrientation;
 
 	//Members for procerssing command buffer
 	static CWsClient* iCurrentClient;	// Client who's buffer is currently being processed
@@ -371,8 +363,8 @@ inline void CWsClient::CancelClientRequestForPriorityKeyEvent()
 inline void CWsClient::HandleClientRequestForPriorityKeyData()
 	{iPriorityKeyEvent->GetData();}
 
-inline void CWsClient::PriorityKeyPressed(TInt aHandle, const TKeyEvent &aKeyEvent)
-	{iPriorityKeyEvent->PriorityKey(aHandle, aKeyEvent);}
+inline void CWsClient::PriorityKeyPressed(TInt aHandle, const TKeyData &aKey, TInt aScanCode)
+	{iPriorityKeyEvent->PriorityKey(aHandle,aKey,aScanCode);}
 
 inline TInt CWsClient::ObjectHandle(const CWsObject* aThis) const
 	{return(iObjectIndex->At(aThis));}

@@ -2,7 +2,7 @@
 #define __glplatform_h_
 
 /**
-Portions Copyright (c) 2008 - 2010 Nokia Corporation and/or its subsidiary(-ies).
+ portions Copyright (c) 2008 - 2009 Nokia Corporation. All rights reserved.
 @publishedAll
 @released
 */

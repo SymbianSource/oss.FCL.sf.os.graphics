@@ -1,5 +1,4 @@
 /* Copyright (c) 2009 The Khronos Group Inc.
- * Portions copyright (c) 2009-2010  Nokia Corporation and/or its subsidiary(-ies)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -120,6 +119,15 @@ typedef OWFint              OWFNativeStreamBuffer;
 /*!
  *  Events emitted by native streams.
  */
+typedef enum
+{
+    OWF_NO_EVENT                        = 0x00000000,
+    OWF_STREAM_COMPOSED                 = 0x00000001,
+    OWF_STREAM_UPDATED                  = 0x00000010,
+    OWF_ALL_CONTEXT_RELATED_EVENTS      = 0x0000fff0,
+    OWF_ALL_SUS_RELATED_EVENTS          = 0x0000ff00,
+    OWF_OBSERVER_RETURN_DEFAULT_EVENT   = 0x00010000,
+} OWFNativeStreamEvent;
 
 typedef struct{
     TInt32      length;

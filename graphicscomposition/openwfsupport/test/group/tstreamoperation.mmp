@@ -33,6 +33,7 @@ OS_LAYER_ESTLIB_SYSTEMINCLUDE
 
 STATICLIBRARY	tefunit.lib
 LIBRARY		euser.lib
+LIBRARY		estlib.lib 
 LIBRARY		testexecuteutils.lib
 LIBRARY		testexecutelogclient.lib
 LIBRARY		rfileloggerclient.lib
@@ -40,6 +41,9 @@ LIBRARY		wfcinterop.lib
 LIBRARY		surfacemanager.lib
 LIBRARY		surfaceupdateclient.lib
 LIBRARY		gdi.lib
+LIBRARY		bitgdi.lib
+LIBRARY		fbscli.lib
+LIBRARY		imageconversion.lib
 LIBRARY		efsrv.lib
 LIBRARY		libEGL.lib
 LIBRARY		hal.lib

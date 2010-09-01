@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -37,7 +37,7 @@ class TPriorityKey
 public:
 	TPriorityKey(TUint aKeycode,TUint aModifierMask,TUint aModifiers,TPriorityKey *aPriorityKeys);
 	TInt Equals(TUint aKeycode,TUint aModifierMask,TUint aModifiers);
-	TInt KeyMatches(const TKeyEvent &aKeyEvent);
+	TInt KeyMatches(const TKeyData &aKey);
 public:
 	TPriorityKey *iNext;
 private:
@@ -50,11 +50,12 @@ class CPriorityKey : public CEventBase
 	{
 public:
 	CPriorityKey(CWsClient *aOwner);
-	void PriorityKey(TInt aHandle, const TKeyEvent &aKeyEvent);
+	void PriorityKey(TInt aHandle, const TKeyData &aKey, TInt aScanCode);
 	void GetData();
 private:
 	TInt iPriorityKeyHandle;
-	TKeyEvent iPriorityKey;
+	TKeyData iPriorityKey;
+	TInt iScanCode;
 	};
 
 #endif

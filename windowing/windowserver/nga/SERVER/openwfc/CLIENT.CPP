@@ -1286,9 +1286,6 @@ void CWsClient::ExecuteCommandL(TInt aOpcode, const TAny* aCmdData)	// (step #6)
 		case EWsClOpCreateDrawableSource:
 			CreateDrawableSourceL(*pData.CreateDrawableSource);
 			break;
-		case EWsClOpIndicateAppOrientation:
-			IndicateAppOrientation(*pData.Orientation);
-			break;
 		default:
 			PPanic(EWservPanicOpcode);
 			break;
@@ -1837,23 +1834,28 @@ void CWsClient::SetComputeMode(RWsSession::TComputeMode aComputeMode)
 
 void CWsClient::CompleteMessage(const RMessage2& aMessage,TInt aReason)
 	{
-	WS_ASSERT_DEBUG(!aMessage.IsNull(),EWsPanicPanicFlagError);
-	if (iInternalFlags&EPanicClientAsSoonAsPossible)
+	WS_ASSERT_DEBUG(!aMessage.IsNull(),EWsPanicCompleteNullMessage);
+	// This defensive check should not be necessary as aMessage should never
+	// be null, but in rare situations it is and WServ would die without this check.
+	if (!aMessage.IsNull())
 		{
-		aMessage.Panic(KWSERVSessionPanicCategory,iPanicReason);
-		iInternalFlags&=~EPanicClientAsSoonAsPossible;
-		}
-	else
-		{
-		if(!iResponseHandle)
-			aMessage.Complete(aReason);
+		if (iInternalFlags&EPanicClientAsSoonAsPossible)
+			{
+			aMessage.Panic(KWSERVSessionPanicCategory,iPanicReason);
+			iInternalFlags&=~EPanicClientAsSoonAsPossible;
+			}
 		else
 			{
-			aMessage.Complete(*iResponseHandle);
-			iResponseHandle=NULL;
+			if(!iResponseHandle)
+				aMessage.Complete(aReason);
+			else
+				{
+				aMessage.Complete(*iResponseHandle);
+				iResponseHandle=NULL;
+				}
 			}
 		}
-	}
+    }
 
 void CWsClient::ServiceError(const RMessage2& /*aMessage*/,TInt aError)
 	{
@@ -2140,17 +2142,6 @@ void CWsClient::CreateDrawableSourceL(const TWsClCmdCreateDrawableSource& aDrawa
 	CleanupStack::PushL(drawableSource);
 	drawableSource->ConstructL(aDrawableSourceData);
 	CleanupStack::Pop();
-	}
-	
-void CWsClient::IndicateAppOrientation(TRenderOrientation aOrientation)
-	{
-	iIndicatedAppOrientation = aOrientation;
-	CWsTop::CheckRenderOrientation();
-	}
-
-TInt CWsClient::GetIndicatedAppOrientation()
-	{
-	return iIndicatedAppOrientation;
 	}
 
 //

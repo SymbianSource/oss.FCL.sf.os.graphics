@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -916,15 +916,7 @@ void CTOutlineAndShadowFonts::TestAntiAliasedOrMonochromeGlyphBitmapL()
 	User::LeaveIfError(iBitmapDevice->GetNearestFontToDesignHeightInPixels((CFont*&)refFont,refFontSpec));
 	iGc->UseFont(refFont);
 	iGc->DrawText(KTestString, rightMidPoint);
-	TBool testPassed = iBitmapDevice->RectCompare(TRect(0,0,KScreenWidth>>1,KScreenHeight), *iBitmapDevice, TRect(KScreenWidth>>1,0,KScreenWidth,KScreenHeight));
-	TEST(testPassed);
-	if (!testPassed)
-		{
-		TFontSpec fontSpec = testFont->FontSpecInTwips();
-		INFO_PRINTF3(_L("Test font: %S, height in twips = %d"), &fontSpec.iTypeface.Name(), fontSpec.iHeight);
-		fontSpec = refFont->FontSpecInTwips();
-		INFO_PRINTF3(_L("Ref font: %S, height in twips = %d"), &fontSpec.iTypeface.Name(), fontSpec.iHeight);
-		}
+	TEST(iBitmapDevice->RectCompare(TRect(0,0,KScreenWidth>>1,KScreenHeight), *iBitmapDevice, TRect(KScreenWidth>>1,0,KScreenWidth,KScreenHeight)));
 	iBitmapDevice->ReleaseFont(testFont);
 	iBitmapDevice->ReleaseFont(refFont);
 	
@@ -939,15 +931,7 @@ void CTOutlineAndShadowFonts::TestAntiAliasedOrMonochromeGlyphBitmapL()
 	User::LeaveIfError(iBitmapDevice->GetNearestFontToDesignHeightInPixels((CFont*&)refFont,refFontSpec));
 	iGc->UseFont(refFont);
 	iGc->DrawText(KTestString, rightMidPoint);
-	testPassed = iBitmapDevice->RectCompare(TRect(0,0,KScreenWidth>>1,KScreenHeight), *iBitmapDevice, TRect(KScreenWidth>>1,0,KScreenWidth,KScreenHeight));
-	TEST(testPassed);
-	if (!testPassed)
-		{
-		TFontSpec fontSpec = testFont->FontSpecInTwips();
-		INFO_PRINTF3(_L("Test font: %S, height in twips = %d"), &fontSpec.iTypeface.Name(), fontSpec.iHeight);
-		fontSpec = refFont->FontSpecInTwips();
-		INFO_PRINTF3(_L("Ref font: %S, height in twips = %d"), &fontSpec.iTypeface.Name(), fontSpec.iHeight);
-		}
+	TEST(iBitmapDevice->RectCompare(TRect(0,0,KScreenWidth>>1,KScreenHeight), *iBitmapDevice, TRect(KScreenWidth>>1,0,KScreenWidth,KScreenHeight)));
 	iBitmapDevice->ReleaseFont(testFont);
 	iBitmapDevice->ReleaseFont(refFont);
 	
@@ -962,15 +946,7 @@ void CTOutlineAndShadowFonts::TestAntiAliasedOrMonochromeGlyphBitmapL()
 	User::LeaveIfError(iBitmapDevice->GetNearestFontToDesignHeightInPixels((CFont*&)refFont,refFontSpec));
 	iGc->UseFont(refFont);
 	iGc->DrawText(KTestString, rightMidPoint);
-	testPassed = iBitmapDevice->RectCompare(TRect(0,0,KScreenWidth>>1,KScreenHeight), *iBitmapDevice, TRect(KScreenWidth>>1,0,KScreenWidth,KScreenHeight));
-	TEST(testPassed);
-	if (!testPassed)
-		{
-		TFontSpec fontSpec = testFont->FontSpecInTwips();
-		INFO_PRINTF3(_L("Test font: %S, height in twips = %d"), &fontSpec.iTypeface.Name(), fontSpec.iHeight);
-		fontSpec = refFont->FontSpecInTwips();
-		INFO_PRINTF3(_L("Ref font: %S, height in twips = %d"), &fontSpec.iTypeface.Name(), fontSpec.iHeight);
-		}
+	TEST(iBitmapDevice->RectCompare(TRect(0,0,KScreenWidth>>1,KScreenHeight), *iBitmapDevice, TRect(KScreenWidth>>1,0,KScreenWidth,KScreenHeight)));
 	iBitmapDevice->ReleaseFont(testFont);
 	iBitmapDevice->ReleaseFont(refFont);
 	}

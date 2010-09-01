@@ -40,7 +40,7 @@
 
 #include <openvgtest.iby>
 
-#include <egltestext.iby>
+#include <egltest.iby>
 
 #include <wservtest.iby>
 #include <t_wservcapcheck.iby>

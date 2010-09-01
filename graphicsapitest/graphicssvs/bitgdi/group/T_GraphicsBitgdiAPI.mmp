@@ -1,0 +1,101 @@
+//
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+
+TARGETTYPE EXE
+TARGET T_GraphicsBitgdiApi.exe
+UID				0x1000007C 0x20003722
+VENDORID		0x70000001
+
+CAPABILITY		SwEvent WriteDeviceData Powermgmt ProtServ
+
+SOURCEPATH		../src
+
+SOURCE			../../common/src/UtilityClearPanicDlg.cpp
+SOURCE			../../common/src/T_GraphicsUtil.cpp
+
+SOURCE			T_GraphicsBitgdiAPIServer.cpp
+SOURCE          T_DataFbsBitGc.cpp
+SOURCE          T_DataFbsDevice.cpp
+SOURCE          T_DataFbsScreenDevice.cpp
+SOURCE          T_DataPolygonFiller.cpp 
+SOURCE          T_DataFbsBitmapDevice.cpp
+SOURCE			T_DataFbsBitGcFont.cpp
+
+//from fntstore
+SOURCE			../../fntstore/src/T_DataAlgStyle.cpp
+
+USERINCLUDE		../inc
+USERINCLUDE		../../common/inc
+USERINCLUDE		../../gdi/inc
+USERINCLUDE		../../bitgdi/inc
+USERINCLUDE		../../fntstore/inc
+USERINCLUDE		../../fbserv/inc
+USERINCLUDE		../../wserv/inc
+
+MW_LAYER_SYSTEMINCLUDE_SYMBIAN
+OS_LAYER_SYSTEMINCLUDE_SYMBIAN
+
+LIBRARY			euser.lib
+LIBRARY			efsrv.lib
+LIBRARY			esock.lib
+LIBRARY			testexecuteutils.lib
+LIBRARY			testexecutelogclient.lib
+LIBRARY			charconv.lib
+LIBRARY			fbscli.lib
+LIBRARY			ws32.lib
+LIBRARY			gdi.lib
+LIBRARY			bafl.lib
+LIBRARY			c32.lib
+LIBRARY			c32root.lib
+LIBRARY 		hal.lib
+LIBRARY			w32stdgraphic.lib
+
+LIBRARY			fntstr.lib
+LIBRARY			estor.lib
+LIBRARY			bitgdi.lib
+LIBRARY			eikcore.lib
+LIBRARY			cone.lib
+LIBRARY			apgrfx.lib
+LIBRARY			iniparser.lib 
+LIBRARY         imageconversion.lib
+
+SOURCEPATH ..\..\gdi\src
+SOURCE T_DataGraphicsContext.cpp T_DataGraphicsDevice.cpp T_DataGraphicsDeviceMap.cpp
+SOURCEPATH ..\..\fbserv\src
+SOURCE T_DataFbsSession.cpp
+SOURCEPATH ..\..\common\src
+SOURCE DataWrapperActive.cpp DataWrapperBase.cpp TestServerBase.cpp
+SOURCEPATH ..\..\gdi\src
+SOURCE T_DataBitmapContext.cpp T_DataBitmapDevice.cpp
+SOURCEPATH ..\..\gdi\src
+SOURCE T_DataPalette.cpp T_DataFont.cpp
+SOURCEPATH ..\..\fbserv\src
+SOURCE T_DataFbsFont.cpp T_DataFbsBitmap.cpp
+
+SOURCEPATH ..\..\wserv\src
+SOURCE T_DataWsBitmap.cpp T_DataWsClientClass.cpp T_DataWsSession.cpp
+SOURCEPATH ..\..\fbserv\src
+SOURCE T_DataFbsTypefaceStore.cpp
+SOURCEPATH ..\..\gdi\src
+SOURCE T_DataTypefaceStore.cpp
+SOURCEPATH ..\..\wserv\src
+SOURCE T_DataWsScreenDevice.cpp
+SOURCEPATH ..\src
+SOURCE T_DataFbsBitGcBitmap.cpp
+SOURCEPATH ..\..\fntstore\src
+SOURCE T_DataLinkedTypefaceSpecification.cpp
+
+SMPSAFE

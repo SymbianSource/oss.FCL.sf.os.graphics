@@ -54,17 +54,6 @@ const TInt KNumValidDisplayModes = TInt(sizeof(KValidDisplayModes)/sizeof(KValid
 	testBooleanTrueWithErrorCodeL((c), (b), (TText8*)__FILE__, __LINE__);\
 	}
 
-// Redefine TEST/TESTE as TEST1/TESTE1 so that all errors are logged, not
-// just the first error.
-#ifdef TEST
-#undef TEST
-#define TEST(a) TEST1(a, ETrue)
-#endif // TEST
-
-#ifdef TESTE
-#undef TESTE
-#define TESTE(a, b) TESTE1(a, b, ETrue)
-#endif // TESTE
 
 #ifdef _USE_PROFILER
 	#define __PROFILERMEMBERS RProcess iProcess; TInt iPErr; RFs iFSession; TBuf<256> iProfLog; TBuf<256> iProfLoE; CFileMan* iFileMan; 

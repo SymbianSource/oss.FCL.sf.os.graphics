@@ -190,6 +190,7 @@ static void m3gInitializeEGL(void)
 {
     M3G_LOG(M3G_LOG_INTERFACE, "Initializing EGL\n");
     eglInitialize(eglGetDisplay(EGL_DEFAULT_DISPLAY), NULL, NULL);
+    eglBindAPI(EGL_OPENGL_ES_API);
 }
 
 /*!
@@ -759,7 +760,7 @@ static M3Gbool m3gCanDirectRender(const RenderContext *ctx)
     if (surfaceType == SURFACE_IMAGE) {
         return M3G_FALSE;
     }
-    if (surfaceType == SURFACE_EGL || surfaceType == SURFACE_WINDOW) {
+    if (surfaceType == SURFACE_EGL) {
         return M3G_TRUE;
     }
     
@@ -1058,50 +1059,32 @@ static void m3gUpdateTargetBuffer(RenderContext *ctx)
             stride = ctx->target.stride;
         }
                 
-        /* OK, got the pointer; now, copy a few scanlines at a
-         * time, and we can pretty much assume conversion since 
-         * the fast method didn't work */
+        /* OK, got the pointer; now, copy a scanline at a
+         * time, and we can pretty much assume conversion
+         * since the fast method didn't work */
 
-#define READPIXELS_BUFFER_SIZE      16384
-
-        if (width > 0 && height > 0) {
-
-            M3Gint bufSize = (width * 4 > READPIXELS_BUFFER_SIZE ? width * 4 : READPIXELS_BUFFER_SIZE);
-            M3Gint numLinesInBuffer = bufSize/(width * 4);
-            M3Gint numLinesRead, line;
-            temp = m3gAllocTemp(M3G_INTERFACE(ctx), bufSize);
-
-            if (!temp) {
-                return; /* out of memory */
-            }
-
-            dst += (ctx->target.height - (yOffset + height)) * stride
-                + xOffset * m3gBytesPerPixel(format);
-
-            for (row = 0; row < height; row += numLinesRead) {
-                line = numLinesRead = (row + numLinesInBuffer > height) ? (height - row) : numLinesInBuffer;
-
-                glReadPixels(xOffset, 
-                    yOffset + height - row - numLinesRead,
-                    width, numLinesRead, 
-                    GL_RGBA, GL_UNSIGNED_BYTE, 
-                    temp);
-
-                while (line-- > 0) {
-                    m3gConvertPixels(M3G_RGBA8, &temp[4*line*width], format, dst, width);
-                    dst += stride;
-                }
-            }
-            m3gFreeTemp(M3G_INTERFACE(ctx));
+        temp = m3gAllocTemp(M3G_INTERFACE(ctx), width * 4);
+        if (!temp) {
+            return; /* out of memory */
         }
+
+        dst += (ctx->target.height - (yOffset + height)) * stride
+            + xOffset * m3gBytesPerPixel(format);
+        
+        for (row = 0; row < height; ++row) {
+            glReadPixels(xOffset, yOffset + height - row - 1,
+                         width, 1,
+                         GL_RGBA, GL_UNSIGNED_BYTE,
+                         temp);
+            m3gConvertPixels(M3G_RGBA8, temp, format, dst, width);
+            dst += stride;
+        }
+        m3gFreeTemp(M3G_INTERFACE(ctx));
 
         if (ctx->target.type == SURFACE_BITMAP) {
             m3gglReleaseNativeBitmap((M3GNativeBitmap) ctx->target.handle);
         }
-
-#undef READPIXELS_BUFFER_SIZE
-
-    } 
+    }
     else {
         /* Buffered rendering is not supported for window and pbuffer
          * targets */
@@ -1407,9 +1390,6 @@ static void m3gMakeGLCurrent(RenderContext *ctx)
                 ctx->target.surface = surface;
             }
         }
-        /* Synchronize with native rendering in case we're 
-           rendering to a native bitmap (or window) target */
-        eglWaitNative(EGL_CORE_NATIVE_ENGINE);
 
         /* Update the current acceleration status */
         
