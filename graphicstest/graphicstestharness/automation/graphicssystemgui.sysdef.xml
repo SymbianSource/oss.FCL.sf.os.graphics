@@ -121,7 +121,7 @@
 				</collection>
 				<collection name="Graphics Information">
 					<component name="Graphics Docs">
-						<unit mrp="sf\os\graphics\graphics_info\graphicsdocs\graphics_documentation.mrp"/>
+						<unit base="sf\os\graphics\graphics_info\graphicsdocs"/>
 					</component>
 				</collection>
 				<collection name="Graphics Composition">
@@ -215,6 +215,9 @@
 					<component name="Common Graphics Headers">
 						<unit bldFile="sf\os\graphics\graphicsutils\commongraphicsheaders\group" mrp="sf\os\graphics\graphicsutils\commongraphicsheaders\group\graphics_commonheader.mrp"/>
 					</component>
+   				   <component id="graphics_tems" name="Graphics Template Extension Makefiles" introduced="^4" purpose="development" target="desktop" class="tool">
+        				<unit bldFile="graphicsutils/graphics_tems/group"/>
+      				</component>
 				</collection>
 				<collection name="OpenGLES">
 					<component name="OpenGLES Display Properties">

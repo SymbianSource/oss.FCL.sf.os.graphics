@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,6 +21,11 @@
 #include "fbshelper.h"
 #include "FbsMessage.H"
 #include <graphics/fbsoogmmessage.h>
+#include "OstTraceDefinitions.h"
+#include "fbstrace.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "SESSIONTraces.h"
+#endif
 
 GLDEF_C void Panic(TFbsPanic aPanic)
 	{
@@ -91,16 +96,33 @@ to create the session; otherwise another of the system-wide error codes.
 */
 EXPORT_C TInt RFbsSession::Connect(RFs& aFileServer)
 	{
+    TInt ret = KErrNone;
 	RFbsSession* thisptr = (RFbsSession*)Dll::Tls();
+	FBS_OST(OstTrace1(GRAPHICS_CONTROL_FUNCTIONS, RFBSSESSION_CONNECT_ENTRY, "> this=0x%08x;", (TUint)thisptr);)
 	if(thisptr)
 		{
 		thisptr->iConnections++;
-		return KErrNone;
+		FBS_OST(OstTraceExt2(GRAPHICS_CONTROL_SEMANTICS, RFBSSESSION_CONNECT_INFO, "# Connected to existing session; this=0x%08x; iConnections=%d;", (TInt)thisptr, thisptr->iConnections);)
 		}
-	TInt ret = RFbsSession::DoAlloc(thisptr);
-	if(ret!=KErrNone)
-		return ret;
-	return thisptr->DoConnect(aFileServer);
+	else
+	    {
+        ret = RFbsSession::DoAlloc(thisptr);
+        if(ret!=KErrNone)
+            {
+            FBS_OST(OstTrace1(TRACE_ERROR, RFBSSESSION_CONNECT_ERROR, "! DoAlloc returned %d", ret);)
+            }
+        else
+            {
+            ret = thisptr->DoConnect(aFileServer);
+            if(ret!=KErrNone)
+                {
+                FBS_OST(OstTraceExt2(TRACE_ERROR, RFBSSESSION_CONNECT_ERROR2, "! this=0x%08x; DoConnect returned %d", (TInt)thisptr, ret);)
+                }
+            }
+	    }
+	
+	FBS_OST(OstTraceExt2(GRAPHICS_CONTROL_FUNCTIONS, RFBSSESSION_CONNECT_EXIT, "< this=0x%08x; ret=%d", (TUint)thisptr, ret);)
+	return ret; 
 	}
 
 /** Creates a session with the Font and Bitmap server.
@@ -111,22 +133,40 @@ to create the session; otherwise another of the system-wide error codes.
 */
 EXPORT_C TInt RFbsSession::Connect()
 	{
+    TInt ret = KErrNone;
 	RFbsSession* thisptr = (RFbsSession*)Dll::Tls();
+	FBS_OST(OstTrace1(GRAPHICS_CONTROL_FUNCTIONS, RFBSSESSION_CONNECT2_ENTRY, "> this=0x%08x;", (TUint)thisptr);)
 	if(thisptr)
 		{
 		thisptr->iConnections++;
-		return KErrNone;
+	    FBS_OST(OstTraceExt2(GRAPHICS_CONTROL_SEMANTICS, RFBSSESSION_CONNECT2_INFO, "# Connected to existing session; this=0x%08x; iConnections=%d;", (TInt)thisptr, thisptr->iConnections);)
 		}
-	TInt ret = RFbsSession::DoAlloc(thisptr);
-	if (ret!=KErrNone)
-		return ret;
-	ret = thisptr->iFileServer.Connect();
-	if(ret!=KErrNone)
-		{
-		thisptr->Disconnect();
-		return ret;
-		}
-	return thisptr->DoConnect(thisptr->iFileServer);
+	else
+	    {
+        TInt ret = RFbsSession::DoAlloc(thisptr);
+        if (ret!=KErrNone)
+            {
+            FBS_OST(OstTrace1(TRACE_ERROR, RFBSSESSION_CONNECT2_ERROR, "! DoAlloc returned %d", ret);)
+            goto end;
+            }
+            
+        ret = thisptr->iFileServer.Connect();
+        if(ret!=KErrNone)
+            {
+            thisptr->Disconnect();
+            FBS_OST(OstTraceExt2(TRACE_ERROR, RFBSSESSION_CONNECT2_ERROR2, "! this=0x%08x; RFs::Connect() returned %d", (TInt)thisptr, ret);)
+            goto end;
+            }
+        
+        ret = thisptr->DoConnect(thisptr->iFileServer);
+        if(ret!=KErrNone)
+            {
+            FBS_OST(OstTraceExt2(TRACE_ERROR, RFBSSESSION_CONNECT2_ERROR3, "! this=0x%08x; DoConnect returned %d", (TInt)thisptr, ret);)
+            }
+	    }
+end:
+	FBS_OST(OstTraceExt2(GRAPHICS_CONTROL_FUNCTIONS, RFBSSESSION_CONNECT2_EXIT, "< this=0x%08x; ret=%d", (TUint)thisptr, ret);)
+	return ret;
 	}
 
 /** Closes the session with the Font and Bitmap server. 
@@ -136,35 +176,41 @@ EXPORT_C TInt RFbsSession::Connect()
 EXPORT_C void RFbsSession::Disconnect()
 	{
 	RFbsSession* thisptr=(RFbsSession*)Dll::Tls();
-	if(thisptr==NULL) return;
-	if(thisptr->iConnections>0)
-		{
-		thisptr->iCallBack.iPtr=NULL;
-		thisptr->iCallBack.CallBack();
-		// Destructor of CFbsSessionHelper may call SendCommand to cancel an
-		// outstanding request, therefore destruction must be done before
-		// iConnections is 0 to avoid an assertion going off.
-		if(thisptr->iConnections==1)
-			{
-			delete thisptr->iHelper;
-			}
-		thisptr->iConnections--;
-		}
-	if(thisptr->iConnections==0)
-		{
-		thisptr->iSharedChunk.Close();
-		thisptr->iLargeBitmapChunk.Close();
-		// Call close on the iFileServer regardless of whether this session owns it: 
-		// if we don't own it, close will do nothing if there are still open files, 
-		// so always calling close introduces extra safety
-		thisptr->iFileServer.Close();
-		delete thisptr->iRomFileAddrCache; 
-		delete thisptr->iScanLineBuffer;
-		delete thisptr->iDecompressionBuffer;
-		thisptr->Close();
-		delete thisptr;
-		Dll::FreeTls();
-		}
+    FBS_OST(OstTrace1(GRAPHICS_CONTROL_FUNCTIONS, RFBSSESSION_DISCONNECT_ENTRY, "> this=0x%08x;", (TUint)thisptr);)
+	if(thisptr)
+	    {
+        TInt tempServerSessionHandle = thisptr->ServerSessionHandle();
+        if(thisptr->iConnections>0)
+            {
+            thisptr->iCallBack.iPtr=NULL;
+            thisptr->iCallBack.CallBack();
+            // Destructor of CFbsSessionHelper may call SendCommand to cancel an
+            // outstanding request, therefore destruction must be done before
+            // iConnections is 0 to avoid an assertion going off.
+            if(thisptr->iConnections==1)
+                {
+                delete thisptr->iHelper;
+                }
+            thisptr->iConnections--;
+            }
+        if(thisptr->iConnections==0)
+            {
+            thisptr->iSharedChunk.Close();
+            thisptr->iLargeBitmapChunk.Close();
+            // Call close on the iFileServer regardless of whether this session owns it: 
+            // if we don't own it, close will do nothing if there are still open files, 
+            // so always calling close introduces extra safety
+            thisptr->iFileServer.Close();
+            delete thisptr->iRomFileAddrCache; 
+            delete thisptr->iScanLineBuffer;
+            delete thisptr->iDecompressionBuffer;
+            thisptr->Close();
+            delete thisptr;
+            Dll::FreeTls();	
+            }
+        FBS_OST(OstTraceExt3(GRAPHICS_CONTROL_SEMANTICS, RFBSSESSION_DISCONNECT_INFO, "# Disconnected from session; this=0x%08x; iConnections=%d; iSSH=0x%08x", (TInt)thisptr, thisptr->iConnections, tempServerSessionHandle);)
+	    }
+	FBS_OST(OstTrace1(GRAPHICS_CONTROL_FUNCTIONS, RFBSSESSION_DISCONNECT_EXIT2, "< this=0x%08x;", (TUint)thisptr);)
 	}
 
 /**  Gets the current Font and Bitmap server session.
@@ -359,11 +405,14 @@ TInt RFbsSession::DoConnect(RFs& aFileServer)
 		return KErrNoMemory;
 		}
 	iHelper->iServerSessionHandle = serverAssignedHandle;
+	
 	ret = iLargeBitmapChunk.OpenGlobal(KFBSERVLargeChunkName,EFalse);
 	if(ret!=KErrNone) 
 		Panic(EFbsPanicChunkError);
 	
 	iSpare = (TUint32*)&aFileServer;
+	
+    FBS_OST(OstTraceExt2(GRAPHICS_CONTROL_SEMANTICS, RFBSSESSION_DOCONNECT_INFO, "# New FBS Session created; this=0x%08x; iSSH=0x%08x;", (TInt)this, serverAssignedHandle);)
 	return KErrNone;
 	}
 	

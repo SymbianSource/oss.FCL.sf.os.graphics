@@ -20,7 +20,7 @@
 
 #include <e32math.h>
 #include <e32debug.h>
-#include <cinidata.h>
+#include <iniparser.h>
 #include "t_simload.h"
 #include "t_simloadutils.h"
 

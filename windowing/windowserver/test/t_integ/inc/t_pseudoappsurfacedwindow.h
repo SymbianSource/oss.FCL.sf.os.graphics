@@ -24,7 +24,7 @@
 
 #include <e32base.h>
 #include <gdi.h>			//Display modes
-#include <cinidata.h>
+#include <iniparser.h>
 
 #include <graphics/surface.h>		//TSurfaceId
 #include <graphics/surfacemanager.h>	//RSurfaceManager

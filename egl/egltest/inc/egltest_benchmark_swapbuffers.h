@@ -51,6 +51,8 @@ private:
     EGLContext iEglContext;
     CTProfiler* iProfiler;
     TSize iWindowSize;
+
+    PFNEGLSWAPBUFFERSREGIONNOKPROC iPfnEglSwapBuffersRegionNok;
 	};
 	
 // Testname, is used by the test server and the test scripts to identify the test

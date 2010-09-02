@@ -31,7 +31,7 @@ userinclude		../tfbs
 userinclude		../sfbs 
 userinclude		../inc 
 userinclude		../trasterizer/src
-userinclude		../traces
+userinclude		../traces_FBSERV
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 OS_LAYER_ESTLIB_SYSTEMINCLUDE

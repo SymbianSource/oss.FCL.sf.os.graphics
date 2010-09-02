@@ -311,7 +311,7 @@ TESTEXECUTE, C:\logs\testexecute\surfacemgtest_T_multiprocess.htm,		, z:\surface
 TESTEXECUTE, C:\logs\testexecute\surfacemgtest_T_multithread.htm,		, z:\surfacemgtest\surfacemgtest_T_multithread.script, 600
 
 # Surface Update
-TESTEXECUTE, C:\logs\testexecute\surfaceupdate.htm,			, z:\surfaceupdate\surfaceupdate.script, 600
+TESTEXECUTE, C:\logs\testexecute\surfaceupdate.htm,					, z:\surfaceupdate\surfaceupdate.script, 600
 TESTEXECUTE, C:\logs\testexecute\surfaceupdateinteg.htm,			, z:\surfaceupdate\surfaceupdateinteg.script, 800, ,  z\graphicstest\minigui.cmd z\graphics\t_graphics_config_inifiles.bat install multiple_screen csc_nga, z\graphicstest\unminigui.cmd z\graphics\t_graphics_config_inifiles.bat uninstall
 TESTEXECUTE, C:\logs\testexecute\graphics-gce-notification.htm,		, z:\graphics\graphics-gce-notification.script,  3600, , z\graphics\t_graphics_config_inifiles.bat install csc_nga, z\graphics\t_graphics_config_inifiles.bat uninstall
 
@@ -495,6 +495,9 @@ TESTEXECUTE, C:\logs\testexecute\uilayerdrawing_tests_noautoclear.htm,	, z:\tlay
 
 #PREQ2636
 TESTEXECUTE, C:\logs\testexecute\tfxframework_tests.htm,		, z:\tlayercomposition\tfxframework_tests.script, 600,			, z\tfxframework\wstest_t_tfxrenderstage.bat install, 			z\tfxframework\wstest_t_tfxrenderstage.bat uninstall
+
+# System TFX
+TESTEXECUTE, C:\logs\testexecute\ttfx_unittests.htm,		, z:\ttfx\ttfx_unittests.script, 600,			, z\ttfx\t_graphics_systemtfx.bat install, 			z\ttfx\t_graphics_systemtfx.bat uninstall
 
 # UIBENCH S60
 TESTEXECUTE, C:\logs\testexecute\te_uibench_s60_techview_emulator.htm,	, c:\uibench_s60\te_uibench_s60_techview_emulator.script, 900

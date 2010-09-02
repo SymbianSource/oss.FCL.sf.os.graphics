@@ -51,7 +51,7 @@ OS_LAYER_LIBC_SYSTEMINCLUDE
 LIBRARY         euser.lib 
 LIBRARY         fbscli.lib
 LIBRARY         ws32.lib
-LIBRARY         cinidata.lib
+LIBRARY			iniparser.lib
 LIBRARY         bitgdi.lib
 LIBRARY			surfacemanager.lib
 LIBRARY         surfaceupdateclient.lib

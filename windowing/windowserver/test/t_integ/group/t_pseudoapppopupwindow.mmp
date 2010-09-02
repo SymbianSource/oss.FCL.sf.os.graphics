@@ -39,7 +39,7 @@ OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 LIBRARY			euser.lib 
 LIBRARY			ws32.lib
-LIBRARY			cinidata.lib
+LIBRARY			iniparser.lib
 LIBRARY			fbscli.lib
 LIBRARY			gdi.lib
 LIBRARY			t_winutils.lib

@@ -30,6 +30,8 @@
 	data=DATAZ_\tlayercomposition\wsini_vasco_layercomposition.ini \system\data\wsini.ini
 #elif WSERV_TEST_WSINI == WSERV_TEST_WSINI_RATELIMITER
 	data=DATAZ_\wstest\ratelimiter\wsini_vasco_ratelimiter.ini \system\data\wsini.ini
+#elif WSERV_TEST_WSINI == WSERV_TEST_WSINI_TTFX
+	data=DATAZ_\ttfx\wsini_vasco_tfx_auto.ini \system\data\wsini.ini
 #else
 	data=EPOCROOT##epoc32\data\test_wsini\wsini_vasco.ini \system\data\wsini.ini
 #endif

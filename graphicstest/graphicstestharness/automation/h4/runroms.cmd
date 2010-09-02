@@ -42,5 +42,6 @@ call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/h4hrp_graphics24_armv
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/h4hrp_graphics25_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/h4hrp_graphics29a_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/h4hrp_graphics29b_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400
+call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/h4hrp_graphics30_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/h4hrp_uiframeworks_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400
 call ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/h4hrp_graphicsresource_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400

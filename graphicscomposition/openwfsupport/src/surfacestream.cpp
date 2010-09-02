@@ -1097,7 +1097,7 @@ int CSurfaceStream::RemoveObserver(TInt32 aEvents, void* aData)
                     if (callBackData && (!aData || (iCallBacks[count].iScreenNumber == susScreenNumber)))
                         {
                         Displayed(ESOWF_ObserverCancel, iCallBacks[count].iScreenNumber, NULL, callBackData, NULL);
-                        delete callBackData;
+                        delete (TNotificationDisplayed*) callBackData;
                         iCallBacks[count].Reset();
                         if (iNumberOfScreenAttachedDisplayedNotif > 0)
                             {
@@ -1111,7 +1111,7 @@ int CSurfaceStream::RemoveObserver(TInt32 aEvents, void* aData)
                     if (callBackData && (!aData || (iCallBacks[count].iScreenNumber == susScreenNumber)))
                         {
                         Available(ESOWF_ObserverCancel, iCallBacks[count].iScreenNumber, NULL, callBackData, NULL);
-                        delete callBackData;
+                        delete (TNotificationAvailable*) callBackData;
                         iCallBacks[count].Reset();
                         if (iNumberOfScreenAttachedAvailableNotif > 0)
                             {
@@ -1125,7 +1125,7 @@ int CSurfaceStream::RemoveObserver(TInt32 aEvents, void* aData)
                     if (callBackData && (!aData || (iCallBacks[count].iScreenNumber == susScreenNumber)))
                         {
                         DisplayedXTimes(ESOWF_ObserverCancel, iCallBacks[count].iScreenNumber, NULL, callBackData, NULL);
-                        delete callBackData;
+                        delete (TNotificationDisplayedX*) callBackData;
                         iCallBacks[count].Reset();
                         if (iNumberOfScreenAttachedDisplayedXNotif)
                             {

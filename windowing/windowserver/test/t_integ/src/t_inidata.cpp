@@ -19,7 +19,7 @@
  @internalComponent
 */
 
-#include <cinidata.h>
+#include <iniparser.h>
 #include "t_inidata.h"
 #include "t_wservconsts.h"
 

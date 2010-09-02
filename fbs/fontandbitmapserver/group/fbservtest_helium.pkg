@@ -35,8 +35,7 @@
 
 "\epoc32\data\z\fbstest\fbstest_T_Alloc.script"-"c:\fbstest\fbstest_T_Alloc.script"
 "\epoc32\data\z\fbstest\fbstest_T_Bitmap.script"-"c:\fbstest\fbstest_T_Bitmap.script"
-;COMMENTED OUT FOR 10T38 ZERO TOLERANCE TEST STRATEGY
-;"\epoc32\data\z\fbstest\fbstest_T_Fbs.script"-"c:\fbstest\fbstest_T_Fbs.script"
+"\epoc32\data\z\fbstest\fbstest_T_Fbs.script"-"c:\fbstest\fbstest_T_Fbs.script"
 "\epoc32\data\z\fbstest\fbstest_T_Compressed.script"-"c:\fbstest\fbstest_T_Compressed.script"
 "\epoc32\data\z\fbstest\fbstest_T_Ralc.script"-"c:\fbstest\fbstest_T_Ralc.script"
 "\epoc32\data\z\fbstest\fbstest_T_Defect.script"-"c:\fbstest\fbstest_T_Defect.script"

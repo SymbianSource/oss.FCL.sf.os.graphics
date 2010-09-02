@@ -1420,6 +1420,7 @@ end of the text.
 	{
 	iPimpl->WriteAnyPendingStateChanges();
 	TWsGcCmdDrawText printText(aPos,aBuf.Length());
+    __ASSERT_ALWAYS(((aBuf.Size()+sizeof(printText))<=EClientBufferMaxSize),Panic(EW32PanicSizeNotExpected));    
 	WriteTextCommand(&printText,sizeof(printText),aBuf,EWsGcOpDrawText,EWsGcOpDrawTextPtr);
 	}
 
@@ -1452,17 +1453,20 @@ for right-aligned text (default is zero).
 		if (aHoriz==ELeft && aLeftMrg==0)
 			{
 			TWsGcCmdBoxTextOptimised1 boxTextOpt1(aBox,aBaselineOffset,aBuf.Length());
+			__ASSERT_ALWAYS(((aBuf.Size()+sizeof(boxTextOpt1))<=EClientBufferMaxSize),Panic(EW32PanicSizeNotExpected)); 
 			Write(&boxTextOpt1,sizeof(boxTextOpt1),aBuf.Ptr(),aBuf.Size(),EWsGcOpDrawBoxTextOptimised1);
 			}
 		else
 			{
 			TWsGcCmdBoxTextOptimised2 boxTextOpt2(aBox,aBaselineOffset,aHoriz,aLeftMrg,aBuf.Length());
+			__ASSERT_ALWAYS(((aBuf.Size()+sizeof(boxTextOpt2))<=EClientBufferMaxSize),Panic(EW32PanicSizeNotExpected)); 
 			Write(&boxTextOpt2,sizeof(boxTextOpt2),aBuf.Ptr(),aBuf.Size(),EWsGcOpDrawBoxTextOptimised2);
 			}
 		}
 	else
 		{
 		TWsGcCmdBoxText boxText(aBox,aBaselineOffset,aHoriz,aLeftMrg,aBuf.Length(),iPimpl->iFont->TextWidthInPixels(aBuf));
+		__ASSERT_ALWAYS(((aBuf.Size()+sizeof(boxText))<=EClientBufferMaxSize),Panic(EW32PanicSizeNotExpected)); 
 		WriteTextCommand(&boxText,sizeof(boxText),aBuf,EWsGcOpDrawBoxText,EWsGcOpDrawBoxTextPtr);
 		}
 	}
@@ -1471,6 +1475,7 @@ TInt CWindowGc::APIExDrawText(const TDesC& aBuf,const TTextParameters* aParam,co
 	{
 	iPimpl->WriteAnyPendingStateChanges();
 	TWsGcCmdDrawTextInContext printTextInContext(aPos,aBuf.Length(),aParam->iStart,aParam->iEnd);
+	__ASSERT_ALWAYS(((aBuf.Size()+sizeof(printTextInContext))<=EClientBufferMaxSize),Panic(EW32PanicSizeNotExpected)); 
 	WriteTextCommand(&printTextInContext,sizeof(printTextInContext),aBuf,EWsGcOpDrawTextInContext,EWsGcOpDrawTextInContextPtr);
 	return KErrNone;
 	}
@@ -1483,17 +1488,20 @@ TInt CWindowGc::APIExDrawText(const TDesC& aBuf,const TTextParameters* aParam,co
 		if (aHoriz==ELeft && aLeftMrg==0)
 			{
 			TWsGcCmdBoxTextInContextOptimised1 boxTextOpt1(aBox,aBaselineOffset,aBuf.Length(),aParam->iStart,aParam->iEnd);
+			__ASSERT_ALWAYS(((aBuf.Size()+sizeof(boxTextOpt1))<=EClientBufferMaxSize),Panic(EW32PanicSizeNotExpected)); 
 			Write(&boxTextOpt1,sizeof(boxTextOpt1),aBuf.Ptr(),aBuf.Size(),EWsGcOpDrawBoxTextInContextOptimised1);
 			}
 		else
 			{
 			TWsGcCmdBoxTextInContextOptimised2 boxTextOpt2(aBox,aBaselineOffset,aHoriz,aLeftMrg,aBuf.Length(),aParam->iStart,aParam->iEnd);
+			__ASSERT_ALWAYS(((aBuf.Size()+sizeof(boxTextOpt2))<=EClientBufferMaxSize),Panic(EW32PanicSizeNotExpected)); 
 			Write(&boxTextOpt2,sizeof(boxTextOpt2),aBuf.Ptr(),aBuf.Size(),EWsGcOpDrawBoxTextInContextOptimised2);
 			}
 		}
 	else
 		{
 		TWsGcCmdBoxTextInContext boxText(aBox,aBaselineOffset,aHoriz,aLeftMrg,aBuf.Length(),iPimpl->iFont->TextWidthInPixels(aBuf),aParam->iStart,aParam->iEnd);
+		__ASSERT_ALWAYS(((aBuf.Size()+sizeof(boxText))<=EClientBufferMaxSize),Panic(EW32PanicSizeNotExpected)); 
 		WriteTextCommand(&boxText,sizeof(boxText),aBuf,EWsGcOpDrawBoxTextInContext,EWsGcOpDrawBoxTextInContextPtr);
 		}
 	return KErrNone;
@@ -1509,6 +1517,7 @@ A panic occurs if this function is called when there is no font: see UseFont().
 	{
 	iPimpl->WriteAnyPendingStateChanges();
 	TWsGcCmdDrawTextVertical printText(aPos,aText.Length(),aUp);
+	__ASSERT_ALWAYS(((aText.Size()+sizeof(printText))<=EClientBufferMaxSize),Panic(EW32PanicSizeNotExpected)); 
 	WriteTextCommand(&printText,sizeof(printText),aText,EWsGcOpDrawTextVertical,EWsGcOpDrawTextVerticalPtr);
 	}
 
@@ -1535,6 +1544,7 @@ baseline.
 	boxText.margin=aMargin;
 	boxText.length=aText.Length();
 	boxText.width=iPimpl->iFont->TextWidthInPixels(aText);
+	__ASSERT_ALWAYS(((aText.Size()+sizeof(boxText))<=EClientBufferMaxSize),Panic(EW32PanicSizeNotExpected)); 
 	WriteTextCommand(&boxText,sizeof(boxText),aText,EWsGcOpDrawBoxTextVertical,EWsGcOpDrawBoxTextVerticalPtr);
 	}
 
@@ -1542,6 +1552,7 @@ TInt CWindowGc::APIExDrawTextVertical(const TDesC& aText,const TTextParameters* 
 	{
 	iPimpl->WriteAnyPendingStateChanges();
 	TWsGcCmdDrawTextInContextVertical printText(aPos,aText.Length(),aUp,aParam->iStart,aParam->iEnd);
+	__ASSERT_ALWAYS(((aText.Size()+sizeof(printText))<=EClientBufferMaxSize),Panic(EW32PanicSizeNotExpected)); 
 	WriteTextCommand(&printText,sizeof(printText),aText,EWsGcOpDrawTextInContextVertical,EWsGcOpDrawTextInContextVerticalPtr);
 	return KErrNone;
 	}
@@ -1558,6 +1569,7 @@ TInt CWindowGc::APIExDrawTextVertical(const TDesC& aText,const TTextParameters* 
 	boxText.width=iPimpl->iFont->TextWidthInPixels(aText);
 	boxText.start = aParam->iStart;
 	boxText.end = aParam->iEnd;
+	__ASSERT_ALWAYS(((aText.Size()+sizeof(boxText))<=EClientBufferMaxSize),Panic(EW32PanicSizeNotExpected)); 
 	WriteTextCommand(&boxText,sizeof(boxText),aText,EWsGcOpDrawBoxTextInContextVertical,EWsGcOpDrawBoxTextInContextVerticalPtr);
 	return KErrNone;
 	}
@@ -2255,6 +2267,7 @@ EXPORT_C TInt RWsDrawableSource::Create(const RSgDrawable& aDrawable, TInt aScre
 	CGraphicsResourceWrapperFactory* grwFactory = new CGraphicsResourceWrapperFactory();
 	if (!grwFactory)
 		return KErrNoMemory;
+	// coverity[uninit_use_in_call]
 	CGraphicsResourceWrapper* graphicsResource = grwFactory->NewGraphicsResourceWrapper();
 	if(!graphicsResource)
 		{

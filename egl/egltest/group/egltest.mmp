@@ -91,7 +91,7 @@ LIBRARY                 graphicsresource.lib
 #endif //SYMBIAN_GRAPHICS_EGL_SGIMAGELITE
 LIBRARY                 testexecuteutils.lib
 LIBRARY                 testexecutelogclient.lib
-LIBRARY                 cinidata.lib
+LIBRARY			iniparser.lib
 LIBRARY                 tgraphicsharness.lib
 LIBRARY                 graphicsscreencomparison.lib
 LIBRARY                 egltestcommon.lib

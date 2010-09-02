@@ -364,6 +364,8 @@ private:
 	TInt DoLoadFromRom(TUint32* aRomPointer, TInt32 aId, TUint aFileOffset, TBool& aRomPointerValid);
 	TBool LoadShiftedRomBmpL(const TDesC& aFileName,TInt32 aId,TUint aFileOffset);
 	static void DoStoreL(CDirectFileStore* aFileStore,CFbsBitmap* aBitmap,TInt aNumSources,const TDesC* aSources[],TInt32 aSourceIds[]);
+	TInt DuplicateInRom(TInt aBitmapHandle);
+	TInt DuplicateInRam(TInt aBitmapHandle);
 protected:
 	/** WARNING: For internal use ONLY.  Compatibility is not guaranteed in future releases.
 	 */

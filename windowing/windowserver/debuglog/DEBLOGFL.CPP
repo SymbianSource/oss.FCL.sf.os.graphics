@@ -86,7 +86,7 @@ void CDebugLogFile::ConstructL(TBool aIsFirst, TDesC &aParams)
 		//RDebug::Print(KLog3);
 		if (err==KErrNone)
 			{
-			TInt seekpos;
+			TInt seekpos = 0;
 			User::LeaveIfError(iFile.Seek(ESeekEnd,seekpos));
 			}
 		else

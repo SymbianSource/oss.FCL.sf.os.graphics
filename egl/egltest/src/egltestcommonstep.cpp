@@ -19,9 +19,7 @@
 */
 
 #include <test/tefunit.h> // for ASSERT macros
-#ifndef __INIPARSER_H__
-#include <cinidata.h>
-#endif // __INIPARSER_H__
+#include <iniparser.h>
 #include <apgtask.h>
 #include <e32math.h>
 #include <e32msgqueue.h> 

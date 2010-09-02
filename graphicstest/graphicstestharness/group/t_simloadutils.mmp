@@ -37,7 +37,7 @@ SOURCEPATH      ../src
 SOURCE          t_simloadutils.cpp
 
 LIBRARY         euser.lib
-LIBRARY         cinidata.lib
+LIBRARY			iniparser.lib
 
 DEFFILE         t_simloadutils.def
 

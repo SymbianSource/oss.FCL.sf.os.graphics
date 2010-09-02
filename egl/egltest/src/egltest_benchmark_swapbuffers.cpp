@@ -61,6 +61,7 @@ _LIT(KErrEglConfigNotSupported, "EGL config is not supported.");
 _LIT(KInfoRectangles, "Number of dirty rectangles: %d");
 _LIT(KWarnStressTestRectCount, "Dirty rectangles for stress test don't fit onto window surface (%d of %d).");
 
+_LIT(KEglSwapBuffersRegionNokMsg, "eglSwapBuffersRegionNOK extension is not supported.");
 
 CEglTest_Benchmark_SwapBuffers::CEglTest_Benchmark_SwapBuffers()
 	{
@@ -134,9 +135,8 @@ TVerdict CEglTest_Benchmark_SwapBuffers::doTestStepPreambleL()
     ASSERT_EGL_TRUE(iEglContext != EGL_NO_CONTEXT);
     ASSERT_EGL_TRUE(eglMakeCurrent(iDisplay, iEglSurface, iEglSurface, iEglContext));
     
-    // Get the function pointer for eglSwapBuffersRegionNOK() and check SwapBuffers extension exist
-    PFNEGLSWAPBUFFERSREGIONNOKPROC pfnEglSwapBuffersRegionNok = reinterpret_cast<PFNEGLSWAPBUFFERSREGIONNOKPROC>(eglGetProcAddress("eglSwapBuffersRegionNOK"));
-    ASSERT_EGL_TRUE(pfnEglSwapBuffersRegionNok);
+    // Get the function pointer for eglSwapBuffersRegionNOK()
+    iPfnEglSwapBuffersRegionNok = reinterpret_cast<PFNEGLSWAPBUFFERSREGIONNOKPROC>(eglGetProcAddress("eglSwapBuffersRegionNOK"));
     
     return TestStepResult();
     }
@@ -186,28 +186,36 @@ TVerdict CEglTest_Benchmark_SwapBuffers::doTestStepL()
         }    
     RecordTestResultL();
     
-    // Tests the maximum performance of eglSwapBuffersRegionNOK()
-    SetTestStepID(KTestStep0529);    
-    TRAP(err, EglSwapBufferRegionL());
-    if (err != KErrNone)
+    // We only perform swap region benchmark test if eglSwapBuffersRegionNOK extension is supported
+    if (iPfnEglSwapBuffersRegionNok != NULL)
         {
-        SetTestStepResult(EAbort);
-        }    
-    RecordTestResultL();
-    
-    // Stress tests the performance of eglSwapBuffersRegionNOK()
-    SetTestStepID(KTestStep0530);    
-    for (TInt noRects = KStressTestNoRectsStepSize; noRects <= KStressTestMaxNoRects; noRects += KStressTestNoRectsStepSize)
-        {
-        // TRAP here is on purpose, normally you shouldn't use it in loops
-        TRAP(err, EglSwapBufferRegionStressL(noRects));
+        // Tests the maximum performance of eglSwapBuffersRegionNOK()
+        SetTestStepID(KTestStep0529);    
+        TRAP(err, EglSwapBufferRegionL());
         if (err != KErrNone)
             {
-            ERR_PRINTF2(_L("EglSwapBufferRegionStressL (leave code: %d)."), err);
             SetTestStepResult(EAbort);
+            }    
+        RecordTestResultL();
+        
+        // Stress tests the performance of eglSwapBuffersRegionNOK()
+        SetTestStepID(KTestStep0530);    
+        for (TInt noRects = KStressTestNoRectsStepSize; noRects <= KStressTestMaxNoRects; noRects += KStressTestNoRectsStepSize)
+            {
+            // TRAP here is on purpose, normally you shouldn't use it in loops
+            TRAP(err, EglSwapBufferRegionStressL(noRects));
+            if (err != KErrNone)
+                {
+                ERR_PRINTF2(_L("EglSwapBufferRegionStressL (leave code: %d)."), err);
+                SetTestStepResult(EAbort);
+                }
             }
+        RecordTestResultL();
         }
-    RecordTestResultL();
+    else
+        {
+        INFO_PRINTF1(KEglSwapBuffersRegionNokMsg);
+        }
     
     // Close the test and return result to the testframework
     CloseTMSGraphicsStep();    
@@ -279,8 +287,8 @@ void CEglTest_Benchmark_SwapBuffers::EglSwapBufferRegionL()
     // Number of rectangles (one rectangle consist of 4 values)
     const EGLint count = (sizeof(rects) / (sizeof(rects[0] * 4)));
             
-    // Get the function pointer for eglSwapBuffersRegionNOK()
-    PFNEGLSWAPBUFFERSREGIONNOKPROC pfnEglSwapBuffersRegionNok = reinterpret_cast<PFNEGLSWAPBUFFERSREGIONNOKPROC>(eglGetProcAddress("eglSwapBuffersRegionNOK"));
+    // We obtain the func ptr in doTestStepPreambleL and only execute this test if it is not null
+    TESTL(iPfnEglSwapBuffersRegionNok != NULL);
     
     // Clear the surface
     vgSetfv(VG_CLEAR_COLOR, 4, KClearColors[0]);
@@ -296,7 +304,7 @@ void CEglTest_Benchmark_SwapBuffers::EglSwapBufferRegionL()
         vgSetfv(VG_CLEAR_COLOR, 4, KClearColors[i % KMaxClearColors]);
         vgClear(0, 0, iWindowSize.iWidth, iWindowSize.iHeight);
         // Swap the surface buffers
-        ASSERT_EGL_TRUE(pfnEglSwapBuffersRegionNok(iDisplay, iEglSurface, count, rects));
+        ASSERT_EGL_TRUE(iPfnEglSwapBuffersRegionNok(iDisplay, iEglSurface, count, rects));
         }
     // Mark the time and print the results to the log file
     iProfiler->MarkResultSetL();
@@ -348,8 +356,8 @@ void CEglTest_Benchmark_SwapBuffers::EglSwapBufferRegionStressL(EGLint aCount)
         WARN_PRINTF3(KWarnStressTestRectCount, actualRectCount, aCount);
         }
     
-    // Get the function pointer for eglSwapBuffersRegionNOK()
-    PFNEGLSWAPBUFFERSREGIONNOKPROC pfnEglSwapBuffersRegionNok = reinterpret_cast<PFNEGLSWAPBUFFERSREGIONNOKPROC>(eglGetProcAddress("eglSwapBuffersRegionNOK"));
+    // We obtain the func ptr in doTestStepPreambleL and only execute this test if it is not null
+    TESTL(iPfnEglSwapBuffersRegionNok != NULL);
     
     // Clear the surface
     vgSetfv(VG_CLEAR_COLOR, 4, KClearColors[0]);
@@ -365,7 +373,7 @@ void CEglTest_Benchmark_SwapBuffers::EglSwapBufferRegionStressL(EGLint aCount)
         vgSetfv(VG_CLEAR_COLOR, 4, KClearColors[i % KMaxClearColors]);
         vgClear(0, 0, iWindowSize.iWidth, iWindowSize.iHeight);
         // Swap the surface buffers
-        ASSERT_EGL_TRUE(pfnEglSwapBuffersRegionNok(iDisplay, iEglSurface, actualRectCount, rects));
+        ASSERT_EGL_TRUE(iPfnEglSwapBuffersRegionNok(iDisplay, iEglSurface, actualRectCount, rects));
         }
     // Mark the time and print the results to the log file
     iProfiler->MarkResultSetL();

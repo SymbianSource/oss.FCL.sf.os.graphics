@@ -27,7 +27,7 @@
 #include <displaymode.h>
 #include <fbs.h>
 #include <bitdev.h>
-#include <cinidata.h>
+#include <iniparser.h>
 
 class CTestBitmap : public CBase
 	{

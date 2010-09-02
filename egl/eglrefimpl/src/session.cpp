@@ -319,6 +319,7 @@ EGLint CEglThreadSession::EglClientWaitSyncKhr(EGLDisplay aDisplay, EGLSyncKHR a
     
     // release display lock as we're going to wait on sync object after this point, not releasing display lock at this 
     // point will cause deadlock
+    // coverity[stale]
     iDriver.Unlock();
 
     // sync obj refcount has been incremented so it won't get destroyed even if other thread call eglDestroySyncKHR or eglTerminate

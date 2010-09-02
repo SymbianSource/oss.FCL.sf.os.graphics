@@ -944,6 +944,9 @@ wfcGetStrings(WFCDevice dev,
 
     case WFC_EXTENSIONS:
         tmp = &wfc_extensions[0];
+		/* we know that wfc_extensions always has NULL as the last member 
+		   so this loop will never exceed the size of tmp */
+		/* coverity[overrun-local] */
         for (retVal=0; tmp[retVal] != NULL; retVal++)
         {
             /* get extensions array size */

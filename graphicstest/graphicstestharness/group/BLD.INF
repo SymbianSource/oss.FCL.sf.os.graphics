@@ -48,6 +48,8 @@ PRJ_TESTEXPORTS
 ../rom/graphics_sirocco_ne_wsini.iby  	/epoc32/rom/include/graphics_sirocco_ne_wsini.iby
 ../wsini/wsini_vasco.ini		/epoc32/data/test_wsini/wsini_vasco.ini
 ../wsini/wsini_naviengine.ini		/epoc32/data/test_wsini/wsini_naviengine.ini
+../wsini/wsini_emulator.ini		/epoc32/data/test_wsini/wsini_emulator.ini
+../data/epoc_two_screens.ini	/epoc32/data/epoc_two_screens.ini
 
 // ONB batch files
 ../batch/retain_files.cmd z:\graphicstest\retain_files.cmd

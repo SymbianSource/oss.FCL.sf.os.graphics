@@ -43,4 +43,6 @@ call  ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/34xx_sdp_graphics24_
 call  ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/34xx_sdp_graphics25_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400
 call  ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/34xx_sdp_graphics29a_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400
 call  ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/34xx_sdp_graphics29b_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400
+call  ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/34xx_sdp_graphics30_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 2400
 call  ec-perl w:\scripts\rom\runrom.pl --romDirectory "roms/34xx_sdp_uiframeworks_armv5_dpdef_auto" --nandLoader %1 --resource %2 --jobId %3 --listenTimeout 3600
+

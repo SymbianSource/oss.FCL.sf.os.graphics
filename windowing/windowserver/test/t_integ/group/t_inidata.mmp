@@ -44,6 +44,6 @@ LIBRARY		  	gdi.lib
 LIBRARY		  	ws32.lib
 LIBRARY       	bitgdi.lib
 LIBRARY		  	hal.lib
-LIBRARY	  	  	cinidata.lib
+LIBRARY			iniparser.lib
 
 SMPSAFE

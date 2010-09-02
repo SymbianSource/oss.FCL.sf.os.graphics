@@ -55,7 +55,7 @@ END
 
 LIBRARY		  	apparc.lib 
 LIBRARY       	bitgdi.lib
-LIBRARY			cinidata.lib
+LIBRARY			iniparser.lib
 LIBRARY		  	cone.lib 
 LIBRARY		  	eikcore.lib
 LIBRARY      	euser.lib 
