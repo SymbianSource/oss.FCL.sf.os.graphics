@@ -8,3 +8,4 @@ EXPORTS
         _ZN17RGuestVideoDriverC2Ev @ 7 NONAME
         _ZN17RGuestVideoDriverD1Ev @ 8 NONAME
         _ZN17RGuestVideoDriverD2Ev @ 9 NONAME
+	_ZN17RGuestVideoDriver25GetFrameBufferBaseAddressERm @ 10 NONAME
