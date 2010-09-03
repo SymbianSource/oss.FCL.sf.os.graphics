@@ -1289,6 +1289,9 @@ void CWsClient::ExecuteCommandL(TInt aOpcode, const TAny* aCmdData)	// (step #6)
 		case EWsClOpIndicateAppOrientation:
 			IndicateAppOrientation(*pData.Orientation);
 			break;
+		case EWsClOpUnregisterAllTFXEffect:
+			RDebug::Printf("[Bug 3344] OpCode EWsClOpUnregisterAllTFXEffect not supported.");
+			break;
 		default:
 			PPanic(EWservPanicOpcode);
 			break;
