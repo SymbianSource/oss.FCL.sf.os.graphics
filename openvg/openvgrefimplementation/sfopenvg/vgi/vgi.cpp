@@ -187,6 +187,7 @@ VGI_API_CALL void VGISymbianTerminate()
 	eglDestroySurface(egl.iEgldisplay, egl.iEglsurface);
 	delete egl.iPixmap;
 	ReleaseTls();
+	eglReleaseThread();	
 }
 
 VGI_API_CALL TInt VGISymbianResize( TSize aSize )
