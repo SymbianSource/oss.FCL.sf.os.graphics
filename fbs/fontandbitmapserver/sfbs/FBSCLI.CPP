@@ -89,6 +89,7 @@ CFbClient* CFbClient::NewL(RHeap* aHeap)
 
 CFbClient::~CFbClient()
 	{
+    FBS_OST( OstTraceExt2( GRAPHICS_RESOURCE_MANAGEMENT_SEMANTICS, CFBCLIENT_DESTRUCTOR_INFO, "# Server session destroyed; rc=%d; iSSH=0x%08x;", iResourceCount, iSessionHandle);)
 	/*
 	Don't call any CFontStore functions if CFbClient::NewL has left, or if FBSERV has already deleted the
 	font store, which happens in test programs like TFBS when FBSERV is closed before the client(s).
@@ -101,16 +102,33 @@ CFbClient::~CFbClient()
 		}
 	
 	if (font_store)
+	    {
 		font_store->DeleteSessionCache(iSessionHandle);
+	    }
 	
 	// If the font store doesn't exist, neither will the shared heap owned by FBSERV.
 	if (font_store)
+	    {
 		iHeap->Free(iOpenFontGlyphData);
-	
-	// delete fonts hold by the client
+	    }
+
+    // output each bitmap that is about to be destroyed...
+	FBS_OST
+        ({
+        for (TInt ii = iIx->Count() - 1; ii >= 0; --ii)
+            {
+            CObject* object = (*iIx)[ii];
+            TInt localHandle = iIx->At(object);
+            if ((localHandle != KErrNotFound) && (iIx->At(localHandle, fbTop->BitmapConUniqueID()) != NULL))
+                {
+                OstTraceExt3( GRAPHICS_RESOURCE_MANAGEMENT_SEMANTICS, CFBCLIENT_DESTRUCTOR_INFO2, "# Server resource destroyed; iSSH=0x%08x; rc=%d; iH=0x%08x;", iSessionHandle, iResourceCount, localHandle);
+                }
+            }
+	    })
+	// delete fonts and bitmaps held by the client
 	delete iIx;
 	
-	// delete font files hold by the client
+	// delete font files held by the client
     if (iFontFileIndex)
         {
         TInt count = iFontFileIndex->Count();

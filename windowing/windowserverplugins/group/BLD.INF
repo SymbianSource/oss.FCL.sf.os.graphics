@@ -31,9 +31,9 @@ PRJ_EXPORTS
 PRJ_MMPFILES
 
 #ifndef SYMBIAN_GRAPHICS_BUILD_OPENWF_WSERV
-#include "../restricted/group/BLD.INF"
+#include "../restricted/group/bld.inf"
 #else
-#include "../openwfc/group/BLD.INF"
+#include "../openwfc/group/bld.inf"
 #endif
 
 
