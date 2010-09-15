@@ -537,7 +537,7 @@ EXPORT_C TInt CFbsBitmap::Load(const TDesC& aFileName,TInt32 aId,TBool aShareIfL
 	{
     FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD_ENTRY, "> this=0x%08x; file=%S, id=0x%08x; share=%d", (TUint)this, aFileName, aId, aShareIfLoaded);)
 	TInt err = Load(aFileName,aId,aShareIfLoaded,0);
-    FBS_OST(OstTraceExt2( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD_EXIT, "< this=0x%08x; err=%d", (TUint)this, err);)
+    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, err, iHandle, iServerHandle);)
 	return err; 
 	}
 
@@ -592,7 +592,7 @@ EXPORT_C TInt CFbsBitmap::Load(const TDesC& aFileName,TInt32 aId,TBool aShareIfL
                 }
             }
 	    }
-    FBS_OST(OstTraceExt2( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD2_EXIT, "< this=0x%08x; err=%d", (TUint)this, err);)
+    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD2_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, err, iHandle, iServerHandle);)
 	return err;
 	}
 
@@ -612,7 +612,7 @@ EXPORT_C TInt CFbsBitmap::LoadAndCompress(const TDesC& aFileName,TInt32 aId,TBoo
     {	
     FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS_ENTRY, "> this=0x%08x; file=%S; id=0x%08x; share=%d", (TUint)this, aFileName, aId, aShareIfLoaded);)
     TInt ret = LoadAndCompress(aFileName, aId, aShareIfLoaded, 0);
-    FBS_OST(OstTraceExt2( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS_EXIT, "< this=0x%08x; err=%d", (TUint)this, ret);)
+    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, ret, iHandle, iServerHandle);)
     return ret;
 	}
 
@@ -638,7 +638,7 @@ EXPORT_C TInt CFbsBitmap::LoadAndCompress(const TDesC& aFileName,TInt32 aId,TBoo
 		err = !(iFlags & EIsRomBitmap) ? Compress() : KErrAccessDenied;
 		FBS_OST_IF(err!=KErrNone, OstTraceExt3( TRACE_ERROR, CFBSBITMAP_LOADANDCOMPRESS2_ERROR, "! this=0x%08x; iFlags=0x%08x; err=%d", (TUint)this, (TUint)iFlags, err);)
 		}
-	FBS_OST(OstTraceExt2( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS2_EXIT, "< this=0x%08x; err=%d", (TUint)this, err);)
+	FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS2_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, err, iHandle, iServerHandle);)
 	return err;
 	}
 
@@ -1832,7 +1832,7 @@ EXPORT_C TInt CFbsBitmap::Load(RFile& aFile,TInt32 aId/*=0*/,TBool aShareIfLoade
     FBS_OST(aFile.FullName(fileName);)
     FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD3_ENTRY, "> this=0x%08x; file=%S; id=0x%08x; share=%d", (TUint)this, fileName, aId, aShareIfLoaded);)
 	TInt ret = Load(aFile,aId,aShareIfLoaded,0);
-    FBS_OST(OstTraceExt2( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD3_EXIT, "< this=0x%08x, ret=%d", (TUint)this, ret);) 
+    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD3_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, ret, iHandle, iServerHandle);) 
 	return ret;
 	}
 
@@ -1871,7 +1871,7 @@ EXPORT_C TInt CFbsBitmap::Load(RFile& aFile,TInt32 aId,TBool aShareIfLoaded,TUin
             FBS_OST_IF(err!=KErrNone, OstTraceExt2( TRACE_ERROR, CFBSBITMAP_LOAD4_ERROR2, "! this=0x%08x; DoLoad() returned %d", (TUint)this, err);)
             }
 	    }
-	FBS_OST(OstTraceExt2( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD4_EXIT, "< this=0x%08x; err=%d", (TUint)this, err);)
+	FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD4_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, err, iHandle, iServerHandle);)
 	return err;
 	}
 
@@ -1893,7 +1893,7 @@ EXPORT_C TInt CFbsBitmap::LoadAndCompress(RFile& aFile,TInt32 aId/*=0*/,TBool aS
     FBS_OST(aFile.FullName(fileName);)
     FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS3_ENTRY, "> this=0x%08x; file=%S; id=0x%08x; share=%d", (TUint)this, fileName, aId, aShareIfLoaded);)      
 	TInt ret = LoadAndCompress(aFile,aId,aShareIfLoaded,0);
-    FBS_OST(OstTraceExt2( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS3_EXIT, "< this=0x%08x; ret=%d", (TUint)this, ret);)
+    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS3_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, ret, iHandle, iServerHandle);)
     return ret;
 	}
 

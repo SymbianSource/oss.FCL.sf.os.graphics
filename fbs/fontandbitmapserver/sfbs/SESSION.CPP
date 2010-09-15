@@ -179,7 +179,7 @@ EXPORT_C void RFbsSession::Disconnect()
     FBS_OST(OstTrace1(GRAPHICS_CONTROL_FUNCTIONS, RFBSSESSION_DISCONNECT_ENTRY, "> this=0x%08x;", (TUint)thisptr);)
 	if(thisptr)
 	    {
-        TInt tempServerSessionHandle = thisptr->ServerSessionHandle();
+        FBS_OST(TInt tempServerSessionHandle = (thisptr->iHelper) ? thisptr->iHelper->iServerSessionHandle : 0;)
         if(thisptr->iConnections>0)
             {
             thisptr->iCallBack.iPtr=NULL;
@@ -193,6 +193,7 @@ EXPORT_C void RFbsSession::Disconnect()
                 }
             thisptr->iConnections--;
             }
+        FBS_OST(TInt tempConnectionCount = thisptr->iConnections;)
         if(thisptr->iConnections==0)
             {
             thisptr->iSharedChunk.Close();
@@ -208,7 +209,7 @@ EXPORT_C void RFbsSession::Disconnect()
             delete thisptr;
             Dll::FreeTls();	
             }
-        FBS_OST(OstTraceExt3(GRAPHICS_CONTROL_SEMANTICS, RFBSSESSION_DISCONNECT_INFO, "# Disconnected from session; this=0x%08x; iConnections=%d; iSSH=0x%08x", (TInt)thisptr, thisptr->iConnections, tempServerSessionHandle);)
+        FBS_OST(OstTraceExt3(GRAPHICS_CONTROL_SEMANTICS, RFBSSESSION_DISCONNECT_INFO, "# Disconnected from session; this=0x%08x; iConnections=%d; iSSH=0x%08x", (TInt)thisptr, tempConnectionCount, tempServerSessionHandle);)
 	    }
 	FBS_OST(OstTrace1(GRAPHICS_CONTROL_FUNCTIONS, RFBSSESSION_DISCONNECT_EXIT2, "< this=0x%08x;", (TUint)thisptr);)
 	}

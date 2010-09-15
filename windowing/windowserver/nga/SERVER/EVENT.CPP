@@ -970,6 +970,9 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
 // Event has completed.
 //
 	{
+    TRawEvent::TType eventType = aRawEvent.Type();
+    TBool isPointerEvent = TWsPointer::IsPointerEventType(eventType);
+   
     TBool pauseProcessEvents = EFalse;
     //Check if the pause in processing all raw pointer and key events was set.
     if(iPauseInterval.Int64() > 0)
@@ -986,7 +989,7 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
             {
             // Set flag ignore of processing all raw events (except processing by anim's dll plug-ins)
             // All events will be ignored except for anim's dll plug-ins.
-            pauseProcessEvents = ETrue;
+            pauseProcessEvents = isPointerEvent;
             }
         }
 
@@ -997,8 +1000,6 @@ void TWindowServerEvent::ProcessRawEvent(const TRawEvent& aRawEvent)
         RDebug::Printf("{EVNT}TWindowServerEvent::ProcessRawEvent Processing of Raw Event - ENABLED");
 #endif
     
-	TRawEvent::TType eventType = aRawEvent.Type();
-	TBool isPointerEvent = TWsPointer::IsPointerEventType(eventType);
 	if (isPointerEvent)
 		{
 #ifdef LOG_WSERV_EVENTS

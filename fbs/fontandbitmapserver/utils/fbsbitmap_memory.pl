@@ -26,9 +26,6 @@
 #  and run this script against it. The resulting file can then be imported into
 #  a spreadsheet application to be visually processed.
 #  
-#  KNOWN DEFECTS:
-#  Once the log time goes beyond midnight, snapshots will stop being taken.
-#
 
 use strict;
 
@@ -38,6 +35,7 @@ if ($#ARGV == -1 || $ARGV[0] eq "help" || $ARGV[0] eq "/?")
    print "\nusage: $0 filename [-h]\n";
    print "where\n";
    print " -h : Specifies the heartbeat in millisecs (default=10000)\n";
+   print " -d : Ignore duplicated handles\n";
    exit;
 }
 
@@ -57,6 +55,7 @@ my $heartBeatMS = 10000;
 ##
 my $heartBeatCount = 0;
 my $nextHeartBeatMS = -1;
+my $logLastLineTimeMS = 0;
 
 # A hash of thread names to the amount of bitmap memory they 
 # have used since the start of the trace.
@@ -72,6 +71,9 @@ my %SessionThreadMap = ();
 
 # Array of the above hashes, one hash per heartbeat.
 my @arrayOfSnapshots;
+
+# Count duplicated handles as memory used by a thread/process. 
+my $countDuplicates = 1;
 
 # Hashes of thread and process names to IDs.
 my %ThreadNames;
@@ -89,6 +91,10 @@ for my $i (1..$#ARGV)
    {
       $heartBeatMS = $1;
    }
+   elsif ($cma =~ m/-d/)
+   {
+      $countDuplicates = 0;
+   }
    else
    {
       print "Unrecognised parameter: $cma , ignoring...\n";
@@ -98,14 +104,13 @@ for my $i (1..$#ARGV)
 ## Read from the file.
 ## Read the log into an array line by line.
 my $TRACE_FILENAME = $ARGV[0];
-open(INPUT_FILE, $TRACE_FILENAME) or die $!;
-my @traceLines = <INPUT_FILE>;
-
+open(INPUT_FILE, '<', $TRACE_FILENAME) or die $!;
+binmode(INPUT_FILE);
 
 ##
 ## Parse each line sequentially...
 ##
-foreach my $line (@traceLines)
+while ( my $line = <INPUT_FILE> )
 {
    my $timeFromMidnightMS;
 
@@ -144,26 +149,35 @@ foreach my $line (@traceLines)
    if ($line =~ /^(\d\d):(\d\d):(\d\d)\.(\d{3})/)
    {
       $timeFromMidnightMS = ((($1 * 3600) + ($2 * 60) + $3) * 1000) + $4;
-      # Set up the time for the first snapshot.
       if ($nextHeartBeatMS == -1) 
       {
-         $nextHeartBeatMS = $timeFromMidnightMS + $firstHeartBeatTimeMS;
+         $nextHeartBeatMS = $firstHeartBeatTimeMS;
+         $logLastLineTimeMS = $timeFromMidnightMS;
       }
-   }
-
-   ##
-   ## If heartbeat reached, take snapshot of bmp memory per thread
-   ## and set next heartbeat time.
-   ##
-   while ($timeFromMidnightMS >= $nextHeartBeatMS)
-   {
-      $nextHeartBeatMS += $heartBeatMS;
-      # take a snapshot of the current bitmap memory usage per thread
-      while ((my $thread, my $bmpMemory) = each(%bmpMemoryPerThread))
+      ## We have wrapped around midnight!
+      ## Add a 1000ms cushion to the comparison to avoid wrapping around 
+      ## midnight if a trace is buffered too slowly.
+      if (($timeFromMidnightMS+1000) < $logLastLineTimeMS)
       {
-           $arrayOfSnapshots[$heartBeatCount]{$thread} = $bmpMemory;
+         $timeFromMidnightMS += 86400000;
       }
-      $heartBeatCount++;
+      $nextHeartBeatMS -= ($timeFromMidnightMS - $logLastLineTimeMS);
+      $logLastLineTimeMS = $timeFromMidnightMS;
+
+      ##
+      ## If heartbeat reached, take snapshot of bmp memory per thread
+      ## and set next heartbeat time.
+      ##
+      while ($nextHeartBeatMS <= 0)
+      {
+         $nextHeartBeatMS += $heartBeatMS;
+         # take a snapshot of the current bitmap memory usage per thread
+         while ((my $thread, my $bmpMemory) = each(%bmpMemoryPerThread))
+         {
+              $arrayOfSnapshots[$heartBeatCount]{$thread} = $bmpMemory;
+         }
+         $heartBeatCount++;
+      }
    }
 
    ## FBS Client-side traces.
@@ -240,10 +254,21 @@ foreach my $line (@traceLines)
                $bmpMemoryByServerHandle{$newBmpIdentifier} = $bytes;
             }
          }
+         elsif ($line =~ m/# Server bitmap duplicated.*iH=(\w*);.*bytes=(\d+);/)
+         {
+            if ($countDuplicates == 1)
+            {
+               # When a bitmap is duplicated, the memory is 'owned' by all
+               # threads that duplicate it.
+               my $bmpHandle = $1;
+               my $bmpBytes = $2;
+               my $bmpIdentifier = "$FbsSessionHandle:$bmpHandle";
+               $bmpMemoryPerThread{$thread} += $bmpBytes;
+               $bmpMemoryByServerHandle{$bmpIdentifier} = $bmpBytes;
+            }
+         }
          elsif ($line =~ m/#.*iH=(\w*);.*bytes=(\d+);/)
          {
-            # Duplication of a bitmap typically. When a bitmap is duplicated,
-            # the memory is 'owned' by all threads that duplicate it.
             my $bmpHandle = $1;
             my $bmpBytes = $2;
             my $bmpIdentifier = "$FbsSessionHandle:$bmpHandle";

@@ -25,9 +25,6 @@
 #  FBSCLI OST dictionary. Once tracing is gathered, save trace output as ascii 
 #  and run this script against it. The resulting file can then be imported into
 #  a spreadsheet application to be visually processed.
-#  
-#  KNOWN DEFECTS:
-#  Once the log time goes beyond midnight, snapshots will stop being taken.
 #
 
 use strict;
@@ -57,6 +54,7 @@ my $heartBeatMS = 10000;
 ##
 my $heartBeatCount = 0;
 my $nextHeartBeatMS = -1;
+my $logLastLineTimeMS = 0;
 
 # Hash of FbsSessions to thread IDs.
 my %SessionThreadMap = ();
@@ -92,14 +90,13 @@ for my $i (1..$#ARGV)
 ## Read from the file.
 ## Read the log into an array line by line.
 my $TRACE_FILENAME = $ARGV[0];
-open(INPUT_FILE, $TRACE_FILENAME) or die $!;
-my @traceLines = <INPUT_FILE>;
-
+open(INPUT_FILE, '<', $TRACE_FILENAME) or die $!;
+binmode(INPUT_FILE);
 
 ##
 ## Parse each line sequentially...
 ##
-foreach my $line (@traceLines)
+while ( my $line = <INPUT_FILE> )
 {
    my $timeFromMidnightMS;
 
@@ -138,26 +135,35 @@ foreach my $line (@traceLines)
    if ($line =~ /^(\d\d):(\d\d):(\d\d)\.(\d{3})/)
    {
       $timeFromMidnightMS = ((($1 * 3600) + ($2 * 60) + $3) * 1000) + $4;
-      # Set up the time for the first snapshot.
       if ($nextHeartBeatMS == -1) 
       {
-         $nextHeartBeatMS = $timeFromMidnightMS + $firstHeartBeatTimeMS;
+         $nextHeartBeatMS = $firstHeartBeatTimeMS;
+         $logLastLineTimeMS = $timeFromMidnightMS;
       }
-   }
-
-   ##
-   ## If heartbeat reached, take snapshot of bmp memory per thread
-   ## and set next heartbeat time.
-   ##
-   while ($timeFromMidnightMS >= $nextHeartBeatMS)
-   {
-      $nextHeartBeatMS += $heartBeatMS;
-      # take a snapshot of the current bitmap memory usage per thread
-      while ((my $thread, my $fbsResourceCount) = each(%fbsResourcesPerThread))
+      ## We have wrapped around midnight!
+      ## Add a 1000ms cushion to the comparison to avoid wrapping around 
+      ## midnight if a trace is buffered too slowly.
+      if (($timeFromMidnightMS+1000) < $logLastLineTimeMS)
       {
-           $arrayOfSnapshots[$heartBeatCount]{$thread} = $fbsResourceCount;
+         $timeFromMidnightMS += 86400000;
       }
-      $heartBeatCount++;
+      $nextHeartBeatMS -= ($timeFromMidnightMS - $logLastLineTimeMS);
+      $logLastLineTimeMS = $timeFromMidnightMS;
+
+      ##
+      ## If heartbeat reached, take snapshot of bmp memory per thread
+      ## and set next heartbeat time.
+      ##
+      while ($nextHeartBeatMS <= 0)
+      {
+         $nextHeartBeatMS += $heartBeatMS;
+         # take a snapshot of the current bitmap memory usage per thread
+         while ((my $thread, my $fbsResourceCount) = each(%fbsResourcesPerThread))
+         {
+            $arrayOfSnapshots[$heartBeatCount]{$thread} = $fbsResourceCount;
+         }
+         $heartBeatCount++;
+      }
    }
 
    ## FBS Client-side traces.

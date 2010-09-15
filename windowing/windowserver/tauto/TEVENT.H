@@ -334,6 +334,7 @@ private:
 	inline void SimulatePointerWin(TRawEvent::TType aType, TInt aX, TInt aY);
 	inline void SimulatePointerDownUpWin(TInt aX, TInt aY);
 	inline void SimulatePointer(TRawEvent::TType aType, TInt aX, TInt aY);
+	inline void SimulatePointer(TRawEvent::TType aType, TPoint aPoint);
 	void doSendEvent(TWsEvent &aEvent);
 	void SendKey(TInt aEventCode, TInt aScanCode, TInt aCode=0, TInt iRepeats=0);
 	void SendEvent(TInt aEventCode);

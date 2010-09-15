@@ -1061,6 +1061,11 @@ void CTEventTest::SimulatePointer(TRawEvent::TType aType, TInt aX, TInt aY)
     iTest->SimulatePointer(aType,aX,aY+iYOffset);
     }
 
+void CTEventTest::SimulatePointer(TRawEvent::TType aType, TPoint aPoint)
+    {
+    SimulatePointer(aType,aPoint.iX,aPoint.iY);
+    }
+
 #if !defined(TEST_GRAPHICS_WSERV_TAUTOSERVER_NONNGA)
 void CTEventTest::SimulateButton1DownWithSimulatedMove(TInt aX, TInt aY)
 	{
@@ -1832,44 +1837,79 @@ void CTEventTest::SendEventTest_NextSetOfEvents()
 
 void CTEventTest::InvisibleWindow_NextSetOfEvents()
 	{
+    const TPoint winpos(EWinPositionX, EWinPositionY);    
+    
 	switch(iEventSet++)
 		{
 		case 0:
-			SimulatePointer(TRawEvent::EButton1Down,45,30);
-			SimulatePointer(TRawEvent::EButton1Up,45,30);
-			SimulatePointer(TRawEvent::EButton1Down,20,10);
-			SimulatePointer(TRawEvent::EButton1Up,20,10);
+		    {
+		    TPoint p1(45,30);
+		    TPoint p2(20,10);
+		    TPoint p3(46,31);
+		    
+			SimulatePointer(TRawEvent::EButton1Down, p1);
+			SimulatePointer(TRawEvent::EButton1Up, p1);
+			SimulatePointer(TRawEvent::EButton1Down, p2);
+			SimulatePointer(TRawEvent::EButton1Up, p2);
 			TheClient->iWs.Flush();
 			iQueueClient->iChildWin->BaseWin()->SetVisible(EFalse);
 			iQueueClient->iChildWin->BaseWin()->SetVisible(ETrue);
 			iQueueClient->iWs.Flush();
-			SimulatePointer(TRawEvent::EButton1Down,46,31);
-			SimulatePointer(TRawEvent::EButton1Up,46,31);
+			SimulatePointer(TRawEvent::EButton1Down, p3);
+			SimulatePointer(TRawEvent::EButton1Up, p3);
 			AddExpectedEvent(EEventFocusGained);
-			AddExpectedPointer(TPointerEvent::EButton1Down, TPoint(20-EWinPositionX,10-EWinPositionY));
-			AddExpectedPointer(TPointerEvent::EButton1Up, TPoint(20-EWinPositionX,10-EWinPositionY));
-			AddExpectedPointer(TPointerEvent::EButton1Down, TPoint(46-EWinPositionX,31-EWinPositionY));
-			AddExpectedPointer(TPointerEvent::EButton1Up, TPoint(46-EWinPositionX,31-EWinPositionY));
+			
+			// adjust expected pointer coordinates for window position			
+			p1-=winpos;
+			p2-=winpos;
+			p3-=winpos;
+			
+			// p1 expected post ou1cimx1#460496, previously queued events were deleted when a window was made invisible.
+			AddExpectedPointer(TPointerEvent::EButton1Down, p1);
+            AddExpectedPointer(TPointerEvent::EButton1Up, p1);			
+			AddExpectedPointer(TPointerEvent::EButton1Down, p2);
+			AddExpectedPointer(TPointerEvent::EButton1Up, p2);
+			AddExpectedPointer(TPointerEvent::EButton1Down, p3);
+			AddExpectedPointer(TPointerEvent::EButton1Up, p3);
+		    }
 			break;
 		case 1:
-			SimulatePointer(TRawEvent::EButton1Down,21,11);
-			SimulatePointer(TRawEvent::EButton1Up,21,11);
-			SimulatePointer(TRawEvent::EButton1Down,44,30);
-			SimulatePointer(TRawEvent::EButton1Up,44,30);
+		    {
+		    TPoint p1(21,11);
+		    TPoint p2(44,30);
+		    TPoint p3(19,12);
+		    TPoint p4(47,32);
+		    
+			SimulatePointer(TRawEvent::EButton1Down, p1);
+			SimulatePointer(TRawEvent::EButton1Up, p1);
+			SimulatePointer(TRawEvent::EButton1Down, p2);
+			SimulatePointer(TRawEvent::EButton1Up, p2);
 			TheClient->iWs.Flush();
 			iQueueClient->iWin->BaseWin()->SetVisible(EFalse);
 			iQueueClient->iWin->BaseWin()->SetVisible(ETrue);
 			iQueueClient->iWs.Flush();
-			SimulatePointer(TRawEvent::EButton1Down,19,12);
-			SimulatePointer(TRawEvent::EButton1Up,19,12);
-			SimulatePointer(TRawEvent::EButton1Down,47,32);
-			SimulatePointer(TRawEvent::EButton1Up,47,32);
-			/*AddExpectedPointer(TPointerEvent::EButton1Down, TPoint(44-EWinPositionX,30-EWinPositionY));
-			AddExpectedPointer(TPointerEvent::EButton1Up, TPoint(44-EWinPositionX,30-EWinPositionY));*/
-			AddExpectedPointer(TPointerEvent::EButton1Down, TPoint(19-EWinPositionX,12-EWinPositionY));
-			AddExpectedPointer(TPointerEvent::EButton1Up, TPoint(19-EWinPositionX,12-EWinPositionY));
-			AddExpectedPointer(TPointerEvent::EButton1Down, TPoint(47-EWinPositionX,32-EWinPositionY));
-			AddExpectedPointer(TPointerEvent::EButton1Up, TPoint(47-EWinPositionX,32-EWinPositionY));
+			SimulatePointer(TRawEvent::EButton1Down, p3);
+			SimulatePointer(TRawEvent::EButton1Up, p3);
+			SimulatePointer(TRawEvent::EButton1Down, p4);
+			SimulatePointer(TRawEvent::EButton1Up, p4);
+			
+            // adjust expected pointer coordinates for window position          
+            p1-=winpos;
+            p2-=winpos;
+            p3-=winpos;
+            p4-=winpos;
+			
+            // p1 expected post ou1cimx1#460496, previously queued events were deleted when a window was made invisible.            
+            AddExpectedPointer(TPointerEvent::EButton1Down, p1);
+            AddExpectedPointer(TPointerEvent::EButton1Up, p1);
+            // p2 expected post ou1cimx1#460496, previously queued events were deleted when a window was made invisible.
+			AddExpectedPointer(TPointerEvent::EButton1Down, p2);
+			AddExpectedPointer(TPointerEvent::EButton1Up, p2);
+			AddExpectedPointer(TPointerEvent::EButton1Down, p3);
+			AddExpectedPointer(TPointerEvent::EButton1Up, p3);
+			AddExpectedPointer(TPointerEvent::EButton1Down, p4);
+			AddExpectedPointer(TPointerEvent::EButton1Up, p4);
+		    }
 			break;
 		default:
 			CActiveScheduler::Stop();
