@@ -51,7 +51,9 @@ library         ws32.lib      		// For RWindow, Direct Screen Access, etc
 library         libstdcpp.lib      	// standard lib
 library         libc.lib      		// standard lib
 library         libm.lib      		// standard lib
+#ifdef WINSCW
 library         edllstub.lib 
+#endif
 library         sflibopenvgrefimpl.lib        
 
 #ifdef WINS

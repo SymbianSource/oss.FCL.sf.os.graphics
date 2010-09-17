@@ -15,8 +15,14 @@
 #include <e32debug.h>
 #include "eglprivate.h"
 
+/*
+ * For the moment, we are not actually using the major and minor number
+ * programatically.  Enable this code once its actually used.
+ */
+#if EGL_MAJOR_MINOR_NUMBER_USED
 const TInt KEglMajorVersion = 1;
 const TInt KEglMinorVersion = 4;
+#endif
 
 #define KEglClientApis  ""
 #define KEglVendor      "Nokia"
