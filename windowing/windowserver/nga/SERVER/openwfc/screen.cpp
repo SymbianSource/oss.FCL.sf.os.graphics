@@ -16,6 +16,7 @@
 #include "screen.h"
 
 #include <hal.h>
+#include <hal_data.h>
 #include <graphics/wsscreendevice.h>
 #include <graphics/wsscene.h>
 #include <graphics/wselement.h>

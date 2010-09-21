@@ -91,6 +91,11 @@
 <unit bldFile="graphicshwdrivers/surfacemgr/group" mrp="os/deviceplatformrelease/foundation_system/system_model/graphicshwdrivers/surfacemgr/group/graphics_surfacemanager.mrp"/>
 </component>
 </collection>
+<collection name="windowing" long-name="Windowing">
+<component name="windowserver" long-name="Window Server">
+<unit bldFile="windowing/windowserver/group" mrp=""/>
+</component>
+</collection>
 </block>
 </layer>
 </systemModel>

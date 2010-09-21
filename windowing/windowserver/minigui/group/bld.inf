@@ -22,4 +22,5 @@ minigui.oby						/epoc32/rom/include/minigui.oby
 wsini_minigui.ini				z:/
 minigui-stripped.oby            /epoc32/rom/include/minigui-stripped.oby
 minigui_syborg.oby              /epoc32/rom/include/minigui_syborg.oby
+minigui_simulator.oby			 /epoc32/rom/include/minigui_simulator.oby
 wsini_minigui-stripped.ini		z:/

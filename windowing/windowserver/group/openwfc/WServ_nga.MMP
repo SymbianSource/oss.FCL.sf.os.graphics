@@ -22,6 +22,8 @@
 TARGET            wserv_nga.exe
 TARGETTYPE        exe
 
+OS_LAYER_SYSTEMINCLUDE
+
 EPOCSTACKSIZE	  0x4000
 // 6Mb max heap for Winscw builds (default 1Mb used for target builds)
 
