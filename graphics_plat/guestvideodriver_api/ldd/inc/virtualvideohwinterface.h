@@ -53,7 +53,7 @@ class DVirtualVideoHwInterface : public DBase
         ERegInputBufferMaxTail,
         ERegRequestId,
         ERegSharedCmdMemBase,
-        ERegSharedFramebufferMemBase,
+        ERegSharedSurfacebufferMemBase,
         ENumRegisters              ///< Number of registers                     
         
         };
@@ -144,12 +144,12 @@ class DVirtualVideoHwInterface : public DBase
     void SetSharedCmdMemBase( TUint32 aPhysicalAddress );
         
     /**
-     * Set shared framebuffer memory base address.
+     * Set shared surface buffer memory base address.
      *
      * @param aPhysicalAddress Physical address of the contiguous memory area reserved for video device.
      */
 
-    void SetSharedFramebufferMemBase( TUint32 aPhysicalAddress );
+    void SetSharedSurfacebufferMemBase( TUint32 aPhysicalAddress );
     
     /**
      * Address to input parameter buffer
@@ -183,7 +183,7 @@ class DVirtualVideoHwInterface : public DBase
     void SetRegisterValue( TRegister aRegister,
         TUint32 aValue );
 
-    IMPORT_C static TPhysAddr GetFrameBase();
+    IMPORT_C static TPhysAddr GetSurfaceBufferBase();
 
     protected:
 

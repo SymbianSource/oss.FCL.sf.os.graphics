@@ -62,13 +62,13 @@ public:
 	IMPORT_C TInt EglGetSgHandles( const TUint64 aId, TUint64 *aSgHandles );
 
 	/**
-     * Gets Base Address of Frame Buffer
+     * Gets Base Address of Surface Buffer
      * @param aHWAddress	returned Base Address
      *
 	 * @note	A base address of 0 is invalid, and indicates a failure to
      *          obtain the base address.
 	 */
-	IMPORT_C TInt GetFrameBufferBaseAddress( TUint32& aHWAddress );
+	IMPORT_C TInt GetSurfaceBufferBaseAddress( TUint32& aHWAddress );
 
 
 private:

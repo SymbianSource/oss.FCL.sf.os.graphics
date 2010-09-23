@@ -37,8 +37,8 @@
 #define VVI_PARAMETERS_OUTPUT_BASE_ADDRESS VVI_BASE + 0x01000000
 #define VVI_PARAMETERS_OUTPUT_MEMORY_SIZE  0x01000000
 
-#define VVI_FRAMEBUFFER_BASE_ADDRESS VVI_BASE + 0x02000000
-#define VVI_FRAMEBUFFER_MEMORY_SIZE  0x01000000
+#define VVI_SURFACEBUFFER_BASE_ADDRESS VVI_BASE + 0x02000000
+#define VVI_SURFACEBUFFER_MEMORY_SIZE  0x01000000
 
 // register indices, TODO: cleanup needed, some are not used
 #define VVI_R_ID                                0x0000
@@ -54,7 +54,7 @@
 #define VVI_R_INPUT_BUFFER_MAX_TAIL             0x0028
 #define VVI_R_REQUEST_ID                        0x002c
 #define VVI_R_SHARED_CMD_MEMORY_BASE            0x0030
-#define VVI_R_SHARED_FRAMEBUFFER_MEMORY_BASE    0x0034
+#define VVI_R_SHARED_SURFACEBUFFER_MEMORY_BASE  0x0034
 #define VVI_R_LASTREG                           0x0038  // not a register, address of last register
 
 // COMMAND register values

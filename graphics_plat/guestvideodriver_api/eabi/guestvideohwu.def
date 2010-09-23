@@ -1,6 +1,6 @@
 EXPORTS
  _Z19CreateLogicalDevicev @ 1 NONAME
- _ZN24DVirtualVideoHwInterface12GetFrameBaseEv @ 2 NONAME
+ _ZN24DVirtualVideoHwInterface20GetSurfaceBufferBaseEv @ 2 NONAME
  _ZTI17DDeviceReqHandler @ 3 NONAME DATA 40
  _ZTI21DVirtualVideoHwDevice @ 4 NONAME DATA 32
  _ZTI22DVirtualVideoHwChannel @ 5 NONAME DATA 12
