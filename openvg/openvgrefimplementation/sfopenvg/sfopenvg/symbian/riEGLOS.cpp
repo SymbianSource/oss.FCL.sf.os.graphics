@@ -86,7 +86,7 @@ void OSReleaseMutex(void)
 
 struct OSWindowContext
 {
-	TNativeWindowType*  iNativeWindowType;   
+	TNativeWindowType   iNativeWindowType;
 };
 
 void* OSCreateWindowContext(EGLNativeWindowType window)
@@ -100,7 +100,9 @@ void* OSCreateWindowContext(EGLNativeWindowType window)
 	{
 		return NULL;
 	}
-    ctx->iNativeWindowType = (TNativeWindowType*)window;
+	RDrawableWindow* drawableWindow = (RDrawableWindow*)window;
+	ctx->iNativeWindowType.iSize.iHeight = drawableWindow->Size().iHeight;
+	ctx->iNativeWindowType.iSize.iWidth = drawableWindow->Size().iWidth;
     return ctx;
 }
 
@@ -128,8 +130,8 @@ void OSGetWindowSize(const void* context, int& width, int& height)
     OSWindowContext* ctx = (OSWindowContext*)context;
     if(ctx)
     {
-    	width=ctx->iNativeWindowType->iSize.iWidth;
-		height=ctx->iNativeWindowType->iSize.iHeight; 
+    	width=ctx->iNativeWindowType.iSize.iWidth;
+		height=ctx->iNativeWindowType.iSize.iHeight; 
     }
     else
     {
@@ -150,15 +152,15 @@ void OSBlitToWindow(void* context, const Drawable* drawable)
 {
     OSWindowContext* ctx = (OSWindowContext*)context;
     //blit if either of iBitmap or iMaskBitmap exist
-    if(ctx && ctx->iNativeWindowType->iBitmap)
+    if(ctx && ctx->iNativeWindowType.iBitmap)
     {
         TUint w = drawable->getWidth();
         TUint h = drawable->getHeight();
         
         //these should be same as bitmap
-        if(ctx->iNativeWindowType->iBitmap)
+        if(ctx->iNativeWindowType.iBitmap)
         	{
-        	CFbsBitmap* bitmap = ctx->iNativeWindowType->iBitmap;        	
+        	CFbsBitmap* bitmap = ctx->iNativeWindowType.iBitmap;        	
         	ReadPixelsToCFbsBitmap(*bitmap, w, h);        	
         	}
     }

@@ -24,6 +24,7 @@ VENDORID		0x70000001
 NOEXPORTLIBRARY
 DEFFILE lib_ref_egl.def
 
+MACRO BUILD_WITH_PRIVATE_EGL
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 OS_LAYER_SYSTEMINCLUDE
@@ -35,9 +36,6 @@ SYSTEMINCLUDE  OS_LAYER_PUBLIC_EXPORT_PATH(egl) // EGL include files
 
 USERINCLUDE	../inc
 
-userinclude     ../../sfopenvg			// Local include files
-userinclude     ../../sfopenvg/include	// Local include files
-
 SOURCEPATH ../src
 
 SOURCE entrypoints.cpp
@@ -46,33 +44,17 @@ SOURCE session.cpp
 SOURCE display.cpp
 SOURCE syncobj.cpp
 
-
-sourcepath      ../../sfopenvg		// Relative path to source files
-
-source riApi.cpp
-source riContext.cpp
-source riFont.cpp
-source riImage.cpp
-source riMath.cpp
-source riMiniEGL.cpp
-source riPath.cpp
-source riPixelPipe.cpp
-source riRasterizer.cpp
-source riVGU.cpp
-
-//for EGL
-SOURCEPATH ../../sfopenvg/symbian
-SOURCE riEGLOS.cpp
-
-LIBRARY euser.lib
-
+library			euser.lib
 library         fbscli.lib    		// For CFbsBitmap, etc
 library         bitgdi.lib    		// For CFbsBitmapDevice, CFbsBitGc, etc
 library         ws32.lib      		// For RWindow, Direct Screen Access, etc
 library         libstdcpp.lib      	// standard lib
 library         libc.lib      		// standard lib
 library         libm.lib      		// standard lib
+#ifdef WINSCW
 library         edllstub.lib 
+#endif
+library         sflibopenvgrefimpl.lib        
 
 #ifdef WINS
 LIBRARY ewsd.lib

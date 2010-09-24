@@ -59,21 +59,14 @@ void fill_vector(HINSTANCE aDll)
 		address = GetProcAddress(aDll, (LPCSTR)i);
 		if (address == NULL)
 			{
+			RDebug::Printf("No entry point at %d\n", i);
 			Stop("... has too few exported functions");
 			}
 		vector[i] = address;
 		}
 
-	// There's an additional _E32Dll entry point after last ordinal position.
-	// Read it, but no need to store it
-	address = GetProcAddress(aDll, (LPCSTR)(MAX_ORDINAL+1));
-	if (address == NULL)
-		{
-		Stop("... has too few exported functions");
-		}
-
 	// next position should be empty
-	address = GetProcAddress(aDll, (LPCSTR)(MAX_ORDINAL+2));
+	address = GetProcAddress(aDll, (LPCSTR)(MAX_ORDINAL+1));
 	if (address != NULL)
 		{
 		Stop("... has too many exported functions");

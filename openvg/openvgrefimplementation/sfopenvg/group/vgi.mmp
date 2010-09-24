@@ -37,11 +37,8 @@ source          vgi.cpp
 
 library         euser.lib     		// Mandatory
 
-#ifdef BUILD_WITH_PRIVATE_EGL
 library		libEGL.lib
-#else
-library		libegl_sw.lib
-#endif
+
 
 library			fbscli.lib
 

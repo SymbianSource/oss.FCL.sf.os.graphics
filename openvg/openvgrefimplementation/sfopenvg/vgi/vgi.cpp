@@ -138,7 +138,6 @@ VGI_API_CALL TInt VGISymbianInitialize( TSize aSize, VGIColorSpace /*aColorSpace
 		__ASSERT_ALWAYS(eglGetError() == EGL_SUCCESS,User::Invariant());
 		__ASSERT_ALWAYS(numconfigs == 1,User::Invariant());
 		
-		//TSize maxSize(MAX_WIDTH,MAX_HEIGHT);
 		TSize maxSize(aSize.iWidth, aSize.iHeight);
 	    
 		egl.iPixmap = new(ELeave) CFbsBitmap();
@@ -183,6 +182,7 @@ VGI_API_CALL void VGISymbianTerminate()
 	eglDestroySurface(egl.iEgldisplay, egl.iEglsurface);
 	delete egl.iPixmap;
 	ReleaseTls();
+	eglReleaseThread();
 }
 
 VGI_API_CALL TInt VGISymbianResize( TSize aSize )

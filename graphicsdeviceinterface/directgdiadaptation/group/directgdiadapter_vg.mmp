@@ -56,10 +56,8 @@ SOURCE 			directgdidrawableref.cpp
 LIBRARY			euser.lib
 LIBRARY			estor.lib
 LIBRARY			gdi.lib
-//LIBRARY			libOpenVG.lib
-//LIBRARY			libOpenVGU.lib
-LIBRARY         libopenvg_sw.lib 
-LIBRARY         libopenvgu_sw.lib 
+LIBRARY			libOpenVG.lib
+LIBRARY			libOpenVGU.lib
 LIBRARY			libEGL.lib
 LIBRARY			fbscli.lib
 

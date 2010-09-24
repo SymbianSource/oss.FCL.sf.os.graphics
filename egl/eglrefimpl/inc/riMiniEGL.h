@@ -41,13 +41,13 @@
 #include "egl.h"
 #include "riContext.h"
 
-#ifdef BUILD_WITH_PRIVATE_EGL 
+//#ifdef BUILD_WITH_PRIVATE_EGL 
 #include "eglinternal.h"
-#endif
+//#endif
 
-#ifdef BUILD_WITH_PRIVATE_OPENVG
+//#ifdef BUILD_WITH_PRIVATE_OPENVG
 #include "openvginternal.h"
-#endif
+//#endif
 
 //==============================================================================================
 

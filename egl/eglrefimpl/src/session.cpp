@@ -15,8 +15,14 @@
 #include <e32debug.h>
 #include "eglprivate.h"
 
+/*
+ * For the moment, we are not actually using the major and minor number
+ * programatically.  Enable this code once its actually used.
+ */
+#if EGL_MAJOR_MINOR_NUMBER_USED
 const TInt KEglMajorVersion = 1;
 const TInt KEglMinorVersion = 4;
+#endif
 
 #define KEglClientApis  ""
 #define KEglVendor      "Nokia"
@@ -80,7 +86,7 @@ CEglThreadSession::CEglThreadSession(CEglDriver& aDriver):
 
 CEglThreadSession::~CEglThreadSession()
 	{
-	delete iEgl;
+//Emilio	delete iEgl;
 	CEglDriver::Close();
 	}
 
@@ -142,8 +148,9 @@ EGLDisplay CEglThreadSession::EglGetDisplay(NativeDisplayType aDisplayId)
 
     // default display is created when driver is initialised the first time and will
     // be destroyed when all threads within process have called eglReleaseThread
+    return do_eglGetDisplay(aDisplayId);
 
-    return KEglDefaultDisplayHandle;
+    //Emilio return KEglDefaultDisplayHandle;
     }
 void CEglThreadSession::SetEgl(EGL* aEgl)
 	{
@@ -177,7 +184,7 @@ EGLBoolean CEglThreadSession::EglInitialize(EGLDisplay aDisplay, EGLint* aMajor,
         return EGL_FALSE;
         }
     
-    EGL* pEgl = NULL;
+    /* Emilio EGL* pEgl = NULL;
     
     try
     {
@@ -220,8 +227,9 @@ EGLBoolean CEglThreadSession::EglInitialize(EGLDisplay aDisplay, EGLint* aMajor,
         {
         *aMinor = KEglMinorVersion;
         }
+	Emilio */
 
-    return EGL_TRUE;
+    return do_eglInitialize(aDisplay, aMajor, aMinor);
     }
 
 EGLBoolean CEglThreadSession::EglTerminate(EGLDisplay aDisplay)
@@ -242,7 +250,8 @@ EGLBoolean CEglThreadSession::EglTerminate(EGLDisplay aDisplay)
     display->Terminate();
     iDriver.Unlock();
     
-    return EGL_TRUE;
+    return do_eglTerminate(aDisplay);
+  //Emilio  return EGL_TRUE;
     }
 
 TFuncPtrEglProc CEglThreadSession::EglGetProcAddress(const char* aName)
