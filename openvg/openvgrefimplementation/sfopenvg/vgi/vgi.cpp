@@ -140,10 +140,7 @@ VGI_API_CALL TInt VGISymbianInitialize( TSize aSize, VGIColorSpace /*aColorSpace
 		
 		//TSize maxSize(MAX_WIDTH,MAX_HEIGHT);
 		TSize maxSize(aSize.iWidth, aSize.iHeight);
-		
-		 RDebug::Printf(" ££££££££££££££££££ In VGISymbianInitialize,aSize.iWidth is %d  $$$$$$$$$$$$$ ",aSize.iWidth);
-		 RDebug::Printf(" £££££££££££££££££££ In VGISymbianInitialize,aSize.iHeight is %d  $$$$$$$$$$$$$ ",aSize.iHeight);
-		    
+	    
 		egl.iPixmap = new(ELeave) CFbsBitmap();
 		egl.iPixmap->Create( maxSize, EColor16MA );
 		 

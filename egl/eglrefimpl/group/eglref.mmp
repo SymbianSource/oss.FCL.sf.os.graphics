@@ -64,20 +64,15 @@ source riVGU.cpp
 SOURCEPATH ../../sfopenvg/symbian
 SOURCE riEGLOS.cpp
 
-
 LIBRARY euser.lib
-//added by JT
-//LIBRARY sflibopenvgrefimpl.lib
 
 library         fbscli.lib    		// For CFbsBitmap, etc
 library         bitgdi.lib    		// For CFbsBitmapDevice, CFbsBitGc, etc
 library         ws32.lib      		// For RWindow, Direct Screen Access, etc
-library         libstdcpp.lib      		// standard lib
+library         libstdcpp.lib      	// standard lib
 library         libc.lib      		// standard lib
 library         libm.lib      		// standard lib
 library         edllstub.lib 
-
-//End of added by JT
 
 #ifdef WINS
 LIBRARY ewsd.lib
