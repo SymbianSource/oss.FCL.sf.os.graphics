@@ -94,6 +94,8 @@ data=DATAZ_\wsini_minigui.ini	\system\data\wsini.ini
 #include <emime.iby>
 #include <scs.iby>
 #include <cflog.iby>
+#include <featmgr.iby>
+#include <featreg.iby>
 
 file=\epoc32\release\ARMV5\urel\abclient.dll 				sys\bin\abclient.dll
 file=\epoc32\release\ARMV5\urel\Http.dll 					sys\bin\http.dll
