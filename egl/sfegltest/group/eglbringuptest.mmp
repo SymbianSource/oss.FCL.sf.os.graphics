@@ -1,0 +1,61 @@
+// Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// This test program is designed for a Mini GUI environment (no middleware)
+// for the purpose of testing the bring-up of a new EGL implementation.
+// It differs from egltest component in so far as it does not need the
+// Test Execution Framework version 1, which is not present in the Symbian
+// Foundation (since it uses the newer STIF framework instead).
+//
+// A new EGL implementation must implement EGL Sync Objects in order for the
+// system to boot, since OpenWF needs this for initialisation.
+//
+// Once EGL sync objects support is present, this utility program known as
+// ebt (EGL bringup test) can be used from the EShell command prompt.
+//
+// ebt can take an argument to specific which screen to test.  By default
+// screen zero is tested.
+// ebt aims to provide comprehensive logging to allow confirmation of the
+// setup of appropriate EGL objects, and subsequent rendering using OpenVG
+
+
+target          eglbringuptest.exe
+targettype      exe
+
+userinclude     .
+userinclude 	../inc/
+systeminclude   /epoc32/include
+systeminclude   /epoc32/include/stdapis
+systeminclude   /epoc32/include/platform
+
+library			libegl.lib		// EGL
+library			libopenvg.lib	// OpenVG
+library			libopenvgu.lib	// OpenVGU
+
+library         euser.lib
+library         libc.lib
+library         fbscli.lib
+library         ws32.lib
+library 		gdi.lib
+library     	bitgdi.lib
+library         hal.lib
+library			efsrv.lib
+library			fntstr.lib
+
+sourcepath		../src
+source			main.cpp
+source			eglrendering.cpp 
+
+epocheapsize 0x1000 0x800000
+
+smpsafe

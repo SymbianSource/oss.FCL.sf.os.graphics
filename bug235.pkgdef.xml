@@ -96,6 +96,11 @@
 <unit bldFile="windowing/windowserver/group" mrp=""/>
 </component>
 </collection>
+<collection name="egl" long-name ="EGL">
+<component name="sfegltest" long-name="Symbian Foundation EGL tests">
+<unit bldFile="egl/sfegltest/group" mrp=""/>
+</component>
+</collection>
 </block>
 </layer>
 </systemModel>
