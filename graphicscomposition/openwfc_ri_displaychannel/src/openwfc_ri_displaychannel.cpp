@@ -93,15 +93,15 @@ void COpenWFC_RI_DisplayChannel::ConstructL()
         }
     
     User::LeaveIfError(iDispChan.Open(iScreenNumber));
-#ifdef __WINS__
+//#ifdef __WINS__
     iScreenInfo.iDefaultRotation = EScreenRotate0;
     iDefaultRotation = RDisplayChannel::ERotationNormal;
     iRotationOffset = 0;
-#else
-    iScreenInfo.iDefaultRotation = EScreenRotate270;
-    iDefaultRotation = RDisplayChannel::ERotation270CW;
-    iRotationOffset = 3;
-#endif
+//#else
+//    iScreenInfo.iDefaultRotation = EScreenRotate270;
+//    iDefaultRotation = RDisplayChannel::ERotation270CW;
+//    iRotationOffset = 3;
+//#endif
     RDisplayChannel::TDisplayRotation rotation = iDispChan.CurrentRotation();
     switch (rotation)
         {
