@@ -28,7 +28,6 @@ VENDORID 0x70000001
 SOURCEPATH      ../sfbs
 
 userinclude     ../inc
-userinclude     ../traces_FBSCLI
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 

@@ -1,4 +1,4 @@
-// Copyright (c) 1995-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1995-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -25,11 +25,6 @@
 #include "BitwiseBitmap.inl"
 #include "fbsmessage.h"
 #include "bitmapconst.h"
-#include "OstTraceDefinitions.h"
-#include "fbstrace.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "FBSBMPTraces.h"
-#endif
 
 const TInt KMaxPixelSize = KMaxTInt / 4; // Maximum pixel size to avoid some overflow problems
 const TInt KMaxBitmapHandleBufferSize = KNumBytesPerBitmapHandle * 2000; 	// Maximum size of buffer to store all bitmap handles.
@@ -100,8 +95,6 @@ decrements to zero.
 */
 EXPORT_C void CFbsBitmap::Reset()
 	{
-    FBS_OST(TInt ssh = (iFbs ? iFbs->ServerSessionHandle() : 0);)
-    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_RESET_ENTRY, "> this=0x%08x; iH=0x%08x; iSH=0x%08x; iSSH=0x%08x", (TUint)this, iHandle, iServerHandle, ssh );)
 	if (iHandle && !(iFlags & EIsRomBitmap))
 		{
 		iFbs->SendCommand(EFbsMessClose, iHandle, Handle());
@@ -121,7 +114,6 @@ EXPORT_C void CFbsBitmap::Reset()
 	iUseCount = 0;
 	iHandle = 0;
 	iServerHandle = 0;
-	FBS_OST(OstTrace1( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_RESET_EXIT, "< this=0x%08x", (TUint)this );)
 	}
 	
 /** Tests whether or not the bitmap is read-only.
@@ -262,11 +254,7 @@ if the requested size is too big.
 */
 EXPORT_C TInt CFbsBitmap::Create(const TSize& aSizeInPixels,TDisplayMode aDispMode)
 	{
-    FBS_OST(OstTraceExt4(GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_CREATE_ENTRY, "> this=0x%08x; w=%d; h=%d; dm=%d", (TUint)this, aSizeInPixels.iWidth, aSizeInPixels.iHeight, aDispMode); ) 
-	TInt err = DoCreate(aSizeInPixels,aDispMode,KUidCFbsBitmapCreation);
-    FBS_OST(TInt ssh = (iFbs ? iFbs->ServerSessionHandle() : 0);)
-	FBS_OST(OstTraceExt5(GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_CREATE_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x; iSSH=0x%08x", (TUint)this, err, iHandle, iServerHandle, ssh); )
-    return err;
+	return DoCreate(aSizeInPixels,aDispMode,KUidCFbsBitmapCreation);
 	}
 
 TInt CFbsBitmap::DoCreate(const TSize& aSizeInPixels, TDisplayMode aDispMode, TUid aUid, TInt aDataSize)
@@ -317,11 +305,7 @@ if hardware bitmaps are not supported on the device.
 */
 EXPORT_C TInt CFbsBitmap::CreateHardwareBitmap(const TSize& aSizeInPixels,TDisplayMode aDispMode,TUid aCreatorUid)
 	{
-    FBS_OST(OstTraceExt5( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_CREATEHARDWAREBITMAP_ENTRY, "> this=0x%08x; w=%d; h=%d; dm=%d; uid=0x%08x", (TUint)this, aSizeInPixels.iWidth, aSizeInPixels.iHeight, aDispMode, aCreatorUid.iUid);)
-	TInt err = DoCreate(aSizeInPixels,aDispMode,aCreatorUid);
-    FBS_OST(TInt ssh = (iFbs ? iFbs->ServerSessionHandle() : 0);)
-	FBS_OST(OstTraceExt5( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_CREATEHARDWAREBITMAP_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x; iSSH=0x%08x", (TUint)this, err, iHandle, iServerHandle, ssh);)
-	return err;
+	return DoCreate(aSizeInPixels,aDispMode,aCreatorUid);
 	}
 
 /** Resets the pixel-size of the bitmap.
@@ -422,105 +406,53 @@ with the specified handle number.
 @released
 @see CFbsBitmap::Handle()
 */
-EXPORT_C TInt CFbsBitmap::Duplicate(TInt aBitmapHandle)	
-    {
-    TInt ret = KErrNone;
-    FBS_OST(OstTraceExt2( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_DUPLICATE_ENTRY, "> this=0x%08x; iH=0x%08x;", (TUint)this, aBitmapHandle);)
+EXPORT_C TInt CFbsBitmap::Duplicate(TInt aBitmapHandle)
+		{
 	if(!iFbs) 
 		{
-		ret = KErrCouldNotConnect;
-		FBS_OST(OstTrace1( TRACE_ERROR, CFBSBITMAP_DUPLICATE_ERROR, "! this=0x%08x; !iFbs", (TUint)this);)
+		return(KErrCouldNotConnect);
 		}
-	else if(!aBitmapHandle) 
+	if(!aBitmapHandle) 
 		{
-		ret = KErrUnknown;
-		FBS_OST(OstTrace1( TRACE_ERROR, CFBSBITMAP_DUPLICATE_ERROR2, "! this=0x%08x; !aBitmapHandle", (TUint)this);)
+		return(KErrUnknown);
 		}
-    else
-        {
-        TBool isinrom = EFalse;
-        ret = User::IsRomAddress(isinrom, (TAny*)aBitmapHandle);
-        if (ret == KErrNone)
-            {
-            if (isinrom)
-                {
-                ret = DuplicateInRom(aBitmapHandle);
-                FBS_OST_IF(ret != KErrNone, OstTraceExt2( TRACE_ERROR, CFBSBITMAP_DUPLICATE_ERROR4, "! this=0x%08x; DuplicateInRom() returned %d;", (TUint)this, ret);)
-                }
-            else
-                {
-                ret = DuplicateInRam(aBitmapHandle);
-                FBS_OST_IF(ret != KErrNone, OstTraceExt2( TRACE_ERROR, CFBSBITMAP_DUPLICATE_ERROR5, "! this=0x%08x; DuplicateInRam() returned %d;", (TUint)this, ret);)
-                }
-            }
-        else 
-            {
-            FBS_OST(OstTraceExt2( TRACE_ERROR, CFBSBITMAP_DUPLICATE_ERROR3, "! this=0x%08x; IsRomAddress() returned %d", (TUint)this, ret);)
-            ret = KErrUnknown;
-            }
-        }
-    FBS_OST(TInt ssh = (iFbs ? iFbs->ServerSessionHandle() : 0);)
-    FBS_OST(OstTraceExt5( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_DUPLICATE_EXIT, "< this=0x%08x; iH=0x%08x; iSH=0x%08x; ret=%d; iSSH=0x%08x", (TUint)this, iHandle, iServerHandle, ret, ssh);)
-	return ret;
-    }
-
-/** Duplicates a bitmap where the bitmap handle refers to a rom bitmap.
-@param aBitmapHandle A valid Rom bitmap handle.
-@return KErrNone on success.
- */
-TInt CFbsBitmap::DuplicateInRom(TInt aBitmapHandle)
-    {
-    TInt ret = KErrNone;
-    Reset();
-    TUid uid = ((CBitwiseBitmap*)aBitmapHandle)->Uid();
-    if (uid != KCBitwiseBitmapUid)
-        {
-        FBS_OST(OstTraceExt2( TRACE_ERROR, CFBSBITMAP_DUPLICATEINROM_ERROR, "! this=0x%08x; 0x%08x != KCBitwiseBitmapUid", (TUint)this, (TUint)uid.iUid);)
-        ret = KErrUnknown;
-        }
-    else
-        {
-        iAddressPointer = (CBitwiseBitmap*)aBitmapHandle;
-        iFlags = EIsRomBitmap;
-        iHandle=1;
-        ret = iFbs->AllocScanLineBuffer(iAddressPointer->iByteWidth + 4);
-        FBS_OST_IF(ret!=KErrNone, OstTraceExt2( TRACE_ERROR, CFBSBITMAP_DUPLICATEINROM_ERROR2, "! this=0x%08x; AllocScanLineBuffer() returned %d", (TUint)this, ret);)
-        }
-    return ret;
-    }
-
-/** Duplicates a bitmap where the bitmap handle refers to a ram bitmap
-@param aBitmapHandle A valid Ram bitmap handle.
-@return KErrNone on success.
- */
-TInt CFbsBitmap::DuplicateInRam(TInt aBitmapHandle)
-    {
-    TInt ret = KErrNone;
-    Reset();
-     
-    TPckgBuf<TBmpHandles> b;
-    TIpcArgs args(aBitmapHandle,&b);
-    ret=iFbs->SendCommand(EFbsMessBitmapDuplicate,args);
-    FBS_OST_IF(ret!=KErrNone, OstTraceExt2( TRACE_ERROR, CFBSBITMAP_DUPLICATEINRAM_ERROR, "! this=0x%08x; SendCommand(EFbsMessBitmapDuplicate) returned %d", (TUint)this, ret);)
-    if(ret==KErrNone) 
-        {
-        iHandle=b().iHandle;
-        iServerHandle=b().iServerHandle;
-        iAddressPointer=(CBitwiseBitmap*)(iFbs->HeapBase()+b().iAddressOffset);
-        if (iAddressPointer->iUid.iUid != KCBitwiseBitmapUid.iUid && iAddressPointer->iUid.iUid != KCBitwiseBitmapHardwareUid.iUid)
-            {
-            iFlags = EIsExtendedBitmap;
-            }
-        ret = iFbs->iHelper->AddBitmap(*this);
-        FBS_OST_IF(ret!=KErrNone, OstTraceExt2( TRACE_ERROR, CFBSBITMAP_DUPLICATEINRAM_ERROR2, "! this=0x%08x; AddBitmap() returned %d", (TUint)this, ret);)
-        if (ret == KErrNone)
-            {
-            ret = iFbs->AllocScanLineBuffer(iAddressPointer->iByteWidth+4);
-            FBS_OST_IF(ret!=KErrNone, OstTraceExt2( TRACE_ERROR, CFBSBITMAP_DUPLICATEINRAM_ERROR3, "! this=0x%08x; AllocScanLineBuffer() returned %d", (TUint)this, ret);)
-            }
-        }
-    return ret;
-    }
+	Reset();
+	TBool isinrom=EFalse;
+	TInt ret=User::IsRomAddress(isinrom,(TAny*)aBitmapHandle);
+	if(ret!=KErrNone) 
+		{
+		return(KErrUnknown);
+		}
+	if(isinrom)
+		{
+		if (((CBitwiseBitmap*)aBitmapHandle)->Uid() != KCBitwiseBitmapUid)
+			return(KErrUnknown);
+		iAddressPointer = (CBitwiseBitmap*)aBitmapHandle;
+		iFlags = EIsRomBitmap;
+		iHandle=1;
+		return iFbs->AllocScanLineBuffer(iAddressPointer->iByteWidth + 4);
+		}
+	TPckgBuf<TBmpHandles> b;
+	TIpcArgs args(aBitmapHandle,&b);
+	ret=iFbs->SendCommand(EFbsMessBitmapDuplicate,args);
+	if(ret!=KErrNone) 
+		{
+		return(ret);
+		}
+	iHandle=b().iHandle;
+	iServerHandle=b().iServerHandle;
+	iAddressPointer=(CBitwiseBitmap*)(iFbs->HeapBase()+b().iAddressOffset);
+	if (iAddressPointer->iUid.iUid != KCBitwiseBitmapUid.iUid && iAddressPointer->iUid.iUid != KCBitwiseBitmapHardwareUid.iUid)
+		{
+		iFlags = EIsExtendedBitmap;
+		}
+	ret = iFbs->iHelper->AddBitmap(*this);
+	if (ret != KErrNone)
+		{
+		return ret;
+		}
+	return iFbs->AllocScanLineBuffer(iAddressPointer->iByteWidth+4);
+	}
 
 /** Loads a specific bitmap from a multi-bitmap file.
 The bitmap may be shared by other font and bitmap server clients.
@@ -535,10 +467,7 @@ codes.
 */	
 EXPORT_C TInt CFbsBitmap::Load(const TDesC& aFileName,TInt32 aId,TBool aShareIfLoaded)
 	{
-    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD_ENTRY, "> this=0x%08x; file=%S, id=0x%08x; share=%d", (TUint)this, aFileName, aId, aShareIfLoaded);)
-	TInt err = Load(aFileName,aId,aShareIfLoaded,0);
-    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, err, iHandle, iServerHandle);)
-	return err; 
+	return Load(aFileName,aId,aShareIfLoaded,0);
 	}
 
 /**  Loads a specific bitmap from a multi-bitmap file.
@@ -554,45 +483,38 @@ available for sharing between FBSERV clients.
 */	
 EXPORT_C TInt CFbsBitmap::Load(const TDesC& aFileName,TInt32 aId,TBool aShareIfLoaded,TUint aFileOffset)
 	{
-    TInt err = KErrNone;
-    FBS_OST(OstTraceExt5( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD2_ENTRY, "> this=0x%08x; file=%S, id=0x%08x; share=%d; off=%d", (TUint)this, aFileName, aId, aShareIfLoaded, aFileOffset);)
 	if(!iFbs)
 		{
-        FBS_OST(OstTrace1( TRACE_ERROR, CFBSBITMAP_LOAD2_ERROR, "! this=0x%08x; !iFbs", (TUint)this);)
-		err = KErrCouldNotConnect;
+		return(KErrCouldNotConnect);
+		}
+	Reset();
+	TUint32* rompointer = NULL;
+	//access using filename has the advantage of using rom address lookup cache
+	IsFileInRom(aFileName, rompointer);
+	TBool romPointerValid;
+	TInt err = DoLoadFromRom(rompointer, aId, aFileOffset, romPointerValid);
+	if(romPointerValid)
+		{
+		return err;
+		}
+	_LIT(KResourcePath, "?:\\Resource\\*");
+	TInt match = aFileName.MatchF(KResourcePath);
+	//if the file is in the resource directory we don't need to check capabilities and the file can just be opened on the server side.
+	if (match == 0)
+		{
+		err = DoLoad(aFileName,aId,aShareIfLoaded,aFileOffset);
 		}
 	else
-	    {
-        Reset();
-        TUint32* rompointer = NULL;
-        //access using filename has the advantage of using rom address lookup cache
-        IsFileInRom(aFileName, rompointer);
-        TBool romPointerValid;
-        err = DoLoadFromRom(rompointer, aId, aFileOffset, romPointerValid);
-        if(!romPointerValid)
-            {
-            _LIT(KResourcePath, "?:\\Resource\\*");
-            TInt match = aFileName.MatchF(KResourcePath);
-            //if the file is in the resource directory we don't need to check capabilities and the file can just be opened on the server side.
-            if (match == 0)
-                {
-                err = DoLoad(aFileName,aId,aShareIfLoaded,aFileOffset);
-                FBS_OST_IF(err!=KErrNone, OstTraceExt2( TRACE_ERROR, CFBSBITMAP_LOAD2_ERROR3, "! this=0x%08x; DoLoad returned %d", (TUint)this, err);)
-                }
-            else
-                {
-                RFile file;
-                err = file.Open(iFbs->FileServer(),aFileName,EFileShareReadersOnly);
-                if (err==KErrNone)
-                    {
-                    err = DoLoad(file,aId,aShareIfLoaded,aFileOffset);
-                    FBS_OST_IF(err!=KErrNone, OstTraceExt2( TRACE_ERROR, CFBSBITMAP_LOAD2_ERROR4, "! this=0x%08x; DoLoad returned %d", (TUint)this, err);)
-                    }
-                file.Close();
-                }
-            }
-	    }
-    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD2_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, err, iHandle, iServerHandle);)
+		{
+		RFile file;
+		err = file.Open(iFbs->FileServer(),aFileName,EFileShareReadersOnly);
+		if (err!=KErrNone)
+			{
+			return err;
+			}
+		err = DoLoad(file,aId,aShareIfLoaded,aFileOffset);
+		file.Close();
+		}
 	return err;
 	}
 
@@ -610,10 +532,7 @@ codes.
 */	
 EXPORT_C TInt CFbsBitmap::LoadAndCompress(const TDesC& aFileName,TInt32 aId,TBool aShareIfLoaded)
     {	
-    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS_ENTRY, "> this=0x%08x; file=%S; id=0x%08x; share=%d", (TUint)this, aFileName, aId, aShareIfLoaded);)
-    TInt ret = LoadAndCompress(aFileName, aId, aShareIfLoaded, 0);
-    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, ret, iHandle, iServerHandle);)
-    return ret;
+    return LoadAndCompress(aFileName, aId, aShareIfLoaded, 0);
 	}
 
 /** Loads and compresses a specific bitmap from a multi-bitmap file.
@@ -630,15 +549,12 @@ codes.
 @released
 */	
 EXPORT_C TInt CFbsBitmap::LoadAndCompress(const TDesC& aFileName,TInt32 aId,TBool aShareIfLoaded,TUint aFileOffset)
-    {
-    FBS_OST(OstTraceExt5( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS2_ENTRY, "> this=0x%08x; file=%S, id=0x%08x; share=%d; off=%d", (TUint)this, aFileName, aId, aShareIfLoaded, aFileOffset);)
+    {	
 	TInt err = Load(aFileName,aId,aShareIfLoaded,aFileOffset);
 	if (err == KErrNone)
 		{
 		err = !(iFlags & EIsRomBitmap) ? Compress() : KErrAccessDenied;
-		FBS_OST_IF(err!=KErrNone, OstTraceExt3( TRACE_ERROR, CFBSBITMAP_LOADANDCOMPRESS2_ERROR, "! this=0x%08x; iFlags=0x%08x; err=%d", (TUint)this, (TUint)iFlags, err);)
 		}
-	FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS2_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, err, iHandle, iServerHandle);)
 	return err;
 	}
 
@@ -1235,7 +1151,7 @@ EXPORT_C TBool CFbsBitmap::IsCompressedInRAM() const
 	CBitwiseBitmap* bitmap = CleanAddress();
 	if (bitmap==NULL)
 		{
-		return EFalse;
+			return EFalse;
 		}	
 	return bitmap->IsCompressedInRAM();
 	}
@@ -1334,16 +1250,10 @@ Calls to BeginDataAccess() must be coupled with subsequent calls to EndDataAcces
 */
 EXPORT_C void CFbsBitmap::BeginDataAccess() const
 	{
-    FBS_OST_VERBOSE(OstTrace1(GRAPHICS_CONTROL_FUNCTIONS, CFBSBITMAP_BEGINDATAACCESS_ENTRY, "> this=0x%08x;", (TUint)this););
-	FBS_OST_IF(!iHandle, OstTrace1(TRACE_ERROR, CFBSBITMAP_BEGINDATAACCESS_ERROR, "! this=0x%08x; !iHandle", (TUint)this););
-	
-	if (iHandle)
-	    {
-        (void)CleanAddress();	//called for side-effect to make sure bitmap reference is current. Should be low overhead.
-        const_cast<CFbsBitmap*>(this)->iUseCount++;
-	    }
-    
-	FBS_OST_VERBOSE(OstTraceExt2(GRAPHICS_CONTROL_FUNCTIONS, CFBSBITMAP_BEGINDATAACCESS_EXIT, "< this=0x%08x; iUseCount=%d;", (TUint)this, const_cast<CFbsBitmap*>(this)->iUseCount);)
+	if (!iHandle)
+		return;
+	(void)CleanAddress();	//called for side-effect to make sure bitmap reference is current. Should be low overhead.
+	const_cast<CFbsBitmap*>(this)->iUseCount++;
 	}
 
 /** Marks the end of direct access to the bitmap data.
@@ -1361,17 +1271,11 @@ See BeginDataAccess() for more details.
 */
 EXPORT_C void CFbsBitmap::EndDataAccess(TBool aReadOnly) const
 	{
-    FBS_OST_VERBOSE(OstTraceExt2(GRAPHICS_CONTROL_FUNCTIONS, CFBSBITMAP_ENDDATAACCESS_ENTRY, "> this=0x%08x; aReadOnly=%d;", (TUint)this, (TUint)aReadOnly);)
-    FBS_OST_IF(!iHandle, OstTrace1(TRACE_ERROR, CFBSBITMAP_ENDDATAACCESS_ERROR, "! this=0x%08x; !iHandle", (TUint)this););
-    if (iHandle)
-        {
-        const_cast<CFbsBitmap*>(this)->iUseCount--;
-        if (!aReadOnly && !(iFlags & EIsReadOnlyBitmapMask))
-            {
-            User::LockedInc(iAddressPointer->Extra()->iTouchCount);
-            }
-        }
-    FBS_OST_VERBOSE(OstTraceExt2(GRAPHICS_CONTROL_FUNCTIONS, CFBSBITMAP_ENDDATAACCESS_EXIT, "< this=0x%08x; iUseCount=%d;", (TUint)this, const_cast<CFbsBitmap*>(this)->iUseCount);)
+	if (!iHandle)
+		return;
+	const_cast<CFbsBitmap*>(this)->iUseCount--;
+	if (!aReadOnly && !(iFlags & EIsReadOnlyBitmapMask))
+		User::LockedInc(iAddressPointer->Extra()->iTouchCount);
 	}
 
 /** Locks the global bitmap heap.
@@ -1395,12 +1299,12 @@ threads concurrently accessing bitmap data.
 */
 EXPORT_C void CFbsBitmap::LockHeap(TBool /*aAlways*/) const
 	{
-    FBS_OST(OstTrace1(GRAPHICS_CONTROL_FUNCTIONS, CFBSBITMAP_LOCKHEAP_ENTRY, "> this=0x%08x;", (TUint)this);)
 	BeginDataAccess();
 #ifdef SYMBIAN_DEBUG_FBS_LOCKHEAP
 	//These debug checks now refer to the cleaned data address
-    FBS_OST_IF(!iHandle, OstTrace1(TRACE_ERROR, CFBSBITMAP_LOCKHEAP_ERROR, "! this=0x%08x; !iHandle", (TUint)this););
-	if (iHandle && !(iFlags & EIsRomBitmap)) // can't do anything with ROM bitmaps
+	if (!iHandle)
+		return;
+	if (!(iFlags & EIsRomBitmap)) // can't do anything with ROM bitmaps
 		{
 		TThreadId threadId = RThread().Id();
 		iFbs->iHelper->iDebugMutex.Wait();
@@ -1414,7 +1318,6 @@ EXPORT_C void CFbsBitmap::LockHeap(TBool /*aAlways*/) const
 		iFbs->iHelper->iDebugMutex.Signal();
 		}
 #endif
-	FBS_OST(OstTrace1(GRAPHICS_CONTROL_FUNCTIONS, CFBSBITMAP_LOCKHEAP_EXIT, "< this=0x%08x;", (TUint)this);)
 	}
 
 /** Unlocks the global heap. 
@@ -1429,25 +1332,21 @@ Calls to UnlockHeap() must correspond to prior calls to LockHeap() or LockHeapLC
 */
 EXPORT_C void CFbsBitmap::UnlockHeap(TBool /*aAlways*/) const
 	{
-    FBS_OST(OstTrace1(GRAPHICS_CONTROL_FUNCTIONS, CFBSBITMAP_UNLOCKHEAP_ENTRY, "> this=0x%08x;", (TUint)this);)
-    FBS_OST_IF(!iHandle, OstTrace1(TRACE_ERROR, CFBSBITMAP_UNLOCKHEAP_ERROR, "! this=0x%08x; !iHandle", (TUint)this););
-	if (iHandle)
-	    {
 #ifdef SYMBIAN_DEBUG_FBS_LOCKHEAP
-	    if (!(iFlags & EIsRomBitmap)) // can't do anything with ROM bitmaps
-            {
-            TThreadId threadId = RThread().Id();
-            iFbs->iHelper->iDebugMutex.Wait();
-            __ASSERT_ALWAYS(iAddressPointer->Extra()->iLockCount > 0, Panic(EFbsPanicBadHeapLock));
-            __ASSERT_ALWAYS(iAddressPointer->Extra()->iThreadId == threadId, Panic(EFbsPanicBadHeapLock));
-            if (--iAddressPointer->Extra()->iLockCount == 0)
-                iAddressPointer->Extra()->iThreadId = TThreadId(KNullThreadId);
-            iFbs->iHelper->iDebugMutex.Signal();
-            }
+	if (!iHandle)
+		return;
+	if (!(iFlags & EIsRomBitmap)) // can't do anything with ROM bitmaps
+		{
+		TThreadId threadId = RThread().Id();
+		iFbs->iHelper->iDebugMutex.Wait();
+		__ASSERT_ALWAYS(iAddressPointer->Extra()->iLockCount > 0, Panic(EFbsPanicBadHeapLock));
+		__ASSERT_ALWAYS(iAddressPointer->Extra()->iThreadId == threadId, Panic(EFbsPanicBadHeapLock));
+		if (--iAddressPointer->Extra()->iLockCount == 0)
+			iAddressPointer->Extra()->iThreadId = TThreadId(KNullThreadId);
+		iFbs->iHelper->iDebugMutex.Signal();
+		}
 #endif
-	    EndDataAccess();
-	    }
-	FBS_OST(OstTrace1(GRAPHICS_CONTROL_FUNCTIONS, CFBSBITMAP_UNLOCKHEAP_EXIT, "< this=0x%08x;", (TUint)this);)
+	EndDataAccess();
 	}
 
 /** Locks the global bitmap heap, leaving on the clean-up stack a pointer
@@ -1463,18 +1362,14 @@ This function is deprecated. See CFbsBitmap::LockHeap() for more details.
 */
 EXPORT_C void CFbsBitmap::LockHeapLC(TBool /*aAlways*/) const
 	{
-    FBS_OST(OstTrace1(GRAPHICS_CONTROL_FUNCTIONS, CFBSBITMAP_LOCKHEAPLC_ENTRY, "> this=0x%08x;", (TUint)this);)
-    LockHeap();
+	LockHeap();
 	TCleanupItem cleanitem(CFbsBitmap::UnlockHeap, (TAny*)this);
 	CleanupStack::PushL(cleanitem);
-	FBS_OST(OstTrace1(GRAPHICS_CONTROL_FUNCTIONS, CFBSBITMAP_LOCKHEAPLC_EXIT, "< this=0x%08x;", (TUint)this);)
 	}
 
 EXPORT_C void CFbsBitmap::UnlockHeap(TAny* aFbsBitmap)
 	{
-    FBS_OST(OstTrace1(GRAPHICS_CONTROL_FUNCTIONS, CFBSBITMAP_UNLOCKHEAP2_ENTRY, "> bitmap=0x%08x;", (TUint)aFbsBitmap);)
-    ((CFbsBitmap*)aFbsBitmap)->UnlockHeap();
-    FBS_OST(OstTrace0(GRAPHICS_CONTROL_FUNCTIONS, CFBSBITMAP_UNLOCKHEAP2_EXIT, "<");)
+	((CFbsBitmap*)aFbsBitmap)->UnlockHeap();
 	}
 
 /** Tests whether the bitmap is volatile.
@@ -1503,7 +1398,7 @@ aReadOnly set to EFalse and also whenever a resizing or compression is performed
 EXPORT_C TInt CFbsBitmap::TouchCount() const
 	{
 	if (!iHandle || (iFlags & EIsReadOnlyBitmapMask))
-		return 0; // A read-only bitmap can never be touched.
+			return 0; // A read-only bitmap can never be touched.
 	return CleanAddress()->Extra()->iTouchCount;
 	}
 
@@ -1828,12 +1723,7 @@ codes.
 */	
 EXPORT_C TInt CFbsBitmap::Load(RFile& aFile,TInt32 aId/*=0*/,TBool aShareIfLoaded/*=ETrue*/)
 	{
-    FBS_OST(TFullName fileName;)
-    FBS_OST(aFile.FullName(fileName);)
-    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD3_ENTRY, "> this=0x%08x; file=%S; id=0x%08x; share=%d", (TUint)this, fileName, aId, aShareIfLoaded);)
-	TInt ret = Load(aFile,aId,aShareIfLoaded,0);
-    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD3_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, ret, iHandle, iServerHandle);) 
-	return ret;
+	return Load(aFile,aId,aShareIfLoaded,0);
 	}
 
 /** Loads a specific bitmap from an opened multi-bitmap file handle.
@@ -1849,29 +1739,19 @@ available for sharing between FBSERV clients.
 */	
 EXPORT_C TInt CFbsBitmap::Load(RFile& aFile,TInt32 aId,TBool aShareIfLoaded,TUint aFileOffset)
 	{
-    TInt err = KErrNone;
-    FBS_OST(TFullName fileName;)
-    FBS_OST(aFile.FullName(fileName);)
-    FBS_OST(OstTraceExt5( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD4_ENTRY, "> this=0x%08x; file=%S; id=0x%08x; share=%d; off=%d", (TUint)this, fileName, aId, aShareIfLoaded, aFileOffset);)
 	if (!iFbs)
 		{
-        FBS_OST(OstTrace1( TRACE_ERROR, CFBSBITMAP_LOAD4_ERROR, "! this=0x%08x; !iFbs", (TUint)this);)
-		err = KErrCouldNotConnect;
+		return(KErrCouldNotConnect);
 		}
-	else
-	    {
-        Reset();
-        TUint32* rompointer;
-        IsFileInRom(aFile,rompointer);
-        TBool romPointerValid;
-        err = DoLoadFromRom(rompointer, aId, aFileOffset, romPointerValid);
-        if (!romPointerValid)
-            {
-            err = DoLoad(aFile,aId,aShareIfLoaded,aFileOffset);
-            FBS_OST_IF(err!=KErrNone, OstTraceExt2( TRACE_ERROR, CFBSBITMAP_LOAD4_ERROR2, "! this=0x%08x; DoLoad() returned %d", (TUint)this, err);)
-            }
-	    }
-	FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOAD4_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, err, iHandle, iServerHandle);)
+	Reset();
+	TUint32* rompointer;
+	IsFileInRom(aFile,rompointer);
+	TBool romPointerValid;
+	TInt err = DoLoadFromRom(rompointer, aId, aFileOffset, romPointerValid);
+	if (!romPointerValid)
+		{
+		err = DoLoad(aFile,aId,aShareIfLoaded,aFileOffset);
+		}
 	return err;
 	}
 
@@ -1889,12 +1769,7 @@ codes.
 */	
 EXPORT_C TInt CFbsBitmap::LoadAndCompress(RFile& aFile,TInt32 aId/*=0*/,TBool aShareIfLoaded/*=ETrue*/)
 	{
-    FBS_OST(TFullName fileName;)
-    FBS_OST(aFile.FullName(fileName);)
-    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS3_ENTRY, "> this=0x%08x; file=%S; id=0x%08x; share=%d", (TUint)this, fileName, aId, aShareIfLoaded);)      
-	TInt ret = LoadAndCompress(aFile,aId,aShareIfLoaded,0);
-    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS3_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, ret, iHandle, iServerHandle);)
-    return ret;
+	return LoadAndCompress(aFile,aId,aShareIfLoaded,0);
 	}
 
 /** Loads and compresses a specific bitmap from an opened multi-bitmap file handle.
@@ -1912,24 +1787,11 @@ codes.
 */	
 EXPORT_C TInt CFbsBitmap::LoadAndCompress(RFile& aFile,TInt32 aId,TBool aShareIfLoaded,TUint aFileOffset)
 	{
-    FBS_OST(TFullName fileName;)
-    FBS_OST(aFile.FullName(fileName);)
-    FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS4_ENTRY, "> this=0x%08x; file=%S; id=0x%08x; share=%d", (TUint)this, fileName, aId, aShareIfLoaded);)
 	TInt err = Load(aFile,aId,aShareIfLoaded,aFileOffset);
 	if (err == KErrNone)
 		{
-        if (!(iFlags & EIsRomBitmap))
-            {
-            err = Compress();
-            FBS_OST_IF(err!=KErrNone, OstTraceExt2( TRACE_ERROR, CFBSBITMAP_LOADANDCOMPRESS4_ERROR, "! this=0x%08x; Compress() returned %d", (TUint)this, err);)
-            }
-        else
-            {
-            err = KErrAccessDenied;
-            FBS_OST(OstTraceExt2( TRACE_ERROR, CFBSBITMAP_LOADANDCOMPRESS4_ERROR2, "! this=0x%08x; Cannot compress bitmap in ROM; iFlags=0x%08x", (TUint)this, (TUint)iFlags);)
-            }
+		err = !(iFlags & EIsRomBitmap) ? Compress() : KErrAccessDenied;
 		}
-	FBS_OST(OstTraceExt2( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_LOADANDCOMPRESS4_EXIT, "< this=0x%08x; err=%d", (TUint)this, err);)
 	return err;
 	}
 
@@ -2046,22 +1908,15 @@ exceeds KMaxTInt/2; otherwise another of the system-wide error codes.
 */
 EXPORT_C TInt CFbsBitmap::CreateExtendedBitmap(const TSize& aSizeInPixels, TDisplayMode aDispMode, TUid aType, const TAny* aData, TInt aDataSize)
 	{
-    TInt err;
-    FBS_OST(OstTraceExt5( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_CREATEEXTENDEDBITMAP_ENTRY, "> this=0x%08x; w=%d; h=%d; dm=%d; type=0x%08x", (TUint)this, aSizeInPixels.iWidth, aSizeInPixels.iHeight, aDispMode, aType.iUid);)
 	if (!aData || aDataSize == 0)
 		{
-        FBS_OST(OstTrace1( TRACE_ERROR, CFBSBITMAP_CREATEEXTENDEDBITMAP_ERROR, "! this=0x%08x; (!aData || aDataSize == 0)", (TUint)this);)
-		err = KErrArgument;
+		return KErrArgument;
 		}
-	else
-	    {
-        err = DoCreate(aSizeInPixels, aDispMode, aType, aDataSize);
-        if (err == KErrNone)
-            {
-            Mem::Copy(iFbs->iLargeBitmapChunk.Base() + iAddressPointer->iDataOffset, aData, aDataSize);
-            }
-	    }
-	FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_CREATEEXTENDEDBITMAP_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, err, iHandle, iServerHandle);)
+	TInt err = DoCreate(aSizeInPixels, aDispMode, aType, aDataSize);
+	if (err == KErrNone)
+		{
+		Mem::Copy(iFbs->iLargeBitmapChunk.Base() + iAddressPointer->iDataOffset, aData, aDataSize);
+		}
 	return err;
 	}
 
@@ -2105,26 +1960,19 @@ exceeds KMaxTInt/2; otherwise another of the system-wide error codes.
 */
 EXPORT_C TInt CFbsBitmap::CreateExtendedBitmap(const TSize& aSizeInPixels, TDisplayMode aDispMode, TUid aType, TInt aDataSize, MFbsExtendedBitmapInitializer& aInitializer)
 	{
-    TInt err; 
-    FBS_OST(OstTraceExt5( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_CREATEEXTENDEDBITMAP2_ENTRY, "> this=0x%08x; w=%d; h=%d; dm=%d; type=0x%08x;", (TUint)this, aSizeInPixels.iWidth, aSizeInPixels.iHeight, aDispMode, aType.iUid);)
 	if (aDataSize == 0)
 		{
-        FBS_OST(OstTrace1( TRACE_ERROR, CFBSBITMAP_CREATEEXTENDEDBITMAP2_ERROR, "! this=0x%08x; aDataSize == 0", (TUint)this);)
-		err = KErrArgument;
+		return KErrArgument;
 		}
-	else
-	    {
-        err = DoCreate(aSizeInPixels, aDispMode, aType, aDataSize);
-        if (err == KErrNone)
-            {
-            err = aInitializer.InitExtendedBitmap(iFbs->iLargeBitmapChunk.Base() + iAddressPointer->iDataOffset, aDataSize);
-            if (err != KErrNone)
-                {
-                Reset();
-                }
-            }
-	    }
-	FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_FUNCTIONS, CFBSBITMAP_CREATEEXTENDEDBITMAP2_EXIT, "< this=0x%08x; err=%d; iH=0x%08x; iSH=0x%08x", (TUint)this, err, iHandle, iServerHandle);)
+	TInt err = DoCreate(aSizeInPixels, aDispMode, aType, aDataSize);
+	if (err == KErrNone)
+		{
+		err = aInitializer.InitExtendedBitmap(iFbs->iLargeBitmapChunk.Base() + iAddressPointer->iDataOffset, aDataSize);
+		if (err != KErrNone)
+			{
+			Reset();
+			}
+		}
 	return err;
 	}
 

@@ -564,7 +564,6 @@ void CWsClientWindow::SetExtentL(const TPoint *aPos,const TSize *aSize)
 		}
 	}
 
-
 void CWsClientWindow::GetElementFlipAndRotation(TBool& aElemetFlip, MWsElement::TElementRotation& aElemenetRotation)
     {
     MWsElement* element = Screen()->WindowElements().GetElementFromWindow(*this);

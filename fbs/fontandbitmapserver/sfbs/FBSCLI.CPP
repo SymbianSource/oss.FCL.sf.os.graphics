@@ -21,12 +21,6 @@
 #include "BackGroundCompression.h"
 #include <shapeinfo.h>
 #include <graphics/shaperparams.h>
-#include "OstTraceDefinitions.h"
-#include "fbstrace.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "FBSCLITraces.h"
-#endif
-
 
 /** Helper function for converting a pointer to an offset from the passed
 heap base. Use OffsetToPointer() to convert the returned offset back to a
@@ -89,7 +83,6 @@ CFbClient* CFbClient::NewL(RHeap* aHeap)
 
 CFbClient::~CFbClient()
 	{
-    FBS_OST( OstTraceExt2( GRAPHICS_RESOURCE_MANAGEMENT_SEMANTICS, CFBCLIENT_DESTRUCTOR_INFO, "# Server session destroyed; rc=%d; iSSH=0x%08x;", iResourceCount, iSessionHandle);)
 	/*
 	Don't call any CFontStore functions if CFbClient::NewL has left, or if FBSERV has already deleted the
 	font store, which happens in test programs like TFBS when FBSERV is closed before the client(s).
@@ -102,33 +95,16 @@ CFbClient::~CFbClient()
 		}
 	
 	if (font_store)
-	    {
 		font_store->DeleteSessionCache(iSessionHandle);
-	    }
 	
 	// If the font store doesn't exist, neither will the shared heap owned by FBSERV.
 	if (font_store)
-	    {
 		iHeap->Free(iOpenFontGlyphData);
-	    }
-
-    // output each bitmap that is about to be destroyed...
-	FBS_OST
-        ({
-        for (TInt ii = iIx->Count() - 1; ii >= 0; --ii)
-            {
-            CObject* object = (*iIx)[ii];
-            TInt localHandle = iIx->At(object);
-            if ((localHandle != KErrNotFound) && (iIx->At(localHandle, fbTop->BitmapConUniqueID()) != NULL))
-                {
-                OstTraceExt3( GRAPHICS_RESOURCE_MANAGEMENT_SEMANTICS, CFBCLIENT_DESTRUCTOR_INFO2, "# Server resource destroyed; iSSH=0x%08x; rc=%d; iH=0x%08x;", iSessionHandle, iResourceCount, localHandle);
-                }
-            }
-	    })
-	// delete fonts and bitmaps held by the client
+	
+	// delete fonts hold by the client
 	delete iIx;
 	
-	// delete font files held by the client
+	// delete font files hold by the client
     if (iFontFileIndex)
         {
         TInt count = iFontFileIndex->Count();
@@ -234,7 +210,6 @@ void CFbClient::ServiceL(const RMessage2& aMessage)
 		iIx->Remove(localhandle);
 		iResourceCount--;
 		aMessage.Complete(KErrNone);
-		FBS_OST(OstTraceExt3( GRAPHICS_RESOURCE_MANAGEMENT_SEMANTICS, CFBCLIENT_SERVICEL_INFO, "# Server resource destroyed; iSSH=0x%08x; rc=%d; iH=0x%08x;", iSessionHandle, iResourceCount, localhandle);)
 #ifdef _DEBUG
 		iRet=KErrNone;
 #endif				
@@ -424,7 +399,6 @@ TInt CFbClient::HandleMesgFontDuplicate(const RMessage2& aMessage, TBool& aPanic
 
 	// success
 	iResourceCount++;
-    FBS_OST(OstTraceExt3( GRAPHICS_RESOURCE_MANAGEMENT_SEMANTICS, CFBCLIENT_HANDLEMESGFONTDUPLICATE_INFO, "# Server font duplicated; iSSH=0x%08x; rc=%d; iH=0x%08x;", iSessionHandle, iResourceCount, localhandle);)
 	return KErrNone;
 	}
 
@@ -514,7 +488,6 @@ TInt CFbClient::CopyFontInfoIntoReturnMessage(const RMessage2& aMessage, TBool& 
 		}
 	// success
 	iResourceCount++;
-	FBS_OST(OstTraceExt3( GRAPHICS_RESOURCE_MANAGEMENT_SEMANTICS, CFBCLIENT_COPYFONTINFOINTORETURNMESSAGE_INFO, "# Server font duplicated; iSSH=0x%08x; rc=%d; iH=0x%08x;", iSessionHandle, iResourceCount, localhandle);)
 	return KErrNone;
 	}
 
@@ -998,7 +971,6 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 			bmpptr->Close();
 			break;
 			}
-		
 		bmpSpec.iHandle=localhandle;
 		bmpSpec.iServerHandle = bmpptr->Handle();
 		bmpSpec.iAddressOffset=TInt(bmpptr->Address())-TopLevelStore()->HeapBase();
@@ -1010,7 +982,6 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 			return;
 			}
 		iResourceCount++;
-		FBS_OST(OstTraceExt5( GRAPHICS_RESOURCE_MANAGEMENT_SEMANTICS, CFBCLIENT_PROCBITMAPMESSAGE_INFO, "# Server bitmap created; iSSH=0x%08x; rc=%d; iH=0x%08x; iSH=0x%08x; bytes=%d;", iSessionHandle, iResourceCount, bmpSpec.iHandle, bmpSpec.iServerHandle, bmpptr->Address()->DataStride() * bmpSpec.iSizeInPixels.iHeight);)		
 		break;
 		}
 
@@ -1118,7 +1089,6 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 			return;
 			}
 		iResourceCount++;
-        FBS_OST(OstTraceExt5( GRAPHICS_RESOURCE_MANAGEMENT_SEMANTICS, CFBCLIENT_PROCBITMAPMESSAGE_INFO2, "# Server bitmap loaded; iSSH=0x%08x; rc=%d; iH=0x%08x; iSH=0x%08x; bytes=%d;", iSessionHandle, iResourceCount, handlebuffer().iHandle, handlebuffer().iServerHandle, bmpptr->Address()->DataStride() * bmpptr->Address()->SizeInPixels().iHeight);)
 		break;
 		}
 	case EFbsMessBitmapResize:
@@ -1188,7 +1158,6 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 			aMessage.Panic(KFBSERVPanicCategory, ret);
 			return;
 			}
-        FBS_OST(OstTraceExt5( GRAPHICS_RESOURCE_MANAGEMENT_SEMANTICS, CFBCLIENT_PROCBITMAPMESSAGE_INFO4, "# Server bitmap resized; iSSH=0x%08x; iOldH=0x%08x; iNewH=0x%08x; iNewSH=0x%08x; newbytes=%d;", iSessionHandle, localhandle, newlocalhandle, newbmpptr->Handle(), newbmpptr->Address()->DataStride() * newsize.iHeight);)
 		break;
 		}
 	case EFbsMessBitmapDuplicate:
@@ -1223,7 +1192,6 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 			return;
 			}
 		iResourceCount++;
-        FBS_OST(OstTraceExt5( GRAPHICS_RESOURCE_MANAGEMENT_SEMANTICS, CFBCLIENT_PROCBITMAPMESSAGE_INFO3, "# Server bitmap duplicated; iSSH=0x%08x; rc=%d; iH=0x%08x; iSH=0x%08x; bytes=%d;", iSessionHandle, iResourceCount, handlebuffer().iHandle, handlebuffer().iServerHandle, bmpptr->Address()->DataStride() * bmpptr->Address()->SizeInPixels().iHeight);)
 		break;
 		}
 	case EFbsMessBitmapCompress:
@@ -1285,7 +1253,6 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 			aMessage.Panic(KFBSERVPanicCategory, ret);
 			return;
 			}
-        FBS_OST(OstTraceExt4( GRAPHICS_RESOURCE_MANAGEMENT_SEMANTICS, CFBCLIENT_PROCBITMAPMESSAGE_INFO5, "# Server bitmap compressed; iSSH=0x%08x; iOldH=0x%08x; iNewH=0x%08x; iNewSH=0x%08x;", (TUint)iSessionHandle, localhandle, newlocalhandle, handlebuffer().iServerHandle);)
 		break;
 		}
 	case EFbsMessBitmapBgCompress:
@@ -1353,7 +1320,6 @@ void CFbClient::ProcBitmapMessage(const RMessage2 &aMessage)
 			aMessage.Panic(KFBSERVPanicCategory, ret);
 			return;
 			}
-		FBS_OST(OstTraceExt3( GRAPHICS_RESOURCE_MANAGEMENT_SEMANTICS, CFBCLIENT_PROCBITMAPMESSAGE_INFO6, "# Server bitmap cleaned; iSSH=0x%08x; iOldH=0x%08x; iNewH=0x%08x;", iSessionHandle, localhandle, cleanlocalhandle);)
 		break;
 		}
 	case EFbsGetAllBitmapHandles:
