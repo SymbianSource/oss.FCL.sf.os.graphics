@@ -523,9 +523,10 @@ TBool CWsWindowBase::CommandL(TInt aOpcode, TWsWinCmdUnion &aCmd)
           OwnerPanic(EWservPanicUnableToEnableAdvPointer);
           }
 			break;
-		case EWsWinOpSetSurfaceTransparency:
-			RDebug::Printf("[Bug 3343] OpCode EWsWinOpSetSurfaceTransparency not supported.");
-			break;
+		// Remove as a workaround for Bug 3802
+		//case EWsWinOpSetSurfaceTransparency:
+		//	RDebug::Printf("[Bug 3343] OpCode EWsWinOpSetSurfaceTransparency not supported.");
+		//	break;
 		default:
 			return(EFalse);
 		}
