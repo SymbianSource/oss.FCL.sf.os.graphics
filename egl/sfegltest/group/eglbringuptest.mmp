@@ -31,6 +31,7 @@
 
 target          eglbringuptest.exe
 targettype      exe
+uid             0x100039ce 0x12345678
 
 userinclude     .
 userinclude 	../inc/
@@ -40,7 +41,6 @@ systeminclude   /epoc32/include/platform
 
 library			libegl.lib		// EGL
 library			libopenvg.lib	// OpenVG
-library			libopenvgu.lib	// OpenVGU
 
 library         euser.lib
 library         libc.lib

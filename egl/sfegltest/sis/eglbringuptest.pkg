@@ -1,0 +1,21 @@
+;Languages
+&EN
+
+;Header
+#{"eglbringuptest"}, (0x12345678), 1, 0, 0
+
+; Localised Vendor name
+%{"Vendor"}
+
+; Unique Vendor name
+:"Vendor"
+
+; Default HW/platform dependencies
+;[0x101F7961],0,0,0,{"S60ProductID"}
+;[0x102032BE],0,0,0,{"S60ProductID"}
+;[0x102752AE],0,0,0,{"S60ProductID"}
+;[0x1028315F],0,0,0,{"S60ProductID"}
+
+;Files to install
+"/epoc32/release/armv5/urel/eglbringuptest.exe" -"!:\sys\bin\eglbringuptest.exe"
+
