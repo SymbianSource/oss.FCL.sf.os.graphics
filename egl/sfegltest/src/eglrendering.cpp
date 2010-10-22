@@ -58,18 +58,8 @@ void CEGLRendering::VGCheckError()
         }
     }
 
-CEGLRendering* CEGLRendering::NewL(RWindow& aWindow)
-	{
-	CEGLRendering* self = new (ELeave) CEGLRendering(aWindow);
-	CleanupStack::PushL(self);
-	self->ConstructL();
-    CleanupStack::Pop(self);
-	return self;
-	}
-
 CEGLRendering::CEGLRendering(RWindow& aWindow)
 	:  iWindow(aWindow)
-	,  iCount(0)
 	{
 	}
 
@@ -88,10 +78,11 @@ CEGLRendering::CEGLRendering(RWindow& aWindow)
 void CEGLRendering::ConstructL()
     {
 	RDebug::Printf("[EBT] CEGLRendering::ConstructL");
-	iTimer = CPeriodic::NewL(CActive::EPriorityIdle);
+	iRedrawTimer = CPeriodic::NewL(CActive::EPriorityIdle);
 	EglSetupL();
-	VgSetup();
-	VgPaint();
+	KhrSetup();
+	KhrPaint();
+	EglSwapBuffers();
 	}
 
 void CEGLRendering::EglSetupL()
@@ -132,7 +123,7 @@ void CEGLRendering::EglSetupL()
 
     RDebug::Printf("[EBT] CEGLRendering::EglSetupL eglBindApi");
     EGLCheckReturnError(eglBindAPI(EGL_OPENVG_API));
-    
+
     RDebug::Printf("[EBT] CEGLRendering::EglSetupL eglCreateWindowSurface");
     iSurface = eglCreateWindowSurface(iDisplay, chosenConfig, &iWindow, NULL);
     EGLCheckError();
@@ -154,59 +145,9 @@ void CEGLRendering::EglSetupL()
     CEGLRendering::EGLCheckReturnError(eglMakeCurrent(iDisplay, iSurface, iSurface, iContext));
     }
 
-void CEGLRendering::VgSetup()
+void CEGLRendering::EglSwapBuffers()
     {
-    static VGubyte const Segments[] =
-        {
-        VG_MOVE_TO_ABS,
-        VG_LINE_TO_REL,
-        VG_CLOSE_PATH
-        };
-
-    static VGfloat const Coords[] =
-        {
-        110, 35,
-        50, 160,
-        };
-
-    VGfloat strokeColor[4]  = {1.f, 0.f, 0.f, 1.f};
-
-    RDebug::Printf("[EBT] CEGLRendering::VgSetup vgCreatePaint");
-    iVGPaint = vgCreatePaint();
-    VGCheckError();
-
-    RDebug::Printf("[EBT] CEGLRendering::VgSetup vgSetParameterX");
-    vgSetParameteri(iVGPaint, VG_PAINT_TYPE, VG_PAINT_TYPE_COLOR);
-    VGCheckError();
-    vgSetParameterfv(iVGPaint, VG_PAINT_COLOR, 4, strokeColor);
-    VGCheckError();
-    
-    RDebug::Printf("[EBT] CEGLRendering::VgSetup vgCreatePath");
-    iVGPath = vgCreatePath(VG_PATH_FORMAT_STANDARD,
-                            VG_PATH_DATATYPE_F,
-                            1.0f, // scale
-                            0.0f, // bias
-                            3,    // segmentCapacityHint
-                            4,    // coordCapacityHint
-                            VG_PATH_CAPABILITY_ALL);
-    VGCheckError();
-    
-    RDebug::Printf("[EBT] CEGLRendering::VgSetup vgAppendPathData");
-    vgAppendPathData(iVGPath, sizeof(Segments), Segments, Coords);
-    VGCheckError();
-    }
-
-void CEGLRendering::VgPaint()
-    {
-    RDebug::Printf("[EBT] CEGLRendering::VgPaint vgSetPaint");
-    vgSetPaint(iVGPaint, VG_STROKE_PATH);
-    VGCheckError();
-    
-    RDebug::Printf("[EBT] CEGLRendering::VgPaint vgDrawPath");
-    vgDrawPath(iVGPath, VG_STROKE_PATH);
-    VGCheckError();
-
-    RDebug::Printf("[EBT] CEGLRendering::VgPaint eglSwapBuffers");
+    RDebug::Printf("[EBT] CEGLRendering::EglSwapBuffers");
     eglSwapBuffers(iDisplay, iSurface);
     EGLCheckError();
     }
@@ -214,10 +155,9 @@ void CEGLRendering::VgPaint()
 CEGLRendering::~CEGLRendering()
     {
     RDebug::Printf("[EBT] CEGLRendering::~CEGLRendering");
-    
-    Stop();
 
-    delete iTimer;
+    StopRedrawTimer();
+    delete iRedrawTimer;
 
     if (EGL_NO_CONTEXT != iContext)
         {
@@ -233,35 +173,32 @@ CEGLRendering::~CEGLRendering()
     EGLCheckReturnError(eglMakeCurrent(iDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
     EGLCheckReturnError(eglTerminate(iDisplay));
     EGLCheckReturnError(eglReleaseThread());
-
-    delete iBitmap;
     }
 
-void CEGLRendering::Start()
+void CEGLRendering::StartRedrawTimer()
     {
     // Start drawing the screen periodically
-    iTimer->Start(0, KTimerDelay, TCallBack(TimerCallBack, this));
+    iRedrawTimer->Start(0, KTimerDelay, TCallBack(TimerCallBack, this));
     }
 
-void CEGLRendering::Stop()
+void CEGLRendering::StopRedrawTimer()
     {
-    if(iTimer)
+    if(iRedrawTimer)
         {
-        iTimer->Cancel();
+        iRedrawTimer->Cancel();
         }
     }
 
-/** Update the display */
-void CEGLRendering::UpdateDisplay()
-	{
-	// Flush colour buffer to the window surface
-	//CEGLRendering::EGLCheckReturnError(eglSwapBuffers(iDisplay, iSurface));
-	}
-
-/** Callback called by refresh timer */
 TInt CEGLRendering::TimerCallBack(TAny* aDemo)
 	{
-	static_cast<CEGLRendering*>(aDemo)->UpdateDisplay();
+	static_cast<CEGLRendering*>(aDemo)->Redraw();
 	return KErrNone;
 	}
+
+void CEGLRendering::Redraw()
+    {
+    RDebug::Printf("[EBT] CEGLRendering::Redraw");
+    KhrPaint();
+    EglSwapBuffers();
+    }
 

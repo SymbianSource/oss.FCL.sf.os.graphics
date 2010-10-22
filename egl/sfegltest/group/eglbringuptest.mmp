@@ -43,6 +43,7 @@ systeminclude   /epoc32/include/platform
 sourcepath		../src
 source			main.cpp
 source			eglrendering.cpp
+source			vgline.cpp
 
 library         euser.lib
 library         libc.lib

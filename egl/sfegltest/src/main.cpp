@@ -16,7 +16,7 @@
 #include <w32std.h>
 #include <e32math.h>
 #include <e32keys.h>
-#include "eglrendering.h"
+#include "vgline.h"
 
 #define KDefaultScreenNo 0
 
@@ -179,12 +179,10 @@ void CWsApp::ConstructL()
 	RDebug::Printf("[EBT] CWsApp::ConstructL 1");
 	iAppView = CWsCanvas::NewL(iScrId, iPos);
 	RDebug::Printf("[EBT] CWsApp::ConstructL 2");
-	iDemo = CEGLRendering::NewL(iAppView->Window());
+	iDemo = CVGLine::NewL(iAppView->Window());
 	RDebug::Printf("[EBT] CWsApp::ConstructL 3");
-	iDemo->Start();
-	RDebug::Printf("[EBT] CWsApp::ConstructL 4");
 	iSz = iAppView->ScreenSize();
-	RDebug::Printf("[EBT] CWsApp::ConstructL 5");
+	RDebug::Printf("[EBT] CWsApp::ConstructL 4");
 	}
 
 TInt CWsApp::TimerCallBack(TAny* aApp)

@@ -23,37 +23,34 @@
 class CEGLRendering : public CBase
 	{
 public:
-	static CEGLRendering* NewL(RWindow& aWindow);
 	~CEGLRendering();
 
-	void Start();
-	void Stop();
-
-	void UpdateDisplay();
 	static TInt TimerCallBack(TAny* aDemo);
+    void Redraw();
 
-private:
-	CEGLRendering(RWindow& aWindow);
-	void ConstructL();
+protected:
+    CEGLRendering(RWindow& aWindow);
+    void ConstructL();
+
+	void StartRedrawTimer();
+	void StopRedrawTimer();
 
     static void EGLCheckError();
     static void EGLCheckReturnError(EGLBoolean aBool);
     static void VGCheckError();
-    
+
+private:
     void EglSetupL();
-    void VgSetup();
-    void VgPaint();
-	
+    virtual void KhrSetup() = 0;
+    virtual void KhrPaint() = 0;
+    void EglSwapBuffers();
+
 private:
 	RWindow& iWindow;
-	CPeriodic* iTimer;
-	CFbsBitmap* iBitmap;
-	TInt iCount;
+	CPeriodic* iRedrawTimer;
 	EGLDisplay iDisplay;
 	EGLSurface iSurface;
 	EGLContext iContext;
-	VGPaint iVGPaint;
-	VGPath iVGPath;
 	};
 
 #endif
