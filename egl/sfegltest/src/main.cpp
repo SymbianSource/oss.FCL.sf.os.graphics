@@ -20,6 +20,9 @@
 
 #define KDefaultScreenNo 0
 
+// Amount of time for which to run the app
+static const TInt KAppRunDuration = 5000000;
+
 class CWsRedrawHandler;
 
 class CWsCanvas: public CBase
@@ -75,11 +78,15 @@ public:
 	~CWsApp();
 	void Start();
 	void Stop();
+	
+private:
+	static TInt TimerCallBack(TAny* aApp);
 
 private:
 	CWsApp();
     void ConstructL();
     
+    CPeriodic* iTimer;
     CWsCanvas* iAppView;    
 	CEGLRendering* iDemo;	
 	TBool iCallWindow;	
@@ -251,6 +258,11 @@ CWsApp* CWsApp::NewL()
 void CWsApp::ConstructL()
     {
 	RDebug::Printf("CWsApp::ConstructL()");
+	
+	// Set a timer to stop the application after a short time
+	iTimer = CPeriodic::NewL(CActive::EPriorityIdle);
+	iTimer->Start(KAppRunDuration, KAppRunDuration, TCallBack(TimerCallBack,this));
+	
     iPos = iQhd? iQhdPos : iQvgaPos;
 
 	iScrId = KDefaultScreenNo;
@@ -284,6 +296,12 @@ void CWsApp::ConstructL()
 	iCallWindow = EFalse;
 	}
 
+TInt CWsApp::TimerCallBack(TAny* aApp)
+    {
+    reinterpret_cast<CWsApp*>(aApp)->Stop();
+    return KErrNone;
+    }
+
 void CWsApp::Start()
 	{
 	RDebug::Printf("CWsApp::Start");
@@ -299,6 +317,7 @@ CWsApp::~CWsApp()
 	{	
 	delete iDemo;
 	delete iAppView;
+	delete iTimer;
 	}
 
 /**
