@@ -210,6 +210,20 @@ void CEGLRendering::ConstructL(TBool aQhd)
 	
 	CEGLRendering::EGLCheckReturnError(eglMakeCurrent(iDisplay, iSurface, iSurface, iContextVG));
 	RDebug::Printf("CEGLRendering::ConstructL 8");
+	
+    VGfloat clearColour[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+    vgSetfv(VG_CLEAR_COLOR, 4, clearColour);
+    RDebug::Printf("CEGLRendering::ConstructL 9");
+    vgSeti(VG_IMAGE_QUALITY, VG_IMAGE_QUALITY_NONANTIALIASED);
+    RDebug::Printf("CEGLRendering::ConstructL 10");
+    vgSeti(VG_RENDERING_QUALITY, VG_RENDERING_QUALITY_NONANTIALIASED);
+    RDebug::Printf("CEGLRendering::ConstructL 11");
+    vgSeti(VG_MATRIX_MODE, VG_MATRIX_IMAGE_USER_TO_SURFACE);
+    RDebug::Printf("CEGLRendering::ConstructL 12");
+    vgClear(0, 0, windowSize.iWidth, windowSize.iHeight);
+    RDebug::Printf("CEGLRendering::ConstructL 13");
+    eglSwapBuffers(iDisplay, iSurface);
+    RDebug::Printf("CEGLRendering::ConstructL 14");
 	}
 
 
