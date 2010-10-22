@@ -21,12 +21,11 @@ const TInt KTimerDelay = 0;
 
 
 /** Attributes to be passed into eglChooseConfig */
-const EGLint	KColorRGBA8888AttribList[] =
+const EGLint	KColorRGB565AttribList[] =
 		{
-		EGL_RED_SIZE,			8,
-		EGL_GREEN_SIZE,			8,
-		EGL_BLUE_SIZE,			8,
-        EGL_ALPHA_SIZE,         8,
+		EGL_RED_SIZE,			5,
+		EGL_GREEN_SIZE,			6,
+		EGL_BLUE_SIZE,			5,
 		EGL_SURFACE_TYPE,		EGL_WINDOW_BIT,
 		EGL_RENDERABLE_TYPE, 	EGL_OPENVG_BIT,
 		EGL_NONE
@@ -179,7 +178,7 @@ void CEGLRendering::ConstructL(TBool aQhd)
 	EGLConfig chosenConfig = 0;
 
 	// Choose the config to use
-	EGLCheckReturnError(eglChooseConfig(iDisplay, KColorRGBA8888AttribList, &chosenConfig, 1, &numConfigs));
+	EGLCheckReturnError(eglChooseConfig(iDisplay, KColorRGB565AttribList, &chosenConfig, 1, &numConfigs));
 	RDebug::Printf("CEGLRendering::ConstructL 3");
 	if (numConfigs == 0)
 		{
@@ -250,6 +249,8 @@ void CEGLRendering::ConstructL(TBool aQhd)
     ASSERT(vgGetError() == VG_NO_ERROR);
     RDebug::Printf("vgAppendPathData");
     
+    vgSetPaint(strokePaint, VG_STROKE_PATH);
+    
     // Draw the star directly using the OpenVG API.
     vgDrawPath(path, VG_FILL_PATH | VG_STROKE_PATH);
     ASSERT(vgGetError() == VG_NO_ERROR);
@@ -265,7 +266,7 @@ void CEGLRendering::ConstructL(TBool aQhd)
 void CEGLRendering::UpdateDisplay()
 	{
 	// Flush colour buffer to the window surface
-	CEGLRendering::EGLCheckReturnError(eglSwapBuffers(iDisplay, iSurface));
+	//CEGLRendering::EGLCheckReturnError(eglSwapBuffers(iDisplay, iSurface));
 	}
 
 /** Callback called by refresh timer */
