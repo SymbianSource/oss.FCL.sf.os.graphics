@@ -21,11 +21,12 @@ const TInt KTimerDelay = 0;
 
 
 /** Attributes to be passed into eglChooseConfig */
-const EGLint	KColorRGB565AttribList[] =
+const EGLint	KColorRGBA8888AttribList[] =
 		{
-		EGL_RED_SIZE,			5,
-		EGL_GREEN_SIZE,			6,
-		EGL_BLUE_SIZE,			5,
+		EGL_RED_SIZE,			8,
+		EGL_GREEN_SIZE,			8,
+		EGL_BLUE_SIZE,			8,
+        EGL_ALPHA_SIZE,         8,
 		EGL_SURFACE_TYPE,		EGL_WINDOW_BIT,
 		EGL_RENDERABLE_TYPE, 	EGL_OPENVG_BIT,
 		EGL_NONE
@@ -178,7 +179,7 @@ void CEGLRendering::ConstructL(TBool aQhd)
 	EGLConfig chosenConfig = 0;
 
 	// Choose the config to use
-	EGLCheckReturnError(eglChooseConfig(iDisplay, KColorRGB565AttribList, &chosenConfig, 1, &numConfigs));
+	EGLCheckReturnError(eglChooseConfig(iDisplay, KColorRGBA8888AttribList, &chosenConfig, 1, &numConfigs));
 	RDebug::Printf("CEGLRendering::ConstructL 3");
 	if (numConfigs == 0)
 		{
@@ -210,20 +211,53 @@ void CEGLRendering::ConstructL(TBool aQhd)
 	
 	CEGLRendering::EGLCheckReturnError(eglMakeCurrent(iDisplay, iSurface, iSurface, iContextVG));
 	RDebug::Printf("CEGLRendering::ConstructL 8");
-	
-    VGfloat clearColour[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-    vgSetfv(VG_CLEAR_COLOR, 4, clearColour);
-    RDebug::Printf("CEGLRendering::ConstructL 9");
-    vgSeti(VG_IMAGE_QUALITY, VG_IMAGE_QUALITY_NONANTIALIASED);
-    RDebug::Printf("CEGLRendering::ConstructL 10");
-    vgSeti(VG_RENDERING_QUALITY, VG_RENDERING_QUALITY_NONANTIALIASED);
-    RDebug::Printf("CEGLRendering::ConstructL 11");
-    vgSeti(VG_MATRIX_MODE, VG_MATRIX_IMAGE_USER_TO_SURFACE);
-    RDebug::Printf("CEGLRendering::ConstructL 12");
-    vgClear(0, 0, windowSize.iWidth, windowSize.iHeight);
-    RDebug::Printf("CEGLRendering::ConstructL 13");
+
+    // Now try and draw a line (blue)
+    static VGubyte const starSegments[] = 
+        {
+        VG_MOVE_TO_ABS,
+        VG_LINE_TO_REL,
+        VG_CLOSE_PATH
+        };
+    
+    static VGfloat const starCoords[] = 
+        {
+        110, 35,
+        50, 160,
+        };
+        
+        
+    VGfloat strokeColor[4]  = {1.f, 0.f, 0.f, 1.f};
+    
+    VGPaint strokePaint = vgCreatePaint();
+
+    vgSetParameteri(strokePaint, VG_PAINT_TYPE, VG_PAINT_TYPE_COLOR);
+    vgSetParameterfv(strokePaint, VG_PAINT_COLOR, 4, strokeColor);
+    
+    VGPath path = vgCreatePath(VG_PATH_FORMAT_STANDARD,
+                            VG_PATH_DATATYPE_F,
+                            1.0f, // scale
+                            0.0f, // bias
+                            3,    // segmentCapacityHint
+                            4,   // coordCapacityHint
+                            VG_PATH_CAPABILITY_ALL);
+                            
+    ASSERT(vgGetError() == VG_NO_ERROR);
+    RDebug::Printf("vgCreatePath");
+    
+                            
+    vgAppendPathData(path, sizeof(starSegments), starSegments, starCoords);
+    ASSERT(vgGetError() == VG_NO_ERROR);
+    RDebug::Printf("vgAppendPathData");
+    
+    // Draw the star directly using the OpenVG API.
+    vgDrawPath(path, VG_FILL_PATH | VG_STROKE_PATH);
+    ASSERT(vgGetError() == VG_NO_ERROR);
+    RDebug::Printf("vgDrawPath");
+    
     eglSwapBuffers(iDisplay, iSurface);
-    RDebug::Printf("CEGLRendering::ConstructL 14");
+    RDebug::Printf("eglSwapBuffers");
+    EGLCheckError();
 	}
 
 
