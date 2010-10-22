@@ -21,11 +21,12 @@ const TInt KTimerDelay = 0;
 
 
 /** Attributes to be passed into eglChooseConfig */
-const EGLint	KColorRGB565AttribList[] =
+const EGLint	KColorRGBA8888AttribList[] =
 		{
-		EGL_RED_SIZE,			5,
-		EGL_GREEN_SIZE,			6,
-		EGL_BLUE_SIZE,			5,
+		EGL_RED_SIZE,			8,
+		EGL_GREEN_SIZE,			8,
+		EGL_BLUE_SIZE,			8,
+        EGL_ALPHA_SIZE,         8,
 		EGL_SURFACE_TYPE,		EGL_WINDOW_BIT,
 		EGL_RENDERABLE_TYPE, 	EGL_OPENVG_BIT,
 		EGL_NONE
@@ -178,7 +179,7 @@ void CEGLRendering::ConstructL(TBool aQhd)
 	EGLConfig chosenConfig = 0;
 
 	// Choose the config to use
-	EGLCheckReturnError(eglChooseConfig(iDisplay, KColorRGB565AttribList, &chosenConfig, 1, &numConfigs));
+	EGLCheckReturnError(eglChooseConfig(iDisplay, KColorRGBA8888AttribList, &chosenConfig, 1, &numConfigs));
 	RDebug::Printf("CEGLRendering::ConstructL 3");
 	if (numConfigs == 0)
 		{
