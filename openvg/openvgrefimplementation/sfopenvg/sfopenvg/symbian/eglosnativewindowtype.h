@@ -20,7 +20,26 @@
 #ifndef EGLOSNATVIEWINDOWTYPE_H
 #define EGLOSNATVIEWINDOWTYPE_H
 
-struct TNativeWindowType
+class REglWindowBase
+	{
+public:
+	TBool IsWindow()
+		{
+		if(*(TInt32*)iOffset == 0xFFFFFFFF)
+			{
+			return EFalse;
+			}
+		}
+protected:
+	REglWindowBase():iOffsetVal(0xFFFFFFFF)
+		{
+		iOffset= &iOffsetVal;
+		}
+	TInt32 iOffsetVal;
+	void* iOffset;
+	};
+
+struct TNativeWindowType:public REglWindowBase
 	{
 public:
 	TNativeWindowType() :
