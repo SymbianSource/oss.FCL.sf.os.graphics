@@ -16,6 +16,8 @@
 #include <w32std.h>
 #include <e32math.h>
 #include <e32keys.h>
+#include <bacline.h>
+#include "gles1cube.h"
 #include "vgline.h"
 
 #define KDefaultScreenNo 0
@@ -224,6 +226,10 @@ CWsApp* CWsApp::NewL()
 	return self;
 	}
 
+_LIT(KOptionScreen, "-screen");
+
+typedef CEGLRendering* (*RendererFactoryFunctionL)(RWindow&);
+
 /**
  * Constructor for CWsApp
  *
@@ -236,22 +242,56 @@ void CWsApp::ConstructL()
 	RDebug::Printf("[EBT] CWsApp::ConstructL");
 
 	iScrId = KDefaultScreenNo;
-	if (User::CommandLineLength() > 0)
+	HBufC* rendererName = 0;
+	CCommandLineArguments* args = CCommandLineArguments::NewLC();
+	for (TInt i=1; i<args->Count(); ++i)
 		{
-		TBuf<1> arg;
-		User::CommandLine(arg);
-		iScrId = (TInt)(arg[0]-'0');
+		const TPtrC arg = args->Arg(i);
+		if (!arg.Compare(KOptionScreen))
+			{
+			if (++i < args->Count())
+				{
+				TLex lex(args->Arg(i));
+				User::LeaveIfError(lex.Val(iScrId));
+				RDebug::Printf("[EBT] CWsApp::ConstructL screenId %d", iScrId);
+				}
+			}
+		else if (!rendererName)
+			{
+			RDebug::Print(_L("[EBT] CWsApp::ConstructL rendererName %S"), &arg);
+			rendererName = HBufC::NewL(arg.Length());
+			rendererName->Des() = arg;
+			}
+		else
+			{
+			RDebug::Print(_L("[EBT] CWsApp::ConstructL ignoring argument %S"), &arg);
+			}
 		}
 
-	RDebug::Printf("[EBT] CWsApp::ConstructL 1");
+	CleanupStack::PopAndDestroy(args);
+	if (rendererName)
+		{
+		CleanupStack::PushL(rendererName);
+		}
+
 	iAppView = CWsCanvas::NewL(iScrId, iPos);
-	RDebug::Printf("[EBT] CWsApp::ConstructL 2");
+    iSz = iAppView->ScreenSize();
 	iEventHandler = new (ELeave) CWsEventHandler(iAppView->Session(), iAppView->Window(), *this);
-	RDebug::Printf("[EBT] CWsApp::ConstructL 3");
-	iDemo = CVGLine::NewL(iAppView->Window());
-	RDebug::Printf("[EBT] CWsApp::ConstructL 4");
-	iSz = iAppView->ScreenSize();
-	RDebug::Printf("[EBT] CWsApp::ConstructL 5");
+
+	RendererFactoryFunctionL factoryFunctionL = CVGLine::NewL;
+	if (rendererName)
+		{
+		if (!rendererName->Des().Compare(CGLES1Cube::Name()))
+			{
+			factoryFunctionL = CGLES1Cube::NewL;
+			}
+		if (!rendererName->Des().Compare(CVGLine::Name()))
+			{
+			factoryFunctionL = CVGLine::NewL;
+			}
+		CleanupStack::PopAndDestroy(rendererName);
+		}
+	iDemo = (*factoryFunctionL)(iAppView->Window());
 	}
 
 void CWsApp::Start()
@@ -274,13 +314,9 @@ void CWsApp::PointerEvent()
 
 CWsApp::~CWsApp()
 	{
-    RDebug::Printf("[EBT] CWsApp::~CWsApp");
 	delete iDemo;
-	RDebug::Printf("[EBT] CWsApp::~CWsApp 1");
 	delete iEventHandler;
-    RDebug::Printf("[EBT] CWsApp::~CWsApp 2");
 	delete iAppView;
-    RDebug::Printf("[EBT] CWsApp::~CWsApp 3");
 	}
 
 /**

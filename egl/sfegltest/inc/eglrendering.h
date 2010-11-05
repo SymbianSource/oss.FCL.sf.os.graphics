@@ -17,8 +17,9 @@
 
 #include <e32base.h>
 #include <w32std.h>
-#include <EGL/egl.h>
-#include <VG/openvg.h>
+#include <egl/egl.h>
+#include <vg/openvg.h>
+#include <gles/gl.h>
 
 class CEGLRendering : public CBase
 	{
@@ -29,8 +30,9 @@ public:
     void Redraw();
 
 protected:
-    CEGLRendering(RWindow& aWindow);
+    CEGLRendering(RWindow& aWindow, EGLenum aApi);
     void ConstructL();
+    TSize WindowSize() const;
 
 	void StartRedrawTimer();
 	void StopRedrawTimer();
@@ -38,6 +40,7 @@ protected:
     static void EGLCheckError();
     static void EGLCheckReturnError(EGLBoolean aBool);
     static void VGCheckError();
+    static void GLCheckError();
 
 private:
     void EglSetupL();
@@ -47,6 +50,7 @@ private:
 
 private:
 	RWindow& iWindow;
+	const EGLenum iApi;
 	CPeriodic* iRedrawTimer;
 	EGLDisplay iDisplay;
 	EGLSurface iSurface;

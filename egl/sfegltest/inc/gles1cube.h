@@ -6,31 +6,33 @@
 // at the URL "http://www.eclipse.org/legal/epl-v10.html".
 //
 // Initial Contributors:
-// Nokia Corporation - initial contribution.
+// Accenture - initial contribution.
 //
 // Contributors:
 //
 // Description:
 
-#ifndef __VGLINE_H__
-#define __VGLINE_H__
+#ifndef __GLES1CUBE_H__
+#define __GLES1CUBE_H__
 
 #include "eglrendering.h"
 
-class CVGLine : public CEGLRendering
+class CGLES1Cube : public CEGLRendering
     {
 public:
     static CEGLRendering* NewL(RWindow& aWindow);
+    ~CGLES1Cube();
     static const TDesC& Name();
 
 private:
-    CVGLine(RWindow& aWindow);
+    CGLES1Cube(RWindow& aWindow);
     void KhrSetup();
     void KhrPaint();
 
 private:
-    VGPaint iVGPaint;
-    VGPath iVGPath;
+    TReal iAngle;
+    GLuint iCoordinateColorBuffer;
+    GLuint iIndexBuffer;
     };
 
 #endif

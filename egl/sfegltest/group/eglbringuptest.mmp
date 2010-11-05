@@ -43,13 +43,16 @@ systeminclude   /epoc32/include/platform
 sourcepath		../src
 source			main.cpp
 source			eglrendering.cpp
+source			gles1cube.cpp
 source			vgline.cpp
 
+library			bafl.lib
 library         euser.lib
 library         libc.lib
 library         ws32.lib
 library			libegl.lib
 library			libopenvg.lib
+library			libgles_cm.lib
 
 smpsafe
 

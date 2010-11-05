@@ -58,8 +58,19 @@ void CEGLRendering::VGCheckError()
         }
     }
 
-CEGLRendering::CEGLRendering(RWindow& aWindow)
+void CEGLRendering::GLCheckError()
+    {
+	GLenum error = glGetError();
+    if(GL_NO_ERROR != error)
+        {
+        RDebug::Printf("[EBT] CEglRendering::GLCheckError error %d", error);
+        User::Panic(_L("EBT-GL"), error);
+        }
+    }
+
+CEGLRendering::CEGLRendering(RWindow& aWindow, EGLenum aApi)
 	:  iWindow(aWindow)
+	,  iApi(aApi)
 	{
 	}
 
@@ -83,6 +94,11 @@ void CEGLRendering::ConstructL()
 	KhrSetup();
 	KhrPaint();
 	EglSwapBuffers();
+	}
+
+TSize CEGLRendering::WindowSize() const
+	{
+	return iWindow.Size();
 	}
 
 void CEGLRendering::EglSetupL()
@@ -121,8 +137,8 @@ void CEGLRendering::EglSetupL()
         User::Leave(KErrNotSupported);
         }
 
-    RDebug::Printf("[EBT] CEGLRendering::EglSetupL eglBindApi");
-    EGLCheckReturnError(eglBindAPI(EGL_OPENVG_API));
+    RDebug::Printf("[EBT] CEGLRendering::EglSetupL eglBindApi 0x%x", iApi);
+    EGLCheckReturnError(eglBindAPI(iApi));
 
     RDebug::Printf("[EBT] CEGLRendering::EglSetupL eglCreateWindowSurface");
     iSurface = eglCreateWindowSurface(iDisplay, chosenConfig, &iWindow, NULL);

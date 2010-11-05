@@ -14,7 +14,9 @@
 
 #include "vgline.h"
 
-CVGLine* CVGLine::NewL(RWindow& aWindow)
+_LIT(KVGLineName, "vgline");
+
+CEGLRendering* CVGLine::NewL(RWindow& aWindow)
     {
     CVGLine* self = new (ELeave) CVGLine(aWindow);
     CleanupStack::PushL(self);
@@ -23,9 +25,14 @@ CVGLine* CVGLine::NewL(RWindow& aWindow)
     return self;
     }
 
+const TDesC& CVGLine::Name()
+	{
+	return KVGLineName;
+	}
+
 CVGLine::CVGLine(RWindow& aWindow)
-    :   CEGLRendering(aWindow)
-    {
+    :   CEGLRendering(aWindow, EGL_OPENVG_API)
+	{
     }
 
 void CVGLine::KhrSetup()
