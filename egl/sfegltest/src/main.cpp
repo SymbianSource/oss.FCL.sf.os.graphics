@@ -20,9 +20,6 @@
 
 #define KDefaultScreenNo 0
 
-// Amount of time for which to run the app
-static const TInt KAppRunDuration = 5000000;
-
 class CWsCanvas: public CBase
 {
 public:
@@ -114,8 +111,82 @@ void CWsCanvas::ConstructL()
 
 	iWs.SetFocusScreen(iScrId);
 	}
-	
+
+class MWsEventObserver
+    {
+public:
+    virtual void PointerEvent() = 0;
+    };
+
+class CWsEventHandler : public CActive
+    {
+public:
+    CWsEventHandler(RWsSession& aSession, RWindow& aWindow, MWsEventObserver& aObserver);
+    ~CWsEventHandler();
+private:
+    void ConstructL();
+    void RequestEvent();
+    void RunL();
+    void DoCancel();
+private:
+    RWsSession& iSession;
+    RWindow& iWindow;
+    MWsEventObserver& iObserver;
+    };
+
+CWsEventHandler::CWsEventHandler(RWsSession& aSession, RWindow& aWindow, MWsEventObserver& aObserver)
+    :   CActive(CActive::EPriorityStandard)
+    ,   iSession(aSession)
+    ,   iWindow(aWindow)
+    ,   iObserver(aObserver)
+    {
+    RDebug::Printf("[EBT] CWsEventHandler::CWsEventHandler");
+    CActiveScheduler::Add(this);
+    RequestEvent();
+    }
+
+CWsEventHandler::~CWsEventHandler()
+    {
+    RDebug::Printf("[EBT] CWsEventHandler::~CWsEventHandler");
+    Cancel();
+    }
+
+void CWsEventHandler::ConstructL()
+    {
+    CActiveScheduler::Add(this);
+    RequestEvent();
+    }
+
+void CWsEventHandler::RequestEvent()
+    {
+    iStatus = KRequestPending;
+    iSession.EventReady(&iStatus);
+    SetActive();
+    }
+
+void CWsEventHandler::RunL()
+    {
+    if (KErrNone == iStatus.Int())
+        {
+        TWsEvent event;
+        iSession.GetEvent(event);
+        RequestEvent();
+        switch (event.Type())
+            {
+            case EEventPointer:
+                iObserver.PointerEvent();
+                break;
+            }
+        }
+    }
+
+void CWsEventHandler::DoCancel()
+    {
+    iSession.EventReadyCancel();
+    }
+
 class CWsApp : public CBase
+             , public MWsEventObserver
     {
 public:
     static CWsApp* NewL();
@@ -123,16 +194,16 @@ public:
     void Start();
     void Stop();
 
-private:
-    static TInt TimerCallBack(TAny* aApp);
+    // MWsEventObserver
+    void PointerEvent();
 
 private:
     CWsApp();
     void ConstructL();
 
 private:
-    CPeriodic* iTimer;
     CWsCanvas* iAppView;
+    CWsEventHandler* iEventHandler;
     CEGLRendering* iDemo;
     TPoint iPos;
     TSize iSz;
@@ -164,10 +235,6 @@ void CWsApp::ConstructL()
     {
 	RDebug::Printf("[EBT] CWsApp::ConstructL");
 
-	// Set a timer to stop the application after a short time
-	iTimer = CPeriodic::NewL(CActive::EPriorityIdle);
-	iTimer->Start(KAppRunDuration, KAppRunDuration, TCallBack(TimerCallBack,this));
-
 	iScrId = KDefaultScreenNo;
 	if (User::CommandLineLength() > 0)
 		{
@@ -179,18 +246,13 @@ void CWsApp::ConstructL()
 	RDebug::Printf("[EBT] CWsApp::ConstructL 1");
 	iAppView = CWsCanvas::NewL(iScrId, iPos);
 	RDebug::Printf("[EBT] CWsApp::ConstructL 2");
-	iDemo = CVGLine::NewL(iAppView->Window());
+	iEventHandler = new (ELeave) CWsEventHandler(iAppView->Session(), iAppView->Window(), *this);
 	RDebug::Printf("[EBT] CWsApp::ConstructL 3");
-	iSz = iAppView->ScreenSize();
+	iDemo = CVGLine::NewL(iAppView->Window());
 	RDebug::Printf("[EBT] CWsApp::ConstructL 4");
+	iSz = iAppView->ScreenSize();
+	RDebug::Printf("[EBT] CWsApp::ConstructL 5");
 	}
-
-TInt CWsApp::TimerCallBack(TAny* aApp)
-    {
-    RDebug::Printf("[EBT] CWsApp::TimerCallBack");
-    reinterpret_cast<CWsApp*>(aApp)->Stop();
-    return KErrNone;
-    }
 
 void CWsApp::Start()
 	{
@@ -204,14 +266,20 @@ void CWsApp::Stop()
     CActiveScheduler::Stop();
 	}
 
+void CWsApp::PointerEvent()
+    {
+    RDebug::Printf("[EBT] CWsApp::PointerEvent");
+    Stop();
+    }
+
 CWsApp::~CWsApp()
 	{
     RDebug::Printf("[EBT] CWsApp::~CWsApp");
 	delete iDemo;
-    RDebug::Printf("[EBT] CWsApp::~CWsApp 1");
-	delete iAppView;
+	RDebug::Printf("[EBT] CWsApp::~CWsApp 1");
+	delete iEventHandler;
     RDebug::Printf("[EBT] CWsApp::~CWsApp 2");
-	delete iTimer;
+	delete iAppView;
     RDebug::Printf("[EBT] CWsApp::~CWsApp 3");
 	}
 
