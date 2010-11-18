@@ -38,7 +38,10 @@ MACRO 		BUILD_WITH_PRIVATE_VGU //same meaning as macro BUILD_WITH_PRIVATE_EGL ex
 
 MACRO 		BUILD_WITH_PRIVATE_OPENVG //same meaning as macro BUILD_WITH_PRIVATE_EGL except applies to the OpenVG API.
 								   //see riAPI.cpp
-								   
+
+MACRO EGL_COMPOSITION // temp to build EGL with Surface Manager 
+						// see riMiniEGL.cpp								   
+//userinclude     ..\egl			// Local egl include files
 userinclude     ..\sfopenvg			// Local include files
 userinclude     ..\sfopenvg\include			// Local include files
 
@@ -63,6 +66,9 @@ source riPath.cpp
 source riPixelPipe.cpp
 source riRasterizer.cpp
 source riVGU.cpp
+//
+SOURCEPATH ..\sfopenvg\extensions
+source eglsync.cpp
 
 //for EGL
 SOURCEPATH ..\sfopenvg\symbian
@@ -76,7 +82,8 @@ library         ws32.lib      		// For RWindow, Direct Screen Access, etc
 library         libstdcpp.lib      		// standard lib
 library         libc.lib      		// standard lib
 library         libm.lib      		// standard lib
-
+library 		surfacemanager.lib	// Surface Manager
+library 		surfaceupdateclient.lib	// Surface Update
 
 
 

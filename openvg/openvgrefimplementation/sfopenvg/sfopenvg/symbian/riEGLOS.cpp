@@ -36,7 +36,78 @@
 
 #include <e32std.h>
 #include <w32std.h>
-#include <eglosnativewindowtype.h>
+#include "eglosnativewindowtype.h"
+
+
+REglWindowBase::REglWindowBase()
+{
+	iIsRWindow = (TAny*)0xFFFFFFFF;
+}
+
+TBool REglWindowBase::IsRWindow() const
+{
+	if((TAny*)0xFFFFFFFF == iIsRWindow)
+	{
+		return EFalse;
+	}
+	return ETrue;
+}
+
+EXPORT_C TNativeWindowType::TNativeWindowType(EGLNativeWindowType aNativeWindow) : iSize(0,0),iBitmap(NULL)
+{
+	iEglWindow = (REglWindowBase*)aNativeWindow;
+	iIsValid = ETrue;
+}
+
+EXPORT_C TNativeWindowType::TNativeWindowType() : iSize(0,0),iBitmap(NULL),iEglWindow(NULL),iIsValid(EFalse)
+{
+
+}
+
+EXPORT_C void TNativeWindowType::SetNativeWindow(EGLNativeWindowType aNativeWindow)
+{
+	iEglWindow = (REglWindowBase*)aNativeWindow;
+	iIsValid = ETrue;
+}
+
+EXPORT_C TBool TNativeWindowType::IsValid() const
+{
+	return iIsValid;
+}
+
+EXPORT_C TSize TNativeWindowType::SizeInPixels() const
+{
+	if(iEglWindow && iEglWindow->IsRWindow())
+	{
+		return ((RWindow*)(iEglWindow))->Size();
+	}
+	else
+	{
+		return iSize;
+	}
+}
+
+EXPORT_C TInt TNativeWindowType::ScreenNumber() const
+{
+	if(iEglWindow && iEglWindow->IsRWindow())
+	{
+		return ((RWindow*)(iEglWindow))->ScreenNumber();
+	}
+	else
+	{
+		return KDefaultScreenNumber;
+	}
+}
+
+EXPORT_C TBool TNativeWindowType::IsWindow() const
+{
+	if(iEglWindow)
+	{
+		return iEglWindow->IsRWindow();
+	}
+	else
+		return EFalse;
+}
 
 namespace OpenVGRI
 {
@@ -101,19 +172,13 @@ void* OSCreateWindowContext(EGLNativeWindowType window)
 		return NULL;
 	}
 	
-	REglWindowBase* winbase = (REglWindowBase*)window;
-	if(winbase->IsWindow() == EFalse)
-		{
-		ctx->iNativeWindowType = (TNativeWindowType*)window;
-		}
-	else
-		{
-		RDrawableWindow* drawableWindow = (RDrawableWindow*)window;
-		ctx->iNativeWindowType = new TNativeWindowType;
-		ctx->iNativeWindowType->iSize.iHeight = drawableWindow->Size().iHeight;
-		ctx->iNativeWindowType->iSize.iWidth = drawableWindow->Size().iWidth;
-		}
+	ctx->iNativeWindowType = new TNativeWindowType(window);
 	
+	if(ctx->iNativeWindowType->IsWindow())
+	{
+		ctx->iNativeWindowType->iSize.iHeight = ctx->iNativeWindowType->SizeInPixels().iHeight;
+		ctx->iNativeWindowType->iSize.iWidth = ctx->iNativeWindowType->SizeInPixels().iWidth;
+	}
 return ctx;
 }
 
@@ -122,6 +187,7 @@ void OSDestroyWindowContext(void* context)
     OSWindowContext* ctx = (OSWindowContext*)context;
     if(ctx)
     {
+		delete ctx->iNativeWindowType;
         RI_DELETE(ctx);
     }
 }
@@ -131,6 +197,10 @@ bool OSIsWindow(const void* context)
     OSWindowContext* ctx = (OSWindowContext*)context;
     if(ctx)
     {
+		/* stub!
+		 * ToDo at least attempt to check if IsWindow:o
+		 * or what was the idea here?
+		 */
         return true;
     }
     return false;
@@ -175,6 +245,7 @@ void OSBlitToWindow(void* context, const Drawable* drawable)
         	ReadPixelsToCFbsBitmap(*bitmap, w, h);        	
         	}
     }
+	// do we need to do anything for OpenVG/GL??
 }
 
 void ReadPixelsToCFbsBitmap(CFbsBitmap& aBitmap, TUint aW, TUint aH)

@@ -20,34 +20,43 @@
 #ifndef EGLOSNATVIEWINDOWTYPE_H
 #define EGLOSNATVIEWINDOWTYPE_H
 
+#define KDefaultScreenNumber 0
+
 class REglWindowBase
 	{
 public:
-	TBool IsWindow()
-		{
-		if(*(TInt32*)iOffset == 0xFFFFFFFF)
-			{
-			return EFalse;
-			}
-		}
+	//virtual TBool IsValid() const = 0;
+	//virtual TSize SizeInPixels() const = 0;
+	//virtual TSize SizeInTwips() const = 0;
+	//virtual TInt ScreenNumber() const = 0;
 protected:
-	REglWindowBase():iOffsetVal(0xFFFFFFFF)
-		{
-		iOffset= &iOffsetVal;
-		}
-	TInt32 iOffsetVal;
-	void* iOffset;
+	REglWindowBase();
+private:
+	friend class TNativeWindowType;
+	TBool IsRWindow() const;
+private:
+	TInt32 iFourByteOffset;
+	TAny* iIsRWindow;
 	};
 
-struct TNativeWindowType:public REglWindowBase
+
+class TNativeWindowType
 	{
 public:
-	TNativeWindowType() :
-	iSize(0,0),
-	iBitmap(NULL)
-	{};
+	IMPORT_C TNativeWindowType(EGLNativeWindowType aNativeWindow);
+	IMPORT_C TNativeWindowType();
+	IMPORT_C void SetNativeWindow(EGLNativeWindowType aNativeWindow);
+	IMPORT_C TBool IsValid() const;
+	IMPORT_C TSize SizeInPixels() const;
+	//virtual TSize SizeInTwips() const = 0;
+	IMPORT_C TInt ScreenNumber() const;
+	IMPORT_C TBool IsWindow() const;
+	
 	TSize				iSize; //to keep
 	CFbsBitmap* 		iBitmap; //to keep
+private:
+	REglWindowBase*		iEglWindow;
+	TBool 				iIsValid;
 	};
 
 #endif //EGLOSCALLBACK_H

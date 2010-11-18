@@ -36,7 +36,6 @@ deffile SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(def/eabi/libWFC.def)
 
 MACRO			__KHR_EXPORTS
 TARGETTYPE		dll
-CAPABILITY		PowerMgmt ReadDeviceData WriteDeviceData ProtServ
 UID				0 KUidOpenWfcDllUidValue
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
@@ -95,3 +94,4 @@ SOURCE 			owfnotifications.cpp
 
 SMPSAFE
 
+CAPABILITY All -TCB

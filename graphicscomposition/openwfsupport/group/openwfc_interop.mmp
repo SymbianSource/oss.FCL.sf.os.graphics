@@ -16,7 +16,6 @@
 
 TARGET			wfcinterop.dll
 TARGETTYPE		dll
-CAPABILITY 		PowerMgmt ReadDeviceData WriteDeviceData ProtServ
 UID				0x1000008d 0x10286FC5
 VENDORID		0x70000001
 
@@ -44,3 +43,4 @@ LIBRARY			bitgdi.lib
 LIBRARY         hal.lib
 
 SMPSAFE
+CAPABILITY All -TCB

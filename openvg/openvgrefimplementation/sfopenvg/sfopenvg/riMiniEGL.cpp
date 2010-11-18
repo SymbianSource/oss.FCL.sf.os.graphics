@@ -35,6 +35,7 @@
  * \todo	what happens in egl functions when eglTerminate has been called but the context and surface are still in use?
  * \todo	OSDeinitMutex should be called in case getEGL fails.
  *//*-------------------------------------------------------------------*/
+#include "eglapi.h"
 
 #include "egl.h"
 #include "openvg.h"
@@ -42,6 +43,8 @@
 #include "riMath.h"
 #include "riContext.h"
 #include "riImage.h"
+#include "riMiniEGL.h"
+#include "riDefs.h"
 
 #ifdef BUILD_WITH_PRIVATE_EGL 
 #include "eglinternal.h"
@@ -51,105 +54,329 @@
 #include "openvginternal.h"
 #endif
 
-//==============================================================================================
+#ifdef EGL_COMPOSITION
+#include "eglsync.h"
+//
+#include <w32std.h>
+#include <graphics/surfacemanager.h>
+#include <graphics/surfaceconfiguration.h>
+#include <graphics/suerror.h>
+#include <graphics/surface_hints.h>
+#include <graphics/surfaceupdateclient.h>
+#include <e32hashtab.h>
+#endif
 
+using namespace OpenVGRI;
+//// class EGL
+EGL::EGL() :
+	m_threads(),
+	m_currentThreads(),
+	m_displays(),
+	m_referenceCount(0)
+{
+}
+EGL::~EGL()
+{
+	for(int i=0;i<m_displays.size();i++)
+	{
+		RI_DELETE(m_displays[i]);
+	}
+	for(int i=0;i<m_threads.size();i++)
+	{
+		RI_DELETE(m_threads[i]);
+	}
+	//currentThreads contain just pointers to threads we just deleted
+}
+
+/*-------------------------------------------------------------------*//*!
+* \brief	
+* \param	
+* \return	
+* \note		
+*//*-------------------------------------------------------------------*/
 namespace OpenVGRI
 {
+EGL* getEGL()
+{
 
-void* OSGetCurrentThreadID(void);
-void OSAcquireMutex(void);
-void OSReleaseMutex(void);
-void OSDeinitMutex(void);
 
-EGLDisplay OSGetDisplay(EGLNativeDisplayType display_id);
-void* OSCreateWindowContext(EGLNativeWindowType window);
-void OSDestroyWindowContext(void* context);
-bool OSIsWindow(const void* context);
-void OSGetWindowSize(const void* context, int& width, int& height);
-void OSBlitToWindow(void* context, const Drawable* drawable);
-EGLBoolean OSGetNativePixmapInfo(NativePixmapType pixmap, int* width, int* height, int* stride, VGImageFormat* format, int** data);
+	//use TLS to store static global g_egl
+	EGL* pEgl=NULL; 
+	if((pEgl = static_cast<EGL*>(Dll::Tls()))==NULL)
+		{
+		//create TLS instance
+		pEgl = RI_NEW(EGL, ());
+		Dll::SetTls(pEgl);
+		}
+	return pEgl;
 
+	
+}
+static void releaseEGL()
+{
+	EGL* pEgl = static_cast<EGL*>(Dll::Tls());
+	if (pEgl)
+		delete pEgl; 
+	Dll::SetTls(NULL);
+
+}
+//helper functions
+RIEGLContext* CastToRIEGLContext(EGLContext aCtxId)
+  {
+  return (RIEGLContext*)(aCtxId);
+  }
+EGLContext CastFromRIEGLContext(RIEGLContext* aCtx)
+  {
+  return (EGLContext)(aCtx);
+  }
+
+RIEGLSurface* CastToRIEGLSurface(EGLSurface aSurfaceId)
+  {
+  return (RIEGLSurface*)(aSurfaceId);
+  }
+EGLSurface CastFromRIEGLSurface(RIEGLSurface* aSurface)
+  {
+  return (EGLSurface)(aSurface);
+  }
+
+Image* CastToImage(EGLClientBuffer aBufferId)
+  {
+  return (Image*)(aBufferId);
+  }
+
+EGLClientBuffer CastFromImage(Image* aBUffer)
+  {
+  return (EGLClientBuffer)(aBUffer);
+  }
+////
+} // namespace OpenVGRI
+/*-------------------------------------------------------------------*//*!
+* \brief	Given a display ID, return the corresponding object, or NULL
+*			if the ID hasn't been initialized.
+* \param	
+* \return	
+* \note		if egl has been initialized for this display, the display ID can
+*			be found from egl->m_displays
+*//*-------------------------------------------------------------------*/
+RIEGLDisplay* EGL::getDisplay(const EGLDisplay displayID)
+{
+	for(int i=0;i<m_displays.size();i++)
+	{
+		if(displayID == m_displays[i]->getID())
+		{
+			if (CreateDisplayInfo(displayID))
+			{
+				return m_displays[i];		
+			}
+		}
+	}
+	return NULL;		//error: the display hasn't been eglInitialized
+}
+
+/*
+  Create an information object for an opened Display.
+ */
+TBool EGL::CreateDisplayInfo(const EGLDisplay aDisplayID)
+{
+	TBool result = EFalse;
+	EGL_TRACE("EGL::CreateDisplayInfo begin aDisplay=%d", aDisplayID);
+	iDisplayMapLock.WriteLock();
+	
+	if (NULL != iDisplayMap.Find( aDisplayID))
+	{
+		result = ETrue;
+	}
+	else
+	{
+		TInt err = KErrNoMemory; 
+		CEglDisplayInfo* dispInfo = new CEglDisplayInfo;
+
+		if (dispInfo)
+		{
+			err = iDisplayMap.Insert(aDisplayID, dispInfo);
+			EGL_TRACE("EGL::CreateDisplayInfo - DisplayMap insert error %d", err);
+			EGLPANIC_ASSERT_DEBUG(err == KErrNone, EEglPanicDisplayMapInsertFailed);
+	
+			//added for egl sync extension benefit
+			if (iEglSyncExtension)
+			{
+				err = iEglSyncExtension->EglSyncDisplayCreate(aDisplayID);
+				EGL_TRACE("EGL::CreateDisplayInfo - EglSyncDisplayCreate error %d", err);
+				EGLPANIC_ASSERT_DEBUG(err == KErrNone, EEglPanicEglSyncDisplayCreateFailed);
+	
+				if (err)
+				{
+					iDisplayMap.Remove(aDisplayID);
+				}
+			}
+		}
+
+		if (err == KErrNone)
+		{
+			result = ETrue;
+		}
+	}
+	iDisplayMapLock.Unlock();
+
+	EGL_TRACE("EGL::CreateDisplayInfo end, result=%d", result);
+	return result;
+}
 
 /*-------------------------------------------------------------------*//*!
-* \brief	
+ * \brief   Creates the EGL sync instance
+ * \ingroup eglSync
+*//*-------------------------------------------------------------------*/
+
+EGLint EGL::InitialiseExtensions()
+{
+	iEglSyncExtension = CEglSyncExtension::Create(*this);
+	return EGL_SUCCESS;
+}
+
+// API supporting EGL sync extension
+/*-------------------------------------------------------------------*//*!
+ * \brief   Query and request to lock a specified display
+ * \ingroup eglSync
+ * \param   aEglDisplay a display identifier
+ * \return  EGL_SUCCESS if successful;
+ *          EGL_BAD_DISPLAY is not a name of a valid EGLDisplay
+ *          EGL_NOT_INITIALIZED if the display object associated
+ *          with the <aEglDisplay> has not been initialized
+*//*-------------------------------------------------------------------*/
+
+EGLint EGL::FindAndLockDisplay(EGLDisplay aDisplayID)
+{
+	EGLint result = EGL_BAD_DISPLAY;
+	EGL_TRACE("EGL::FindAndLockDisplay aDisplay=%d", aDisplayID);
+	iDisplayMapLock.ReadLock();
+	CEglDisplayInfo** pDisp = iDisplayMap.Find(aDisplayID);
+	if (pDisp && *pDisp)
+		{
+		CEglDisplayInfo* disp = *pDisp;
+		if (disp->iInitialized)
+			{
+			EGL_TRACE("EGL::FindAndLockDisplay display found");
+			result = EGL_SUCCESS;
+			}
+		else
+			{
+			EGL_TRACE("EGL::FindAndLockDisplay display not initialized");
+			result = EGL_NOT_INITIALIZED;
+			}
+		}
+	else
+		{
+		EGL_TRACE("EGL::FindAndLockDisplay cannot find display");
+		}
+	if (result != EGL_SUCCESS)
+		{
+		iDisplayMapLock.Unlock();
+		}
+	return result;
+}
+
+/*-------------------------------------------------------------------*//*!
+ * \brief   Releases the lock associated with a valid EGLDisplay
+ * \ingroup eglSync
+ * \param   aEglDisplay a display identifier
+*//*-------------------------------------------------------------------*/
+
+void EGL::ReleaseDisplayLock(EGLDisplay aDisplayID)
+{
+	EGL_TRACE("EGL::ReleaseDisplayLock aDisplay=%d", aDisplayID);
+	iDisplayMapLock.Unlock();
+}
+
+/*-------------------------------------------------------------------*//*!
+* \brief	return EGLDisplay for the current context
 * \param	
 * \return	
 * \note		
 *//*-------------------------------------------------------------------*/
 
-class RIEGLConfig
+EGLDisplay EGL::findDisplay(EGLContext ctx) const
 {
-public:
-	RIEGLConfig() : m_desc(Color::formatToDescriptor(VG_sRGBA_8888)), m_configID(0)	{}
-	~RIEGLConfig()							{}
-	void		set(int r, int g, int b, int a, int l, int bpp, int samples, int maskBits, int ID)
+	for(int i=0;i<m_displays.size();i++)
 	{
-		m_desc.redBits = r;
-		m_desc.greenBits = g;
-		m_desc.blueBits = b;
-		m_desc.alphaBits = a;
-		m_desc.luminanceBits = l;
-		m_desc.alphaShift = 0;
-		m_desc.luminanceShift = 0;
-		m_desc.blueShift = b ? a : 0;
-		m_desc.greenShift = g ? a + b : 0;
-		m_desc.redShift = r ? a + b + g : 0;
-		m_desc.format = (VGImageFormat)-1;
-		m_desc.internalFormat = l ? Color::sLA : Color::sRGBA;
-		m_desc.bitsPerPixel = bpp;
-		RI_ASSERT(Color::isValidDescriptor(m_desc));
-		m_samples = samples;
-        m_maskBits = maskBits;
-		m_configID = ID;
-        m_config = (EGLConfig)ID;
+        if(m_displays[i]->contextExists(ctx))
+            return m_displays[i]->getID();
+	}
+    return EGL_NO_DISPLAY;
+}
+
+/*-------------------------------------------------------------------*//*!
+* \brief	return an EGL thread struct for the thread made current, or
+*            NULL if there's no current context.
+* \param	
+* \return	
+* \note		
+*//*-------------------------------------------------------------------*/
+
+RIEGLThread* EGL::getCurrentThread() const
+{
+	void* currentThreadID = OSGetCurrentThreadID();
+	for(int i=0;i<m_currentThreads.size();i++)
+	{
+		if(currentThreadID == m_currentThreads[i]->getThreadID())
+			return m_currentThreads[i];
+	}
+	return NULL;		//thread is not current
+}
+
+/*-------------------------------------------------------------------*//*!
+* \brief	return an EGL thread struct corresponding to current OS thread.
+* \param	
+* \return	
+* \note		
+*//*-------------------------------------------------------------------*/
+
+RIEGLThread* EGL::getThread()
+{
+	void* currentThreadID = OSGetCurrentThreadID();
+	for(int i=0;i<m_threads.size();i++)
+	{
+		if(currentThreadID == m_threads[i]->getThreadID())
+			return m_threads[i];
 	}
 
-    Color::Descriptor configToDescriptor(bool sRGB, bool premultiplied) const
-    {
-        Color::Descriptor desc = m_desc;
-        unsigned int f = m_desc.luminanceBits ? Color::LUMINANCE : 0;
-        f |= sRGB ? Color::NONLINEAR : 0;
-        f |= premultiplied ? Color::PREMULTIPLIED : 0;
-        desc.internalFormat = (Color::InternalFormat)f;
-        return desc;
-    }
+	//EGL doesn't have a struct for the thread yet, add it to EGL's list
+	RIEGLThread* newThread = NULL;
+	try
+	{
+		newThread = RI_NEW(RIEGLThread, (OSGetCurrentThreadID()));	//throws bad_alloc
+		m_threads.push_back(newThread);	//throws bad_alloc
+		return newThread;
+	}
+	catch(std::bad_alloc)
+	{
+		RI_DELETE(newThread);
+		return NULL;
+	}
+}
 
-	//EGL RED SIZE bits of Red in the color buffer
-	//EGL GREEN SIZE bits of Green in the color buffer
-	//EGL BLUE SIZE bits of Blue in the color buffer
-	//EGL ALPHA SIZE bits of Alpha in the color buffer
-	//EGL LUMINANCE SIZE bits of Luminance in the color buffer
-	Color::Descriptor	m_desc;
-	int					m_samples;
-    int                 m_maskBits;
-	EGLint				m_configID;			//EGL CONFIG ID unique EGLConfig identifier
-    EGLConfig           m_config;
-	//EGL BUFFER SIZE depth of the color buffer (sum of channel bits)
-	//EGL ALPHA MASK SIZE number alpha mask bits (always 8)
-	//EGL BIND TO TEXTURE RGB boolean True if bindable to RGB textures. (always EGL_FALSE)
-	//EGL BIND TO TEXTURE RGBA boolean True if bindable to RGBA textures. (always EGL_FALSE)
-	//EGL COLOR BUFFER TYPE enum color buffer type (EGL_RGB_BUFFER, EGL_LUMINANCE_BUFFER)
-	//EGL CONFIG CAVEAT enum any caveats for the configuration (always EGL_NONE)
-	//EGL DEPTH SIZE integer bits of Z in the depth buffer (always 0)
-	//EGL LEVEL integer frame buffer level (always 0)
-	//EGL MAX PBUFFER WIDTH integer maximum width of pbuffer (always INT_MAX)
-	//EGL MAX PBUFFER HEIGHT integer maximum height of pbuffer (always INT_MAX)
-	//EGL MAX PBUFFER PIXELS integer maximum size of pbuffer (always INT_MAX)
-	//EGL MAX SWAP INTERVAL integer maximum swap interval (always 1)
-	//EGL MIN SWAP INTERVAL integer minimum swap interval (always 1)
-	//EGL NATIVE RENDERABLE boolean EGL TRUE if native rendering APIs can render to surface (always EGL_FALSE)
-	//EGL NATIVE VISUAL ID integer handle of corresponding native visual (always 0)
-	//EGL NATIVE VISUAL TYPE integer native visual type of the associated visual (always EGL_NONE)
-	//EGL RENDERABLE TYPE bitmask which client rendering APIs are supported. (always EGL_OPENVG_BIT)
-	//EGL SAMPLE BUFFERS integer number of multisample buffers (always 0)
-	//EGL SAMPLES integer number of samples per pixel (always 0)
-	//EGL STENCIL SIZE integer bits of Stencil in the stencil buffer (always 0)
-	//EGL SURFACE TYPE bitmask which types of EGL surfaces are supported. (always EGL WINDOW BIT | EGL PIXMAP BIT | EGL PBUFFER BIT)
-	//EGL TRANSPARENT TYPE enum type of transparency supported (always EGL_NONE)
-	//EGL TRANSPARENT RED VALUE integer transparent red value (undefined)
-	//EGL TRANSPARENT GREEN VALUE integer transparent green value (undefined)
-	//EGL TRANSPARENT BLUE VALUE integer transparent blue value (undefined)
-};
+/*-------------------------------------------------------------------*//*!
+* \brief	destroy an EGL thread struct
+* \param	
+* \return	
+* \note		
+*//*-------------------------------------------------------------------*/
+
+void EGL::destroyThread()
+{
+	void* currentThreadID = OSGetCurrentThreadID();
+	for(int i=0;i<m_threads.size();i++)
+	{
+		if(currentThreadID == m_threads[i]->getThreadID())
+        {
+            RIEGLThread* thread = m_threads[i];
+            bool res = m_threads.remove(thread);
+            RI_ASSERT(res);
+            RI_UNREF(res);
+            RI_DELETE(thread);
+            break;
+        }
+	}
+}
 
 /*-------------------------------------------------------------------*//*!
 * \brief	
@@ -158,27 +385,17 @@ public:
 * \note		
 *//*-------------------------------------------------------------------*/
 
-class RIEGLContext
+bool EGL::isInUse(const void* image) const
 {
-public:
-	RIEGLContext(OpenVGRI::VGContext* vgctx, const EGLConfig config);
-	~RIEGLContext();
-	void	addReference()				{ m_referenceCount++; }
-	int		removeReference()			{ m_referenceCount--; RI_ASSERT(m_referenceCount >= 0); return m_referenceCount; }
-
-    VGContext*      getVGContext() const      { return m_vgContext; }
-    EGLConfig getConfig() const         { return m_config; }
-private:
-	RIEGLContext(const RIEGLContext&);
-	RIEGLContext& operator=(const RIEGLContext&);
-	VGContext*		m_vgContext;
-	const EGLConfig	m_config;
-	int				m_referenceCount;
-};
-
-RIEGLContext* CastToRIEGLContext(EGLContext aCtxId);
-EGLContext CastFromRIEGLContext(RIEGLContext* aCtx);
-
+    for(int i=0;i<m_currentThreads.size();i++)
+    {
+        RIEGLSurface* s = m_currentThreads[i]->getCurrentSurface();
+        if(s && s->getDrawable() && s->getDrawable()->isInUse((Image*)image))
+            return true;
+    }
+    return false;
+}
+//
 RIEGLContext::RIEGLContext(OpenVGRI::VGContext* vgctx, const EGLConfig config) :
 	m_vgContext(vgctx),
 	m_config(config),
@@ -190,41 +407,6 @@ RIEGLContext::~RIEGLContext()
 	RI_ASSERT(m_referenceCount == 0);
 	RI_DELETE(m_vgContext);
 }
-
-/*-------------------------------------------------------------------*//*!
-* \brief	
-* \param	
-* \return	
-* \note		
-*//*-------------------------------------------------------------------*/
-
-class RIEGLSurface
-{
-public:
-    RIEGLSurface(void* OSWindowContext, const EGLConfig config, Drawable* drawable, bool largestPbuffer, int renderBuffer);
-	~RIEGLSurface();
-	void	addReference()				{ m_referenceCount++; }
-	int		removeReference()			{ m_referenceCount--; RI_ASSERT(m_referenceCount >= 0); return m_referenceCount; }
-
-    void*           getOSWindowContext() const { return m_OSWindowContext; }
-    EGLConfig       getConfig() const          { return m_config; }
-    Drawable*       getDrawable() const        { return m_drawable; }
-    bool            isLargestPbuffer() const   { return m_largestPbuffer; }
-    int             getRenderBuffer() const    { return m_renderBuffer; }
-
-private:
-	RIEGLSurface(const RIEGLSurface&);
-	RIEGLSurface& operator=(const RIEGLSurface&);
-    void*            m_OSWindowContext;
-	const EGLConfig	 m_config;
-	Drawable*        m_drawable;
-	bool			 m_largestPbuffer;
-	int				 m_renderBuffer;		//EGL_BACK_BUFFER or EGL_SINGLE_BUFFER
-	int				 m_referenceCount;
-};
-
-RIEGLSurface* CastToRIEGLSurface(EGLSurface aSurfaceId);
-EGLSurface CastFromRIEGLSurface(RIEGLSurface* aSurface);
 
 RIEGLSurface::RIEGLSurface(void* OSWindowContext, const EGLConfig config, Drawable* drawable, bool largestPbuffer, int renderBuffer) :
     m_OSWindowContext(OSWindowContext),
@@ -248,49 +430,6 @@ RIEGLSurface::~RIEGLSurface()
 			RI_DELETE(m_drawable);
 	}
 }
-
-/*-------------------------------------------------------------------*//*!
-* \brief	
-* \param	
-* \return	
-* \note		
-*//*-------------------------------------------------------------------*/
-
-#define EGL_NUMCONFIGS		60
-
-class RIEGLDisplay
-{
-public:
-	RIEGLDisplay(EGLDisplay id);
-	~RIEGLDisplay();
-
-	int                getNumConfigs() const              { return EGL_NUMCONFIGS; }
-    const RIEGLConfig& getConfigByIdx(int i) const             { RI_ASSERT(i >= 0 && i < EGL_NUMCONFIGS); return m_configs[i]; }
-    const RIEGLConfig& getConfig(const EGLConfig config) const        { for(int i=0;i<EGL_NUMCONFIGS;i++) { if(m_configs[i].m_config == config) return m_configs[i]; } RI_ASSERT(0); return m_configs[0]; }
-
-    EGLDisplay        getID() const                       { return m_id; }
-
-    void              addContext(RIEGLContext* ctx)       { RI_ASSERT(ctx); m_contexts.push_back(ctx); }  //throws bad_alloc
-    void              removeContext(RIEGLContext* ctx)    { RI_ASSERT(ctx); bool res = m_contexts.remove(ctx); RI_ASSERT(res); RI_UNREF(res); }
-
-    void              addSurface(RIEGLSurface* srf)       { RI_ASSERT(srf); m_surfaces.push_back(srf); }  //throws bad_alloc
-    void              removeSurface(RIEGLSurface* srf)    { RI_ASSERT(srf); bool res = m_surfaces.remove(srf); RI_ASSERT(res); RI_UNREF(res); }
-
-    EGLBoolean        contextExists(const EGLContext ctx) const;
-    EGLBoolean        surfaceExists(const EGLSurface srf) const;
-    EGLBoolean        configExists(const EGLConfig cfg) const;
-
-private:
-	RIEGLDisplay(const RIEGLDisplay& t);
-	RIEGLDisplay& operator=(const RIEGLDisplay&t);
-
-	EGLDisplay              m_id;
-
-	Array<RIEGLContext*>	m_contexts;
-	Array<RIEGLSurface*>	m_surfaces;
-
-	RIEGLConfig             m_configs[EGL_NUMCONFIGS];
-};
 
 RIEGLDisplay::RIEGLDisplay(EGLDisplay id) :
 	m_id(id),
@@ -421,6 +560,24 @@ EGLBoolean RIEGLDisplay::surfaceExists(const EGLSurface surf) const
 	return EGL_FALSE;
 }
 
+RIEGLSurface* RIEGLDisplay::getSurface(const EGLSurface surf) const
+{
+	/*
+	CEGLSurface* ret = FindObjectByPointer<CEGLSurface>( m_surfaces, surfaceId, NULL );
+    if( ret && ret->IsTerminated() ) ret = NULL;
+    return ret;
+    */
+    RIEGLSurface* ret = NULL;
+    for(int i = 0; i < m_surfaces.size(); i++ )
+    {
+		if( m_surfaces[i] == CastToRIEGLSurface(surf) )
+        {
+			ret = m_surfaces[i];
+        }
+    }
+    return ret;
+}
+
 EGLBoolean RIEGLDisplay::configExists(const EGLConfig config) const
 {
     for(int i=0;i<EGL_NUMCONFIGS;i++)
@@ -430,42 +587,6 @@ EGLBoolean RIEGLDisplay::configExists(const EGLConfig config) const
     }
 	return EGL_FALSE;
 }
-
-/*-------------------------------------------------------------------*//*!
-* \brief	
-* \param	
-* \return	
-* \note		
-*//*-------------------------------------------------------------------*/
-
-class RIEGLThread
-{
-public:
-	RIEGLThread(void* currentThreadID);
-	~RIEGLThread();
-
-    void*           getThreadID() const       { return m_threadID; }
-
-    void            makeCurrent(RIEGLContext* c, RIEGLSurface* s)       { m_context = c; m_surface = s; }
-	RIEGLContext*	getCurrentContext() const   { return m_context; }
-	RIEGLSurface*	getCurrentSurface() const   { return m_surface; }
-
-    void            setError(EGLint error)      { m_error = error; }
-    EGLint          getError() const            { return m_error; }
-
-    void            bindAPI(EGLint api)         { m_boundAPI = api; }
-    EGLint          getBoundAPI() const         { return m_boundAPI; }
-
-private:
-	RIEGLThread(const RIEGLThread&);
-	RIEGLThread operator=(const RIEGLThread&);
-
-	RIEGLContext*		m_context;
-	RIEGLSurface*		m_surface;
-	EGLint              m_error;
-	void*               m_threadID;
-	EGLint              m_boundAPI;
-};
 
 RIEGLThread::RIEGLThread(void* currentThreadID) :
 	m_context(NULL),
@@ -480,297 +601,12 @@ RIEGLThread::~RIEGLThread()
 {
 }
 
-
-
-
-
-Image* CastToImage(EGLClientBuffer aBufferId);
-EGLClientBuffer CastFromImage(Image* aBUffer);
-
-/*-------------------------------------------------------------------*//*!
-* \brief	
-* \param	
-* \return	
-* \note		
-*//*-------------------------------------------------------------------*/
-
-class EGL
+namespace OpenVGRI
 {
-public:
-	EGL();
-	~EGL();
-
-	void	addReference()				{ m_referenceCount++; }
-	int		removeReference()			{ m_referenceCount--; RI_ASSERT(m_referenceCount >= 0); return m_referenceCount; }
-
-    void                addDisplay(RIEGLDisplay* display)           { RI_ASSERT(display); m_displays.push_back(display); }  //throws bad alloc
-    void                removeDisplay(RIEGLDisplay* display)        { RI_ASSERT(display); bool res = m_displays.remove(display); RI_ASSERT(res); RI_UNREF(res); }
-    RIEGLDisplay*       getDisplay(const EGLDisplay displayID) const;
-    EGLDisplay          findDisplay(const EGLContext ctx) const;
-
-    void                addCurrentThread(RIEGLThread* thread)       { RI_ASSERT(thread); m_currentThreads.push_back(thread); }  //throws bad alloc
-    void                removeCurrentThread(RIEGLThread* thread)    { RI_ASSERT(thread); bool res = m_currentThreads.remove(thread); RI_ASSERT(res); RI_UNREF(res); }
-    RIEGLThread*        getCurrentThread() const;
-
-    RIEGLThread*        getThread();
-    void                destroyThread();
-
-    bool                isInUse(const void* image) const;
-
-private:
-	EGL(const EGL&);						// Not allowed.
-	const EGL& operator=(const EGL&);		// Not allowed.
-
-	Array<RIEGLThread*>		m_threads;			//threads that have called EGL
-	Array<RIEGLThread*>		m_currentThreads;	//threads that have a bound context
-	Array<RIEGLDisplay*>	m_displays;
-
-	int                     m_referenceCount;
-};
-
-EGL::EGL() :
-	m_threads(),
-	m_currentThreads(),
-	m_displays(),
-	m_referenceCount(0)
-{
-}
-EGL::~EGL()
-{
-	for(int i=0;i<m_displays.size();i++)
-	{
-		RI_DELETE(m_displays[i]);
-	}
-	for(int i=0;i<m_threads.size();i++)
-	{
-		RI_DELETE(m_threads[i]);
-	}
-	//currentThreads contain just pointers to threads we just deleted
-}
-
-/*-------------------------------------------------------------------*//*!
-* \brief	
-* \param	
-* \return	
-* \note		
-*//*-------------------------------------------------------------------*/
-
-//static EGL* g_egl = NULL;	//never use this directly
-EGL* getEGL()
-{
-	/*if(!g_egl)
-	{
-		try
-		{
-			g_egl = RI_NEW(EGL, ());				//throws bad_alloc
-			g_egl->addReference();
-		}
-		catch(std::bad_alloc)
-		{
-			g_egl = NULL;
-		}
-	}
-	return g_egl;
-	*/
-
-
-	//use TLS to store static global g_egl
-	EGL* pEgl=NULL; 
-	if((pEgl = static_cast<EGL*>(Dll::Tls()))==NULL)
-		{
-		//create TLS instance
-		pEgl = RI_NEW(EGL, ());
-		Dll::SetTls(pEgl);
-		}
-	return pEgl;
-
-	
-}
-static void releaseEGL()
-{
-/*
-	if(g_egl)
-	{
-		if(!g_egl->removeReference())
-		{
-			RI_DELETE(g_egl);
-			g_egl = NULL;
-		}
-	}
-	*/
-	EGL* pEgl = static_cast<EGL*>(Dll::Tls());
-	if (pEgl)
-		delete pEgl; 
-	Dll::SetTls(NULL);
-
-}
-
-/*-------------------------------------------------------------------*//*!
-* \brief	Given a display ID, return the corresponding object, or NULL
-*			if the ID hasn't been initialized.
-* \param	
-* \return	
-* \note		if egl has been initialized for this display, the display ID can
-*			be found from egl->m_displays
-*//*-------------------------------------------------------------------*/
-
-RIEGLDisplay* EGL::getDisplay(EGLDisplay displayID) const
-{
-	for(int i=0;i<m_displays.size();i++)
-	{
-		if(displayID == m_displays[i]->getID())
-			return m_displays[i];
-	}
-	return NULL;		//error: the display hasn't been eglInitialized
-}
-
-/*-------------------------------------------------------------------*//*!
-* \brief	return EGLDisplay for the current context
-* \param	
-* \return	
-* \note		
-*//*-------------------------------------------------------------------*/
-
-EGLDisplay EGL::findDisplay(EGLContext ctx) const
-{
-	for(int i=0;i<m_displays.size();i++)
-	{
-        if(m_displays[i]->contextExists(ctx))
-            return m_displays[i]->getID();
-	}
-    return EGL_NO_DISPLAY;
-}
-
-/*-------------------------------------------------------------------*//*!
-* \brief	return an EGL thread struct for the thread made current, or
-*            NULL if there's no current context.
-* \param	
-* \return	
-* \note		
-*//*-------------------------------------------------------------------*/
-
-RIEGLThread* EGL::getCurrentThread() const
-{
-	void* currentThreadID = OSGetCurrentThreadID();
-	for(int i=0;i<m_currentThreads.size();i++)
-	{
-		if(currentThreadID == m_currentThreads[i]->getThreadID())
-			return m_currentThreads[i];
-	}
-	return NULL;		//thread is not current
-}
-
-/*-------------------------------------------------------------------*//*!
-* \brief	return an EGL thread struct corresponding to current OS thread.
-* \param	
-* \return	
-* \note		
-*//*-------------------------------------------------------------------*/
-
-RIEGLThread* EGL::getThread()
-{
-	void* currentThreadID = OSGetCurrentThreadID();
-	for(int i=0;i<m_threads.size();i++)
-	{
-		if(currentThreadID == m_threads[i]->getThreadID())
-			return m_threads[i];
-	}
-
-	//EGL doesn't have a struct for the thread yet, add it to EGL's list
-	RIEGLThread* newThread = NULL;
-	try
-	{
-		newThread = RI_NEW(RIEGLThread, (OSGetCurrentThreadID()));	//throws bad_alloc
-		m_threads.push_back(newThread);	//throws bad_alloc
-		return newThread;
-	}
-	catch(std::bad_alloc)
-	{
-		RI_DELETE(newThread);
-		return NULL;
-	}
-}
-
-/*-------------------------------------------------------------------*//*!
-* \brief	destroy an EGL thread struct
-* \param	
-* \return	
-* \note		
-*//*-------------------------------------------------------------------*/
-
-void EGL::destroyThread()
-{
-	void* currentThreadID = OSGetCurrentThreadID();
-	for(int i=0;i<m_threads.size();i++)
-	{
-		if(currentThreadID == m_threads[i]->getThreadID())
-        {
-            RIEGLThread* thread = m_threads[i];
-            bool res = m_threads.remove(thread);
-            RI_ASSERT(res);
-            RI_UNREF(res);
-            RI_DELETE(thread);
-            break;
-        }
-	}
-}
-
-/*-------------------------------------------------------------------*//*!
-* \brief	
-* \param	
-* \return	
-* \note		
-*//*-------------------------------------------------------------------*/
-
-bool EGL::isInUse(const void* image) const
-{
-    for(int i=0;i<m_currentThreads.size();i++)
-    {
-        RIEGLSurface* s = m_currentThreads[i]->getCurrentSurface();
-        if(s && s->getDrawable() && s->getDrawable()->isInUse((Image*)image))
-            return true;
-    }
-    return false;
-}
-
-/*-------------------------------------------------------------------*//*!
-* \brief	
-* \param	
-* \return	
-* \note		
-*//*-------------------------------------------------------------------*/
-
-#define EGL_GET_DISPLAY(DISPLAY, RETVAL) \
-	OSAcquireMutex(); \
-	EGL* egl = getEGL(); \
-    if(!egl) \
-    { \
-		OSReleaseMutex(); \
-		return RETVAL; \
-    } \
-	RIEGLDisplay* display = egl->getDisplay(DISPLAY); \
-
-#define EGL_GET_EGL(RETVAL) \
-	OSAcquireMutex(); \
-	EGL* egl = getEGL(); \
-    if(!egl) \
-    { \
-		OSReleaseMutex(); \
-		return RETVAL; \
-    } \
-
-#define EGL_IF_ERROR(COND, ERRORCODE, RETVAL) \
-	if(COND) { eglSetError(egl, ERRORCODE); OSReleaseMutex(); return RETVAL; } \
-
-#define EGL_RETURN(ERRORCODE, RETVAL) \
-	{ \
-		eglSetError(egl, ERRORCODE); \
-		OSReleaseMutex(); \
-		return RETVAL; \
-	}
-
+////
 // Note: egl error handling model differs from OpenVG. The latest error is stored instead of the oldest one.
-static void eglSetError(EGL* egl, EGLint error)
+//static void eglSetError(EGL* egl, EGLint error)
+void eglSetError(EGL* egl, EGLint error)
 {
 	RIEGLThread* thread = egl->getThread();
 	if(thread)
@@ -786,7 +622,7 @@ static void eglSetError(EGL* egl, EGLint error)
 
 void* eglvgGetCurrentVGContext(void)
 {
-	EGL* egl = getEGL();
+	EGL* egl = OpenVGRI::getEGL();
     if(egl)
     {
         RIEGLThread* thread = egl->getCurrentThread();
@@ -808,7 +644,7 @@ void* eglvgGetCurrentVGContext(void)
 
 bool eglvgIsInUse(void* image)
 {
-	EGL* egl = getEGL();
+	EGL* egl = OpenVGRI::getEGL();
     if(egl)
     {
         return egl->isInUse(image);
@@ -816,43 +652,7 @@ bool eglvgIsInUse(void* image)
 	return false;
 }
 
-//helper functions
-RIEGLContext* CastToRIEGLContext(EGLContext aCtxId)
-  {
-  return (RIEGLContext*)(aCtxId);
-  }
-EGLContext CastFromRIEGLContext(RIEGLContext* aCtx)
-  {
-  return (EGLContext)(aCtx);
-  }
-
-RIEGLSurface* CastToRIEGLSurface(EGLSurface aSurfaceId)
-  {
-  return (RIEGLSurface*)(aSurfaceId);
-  }
-EGLSurface CastFromRIEGLSurface(RIEGLSurface* aSurface)
-  {
-  return (EGLSurface)(aSurface);
-  }
-
-Image* CastToImage(EGLClientBuffer aBufferId)
-  {
-  return (Image*)(aBufferId);
-  }
-
-EGLClientBuffer CastFromImage(Image* aBUffer)
-  {
-  return (EGLClientBuffer)(aBUffer);
-  }
-
-//==============================================================================================
-
-}	//namespace OpenVGRI
-
-using namespace OpenVGRI;
-
-
-
+} // namespace OpenVGRI
 
 
 /*-------------------------------------------------------------------*//*!
@@ -863,14 +663,14 @@ using namespace OpenVGRI;
 *//*-------------------------------------------------------------------*/
 
 #ifdef BUILD_WITH_PRIVATE_EGL
-RI_APIENTRY EGLint do_eglGetError()
+RI_APIENTRY EGLint do_eglGetError(void)
 #else
 EGLint eglGetError()
 #endif
 {
     OSAcquireMutex();
     EGLint ret = EGL_SUCCESS;
-	EGL* egl = getEGL();
+	EGL* egl = OpenVGRI::getEGL();
     if(egl)
     {
         RIEGLThread* thread = egl->getThread();
@@ -971,10 +771,10 @@ const char *eglQueryString(EGLDisplay dpy, EGLint name)
 	EGL_GET_DISPLAY(dpy, NULL);
 	EGL_IF_ERROR(!display, EGL_NOT_INITIALIZED, NULL);
 
-	static const char apis[] = "OpenVG";
-	static const char extensions[] = "";
-	static const char vendor[] = "Khronos Group";
-	static const char version[] = "1.3";
+	static const char apis[] = "OpenVG OpenGL_ES OpenGL_ES2";
+	static const char extensions[] = "KHR_reusable_sync EGL_SYMBIAN_COMPOSITION";
+	static const char vendor[] = "Symbian Foundation";
+	static const char version[] = "1.4 mergeegl";
 
 	const char* ret = NULL;
 	switch(name)
@@ -1460,9 +1260,9 @@ EGLSurface eglCreateWindowSurface(EGLDisplay dpy, EGLConfig config, EGLNativeWin
 
 	//TODO If the attributes of win do not correspond to config, then an EGL BAD MATCH error is generated.
 	//TODO If there is already an EGLConfig associated with win (as a result of a previous eglCreateWindowSurface call), then an EGL BAD ALLOC error is generated
-
-    void* wc = NULL;
-    Drawable* d = NULL;
+	// 
+	void* wc = NULL;
+	Drawable* d = NULL;
 	RIEGLSurface* s = NULL;
 	try
 	{
@@ -1492,8 +1292,267 @@ EGLSurface eglCreateWindowSurface(EGLDisplay dpy, EGLConfig config, EGLNativeWin
         RI_DELETE(s);
 		EGL_RETURN(EGL_BAD_ALLOC, EGL_NO_SURFACE);
 	}
+#ifdef EGL_COMPOSITION
+	RIEGLThread* thread = egl->getThread();
+	RI_ASSERT(thread);
+	
+    
+	//egl->iDisplayMapLock.WriteLock();
+	CEglDisplayInfo** pDispInfo;
+	pDispInfo = egl->iDisplayMap.Find(dpy); // make sure iDisplayInfo is populated in CreateDisplay!!
+	
+	if (pDispInfo && *pDispInfo)
+	{
+		TSurfaceInfo& surfaceInfo = egl->GetSurfaceInfo();
+		// so we don't have to pass alphaFormat to CreateSurface we set it here... not sure if needed anyway
+		surfaceInfo.iAlphaFormat = alphaFormat;
+		
+		if(EGL_TRUE != egl->EglInternalFunction_CreateSurface(/*aThreadState,*/ dpy, (EGLSurface)s, config, win, surfaceInfo))
+			EGL_RETURN(EGL_BAD_SURFACE, NULL);
+			
+		(*pDispInfo)->iSurfaceMap.Insert(surfaceInfo.iSurface, &surfaceInfo);		
+		
+		TSurfaceConfiguration surfaceConfig;
+		surfaceConfig.SetSurfaceId(surfaceInfo.iSurfaceId);
+			
+		if(surfaceInfo.iNativeWindow.IsWindow())
+		{
+			RWindow* window = (RWindow*)(win);				
+			RWsSession& session = *window->Session();
+			session.RegisterSurface(surfaceInfo.iScreenNumber, surfaceInfo.iSurfaceId);
+			window->SetBackgroundSurface(surfaceConfig, ETrue);
+		}
+		else
+		{
+			// Now what?? Nothing is good enough?
+			// Simply no composition if not RWindow?
+			EGL_TRACE("eglCreateWindowSurface - Native Window NOT RWindow - no composition");
+		}
+		
+		TRequestStatus status = KRequestPending;
+		TTimeStamp timestampLocalToThread;
+		// session needs to be established... and it is in InternalFunction_CreateSurface
+		/*
+		 * When double-buffering is used, the client renders to one buffer (called A in this example) while the other buffer (B) is on the screen and vice versa. In order for this to work correctly and to be free of tearing artefacts, the client must use the following sequence:
+
+		   1. Render the graphics content to buffer A, and call NotifyWhenAvailable() followed by SubmitUpdate() for buffer A.
+		   2. Render the graphics content to buffer B, and call NotifyWhenAvailable() followed by SubmitUpdate() for buffer B.
+		   3. Wait for notification that buffer A is available. When it becomes available, render further content to it and call NotifyWhenAvailable() followed by SubmitUpdate() for buffer A.
+		   4. Wait for notification that buffer B is available. When it becomes available, render further content to it and call NotifyWhenAvailable() followed by SubmitUpdate() for buffer B.
+		   5. Repeat steps 3 and 4 for as long as required.
+
+		After sending the first two buffers to the composition engine, the client waits for notification before sending a further buffer. The composition engine always returns notification after receiving a new buffer even if an error condition is detected. 
+		*/
+		surfaceInfo.iSurfaceUpdateSession.NotifyWhenDisplayed(status, timestampLocalToThread);
+		surfaceInfo.iSurfaceUpdateSession.SubmitUpdate(surfaceInfo.iScreenNumber,surfaceInfo.iSurfaceId, 0);
+		surfaceInfo.iSurfaceUpdateSession.SubmitUpdate(surfaceInfo.iScreenNumber,surfaceInfo.iSurfaceId, 1);
+		User::WaitForRequest(status);
+	}
+	
+	
+	
+	//egl->iDisplayMapLock.Unlock();
+		
+	//thread->setError(EGL_SUCCESS); // done by EGL_RETURN macro?
+#endif
 	EGL_RETURN(EGL_SUCCESS, (EGLSurface)s);
 }
+
+// -----------------------------------------------------------------------------
+//
+// -----------------------------------------------------------------------------
+//
+TBool EGL::EglInternalFunction_CreateSurface(/*TEglThreadState& aThreadState,*/ EGLDisplay aDisplay, EGLSurface aSurface, EGLConfig aConfig, 
+		EGLNativeWindowType aNativeWindow, TSurfaceInfo& aSurfaceInfo)
+{
+	
+	aSurfaceInfo.iNativeWindow.SetNativeWindow(aNativeWindow);    
+	aSurfaceInfo.iSurfaceType = ESurfaceTypeWindow;
+	aSurfaceInfo.iSize = aSurfaceInfo.iNativeWindow.SizeInPixels();
+	
+	aSurfaceInfo.iConfigId = aConfig;    
+	aSurfaceInfo.iSurface = aSurface;
+	
+	aSurfaceInfo.iStride = 4 * aSurfaceInfo.iSize.iWidth;          // Number of bytes between start of one line and start of next   
+	    
+	
+	RSurfaceManager::TSurfaceCreationAttributesBuf buf;
+	RSurfaceManager::TSurfaceCreationAttributes& attributes = buf();
+	// Set surafce attributes
+    attributes.iSize = aSurfaceInfo.iSize;
+    attributes.iBuffers = 2;           // double-buffering is used
+    attributes.iPixelFormat = EUidPixelFormatARGB_8888;  // this is a guess; either query or hardcode to match syborg
+    //attributes.iPixelFormat = EUidPixelFormatARGB_8888_PRE;  // this is a guess; either query or hardcode
+    /** Minimum or required number of bytes between start of one line andstart of next. */
+    attributes.iStride = aSurfaceInfo.iStride;
+    /** Minimum or required offset to the first buffer from the base of the chunk. 
+     * Typically this will be set to 0. The value specified for the offset must comply with the alignment specified in iAlignment.
+     * If iAlignment is page aligned, this value will be rounded up to a multiple of the page size when the surface is created, 
+     * therefore the surface info must be queried for the actual value used. */
+    attributes.iOffsetToFirstBuffer = 0;
+    /** Alignment applied to the base address of each buffer in the surface:
+     * 1, 2, 4, 8 ,16, 32, 64 bytes or EPageAligned. */
+    attributes.iAlignment = RSurfaceManager::EPageAligned;                      // alignment, 1,2,4,8,16,32,64 byte aligned or EPageAligned
+    /** Number of hints in the array iSurfaceHints. 
+     * The number should not exceed the maximum number supported by the surface manager, 
+     * see GetSurfaceManagerAttrib(EMaxNumberOfHints). */
+    attributes.iHintCount=0;
+    /** Array of hints which should be associated with the surface. 
+     * This array must not contain duplicate hint keys. */
+     attributes.iSurfaceHints = NULL;
+    /** Minimum or required offset between the start of one buffer and the
+	start of the next one in bytes. When set to 0 the surface manager will
+	choose how buffers are laid out within the chunk. If it is too small
+	and doesn't fit with the alignment, CreateSurface() will return KErrArgument. */
+    attributes.iOffsetBetweenBuffers = 0;
+    /** Require physically contiguous memory. 
+     * This value will be ignored if using a chunk which already exists. */
+    attributes.iContiguous = ETrue;
+    /** Caching attribute to create chunk memory. 
+     * This value will be ignored if using a chunk which already exists. */
+    attributes.iCacheAttrib = RSurfaceManager::ECached;      // Cache attributes
+    /** Should the surface be mappable. 
+     * If EFalse any call to MapSurface() will fail with KErrNotSupported
+     * Note, some architectures may not support mappable surfaces. */
+    attributes.iMappable = ETrue;	
+	//
+    aSurfaceInfo.iScreenNumber = aSurfaceInfo.iNativeWindow.ScreenNumber();
+				
+	// Create the surface
+	
+	aSurfaceInfo.iSurfaceManager.Open();
+	aSurfaceInfo.iSurfaceManager.CreateSurface(buf, aSurfaceInfo.iSurfaceId);
+	
+	TInt err =  aSurfaceInfo.iSurfaceManager.MapSurface(aSurfaceInfo.iSurfaceId, aSurfaceInfo.iChunk);
+		
+	EGL_TRACE("EGL::EglInternalFunction_CreateSurface surface manager returned chunk %x and ret val %d", aSurfaceInfo.iChunk, err);
+				
+
+
+    if ( !EglInternalFunction_CallSetSurfaceParams(/*aThreadState,*/ aDisplay, aSurface, aSurfaceInfo) )
+        {
+        EGL_TRACE("CGuestEGL::EglInternalFunction_CreateSurface end failure");
+
+        return EGL_FALSE;
+        }
+    aSurfaceInfo.iSurfaceUpdateSession.Connect();
+    EGL_TRACE("CGuestEGL::EglInternalFunction_CreateSurface end success");
+
+    return EGL_TRUE;
+}
+
+// -----------------------------------------------------------------------------
+//
+// -----------------------------------------------------------------------------
+//
+TBool EGL::EglInternalFunction_CallSetSurfaceParams(/*aThreadState,*/EGLDisplay aDisplay,EGLSurface aSurface,TSurfaceInfo& aSurfaceInfo)
+{
+	EGL_GET_EGL(EGL_FALSE);
+/*
+    EGL_GET_DISPLAY(aDisplay, EGL_NO_SURFACE);
+    EGL_IF_ERROR(!display, EGL_NOT_INITIALIZED, EGL_NO_SURFACE);
+    //RI_ASSERT( display->ProcessId() == process->Id() );
+    RIEGLSurface* surface = display->getSurface( aSurface );
+    EGL_IF_ERROR(!display, EGL_NOT_INITIALIZED, EGL_BAD_SURFACE);
+ */
+    RI_ASSERT( aSurfaceInfo.iSurfaceType == ESurfaceTypeWindow );
+    
+    //TODO: resizing?
+    
+#ifdef BUILD_WITH_PRIVATE_EGL
+	if(!do_eglQuerySurface(aDisplay, aSurface, EGL_VG_ALPHA_FORMAT, &aSurfaceInfo.iAlphaFormat))
+		EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE );
+	if(!do_eglGetConfigAttrib(aDisplay, aSurfaceInfo.iConfigId, EGL_BUFFER_SIZE, &aSurfaceInfo.iColorBits))
+		EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE );
+	if(!do_eglGetConfigAttrib(aDisplay, aSurfaceInfo.iConfigId, EGL_RED_SIZE, &aSurfaceInfo.iRedBits))
+		EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE );
+	if(!do_eglGetConfigAttrib(aDisplay, aSurfaceInfo.iConfigId, EGL_GREEN_SIZE, &aSurfaceInfo.iGreenBits))
+		EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE );
+	if(!do_eglGetConfigAttrib(aDisplay, aSurfaceInfo.iConfigId, EGL_BLUE_SIZE, &aSurfaceInfo.iBlueBits))
+		EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE );
+	if(!do_eglGetConfigAttrib(aDisplay, aSurfaceInfo.iConfigId, EGL_ALPHA_SIZE, &aSurfaceInfo.iAlphaBits))
+		EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE );
+#else
+	if(!eglQuerySurface(aDisplay, aSurface, EGL_VG_ALPHA_FORMAT, &aSurfaceInfo.iAlphaFormat))
+		EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE );
+	if(!eglGetConfigAttrib(aDisplay, aSurfaceInfo.iConfigId, EGL_BUFFER_SIZE, &aSurfaceInfo.iColorBits))
+		EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE );
+	if(!eglGetConfigAttrib(aDisplay, aSurfaceInfo.iConfigId, EGL_RED_SIZE, &aSurfaceInfo.iRedBits))
+		EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE );
+	if(!eglGetConfigAttrib(aDisplay, aSurfaceInfo.iConfigId, EGL_GREEN_SIZE, &aSurfaceInfo.iGreenBits))
+		EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE );
+	if(!eglGetConfigAttrib(aDisplay, aSurfaceInfo.iConfigId, EGL_BLUE_SIZE, &aSurfaceInfo.iBlueBits))
+		EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE );
+	if(!eglGetConfigAttrib(aDisplay, aSurfaceInfo.iConfigId, EGL_ALPHA_SIZE, &aSurfaceInfo.iAlphaBits))
+		EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE );
+#endif
+
+    
+    EGL_TRACE("EGL::EglInternalFunction_CallSetSurfaceParams  Win surface details: width=%d height=%d colorbits=%d red=%d green=%d blue=%d alpha=%d alphaformat=0x%x",
+    		aSurfaceInfo.iSize.iWidth, aSurfaceInfo.iSize.iHeight, aSurfaceInfo.iColorBits, aSurfaceInfo.iRedBits,
+    		aSurfaceInfo.iGreenBits, aSurfaceInfo.iBlueBits, aSurfaceInfo.iAlphaBits, aSurfaceInfo.iAlphaFormat);
+    TInt err;
+    TSize size;
+
+    TInt offsetToFirstBuffer = -1;
+    TInt offsetToSecondBuffer = -1;
+	err = aSurfaceInfo.iSurfaceManager.GetBufferOffset(aSurfaceInfo.iSurfaceId,0,offsetToFirstBuffer);
+	if(err!=KErrNone)
+		EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE );
+	err = aSurfaceInfo.iSurfaceManager.GetBufferOffset(aSurfaceInfo.iSurfaceId,1,offsetToSecondBuffer);
+	if(err!=KErrNone)
+		EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE );
+    EGL_TRACE("EGL::EglInternalFunction_CallSetSurfaceParams offsetToFirstBuffer=0x%x offsetToSecondBuffer=0x%x",
+    		offsetToFirstBuffer,offsetToSecondBuffer);
+
+   
+    /* Store the pointer to the pixel data */
+    aSurfaceInfo.iBuffer0 = aSurfaceInfo.iChunk.Base() + offsetToFirstBuffer;
+    aSurfaceInfo.iBuffer1 = aSurfaceInfo.iChunk.Base() + offsetToSecondBuffer;
+    
+    aSurfaceInfo.iFrontBuffer = 0; // start rendering buffer 0 as a front buffer
+    
+    //TODO: what else? 
+    EGL_RETURN(EGL_SUCCESS,EGL_TRUE);
+}
+
+// -----------------------------------------------------------------------------
+//
+// -----------------------------------------------------------------------------
+//
+TSurfaceInfo* EGL::EglInternalFunction_GetPlatformSurface( EGLDisplay display, EGLSurface surface )
+{
+	EGL_TRACE( "EGL::EglInternalFunction_GetPlatformSurface");
+	TSurfaceInfo* result = NULL;
+
+	iDisplayMapLock.ReadLock();
+
+	CEglDisplayInfo** pDispInfo = iDisplayMap.Find( display );
+	if (pDispInfo && *pDispInfo)
+		{
+		TSurfaceInfo** pSurfaceInfo = (*pDispInfo)->iSurfaceMap.Find( surface );
+		if (pSurfaceInfo)
+			{
+			result = *pSurfaceInfo;
+			}
+		}
+
+	// TODO on success should probably Unlock() the surface in the caller
+	iDisplayMapLock.Unlock();
+
+	/* TODO review calling code, to see if this suggestion makes sense
+	if (result == NULL)
+		{
+		EGL_RAISE_ERROR( EGL_BAD_SURFACE, NULL); //Enable this when all surfaces are in surface map
+		}
+		*/
+	return result;
+}
+
+EGLBoolean EGL::EglInternalFunction_SurfaceResized(/*TEglThreadState&,*/ TSurfaceInfo&, int, int) 
+	{
+	return EFalse; // stub code
+	}
 
 /*-------------------------------------------------------------------*//*!
 * \brief	
@@ -1894,6 +1953,104 @@ EGLBoolean eglMakeCurrent(EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLC
 #endif
 {
 	EGL_GET_DISPLAY(dpy, EGL_FALSE);
+	// From guestEGL - eglMakeCurrent
+	if (ctx == EGL_NO_CONTEXT)
+	{
+		// what now??
+		EGL_TRACE("eglMakeCurrent context NO_CONTEXT");
+		if ( (draw != EGL_NO_SURFACE) || (read != EGL_NO_SURFACE) )
+		{
+			EGL_RETURN(EGL_BAD_SURFACE, EGL_FALSE);
+		}	
+	}
+	else
+	{
+		if ( (draw == EGL_NO_SURFACE) || (read == EGL_NO_SURFACE) )
+		{
+			EGL_RETURN(EGL_BAD_SURFACE, EGL_FALSE);
+		
+		}
+		// ToDo use new CEglContext code
+		const TInt KMaxSurfaces( 2 );
+		EGLSurface surfaces[KMaxSurfaces];
+		TSurfaceInfo* surfaceInfo[KMaxSurfaces] = {NULL, NULL};
+		surfaces[0] = draw;
+		if (draw != read)
+		{
+			surfaces[1] = read;
+		}
+		else
+		{
+			surfaces[1] = EGL_NO_SURFACE;
+		}
+
+		for ( TInt i = 0; i < KMaxSurfaces; i++ )
+		{
+			if ( EGL_NO_SURFACE != surfaces[i] )
+			{
+				EGL_TRACE("eglMakeCurrent check surface %d", surfaces[i] );
+				surfaceInfo[i] = getEGL()->EglInternalFunction_GetPlatformSurface( dpy, surfaces[i] );
+				EGL_TRACE("eglMakeCurrent surfaces[%d] is %x", i, surfaces[i]);
+				//EGL_CHECK_ERROR( surfaceInfo, EGL_BAD_SURFACE , EGL_FALSE );
+				if ( surfaceInfo[i] )
+				{
+					TSize newSize;
+					switch (surfaceInfo[i]->iSurfaceType)
+					{
+						case ESurfaceTypePixmapFbsBitmap:
+							EGLPANIC_ASSERT_DEBUG(surfaceInfo[i]->iFbsBitmap, EEglPanicTemp);
+							newSize = surfaceInfo[i]->iFbsBitmap->SizeInPixels();
+							break;
+						case ESurfaceTypeWindow:
+							EGLPANIC_ASSERT_DEBUG(surfaceInfo[i]->iNativeWindow, EEglPanicTemp);
+							newSize = surfaceInfo[i]->iNativeWindow.SizeInPixels();
+							break;
+						default:
+							// size cannot change for other surface types
+							newSize = surfaceInfo[i]->iSize;
+							break;
+					}
+					if (newSize != surfaceInfo[i]->iSize)
+					{
+						EGL_TRACE("eglMakeCurrent resize surface");
+						if ( !getEGL()->EglInternalFunction_SurfaceResized(/*aThreadState,*/ *surfaceInfo[i], dpy, surfaces[i] ) )
+						{
+							return EGL_FALSE;
+						}
+						surfaceInfo[i]->iSize = newSize;
+					}
+				}
+			}
+		}
+
+		// adapt to only some surfaces having CEglSurfaceInfo objects so far 
+		EGLSurface drawId = surfaceInfo[0] ? surfaceInfo[0]->iSurface : draw;
+		EGLSurface readId = read;
+		if ((read == draw) && surfaceInfo[0])
+		{
+			readId = surfaceInfo[0]->iSurface;
+		}
+		else if (surfaceInfo[1])
+		{
+			readId = surfaceInfo[1]->iSurface;
+		}
+
+		EGL_TRACE("  eglMakeCurrent surfaces[0]=0x%x, surfaces[1]=0x%x", surfaces[0], surfaces[1]);
+		EGL_TRACE("  eglMakeCurrent surfacesInfo[0]=0x%x, surfacesInfo[0].iSurface=0x%x",
+					surfaceInfo[0], surfaceInfo[0] ? surfaceInfo[0]->iSurface : NULL);
+		EGL_TRACE("  eglMakeCurrent surfacesInfo[1]=0x%x, surfacesInfo[1].iSurface=0x%x",
+					surfaceInfo[1], surfaceInfo[1] ? surfaceInfo[1]->iSurface : NULL);
+
+		EGL_TRACE("CGuestEGL::eglMakeCurrent call host");
+		// now we need to use readId and drawId
+		draw = drawId;
+		read = readId;
+	}
+	// end from guestEGL
+	/* following is original EGL... very much different to hostEGL!
+	 * is that an issue?
+	 * Works only with one buffer... draw only used from now on?
+	 */
 	EGL_IF_ERROR(ctx != EGL_NO_CONTEXT && !display->contextExists(ctx), EGL_BAD_CONTEXT, EGL_FALSE);
 	EGL_IF_ERROR(draw != EGL_NO_SURFACE && !display->surfaceExists(draw), EGL_BAD_SURFACE, EGL_FALSE);
 	EGL_IF_ERROR(read != EGL_NO_SURFACE && !display->surfaceExists(read), EGL_BAD_SURFACE, EGL_FALSE);
@@ -1976,6 +2133,7 @@ EGLBoolean eglMakeCurrent(EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLC
 		c->addReference();
 		s->addReference();
 	}
+	
 	EGL_RETURN(EGL_SUCCESS, EGL_TRUE);
 }
 
@@ -2182,7 +2340,18 @@ EGLBoolean eglWaitNative(EGLint engine)
 * \return	
 * \note		
 *//*-------------------------------------------------------------------*/
+/*
+ * guestEGL swap buffers
+ * 
 
+	 * PSEUDO CODE
+	 * serialization.eglSwapBuffers
+	 * (maybe finish currently bound api)
+	 * surfaceupdatesession.notifywhenavailable
+	 *   .whendisplayed()  (alternative choice from above)
+	 * surfaceupdatesession.submitupdated()
+	 * user:waitforrequestl
+ */
 #ifdef BUILD_WITH_PRIVATE_EGL
 RI_APIENTRY EGLBoolean do_eglSwapBuffers(EGLDisplay dpy, EGLSurface surface)
 #else
@@ -2193,6 +2362,10 @@ EGLBoolean eglSwapBuffers(EGLDisplay dpy, EGLSurface surface)
 	EGL_IF_ERROR(!display, EGL_NOT_INITIALIZED, EGL_FALSE);
 	EGL_IF_ERROR(!display->surfaceExists(surface), EGL_BAD_SURFACE, EGL_FALSE);
 
+	
+	TSurfaceInfo* surfaceInfo = egl->EglInternalFunction_GetPlatformSurface( dpy, surface );
+	EGL_IF_ERROR(!surfaceInfo, EGL_BAD_SURFACE, EGL_FALSE);
+	
 	RIEGLSurface* s = (RIEGLSurface*)surface;
 
 	RIEGLThread* currentThread = egl->getCurrentThread();
@@ -2204,19 +2377,67 @@ EGLBoolean eglSwapBuffers(EGLDisplay dpy, EGLSurface surface)
 #else
 	vgFlush();
 #endif
-
+	
+	EGLint currentApi = currentThread->getBoundAPI();
+	RIEGLContext* context = currentThread->getCurrentContext();
+	switch( currentApi )
+	{
+		case EGL_OPENVG_API:
+	    {
+			//if( thread->CurrentVGContext() != surface->BoundContext() )
+			if( currentThread->getCurrentContext()->getVGContext() != s->getOSWindowContext() ) // getOSWindowContext??
+			{
+				//EGLI_LEAVE_RET( EGL_FALSE, EGL_BAD_SURFACE );
+				EGL_TRACE("eglSwapBuffers EGL_BAD_SURFACE for EGL_OPENVG_API ");
+				//EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE); // commnted out as the check against OSWindowContext seems wrong
+			}
+			break;
+	    }
+	    case EGL_OPENGL_ES_API:
+	    {
+			/*
+	        if( thread->CurrentGLESContext() != surface->BoundContext() )
+	        {
+				 EGLI_LEAVE_RET( EGL_FALSE, EGL_BAD_SURFACE );
+	        }
+	        */
+	        EGL_RETURN(EGL_BAD_SURFACE,EGL_FALSE);
+	        // \todo other GLES stuff?
+	     }
+	}
+	
+	
+	
+	/*
+	 * ToDo
+	 * from hostegl
+	 if( !(CEGLOs::IsValidNativeWindow(((CEGLWindowSurface*)surface)->NativeType())) )
+	 */
 	if(!s->getOSWindowContext())
 	{	//do nothing for other than window surfaces (NOTE: single-buffered window surfaces should return immediately as well)
 		EGL_RETURN(EGL_SUCCESS, EGL_TRUE);
 	}
-
+	if( surfaceInfo->iSurfaceType != ESurfaceTypeWindow || s->getRenderBuffer() == EGL_SINGLE_BUFFER )
+	{
+		EGL_RETURN(EGL_SUCCESS, EGL_TRUE);
+	}
+	
 	int windowWidth = 0, windowHeight = 0;
     OSGetWindowSize(s->getOSWindowContext(), windowWidth, windowHeight);
-
+    /*
+    * TODO
+    * what we need to do for resize to work?
+    */
 	if(windowWidth != s->getDrawable()->getWidth() || windowHeight != s->getDrawable()->getHeight())
 	{	//resize the back buffer
 		RIEGLContext* c = currentThread->getCurrentContext();
 		RI_ASSERT(c);
+		/* from hostEGL
+		if( !(surface->Resize(w, h)) )
+		{
+			EGLI_LEAVE_RET( EGL_FALSE, EGL_BAD_ALLOC );
+		}
+		*/
 		try
 		{
 			s->getDrawable()->resize(windowWidth, windowHeight);	//throws bad_alloc
@@ -2226,11 +2447,98 @@ EGLBoolean eglSwapBuffers(EGLDisplay dpy, EGLSurface surface)
 			c->getVGContext()->setDefaultDrawable(NULL);
 			EGL_RETURN(EGL_BAD_ALLOC, EGL_FALSE);
 		}
+		if( windowWidth <= 0 || windowHeight <= 0 )
+		{
+			// invisible window => do nothing
+			EGL_RETURN(EGL_SUCCESS, EGL_TRUE);
+		}
+		/*
+		 * what is this for? From hostEgl...
+		 
+		if( surface->VGClientSurface() && state->VGInterface() )
+		{
+			if( !(state->VGInterface()->ResizeSurface(thread->CurrentVGContext()->ClientContext(),
+					surface->VGClientSurface(), w, h, surface->VGBuffers())) )
+		    {
+				EGLI_LEAVE_RET( EGL_FALSE, EGL_BAD_ALLOC );
+		    }
+		}
+		*/
 	}
-
+	
+	
+	//
+	
+	void* buf = NULL;
+	if (surfaceInfo->iFrontBuffer == 0)
+	{
+		buf = surfaceInfo->iBuffer1;
+	}
+	else
+	{
+		buf = surfaceInfo->iBuffer0;
+	}
+	
+	//
+	switch( currentApi )
+	{
+		case EGL_OPENVG_API:
+		{
+			//VGImageFormat format = VG_sARGB_8888_PRE; // hack!!
+			VGImageFormat format = VG_sARGB_8888; // hack!!
+			//VGImageFormat format = VG_sRGBA_8888; // hack!!
+			//
+			vgReadPixels(buf,surfaceInfo->iStride,format,0,0,windowWidth,windowHeight);
+		    break;
+		}
+		case EGL_OPENGL_ES_API:
+		{
+		/*
+			if( surface->BoundContext() && !(state->GLESInterface(surface->BoundContext()->ClientVersion())) )
+			{
+				// \todo error code?
+				EGLI_LEAVE_RET( EGL_FALSE, EGL_BAD_ACCESS );
+			}
+			*/
+			EGL_RETURN(EGL_BAD_ACCESS, EGL_FALSE);
+		}
+	}
+	//
     OSBlitToWindow(s->getOSWindowContext(), s->getDrawable());
+    getEGL()->EglInternalFunction_SwapBuffers(dpy, surface);
+    
+	
+    EGL_RETURN(EGL_SUCCESS, EGL_TRUE);
+}
 
-	EGL_RETURN(EGL_SUCCESS, EGL_TRUE);
+TBool EGL::EglInternalFunction_SwapBuffers(EGLDisplay aDisplay, EGLSurface aSurface)
+{
+	TSize size = iSurfaceInfo.iNativeWindow.SizeInPixels();
+	
+	TRequestStatus status;
+	TTimeStamp timestampLocalToThread;
+	// session needs to be established
+	iSurfaceInfo.iSurfaceUpdateSession.NotifyWhenDisplayed(status, timestampLocalToThread);
+	// what to do if native window is not RWindow???
+	if (iSurfaceInfo.iFrontBuffer == 0)
+	{
+		iSurfaceInfo.iFrontBuffer = 1;
+	}
+	else
+	{
+		iSurfaceInfo.iFrontBuffer = 0;
+	}
+	iSurfaceInfo.iSurfaceUpdateSession.SubmitUpdate(iSurfaceInfo.iScreenNumber,iSurfaceInfo.iSurfaceId, iSurfaceInfo.iFrontBuffer);
+	User::WaitForRequest(status);
+	    
+	if (size != iSurfaceInfo.iSize)
+	{
+		EGL_TRACE("EGL::EglInternalFunction_SwapBuffers Surface Resized size=%d,%d, iSurfaceInfo.iSize=%d,%d",
+	    			size.iHeight, size.iWidth, iSurfaceInfo.iSize.iHeight, iSurfaceInfo.iSize.iWidth);
+	    			
+	    return EglInternalFunction_SurfaceResized(/*aThreadState,*/ iSurfaceInfo, aDisplay, aSurface); // TODO handling of resize
+	}
+	return EGL_TRUE;
 }
 
 /*-------------------------------------------------------------------*//*!
