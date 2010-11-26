@@ -77,7 +77,6 @@ typedef enum
 	ESurfaceTypePixmapSgImage = 3,
 	} TEglSurfaceType;
 
-#define KDefaultScreenNumber 0
 	
 class CEglContext;
 
@@ -126,6 +125,9 @@ public:
 //	RMutex                             iContextMapLock;
     RHashMap<EGLContext, CEglContext*> iContextMap;
     };
+
+// prototype to help eglGetProcAddress() API 
+typedef void (*ProcPointer)(...);
 //==============================================================================================
 
 namespace OpenVGRI
@@ -276,6 +278,9 @@ public:
     Drawable*       getDrawable() const        { return m_drawable; }
     bool            isLargestPbuffer() const   { return m_largestPbuffer; }
     int             getRenderBuffer() const    { return m_renderBuffer; }
+    
+    void 			Lock()						{iSurfaceLock.ReadLock();}
+    void 			Unlock()					{iSurfaceLock.Unlock();}
 
 private:
 	RIEGLSurface(const RIEGLSurface&);
@@ -286,6 +291,8 @@ private:
 	bool			 m_largestPbuffer;
 	int				 m_renderBuffer;		//EGL_BACK_BUFFER or EGL_SINGLE_BUFFER
 	int				 m_referenceCount;
+	
+	RReadWriteLock	 iSurfaceLock; 			// protects the surface for multi-threaded clients
 };
 
 RIEGLSurface* CastToRIEGLSurface(EGLSurface aSurfaceId);
@@ -434,9 +441,11 @@ public:
     TSurfaceInfo* EglInternalFunction_GetPlatformSurface( EGLDisplay display, EGLSurface surface );
     EGLBoolean EglInternalFunction_SurfaceResized(TSurfaceInfo&, int, int);
 private:
+    friend EGL* getEGL();
 	EGL(const EGL&);						// Not allowed.
 	const EGL& operator=(const EGL&);		// Not allowed.
-
+	void Create();
+	
 	Array<RIEGLThread*>		m_threads;			//threads that have called EGL
 	Array<RIEGLThread*>		m_currentThreads;	//threads that have a bound context
 	Array<RIEGLDisplay*>	m_displays;

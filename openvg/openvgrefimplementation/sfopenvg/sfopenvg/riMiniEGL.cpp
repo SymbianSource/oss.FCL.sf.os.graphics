@@ -88,6 +88,29 @@ EGL::~EGL()
 	//currentThreads contain just pointers to threads we just deleted
 }
 
+// -----------------------------------------------------------------------------
+// 2nd phase constructor
+// ported from guestEGL
+//-----------------------------------------------------------------------------
+//
+void EGL::Create()
+{
+	EGL_TRACE("  EGL::Create ");
+    //OpenSgResources();
+    TInt err;
+	err = iDisplayMapLock.CreateLocal();
+	EGLPANIC_ASSERT(err == KErrNone, EEglPanicDisplayMapLockCreateLocalFailed);
+
+	//err = iEglImageLock.CreateLocal();
+	//EGLPANIC_ASSERT(err == KErrNone, EEglPanicEglImageLockCreateLocalFailed);	
+
+	InitialiseExtensions();
+
+	//const char* initExtensionList = EglInternalFunction_QueryExtensionList();
+	//EGL_TRACE("  CGuestEGL::Create  initExtensionList=0x%x (\"%s\") <--",
+	//		initExtensionList, initExtensionList ? initExtensionList : "");
+}
+
 /*-------------------------------------------------------------------*//*!
 * \brief	
 * \param	
@@ -106,6 +129,7 @@ EGL* getEGL()
 		{
 		//create TLS instance
 		pEgl = RI_NEW(EGL, ());
+		pEgl->Create();
 		Dll::SetTls(pEgl);
 		}
 	return pEgl;
@@ -173,6 +197,21 @@ RIEGLDisplay* EGL::getDisplay(const EGLDisplay displayID)
 	return NULL;		//error: the display hasn't been eglInitialized
 }
 
+/*-------------------------------------------------------------------*//*!
+* \brief	Creates a display given a display ID, including Display info
+* \param	
+* \return	
+* \note		if egl has been initialized for this display, the display ID can
+*			be found from egl->m_displays
+*//*-------------------------------------------------------------------*/
+void EGL::addDisplay(RIEGLDisplay* display)
+{
+	RI_ASSERT(display); 
+	m_displays.push_back(display); //throws bad alloc
+	CreateDisplayInfo(display->getID());
+}  
+
+
 /*
   Create an information object for an opened Display.
  */
@@ -213,6 +252,8 @@ TBool EGL::CreateDisplayInfo(const EGLDisplay aDisplayID)
 
 		if (err == KErrNone)
 		{
+			// mark as initialized here??
+			dispInfo->iInitialized = ETrue;
 			result = ETrue;
 		}
 	}
@@ -1231,8 +1272,10 @@ EGLSurface eglCreateWindowSurface(EGLDisplay dpy, EGLConfig config, EGLNativeWin
 	EGL_IF_ERROR(!display->configExists(config), EGL_BAD_CONFIG, EGL_NO_SURFACE);
 
 	int renderBuffer = EGL_BACK_BUFFER;
-	int colorSpace = EGL_VG_COLORSPACE_sRGB;
-	int alphaFormat = EGL_VG_ALPHA_FORMAT_NONPRE;
+	int colorSpace = EGL_COLORSPACE_sRGB;
+	int alphaFormat = EGL_ALPHA_FORMAT_NONPRE;
+   
+
 	if(attrib_list)
 	{
 		for(int i=0;attrib_list[i] != EGL_NONE;i+=2)
@@ -1320,6 +1363,7 @@ EGLSurface eglCreateWindowSurface(EGLDisplay dpy, EGLConfig config, EGLNativeWin
 			RWindow* window = (RWindow*)(win);				
 			RWsSession& session = *window->Session();
 			session.RegisterSurface(surfaceInfo.iScreenNumber, surfaceInfo.iSurfaceId);
+			surfaceConfig.SetFlip(ETrue); // don't ask :o
 			window->SetBackgroundSurface(surfaceConfig, ETrue);
 		}
 		else
@@ -2605,20 +2649,183 @@ EGLBoolean eglSwapInterval(EGLDisplay dpy, EGLint interval)
 * \return	
 * \note		
 *//*-------------------------------------------------------------------*/
+/**
+	Obtain extension function pointer.
 
+	Provide support for the Symbian Graphics SHAI for EGL Extensions
+	@param aName	Name of extension
+	@return			Function pointer, or NULL if not available.
+
+	@note  Known extensions and their directly associated functions:
+	   1. EGL_KHR_image 
+			None
+	   2. EGL_KHR_image_base 
+			eglCreateImageKHR,
+			eglDestroyImageKHR
+	   3. EGL_KHR_image_pixmap
+			None
+	   4. EGL_KHR_vg_parent_image
+			None
+	   5. EGL_KHR_gl_texture_2D_image
+			None
+	   6. EGL_KHR_gl_texture_cubemap_image
+			EGLImageTargetTexture2DOES,
+			EGLImageTargetRenderbufferStorageOES
+	   7. EGL_KHR_lock_surface2
+			eglLockSurfaceKHR,
+			eglUnlockSurfaceKHR
+	   8. EGL_NOK_resource_profiling2
+			eglQueryProfilingDataNOK
+	   9. EGL_SYMBIAN_composition
+			None
+	  10. EGL_NOK_image_endpoint
+			eglCreateEndpointNOK,
+			eglDestroyEndpointNOK,
+			eglGetEndpointAttribNOK,
+			eglSetEndpointAttribNOK,
+			eglEndpointBeginStreamingNOK,
+			eglEndpointEndStreamingNOK,
+			eglAcquireImageNOK,
+			eglReleaseImageNOK,
+			eglGetEndpointDirtyAreaNOK,
+			eglEndpointRequestNotificationNOK,
+			eglEndpointCancelNotificationNOK,
+			eglCreateEndpointNOK
+	  11. NOK_pixmap_type_rsgimage
+			None
+	  12. EGL_NOK_swap_region
+			eglSwapBuffersRegionNOK
+
+	@see Khronos EGL 1.4 Specification, eglGetProcAddress()
+	@author Faisal Memon Community EGL project
+	ported to Merge EGL
+	*/
 typedef void RI_Proc();
 
 //EGLAPI void (* EGLAPIENTRY      eglGetProcAddress(const char *procname))(void);
 
 #ifdef BUILD_WITH_PRIVATE_EGL
-RI_APIENTRY void (*do_eglGetProcAddress(const char *procname))(...)
+RI_APIENTRY void (*do_eglGetProcAddress(const char *aName))(...)
 #else
-void (*eglGetProcAddress(const char *procname))(...)
+void (*eglGetProcAddress(const char *aName))(...)
 #endif
 {
+	/*
 	if(!procname)
 		return NULL;
 	return NULL;
+	*/
+	
+/*ProcPointer CGuestEGL::eglGetProcAddress(const char* aName)*/
+	if (strncmp("eglCreateImageKHR", aName, strlen("eglCreateImageKHR")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("eglDestroyImageKHR", aName, strlen("eglDestroyImageKHR")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("EGLImageTargetTexture2DOES", aName, strlen("EGLImageTargetTexture2DOES")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("EGLImageTargetRenderbufferStorageOES", aName, strlen("EGLImageTargetRenderbufferStorageOES")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("eglLockSurfaceKHR", aName, strlen("eglLockSurfaceKHR")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("eglUnlockSurfaceKHR", aName, strlen("eglUnlockSurfaceKHR")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("EGL_KHR_lock_surface", aName, strlen("EGL_KHR_lock_surface")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("eglQueryProfilingDataNOK", aName, strlen("eglQueryProfilingDataNOK")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("eglCreateEndpointNOK", aName, strlen("eglCreateEndpointNOK")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("eglDestroyEndpointNOK", aName, strlen("eglDestroyEndpointNOK")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("eglGetEndpointAttribNOK", aName, strlen("eglGetEndpointAttribNOK")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("eglEndpointBeginStreamingNOK", aName, strlen("eglEndpointBeginStreamingNOK")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("eglEndpointEndStreamingNOK", aName, strlen("eglEndpointEndStreamingNOK")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("eglAcquireImageNOK", aName, strlen("eglAcquireImageNOK")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("eglReleaseImageNOK", aName, strlen("eglReleaseImageNOK")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("eglGetEndpointDirtyAreaNOK", aName, strlen("eglGetEndpointDirtyAreaNOK")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("eglEndpointRequestNotificationNOK", aName, strlen("eglEndpointRequestNotificationNOK")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("eglEndpointCancelNotificationNOK", aName, strlen("eglEndpointCancelNotificationNOK")) == 0)
+	{
+		return NULL;
+	}
+	else if (strncmp("eglCreateEndpointNOK", aName, strlen("eglCreateEndpointNOK")) == 0)
+	{
+	    return NULL;
+	}
+	else if (strncmp("eglSwapBuffersRegionNOK", aName, strlen("eglSwapBuffersRegionNOK")) == 0)
+	{
+	    return NULL;
+	}
+	else if (strncmp("egl_Private_SignalSyncNOK", aName, strlen("egl_Private_SignalSyncNOK")) == 0)
+	{
+		return (ProcPointer)CEglSyncExtension::egl_Private_SignalSyncNOK;
+	}
+	else if (strncmp("eglCreateSyncKHR", aName, strlen("eglCreateSyncKHR")) == 0)
+	{
+		return (ProcPointer)CEglSyncExtension::eglCreateSyncKHR;
+	}
+	else if (strncmp("eglDestroySyncKHR", aName, strlen("eglDestroySyncKHR")) == 0)
+	{
+		return (ProcPointer)CEglSyncExtension::eglDestroySyncKHR;
+	}
+	else if (strncmp("eglClientWaitSyncKHR", aName, strlen("eglClientWaitSyncKHR")) == 0)
+	{
+		return (ProcPointer)CEglSyncExtension::eglClientWaitSyncKHR;
+	}
+	else if (strncmp("eglSignalSyncKHR", aName, strlen("eglSignalSyncKHR")) == 0)
+	{
+		return (ProcPointer)CEglSyncExtension::eglSignalSyncKHR;
+	}
+	else if (strncmp("eglGetSyncAttribKHR", aName, strlen("eglGetSyncAttribKHR")) == 0)
+	{
+		return (ProcPointer)CEglSyncExtension::eglGetSyncAttribKHR;
+	}
+	else
+	{
+		return NULL;
+	}
+		
 }
 
 

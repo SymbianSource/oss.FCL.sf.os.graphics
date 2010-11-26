@@ -410,6 +410,8 @@ private:
     REglSyncHashMap iEglSyncMap;
     RFastLock       iEglSyncMapLock;
     EGLint          iEglSyncId;
+    
+    OpenVGRI::EGL&    iEglInstance;
     };
 
 #endif /* __EGL_SYNC_H_ */

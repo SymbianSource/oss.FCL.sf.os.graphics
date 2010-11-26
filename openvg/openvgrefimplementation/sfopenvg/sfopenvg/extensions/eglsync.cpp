@@ -153,9 +153,15 @@ EGLint CEglSync::ClientWaitSync(EGLint aFlags, EGLTimeKHR aTimeout)
     EGLint ret = (EGLint) EGL_FALSE;
     if (iSyncState == EGL_UNSIGNALED_KHR)
         {
-        if (aTimeout && (aFlags & EGL_SYNC_FLUSH_COMMANDS_BIT_KHR) && (eglGetCurrentContext() != EGL_NO_CONTEXT))
+#ifdef BUILD_WITH_PRIVATE_EGL
+			if (aTimeout && (aFlags & EGL_SYNC_FLUSH_COMMANDS_BIT_KHR) && (do_eglGetCurrentContext() != EGL_NO_CONTEXT))
             {
-            switch(eglQueryAPI())
+				switch(do_eglQueryAPI())
+#else
+			if (aTimeout && (aFlags & EGL_SYNC_FLUSH_COMMANDS_BIT_KHR) && (eglGetCurrentContext() != EGL_NO_CONTEXT))
+			{
+				switch(eglQueryAPI())
+#endif
                 {
                 case EGL_OPENGL_ES_API:
                     //ToDo: make sure these cases are covered
@@ -311,8 +317,8 @@ EGLBoolean CEglSyncExtension::Construct()
 
 CEglSyncExtension::CEglSyncExtension(OpenVGRI::EGL& aEglInstance):
 iEglSyncMap(),
-iEglSyncId(0)/*,
-iEglInstance(aEglInstance)*/
+iEglSyncId(0),
+iEglInstance(aEglInstance)
     {
 
     }
