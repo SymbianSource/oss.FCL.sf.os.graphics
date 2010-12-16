@@ -1,0 +1,514 @@
+// Copyright (c) 1998-2010 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// Window server
+// 
+//
+
+/**
+ @file
+*/
+
+#ifdef SYMBIAN_BUILD_GCE
+#include "../../tvalidationrenderstages/group/bld.inf"
+#endif // SYMBIAN_BUILD_GCE
+
+#include "../../test/group/restricted/bld.inf"
+#include "../../tdynamicres/group/bld.inf"
+
+#include "../../minigui/group/bld.inf"
+
+PRJ_PLATFORMS
+
+DEFAULT
+
+PRJ_EXPORTS
+
+../../inc/W32STD.H SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(w32std.h)
+../../inc/sizemode.h SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(sizemode.h)
+../../inc/pointerevent.h SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(pointerevent.h)
+../../inc/advancedpointerevent.h SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(advancedpointerevent.h)
+../../inc/advancedpointerevent.inl SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(advancedpointerevent.inl)
+../../inc/textcursor.h SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(textcursor.h)
+#ifndef SYMBIAN_ENABLE_SPLIT_HEADERS
+#ifdef SYMBIAN_OLD_EXPORT_LOCATION
+../../inc/Graphics/windowserverconstants.h /epoc32/include/graphics/windowserverconstants.h
+#endif
+#endif
+../../inc/Graphics/pointereventdata.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/pointereventdata.h)
+../../inc/W32ADLL.H SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(w32adll.h)
+../../inc/W32CLICK.H SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(w32click.h)
+../../inc/W32STDGRAPHIC.H SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(w32stdgraphic.h)
+../../inc/restricted/W32Debug.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(w32debug.h)
+
+../../group/wserv.iby	/epoc32/rom/include/wserv.iby
+../../group/WSLog.IBY	/epoc32/rom/include/wslog.iby
+
+../../rom/graphics_textshell.iby  		/epoc32/rom/include/graphics_textshell.iby
+
+
+//For CLOCK and other Anim DLL's
+// NB. should be using targettype ANI instead...
+../../bwins/WSANIMU.DEF /epoc32/release/wins/wsanimu.def
+
+//For Key-click DLL's
+../../bwins/WSClickU.DEF /epoc32/release/wins/wsclicku.def
+../../eabi/wsclicku.def  /epoc32/include/def/eabi/wsclicku.def
+
+//Graphic Drawer exports for partners
+../../inc/Graphics/WSGRAPHICDRAWER.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsgraphicdrawer.h)
+../../inc/Graphics/restricted/WSGRAPHICDRAWERINTERFACE.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsgraphicdrawerinterface.h)
+../../inc/Graphics/WSGRAPHICMSGBUF.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsgraphicmsgbuf.h)
+../../inc/Graphics/W32STDGRAPHICTEST.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/w32stdgraphictest.h)
+
+//Plugin exports for partners
+../../inc/Graphics/WSPLUGIN.H SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsplugin.h)
+../../inc/Graphics/WsRenderStage.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsrenderstage.h)
+../../inc/Graphics/WsRenderStageFactory.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsrenderstagefactory.h)
+../../inc/Graphics/restricted/wscompositioncontext.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wscompositioncontext.h)
+../../inc/Graphics/wscursor.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wscursor.h)
+../../inc/Graphics/wsgraphicscontext.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsgraphicscontext.h)
+../../inc/Graphics/restricted/wslayer.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wslayer.h)
+../../inc/Graphics/wsscreendevice.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsscreendevice.h)
+../../inc/Graphics/wsuibuffer.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsuibuffer.h)
+../../inc/Graphics/wsdrawablesourceprovider.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdrawablesourceprovider.h)
+../../inc/Graphics/wsdisplaycontrol.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdisplaycontrol.h)
+../../inc/Graphics/restricted/wsdisplaymapping.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdisplaymapping.h)
+../../inc/Graphics/wsdisplaypolicy.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdisplaypolicy.h)
+
+//RemoteGc exports for partners
+../../inc/RemoteGc.h		SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/remotegc.h)
+../../inc/CommandBuffer.h	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/commandbuffer.h)
+../../inc/RemoteGcUtils.h	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/remotegcutils.h)
+
+//Test Screen Capture
+../../inc/Graphics/testscreencapture.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/testscreencapture.h)
+../../inc/Graphics/wsscreendeviceutils.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsscreendeviceutils.h)
+../../inc/Graphics/wstestscreencapture.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wstestscreencapture.h)
+
+../../inc/Graphics/wsdrawresource.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/wsdrawresource.h)
+
+#ifdef SYMBIAN_BUILD_GCE
+//Surface support
+../../inc/Graphics/surfaceconfiguration.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/surfaceconfiguration.h)
+../../inc/Graphics/restricted/surfaceconfiguration.inl SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/surfaceconfiguration.inl)
+//Display Control
+../../inc/Graphics/displaycontrol.h	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/displaycontrol.h)
+
+//Display Mapping
+../../inc/Graphics/displaymapping.h	SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(graphics/displaymapping.h)
+
+
+#endif // SYMBIAN_BUILD_GCE
+
+PRJ_MMPFILES
+
+// export library for both GCE & non-GCE version of ws32.DLL
+../../group/ws32lib.mmp
+../../group/remotegclib.mmp
+../../group/wsgraphicdrawerlib.mmp
+
+
+../../group/stdplugin_nonnga.mmp
+../../group/w32_nonnga.mmp
+../../group/wsgraphicdrawer_nonnga.mmp
+../../group/restricted/wserv_nonnga.mmp
+../../group/remotegc_nonnga.mmp
+
+../../group/W32STDGRAPHIC.MMP
+../../group/W32STDGRAPHICDRAWER.MMP
+
+#ifdef SYMBIAN_BUILD_GCE
+../../group/W32_nga.MMP
+../../group/WSGRAPHICDRAWER_nga.MMP
+../../group/restricted/WServ_nga.MMP
+../../group/RemoteGc_nga.mmp
+../../group/graphicsresourcewrapper.mmp
+
+
+	#ifdef WINS
+	// exe for emulator switching between GCE and non-GCE WServ
+	../../group/wserv_switch.mmp
+	// DLL shim for emulator switching between GCE and non-GCE W32
+	../../group/ws32_switch.mmp
+	
+	../../group/remotegc_switch.mmp
+	../../group/wsgraphicdrawer_switch.mmp
+	#else
+	../../group/graphicsresourcewrapper_stub.mmp
+	#endif
+
+#endif // SYMBIAN_BUILD_GCE
+
+#ifdef GENERIC_MARM
+../../group/ProfilerKeys.mmp
+#endif
+
+//Loggings
+../../group/DEBLOG.MMP
+../../group/DEBLOGFL.MMP
+../../group/DEBLOGSR.MMP
+../../group/DebLogRD.MMP
+#ifdef WINS
+../../group/DEBLOGWN.MMP
+../../group/OSBWIN32.MMP
+#endif
+
+PRJ_TESTMMPFILES
+
+//Test environment for WSERV,CONE,FORM,CLOCK
+../../group/TLIB.MMP support
+../../group/SHELL.MMP support
+
+//WSERV test code
+../../group/TCAP_NONE.MMP
+../../group/TCAP_ALL.MMP
+../../group/TCAP1.MMP
+../../group/TCAP2.MMP
+../../group/TCAP3.MMP
+../../group/TWSGRAPHIC.MMP
+../../group/TWSGRAPHICSHARE.MMP
+../../group/TWSGRAPHICSHAREGLOBAL.MMP
+../../group/TWSGRAPHICSHARESECURE.MMP
+../../group/TWSGRAPHICUNSHAREGLOBAL.MMP
+../../group/TWSGRAPHICUNSHARESECURE.MMP
+../../group/framerate.mmp
+../../group/wsframerate.mmp
+../../group/redirector.mmp
+../../group/wsredir.mmp
+../../group/listener.mmp
+../../group/wslisten.mmp
+../../group/containdrawer.mmp
+../../group/wscontaindrawer.mmp
+../../group/wsgdcov.mmp
+../../group/bufferdrawer.mmp
+../../group/wsbufferdrawer.mmp
+../../group/ANIMDLL.MMP support
+../../group/AUTODLL_nonnga.MMP support
+../../group/CONNECT.MMP support
+../../group/eventdd.mmp support
+../../group/MBMANIM.MMP support
+../../group/TMAN.MMP manual
+../../group/TTIMERS.MMP support
+../../group/TFadeCount.mmp manual
+../../group/wscons.mmp support
+../../test/TAutoServer/restricted/TAutoServer_nonnga.mmp
+
+#ifdef SYMBIAN_BUILD_GCE
+../../group/AUTODLL_nga.MMP support
+../../test/TAutoServer/restricted/TAutoServer_nga.mmp
+#endif
+
+#ifdef WINS
+../../group/tcrx.mmp manual
+#endif
+
+//Anim
+../../group/ANIM.MMP
+
+//CloseAllPanicWindow
+../../group/tclosepanicwindow.mmp
+
+//Click plugin's
+../../group/Click.MMP
+../../group/multiptrclick.mmp
+
+//Handwritting ANIM DLL's
+../../group/HANDANIM.MMP support
+
+#ifndef SMP
+#ifdef SYMBIAN_BUILD_GCE
+
+../../group/restricted/TGCE.mmp support
+#ifndef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS
+../../group/restricted/fastpathstartupmode.mmp support
+//Performance tests
+../../group/restricted/tgceperf.mmp
+../../group/restricted/tgceperfanim.mmp
+//Animation Test
+../../group/restricted/tgceanim.mmp
+#endif // SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS
+#endif // SYMBIAN_BUILD_GCE
+#endif // SMP
+
+
+../../group/INC113743.MMP
+
+//Composited Screen Capture test server
+#ifndef SMP
+../../group/tcsc.mmp support
+#endif // SMP
+
+PRJ_TESTEXPORTS
+../../test/scripts/wstest_t_alpha_s0_nga.script		z:/wstest/wstest_t_alpha_s0_nga.script
+../../test/scripts/wstest_t_alpha_s0_nonnga.script		z:/wstest/wstest_t_alpha_s0_nonnga.script
+../../test/scripts/wstest_t_alpha_s1_nga.script		z:/wstest/wstest_t_alpha_s1_nga.script
+../../test/scripts/wstest_t_alpha_s1_nonnga.script		z:/wstest/wstest_t_alpha_s1_nonnga.script
+../../test/scripts/wstest_t_alphawin_s0_nga.script		z:/wstest/wstest_t_alphawin_s0_nga.script
+../../test/scripts/wstest_t_alphawin_s0_nonnga.script	z:/wstest/wstest_t_alphawin_s0_nonnga.script
+../../test/scripts/wstest_t_alphawin_s1_nga.script		z:/wstest/wstest_t_alphawin_s1_nga.script
+../../test/scripts/wstest_t_alphawin_s1_nonnga.script	z:/wstest/wstest_t_alphawin_s1_nonnga.script
+../../test/scripts/wstest_t_animdll_s0_nga.script		z:/wstest/wstest_t_animdll_s0_nga.script
+../../test/scripts/wstest_t_animdll_s0_nonnga.script	z:/wstest/wstest_t_animdll_s0_nonnga.script
+../../test/scripts/wstest_t_animdll_s1_nga.script		z:/wstest/wstest_t_animdll_s1_nga.script
+../../test/scripts/wstest_t_animdll_s1_nonnga.script		z:/wstest/wstest_t_animdll_s1_nonnga.script
+../../test/scripts/wstest_t_blank_s0_nga.script		z:/wstest/wstest_t_blank_s0_nga.script
+../../test/scripts/wstest_t_blank_s0_nonnga.script		z:/wstest/wstest_t_blank_s0_nonnga.script
+../../test/scripts/wstest_t_blank_s1_nga.script		z:/wstest/wstest_t_blank_s1_nga.script
+../../test/scripts/wstest_t_blank_s1_nonnga.script		z:/wstest/wstest_t_blank_s1_nonnga.script
+../../test/scripts/wstest_t_client_s0_nga.script		z:/wstest/wstest_t_client_s0_nga.script
+../../test/scripts/wstest_t_client_s0_nonnga.script	z:/wstest/wstest_t_client_s0_nonnga.script
+../../test/scripts/wstest_t_client_s1_nga.script		z:/wstest/wstest_t_client_s1_nga.script
+../../test/scripts/wstest_t_client_s1_nonnga.script	z:/wstest/wstest_t_client_s1_nonnga.script
+../../test/scripts/wstest_t_crp_s0_nga.script		z:/wstest/wstest_t_crp_s0_nga.script
+../../test/scripts/wstest_t_crp_s0_nonnga.script	z:/wstest/wstest_t_crp_s0_nonnga.script
+../../test/scripts/wstest_t_crp_s1_nga.script		z:/wstest/wstest_t_crp_s1_nga.script
+../../test/scripts/wstest_t_crp_s1_nonnga.script	z:/wstest/wstest_t_crp_s1_nonnga.script
+../../test/scripts/wstest_t_cursor_s0_nga.script		z:/wstest/wstest_t_cursor_s0_nga.script
+../../test/scripts/wstest_t_cursor_s0_nonnga.script	z:/wstest/wstest_t_cursor_s0_nonnga.script
+../../test/scripts/wstest_t_cursor_s1_nga.script		z:/wstest/wstest_t_cursor_s1_nga.script
+../../test/scripts/wstest_t_cursor_s1_nonnga.script	z:/wstest/wstest_t_cursor_s1_nonnga.script
+../../test/scripts/wstest_t_derived_s0_nga.script		z:/wstest/wstest_t_derived_s0_nga.script
+../../test/scripts/wstest_t_derived_s0_nonnga.script	z:/wstest/wstest_t_derived_s0_nonnga.script
+../../test/scripts/wstest_t_derived_s1_nga.script		z:/wstest/wstest_t_derived_s1_nga.script
+../../test/scripts/wstest_t_derived_s1_nonnga.script	z:/wstest/wstest_t_derived_s1_nonnga.script
+../../test/scripts/wstest_t_draw_s0_nga.script		z:/wstest/wstest_t_draw_s0_nga.script
+../../test/scripts/wstest_t_draw_s0_nonnga.script	z:/wstest/wstest_t_draw_s0_nonnga.script
+../../test/scripts/wstest_t_draw_s1_nga.script		z:/wstest/wstest_t_draw_s1_nga.script
+../../test/scripts/wstest_t_draw_s1_nonnga.script	z:/wstest/wstest_t_draw_s1_nonnga.script
+../../test/scripts/wstest_t_dsa_s0_nga.script		z:/wstest/wstest_t_dsa_s0_nga.script
+../../test/scripts/wstest_t_dsa_s0_nonnga.script	z:/wstest/wstest_t_dsa_s0_nonnga.script
+../../test/scripts/wstest_t_dsa_s1_nga.script		z:/wstest/wstest_t_dsa_s1_nga.script
+../../test/scripts/wstest_t_dsa_s1_nonnga.script	z:/wstest/wstest_t_dsa_s1_nonnga.script
+../../test/scripts/wstest_t_event_s0_nga.script	z:/wstest/wstest_t_event_s0_nga.script
+../../test/scripts/wstest_t_event_s0_nonnga.script	z:/wstest/wstest_t_event_s0_nonnga.script
+../../test/scripts/wstest_t_event_s1_nga.script	z:/wstest/wstest_t_event_s1_nga.script
+../../test/scripts/wstest_t_event_s1_nonnga.script	z:/wstest/wstest_t_event_s1_nonnga.script
+../../test/scripts/wstest_t_fade_s0_nga.script		z:/wstest/wstest_t_fade_s0_nga.script
+../../test/scripts/wstest_t_fade_s0_nonnga.script	z:/wstest/wstest_t_fade_s0_nonnga.script
+../../test/scripts/wstest_t_fade_s1_nga.script		z:/wstest/wstest_t_fade_s1_nga.script
+../../test/scripts/wstest_t_fade_s1_nonnga.script	z:/wstest/wstest_t_fade_s1_nonnga.script
+../../test/scripts/wstest_t_gc_s0_nga.script		z:/wstest/wstest_t_gc_s0_nga.script
+../../test/scripts/wstest_t_gc_s0_nonnga.script		z:/wstest/wstest_t_gc_s0_nonnga.script
+../../test/scripts/wstest_t_gc_s1_nga.script		z:/wstest/wstest_t_gc_s1_nga.script
+../../test/scripts/wstest_t_gc_s1_nonnga.script		z:/wstest/wstest_t_gc_s1_nonnga.script
+../../test/scripts/wstest_t_gdi_s0_nga.script		z:/wstest/wstest_t_gdi_s0_nga.script
+../../test/scripts/wstest_t_gdi_s0_nonnga.script	z:/wstest/wstest_t_gdi_s0_nonnga.script
+../../test/scripts/wstest_t_gdi_s1_nga.script		z:/wstest/wstest_t_gdi_s1_nga.script
+../../test/scripts/wstest_t_gdi_s1_nonnga.script	z:/wstest/wstest_t_gdi_s1_nonnga.script
+../../test/scripts/wstest_t_graphicsresource_s0_nga.script		z:/wstest/wstest_t_graphicsresource_s0_nga.script
+../../test/scripts/wstest_t_graphicsresource_s0_nonnga.script	z:/wstest/wstest_t_graphicsresource_s0_nonnga.script
+../../test/scripts/wstest_t_graphicsresource_s1_nga.script		z:/wstest/wstest_t_graphicsresource_s1_nga.script
+../../test/scripts/wstest_t_graphicsresource_s1_nonnga.script	z:/wstest/wstest_t_graphicsresource_s1_nonnga.script
+../../test/scripts/wstest_t_key_s0_nga.script					z:/wstest/wstest_t_key_s0_nga.script
+../../test/scripts/wstest_t_key_s0_nonnga.script				z:/wstest/wstest_t_key_s0_nonnga.script
+../../test/scripts/wstest_t_key_s1_nga.script					z:/wstest/wstest_t_key_s1_nga.script
+../../test/scripts/wstest_t_key_s1_nonnga.script				z:/wstest/wstest_t_key_s1_nonnga.script
+../../test/scripts/wstest_t_multiscreens_s0_nga.script			z:/wstest/wstest_t_multiscreens_s0_nga.script
+../../test/scripts/wstest_t_multiscreens_s0_nonnga.script		z:/wstest/wstest_t_multiscreens_s0_nonnga.script
+../../test/scripts/wstest_t_oom_s0_nga.script			z:/wstest/wstest_t_oom_s0_nga.script
+../../test/scripts/wstest_t_oom_s0_nonnga.script		z:/wstest/wstest_t_oom_s0_nonnga.script
+../../test/scripts/wstest_t_oom_s1_nga.script			z:/wstest/wstest_t_oom_s1_nga.script
+../../test/scripts/wstest_t_oom_s1_nonnga.script		z:/wstest/wstest_t_oom_s1_nonnga.script
+../../test/scripts/wstest_t_panic_s0_nga.script		z:/wstest/wstest_t_panic_s0_nga.script
+../../test/scripts/wstest_t_panic_s0_nonnga.script		z:/wstest/wstest_t_panic_s0_nonnga.script
+../../test/scripts/wstest_t_panic_s1_nga.script		z:/wstest/wstest_t_panic_s1_nga.script
+../../test/scripts/wstest_t_panic_s1_nonnga.script		z:/wstest/wstest_t_panic_s1_nonnga.script
+../../test/scripts/wstest_t_pointer_s0_nga.script		z:/wstest/wstest_t_pointer_s0_nga.script
+../../test/scripts/wstest_t_pointer_s0_nonnga.script	z:/wstest/wstest_t_pointer_s0_nonnga.script
+../../test/scripts/wstest_t_pointer_s1_nga.script		z:/wstest/wstest_t_pointer_s1_nga.script
+../../test/scripts/wstest_t_pointer_s1_nonnga.script	z:/wstest/wstest_t_pointer_s1_nonnga.script
+../../test/scripts/wstest_t_redraw_s0_nga.script		z:/wstest/wstest_t_redraw_s0_nga.script
+../../test/scripts/wstest_t_redraw_s0_nonnga.script	z:/wstest/wstest_t_redraw_s0_nonnga.script
+../../test/scripts/wstest_t_redraw_s1_nga.script		z:/wstest/wstest_t_redraw_s1_nga.script
+../../test/scripts/wstest_t_redraw_s1_nonnga.script	z:/wstest/wstest_t_redraw_s1_nonnga.script
+../../test/scripts/wstest_t_region_s0_nga.script		z:/wstest/wstest_t_region_s0_nga.script
+../../test/scripts/wstest_t_region_s0_nonnga.script	z:/wstest/wstest_t_region_s0_nonnga.script
+../../test/scripts/wstest_t_region_s1_nga.script		z:/wstest/wstest_t_region_s1_nga.script
+../../test/scripts/wstest_t_region_s1_nonnga.script	z:/wstest/wstest_t_region_s1_nonnga.script
+../../test/scripts/wstest_t_screen_s0_nga.script		z:/wstest/wstest_t_screen_s0_nga.script
+../../test/scripts/wstest_t_screen_s0_nonnga.script	z:/wstest/wstest_t_screen_s0_nonnga.script
+../../test/scripts/wstest_t_screen_s1_nga.script		z:/wstest/wstest_t_screen_s1_nga.script
+../../test/scripts/wstest_t_screen_s1_nonnga.script		z:/wstest/wstest_t_screen_s1_nonnga.script
+../../test/scripts/wstest_t_screenmodescaling_s0_nga.script		z:/wstest/wstest_t_screenmodescaling_s0_nga.script
+../../test/scripts/wstest_t_screenmodescaling_s0_nonnga.script	z:/wstest/wstest_t_screenmodescaling_s0_nonnga.script
+../../test/scripts/wstest_t_screenmodescaling_s1_nga.script		z:/wstest/wstest_t_screenmodescaling_s1_nga.script
+../../test/scripts/wstest_t_screenmodescaling_s1_nonnga.script		z:/wstest/wstest_t_screenmodescaling_s1_nonnga.script
+../../test/scripts/wstest_t_screendevice_s0_nga.script		z:/wstest/wstest_t_screendevice_s0_nga.script
+../../test/scripts/wstest_t_screendevice_s0_nonnga.script	z:/wstest/wstest_t_screendevice_s0_nonnga.script
+../../test/scripts/wstest_t_screendevice_s1_nga.script		z:/wstest/wstest_t_screendevice_s1_nga.script
+../../test/scripts/wstest_t_screendevice_s1_nonnga.script	z:/wstest/wstest_t_screendevice_s1_nonnga.script
+../../test/scripts/wstest_t_screendeviceresswitch_s0_nga.script		z:/wstest/wstest_t_screendeviceresswitch_s0_nga.script
+../../test/scripts/wstest_t_screendeviceresswitch_s0_nonnga.script		z:/wstest/wstest_t_screendeviceresswitch_s0_nonnga.script
+../../test/scripts/wstest_t_screendeviceresswitch_s1_nga.script		z:/wstest/wstest_t_screendeviceresswitch_s1_nga.script
+../../test/scripts/wstest_t_screendeviceresswitch_s1_nonnga.script		z:/wstest/wstest_t_screendeviceresswitch_s1_nonnga.script
+../../test/scripts/wstest_t_security_s0_nga.script		z:/wstest/wstest_t_security_s0_nga.script
+../../test/scripts/wstest_t_security_s0_nonnga.script	z:/wstest/wstest_t_security_s0_nonnga.script
+../../test/scripts/wstest_t_security_s1_nga.script		z:/wstest/wstest_t_security_s1_nga.script
+../../test/scripts/wstest_t_security_s1_nonnga.script	z:/wstest/wstest_t_security_s1_nonnga.script
+../../test/scripts/wstest_t_sprite_s0_nga.script		z:/wstest/wstest_t_sprite_s0_nga.script
+../../test/scripts/wstest_t_sprite_s0_nonnga.script	z:/wstest/wstest_t_sprite_s0_nonnga.script
+../../test/scripts/wstest_t_sprite_s1_nga.script		z:/wstest/wstest_t_sprite_s1_nga.script
+../../test/scripts/wstest_t_sprite_s1_nonnga.script	z:/wstest/wstest_t_sprite_s1_nonnga.script
+../../test/scripts/wstest_t_transparentanim_s0_nga.script		z:/wstest/wstest_t_transparentanim_s0_nga.script
+../../test/scripts/wstest_t_transparentanim_s0_nonnga.script	z:/wstest/wstest_t_transparentanim_s0_nonnga.script
+../../test/scripts/wstest_t_transparentanim_s1_nga.script		z:/wstest/wstest_t_transparentanim_s1_nga.script
+../../test/scripts/wstest_t_transparentanim_s1_nonnga.script	z:/wstest/wstest_t_transparentanim_s1_nonnga.script
+../../test/scripts/wstest_t_window_s0_nga.script		z:/wstest/wstest_t_window_s0_nga.script
+../../test/scripts/wstest_t_window_s0_nonnga.script	z:/wstest/wstest_t_window_s0_nonnga.script
+../../test/scripts/wstest_t_window_s1_nga.script		z:/wstest/wstest_t_window_s1_nga.script
+../../test/scripts/wstest_t_window_s1_nonnga.script	z:/wstest/wstest_t_window_s1_nonnga.script 
+../../test/scripts/wstest_t_windowfunction_s0_nga.script		z:/wstest/wstest_t_windowfunction_s0_nga.script
+../../test/scripts/wstest_t_windowfunction_s0_nonnga.script	z:/wstest/wstest_t_windowfunction_s0_nonnga.script
+../../test/scripts/wstest_t_windowfunction_s1_nga.script		z:/wstest/wstest_t_windowfunction_s1_nga.script
+../../test/scripts/wstest_t_windowfunction_s1_nonnga.script	z:/wstest/wstest_t_windowfunction_s1_nonnga.script 
+../../test/scripts/wstest_t_wsgraphs_s0_nga.script		z:/wstest/wstest_t_wsgraphs_s0_nga.script
+../../test/scripts/wstest_t_wsgraphs_s0_nonnga.script	z:/wstest/wstest_t_wsgraphs_s0_nonnga.script
+../../test/scripts/wstest_t_wsgraphs_s1_nga.script		z:/wstest/wstest_t_wsgraphs_s1_nga.script
+../../test/scripts/wstest_t_wsgraphs_s1_nonnga.script	z:/wstest/wstest_t_wsgraphs_s1_nonnga.script 
+
+../../test/scripts/wstest_t_romautotest_nonnga.script	z:/wstest/wstest_t_romautotest_nonnga.script
+../../test/scripts/wstest_t_romautotest_nga.script		z:/wstest/wstest_t_romautotest_nga.script
+../../test/scripts/wstest_t_romautotest_nga_changetracking.script		z:/wstest/wstest_t_romautotest_nga_changetracking.script
+../../test/scripts/wstest_t_autotest_nonnga.script	z:/wstest/wstest_t_autotest_nonnga.script
+../../test/scripts/wstest_t_autotest_nga.script		z:/wstest/wstest_t_autotest_nga.script
+../../test/scripts/wstest_t_autotest_nga_changetracking.script		z:/wstest/wstest_t_autotest_nga_changetracking.script
+../../test/scripts/wstest_t_mulscreens_nonnga.script	z:/wstest/wstest_t_mulscreens_nonnga.script
+../../test/scripts/wstest_t_mulscreens_nga.script		z:/wstest/wstest_t_mulscreens_nga.script
+../../test/scripts/wstest_run_nga.bat 		z:/wstest/wstest_run_nga.bat
+../../test/scripts/wstest_run_nonnga.bat 		z:/wstest/wstest_run_nonnga.bat
+../../test/scripts/wstest_config.cmd					z:/wstest/wstest_config.cmd
+../../test/scripts/wsini-writer.pl					z:/wstest/wsini-writer.pl
+../../group/wservu_multiscreen.ini						z:/wstest/wservu_multiscreen.ini
+../../group/wservu_multiscreen_changetracking.ini		z:/wstest/wservu_multiscreen_changetracking.ini
+// ../../group/wservu_multiscreen-nonnga.ini				z:/wstest/wservu_multiscreen-nonnga.ini
+../../test/test.mbm 	z:/wstest/test.mbm
+../../test/trom.mbm 	z:/wstest/trom.mbm
+../../test/MAILANIM.MBM 	z:/wstest/mailanim.mbm
+../../tanim/tanim.mbm 	z:/wstest/tanim.mbm
+../../tauto/tauto.mbm 	z:/wstest/tauto.mbm 
+../../tauto/Dither.MBM 	z:/wstest/dither.mbm
+../../tauto/mytest.mbm 	z:/wstest/mytest.mbm
+../../tauto/symball.gif	z:/wstest/symball.gif
+../../tauto/config/graphics-wserv-autotest.ini		z:/wstest/graphics-wserv-autotest.ini
+../../group/DLL_LIST.TXT 		z:/system/data/dll_list.txt
+
+#ifdef SYMBIAN_BUILD_GCE
+../../tgce/wsgcetests_sw_color64k.script	z:/wstest/wsgcetests_sw_color64k.script
+../../tgce/wsgcetests_hw_color64k_screen0.script	z:/wstest/wsgcetests_hw_color64k_screen0.script
+../../tgce/wsgcetests_hw_color64k_screen1.script	z:/wstest/wsgcetests_hw_color64k_screen1.script
+../../tgce/wsgcesurfwintest_hw_color16ma_screen0.script z:/wstest/wsgcesurfwintest_hw_color16ma_screen0.script
+../../tgce/wsgcesurfwintest_hw_color16ma_screen1.script z:/wstest/wsgcesurfwintest_hw_color16ma_screen1.script
+../../tgce/wsgcetests_color16ma_screen0.script	z:/wstest/wsgcetests_color16ma_screen0.script
+../../tgce/wsgcetests_color16ma_screen1.script	z:/wstest/wsgcetests_color16ma_screen1.script
+
+../../tgce/wsgcerotationtests_sw.script	/epoc32/release/winscw/udeb/z/wstest/wsgcerotationtests_sw.script
+../../tgce/wsgcerotationtests_sw.script	/epoc32/release/winscw/urel/z/wstest/wsgcerotationtests_sw.script
+../../tgce/wsgcerotationtests_hw.script	/epoc32/data/z/wstest/wsgcerotationtests_hw.script
+../../tgce/wsgcedsatests.script	z:/wstest/wsgcedsatests.script
+../../tgce/wsgcedsatests_h6.script	z:/wstest/wsgcedsatests_h6.script
+../../tgce/wsini-h6gcedsa.ini		z:/wstest/wsini-h6gcedsa.ini
+../../tgce/wsgcesurfwintest_hw_color64k_screen0.script z:/wstest/wsgcesurfwintest_hw_color64k_screen0.script
+../../tgce/wsgcesurfwintest_hw_color64k_screen1.script z:/wstest/wsgcesurfwintest_hw_color64k_screen1.script
+../../tgce/wsgcesurfwintest_sw_color64k.script z:/wstest/wsgcesurfwintest_sw_color64k.script
+../../tgce/wsgcesurfwintest_sw_color16ma.script z:/wstest/wsgcesurfwintest_sw_color16ma.script
+../../tgce/wsgcesurfwintestspos.script	z:/wstest/wsgcesurfwintestspos.script
+../../tgce/wsgcesurfwintestsneg.script	z:/wstest/wsgcesurfwintestsneg.script
+../../tgce/wsgceintegtest.script	z:/wstest/wsgceintegtest.script
+../../tgce/test.png		z:/wstest/test.png
+#ifndef SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS
+../../tgceperf/wsgceperformance.script	z:/wstest/wsgceperformance.script
+../../tgceperf/wsgceperf_alphamode.script	z:/wstest/wsgceperf_alphamode.script
+../../tgceperf/wsgceperf_nonalphamode.script	z:/wstest/wsgceperf_nonalphamode.script
+../../tgceperf/tgceperfanim/cwsgceperfanim.mbm z:/wstest/cwsgceperfanim.mbm
+../../tgce/fastpath/animationdll/cwsgceanim.mbm z:/wstest/cwsgceanim.mbm
+
+../../tgce/fastpath/resources/wins/wsgcefastpathtestpositive.script z:/wstest/fastpath/wins/wsgcefastpathtestpositive.script
+../../tgce/fastpath/resources/wins/wsgcefastpath_alphamode.script z:/wstest/fastpath/wins/wsgcefastpath_alphamode.script
+../../tgce/fastpath/resources/wins/wsgcefastpath_nonalphamode.script z:/wstest/fastpath/wins/wsgcefastpath_nonalphamode.script
+../../tgce/fastpath/resources/wins/wsini_alphamode_optdisabled.ini z:/wstest/fastpath/wins/wsini_alphamode_optdisabled.ini
+../../tgce/fastpath/resources/wins/wsini_alphamode_optfastpath.ini z:/wstest/fastpath/wins/wsini_alphamode_optfastpath.ini
+../../tgce/fastpath/resources/wins/wsini_alphamode_optmax.ini z:/wstest/fastpath/wins/wsini_alphamode_optmax.ini
+../../tgce/fastpath/resources/wins/wsini_nonalphamode_optdisabled.ini z:/wstest/fastpath/wins/wsini_nonalphamode_optdisabled.ini
+../../tgce/fastpath/resources/wins/wsini_nonalphamode_optfastpath.ini z:/wstest/fastpath/wins/wsini_nonalphamode_optfastpath.ini
+../../tgce/fastpath/resources/wins/wsini_nonalphamode_optmax.ini z:/wstest/fastpath/wins/wsini_nonalphamode_optmax.ini
+../../tgce/fastpath/resources/wins/wsini_alphamode_optdisabled_changetracking.ini z:/wstest/fastpath/wins/wsini_alphamode_optdisabled_changetracking.ini
+../../tgce/fastpath/resources/wins/wsini_alphamode_optfastpath_changetracking.ini z:/wstest/fastpath/wins/wsini_alphamode_optfastpath_changetracking.ini
+../../tgce/fastpath/resources/wins/wsini_alphamode_optmax_changetracking.ini z:/wstest/fastpath/wins/wsini_alphamode_optmax_changetracking.ini
+../../tgce/fastpath/resources/wins/wsini_nonalphamode_optdisabled_changetracking.ini z:/wstest/fastpath/wins/wsini_nonalphamode_optdisabled_changetracking.ini
+../../tgce/fastpath/resources/wins/wsini_nonalphamode_optfastpath_changetracking.ini z:/wstest/fastpath/wins/wsini_nonalphamode_optfastpath_changetracking.ini
+../../tgce/fastpath/resources/wins/wsini_nonalphamode_optmax_changetracking.ini z:/wstest/fastpath/wins/wsini_nonalphamode_optmax_changetracking.ini
+../../tgce/fastpath/resources/wins/epoc.ini /epoc32/data/win_fastpath_epoc.ini
+../../tgce/fastpath/resources/arm/wsgcefastpathtestpositive.script /epoc32/data/z/wstest/fastpath/arm/wsgcefastpathtestpositive.script
+../../tgce/fastpath/resources/arm/wsgcefastpath_alphamode.script /epoc32/data/z/wstest/fastpath/arm/wsgcefastpath_alphamode.script
+../../tgce/fastpath/resources/arm/wsgcefastpath_nonalphamode.script /epoc32/data/z/wstest/fastpath/arm/wsgcefastpath_nonalphamode.script
+../../tgce/fastpath/resources/arm/wsini_alphamode_optdisabled.ini /epoc32/data/z/wstest/fastpath/arm/wsini_alphamode_optdisabled.ini
+../../tgce/fastpath/resources/arm/wsini_alphamode_optfastpath.ini /epoc32/data/z/wstest/fastpath/arm/wsini_alphamode_optfastpath.ini
+../../tgce/fastpath/resources/arm/wsini_alphamode_optmax.ini /epoc32/data/z/wstest/fastpath/arm/wsini_alphamode_optmax.ini
+../../tgce/fastpath/resources/arm/wsini_nonalphamode_optdisabled.ini /epoc32/data/z/wstest/fastpath/arm/wsini_nonalphamode_optdisabled.ini
+../../tgce/fastpath/resources/arm/wsini_nonalphamode_optfastpath.ini /epoc32/data/z/wstest/fastpath/arm/wsini_nonalphamode_optfastpath.ini
+../../tgce/fastpath/resources/arm/wsini_nonalphamode_optmax.ini /epoc32/data/z/wstest/fastpath/arm/wsini_nonalphamode_optmax.ini
+../../tgce/fastpath/resources/arm/wsini_alphamode_optdisabled_changetracking.ini /epoc32/data/z/wstest/fastpath/arm/wsini_alphamode_optdisabled_changetracking.ini
+../../tgce/fastpath/resources/arm/wsini_alphamode_optfastpath_changetracking.ini /epoc32/data/z/wstest/fastpath/arm/wsini_alphamode_optfastpath_changetracking.ini
+../../tgce/fastpath/resources/arm/wsini_alphamode_optmax_changetracking.ini /epoc32/data/z/wstest/fastpath/arm/wsini_alphamode_optmax_changetracking.ini
+../../tgce/fastpath/resources/arm/wsini_nonalphamode_optdisabled_changetracking.ini /epoc32/data/z/wstest/fastpath/arm/wsini_nonalphamode_optdisabled_changetracking.ini
+../../tgce/fastpath/resources/arm/wsini_nonalphamode_optfastpath_changetracking.ini /epoc32/data/z/wstest/fastpath/arm/wsini_nonalphamode_optfastpath_changetracking.ini
+../../tgce/fastpath/resources/arm/wsini_nonalphamode_optmax_changetracking.ini /epoc32/data/z/wstest/fastpath/arm/wsini_nonalphamode_optmax_changetracking.ini
+../../tgce/fastpath/resources/arm/epoc.ini /epoc32/data/arm_fastpath_epoc.ini
+../../tgce/fastpath/resources/arm/testexecute.ini /epoc32/data/z/system/data/arm_fastpath_testexecute.ini
+#endif // SYMBIAN_GRAPHICS_WSERV_QT_EFFECTS
+../../test/scripts/wstest_t_pointershifttest_nga.script 	z:/wstest/wstest_t_pointershifttest_nga.script
+../../group/wsini_pointershift.ini							z:/wstest/wsini_pointershift.ini
+../../test/scripts/wspointershifttest_run.bat				z:/wstest/wspointershifttest_run.bat
+../../test/scripts/epoc_pointershift.ini					z:/wstest/epoc_pointershift.ini
+../../group/wsini_pointershift_wins.ini					z:/wstest/wsini_pointershift_wins.ini
+../../group/wsini_pointershift.ini				/epoc32/data/z/system/data/wsini_pointershift.ini
+
+#endif // SYMBIAN_BUILD_GCE
+
+//Composited Screen Capture tests
+#ifdef SYMBIAN_BUILD_GCE
+../../tcsc/wscsc.script 					z:/wstest/wscsc.script
+../../tcsc/resources/wsini_csc_nga_qvga.ini  /epoc32/data/z/wstest/wsini_csc_nga_qvga.ini
+../../tcsc/resources/wsini_csc_nga_vga.ini  /epoc32/data/z/wstest/wsini_csc_nga_vga.ini
+../../tcsc/resources/wsini_csc_nga_naviengine.ini  /epoc32/data/z/wstest/wsini_csc_nga_naviengine.ini
+../../tcsc/resources/wsini_csc_nga_h6.ini  /epoc32/data/z/wstest/wsini_csc_nga_h6.ini
+../../tcsc/resources/wsini_csc_nga.ini 	/epoc32/release/winscw/udeb/z/wstest/wsini_csc_nga.ini
+../../tcsc/resources/wsini_csc_nga.ini 	/epoc32/release/winscw/urel/z/wstest/wsini_csc_nga.ini	
+../../tcsc/resources/wsini_csc_nga_qvga_changetracking.ini  /epoc32/data/z/wstest/wsini_csc_nga_qvga_changetracking.ini
+../../tcsc/resources/wsini_csc_nga_vga_changetracking.ini  /epoc32/data/z/wstest/wsini_csc_nga_vga_changetracking.ini
+../../tcsc/resources/wsini_csc_nga_changetracking.ini 	/epoc32/release/winscw/udeb/z/wstest/wsini_csc_nga_changetracking.ini
+../../tcsc/resources/wsini_csc_nga_changetracking.ini 	/epoc32/release/winscw/urel/z/wstest/wsini_csc_nga_changetracking.ini
+../../tcsc/tcsc.iby						/epoc32/rom/include/tcsc.iby
+
+#endif
+../../tcsc/wscscclassic.script z:/wstest/wscscclassic.script
+../../tcsc/resources/wsini_csc_classic_qvga.ini  /epoc32/data/z/wstest/wsini_csc_classic_qvga.ini
+../../tcsc/resources/wsini_csc_classic_vga.ini  /epoc32/data/z/wstest/wsini_csc_classic_vga.ini
+../../tcsc/resources/wsini_csc_classic_naviengine.ini  /epoc32/data/z/wstest/wsini_csc_classic_naviengine.ini
+../../tcsc/resources/wsini_csc_classic.ini 	/epoc32/release/winscw/udeb/z/wstest/wsini_csc_classic.ini
+../../tcsc/resources/wsini_csc_classic.ini 	/epoc32/release/winscw/urel/z/wstest/wsini_csc_classic.ini	
+
+../../rom/wservu_om.ini  /epoc32/data/z/system/data/ws_test.ini
+../../rom/wservu_om_singlescreen.ini  /epoc32/data/z/system/data/ws_test_singlescreen.ini
+../../rom/wservu_om_singlescreen_changetracking.ini /epoc32/data/z/system/data/wservu_om_singlescreen_changetracking.ini
+../../rom/wservu_om_h6_changetracking.ini 			 /epoc32/data/z/system/data/wservu_om_h6_changetracking.ini
+../../rom/wserv_winscw.ini /epoc32/release/winscw/udeb/z/system/data/wsini.ini
+../../rom/wserv_winscw.ini /epoc32/release/winscw/urel/z/system/data/wsini.ini	
+../../rom/wservu_om_changetracking.ini  /epoc32/data/z/system/data/ws_test_changetracking.ini
+../../rom/wserv_winscw_changetracking.ini /epoc32/release/winscw/udeb/z/system/data/wsini_changetracking.ini
+../../rom/wserv_winscw_changetracking.ini /epoc32/release/winscw/urel/z/system/data/wsini_changetracking.ini	
+//ROM
+../../rom/WSERV.OBY		/epoc32/rom/include/wserv.oby
+../../rom/WSERVTest.IBY	/epoc32/rom/include/wservtest.iby
+../../rom/WSAllTest.IBY	/epoc32/rom/include/wsalltest.iby
